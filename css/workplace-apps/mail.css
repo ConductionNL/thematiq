@@ -24,33 +24,63 @@
  */
 
 /* "New message" is the filled primary action. */
-:is(#content, #content-vue).app-mail .mail-navigation__new-message-button .button-vue--vue-secondary {
-	border-color: var(--nldesign-color-button-primary-border, var(--nldesign-color-primary)) !important;
-	background-color: var(--nldesign-color-button-primary-background, var(--nldesign-color-primary)) !important;
-	color: var(--nldesign-color-button-primary-text, var(--nldesign-color-primary-text)) !important;
+:is(#content, #content-vue).app-mail
+	.mail-navigation__new-message-button
+	.button-vue--vue-secondary {
+	border-color: var(
+		--nldesign-color-button-primary-border,
+		var(--nldesign-color-primary)
+	) !important;
+	background-color: var(
+		--nldesign-color-button-primary-background,
+		var(--nldesign-color-primary)
+	) !important;
+	color: var(
+		--nldesign-color-button-primary-text,
+		var(--nldesign-color-primary-text)
+	) !important;
 }
 
-:is(#content, #content-vue).app-mail .mail-navigation__new-message-button .button-vue--vue-secondary:hover {
-	background-color: var(--nldesign-color-button-primary-hover, var(--nldesign-color-primary-hover)) !important;
+:is(#content, #content-vue).app-mail
+	.mail-navigation__new-message-button
+	.button-vue--vue-secondary:hover {
+	background-color: var(
+		--nldesign-color-button-primary-hover,
+		var(--nldesign-color-primary-hover)
+	) !important;
 }
 
 /* The folders. */
-:is(#content, #content-vue).app-mail #app-navigation-vue :is(.app-navigation-entry, .app-navigation-entry-link, .app-navigation-entry-icon, .app-navigation-entry__name) {
+:is(#content, #content-vue).app-mail
+	#app-navigation-vue
+	:is(
+		.app-navigation-entry,
+		.app-navigation-entry-link,
+		.app-navigation-entry-icon,
+		.app-navigation-entry__name
+	) {
 	min-height: 34px !important;
 	height: 34px;
 }
 
-:is(#content, #content-vue).app-mail #app-navigation-vue .app-navigation-entry__name {
+:is(#content, #content-vue).app-mail
+	#app-navigation-vue
+	.app-navigation-entry__name {
 	font-size: 14px;
 	font-weight: 400;
 	line-height: 34px;
 }
 
-:is(#content, #content-vue).app-mail #app-navigation-vue .app-navigation-entry.active .app-navigation-entry__name {
+:is(#content, #content-vue).app-mail
+	#app-navigation-vue
+	.app-navigation-entry.active
+	.app-navigation-entry__name {
 	font-weight: 600;
 }
 
-:is(#content, #content-vue).app-mail .mail-navigation__new-message-button .button-vue {
+:is(#content, #content-vue).app-mail
+	.mail-navigation__new-message-button
+	.button-vue {
 	min-height: 34px !important;
 	height: 34px !important;
 	padding-block: 0 !important;
@@ -79,7 +109,9 @@
 	background-color: var(--color-primary-element-light) !important;
 }
 
-:is(#content, #content-vue).app-mail :is(.envelope-list, #mail-message) .avatardiv__initials {
+:is(#content, #content-vue).app-mail
+	:is(.envelope-list, #mail-message)
+	.avatardiv__initials {
 	color: var(--color-primary-element-light-text) !important;
 	font-size: 12px !important;
 	font-weight: 700 !important;
@@ -88,11 +120,17 @@
 
 :is(#content, #content-vue).app-mail .splitpanes__pane-list {
 	border-inline-end: 1px solid var(--color-border);
-	background-color: var(--thematiq-global-color-main-background, var(--color-main-background));
+	background-color: var(
+		--thematiq-global-color-main-background,
+		var(--color-main-background)
+	);
 }
 
 :is(#content, #content-vue).app-mail .envelope-list {
-	background-color: var(--thematiq-global-color-main-background, var(--color-main-background));
+	background-color: var(
+		--thematiq-global-color-main-background,
+		var(--color-main-background)
+	);
 }
 
 :is(#content, #content-vue).app-mail .envelope-list .list-item__wrapper {
@@ -104,20 +142,30 @@
 	padding: 9px 14px 9px 22px !important;
 	border-bottom: 1px solid var(--color-border);
 	border-radius: 0 !important;
-	background-color: var(--thematiq-global-color-main-background, var(--color-main-background)) !important;
+	background-color: var(
+		--thematiq-global-color-main-background,
+		var(--color-main-background)
+	) !important;
 }
 
 :is(#content, #content-vue).app-mail .envelope-list .list-item:hover {
 	background-color: var(--color-background-hover) !important;
 }
 
-:is(#content, #content-vue).app-mail .envelope-list .list-item__wrapper--active .list-item,
+:is(#content, #content-vue).app-mail
+	.envelope-list
+	.list-item__wrapper--active
+	.list-item,
 :is(#content, #content-vue).app-mail .envelope-list .list-item--active {
 	box-shadow: inset 3px 0 0 var(--color-primary-element);
 	background-color: var(--color-primary-element-light) !important;
 }
 
-:is(#content, #content-vue).app-mail .envelope-list .list-item__wrapper--active .list-item *,
+:is(#content, #content-vue).app-mail
+	.envelope-list
+	.list-item__wrapper--active
+	.list-item
+	*,
 :is(#content, #content-vue).app-mail .envelope-list .list-item--active * {
 	color: var(--color-primary-element-light-text) !important;
 }
@@ -143,7 +191,9 @@
 	display: none !important;
 }
 
-:is(#content, #content-vue).app-mail .envelope-list .list-item-content__inner__details {
+:is(#content, #content-vue).app-mail
+	.envelope-list
+	.list-item-content__inner__details {
 	font-size: 12px;
 	color: var(--color-text-maxcontrast);
 }
@@ -219,7 +269,7 @@
  * cannot be written as a selector. Without style queries the column simply
  * stays unfolded. */
 @property --thematiq-mail-rail {
-	syntax: "<integer>";
+	syntax: '<integer>';
 	inherits: true;
 	initial-value: 0;
 }
@@ -232,7 +282,8 @@
 }
 
 @media (min-width: 1024px) {
-	:is(#content, #content-vue).app-mail:has(#mail-thread-header) .app-navigation.mail-navigation {
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+		.app-navigation.mail-navigation {
 		--thematiq-mail-rail: 1;
 
 		position: relative;
@@ -243,15 +294,21 @@
 		max-width: 64px !important;
 	}
 
-	:is(#content, #content-vue).app-mail:has(#mail-thread-header) .app-navigation.mail-navigation:is(:focus-within, :has(#app-navigation-vue [aria-haspopup][aria-expanded="true"])) {
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+		.app-navigation.mail-navigation:is(
+			:focus-within,
+			:has(#app-navigation-vue [aria-haspopup][aria-expanded='true'])
+		) {
 		--thematiq-mail-rail: 0;
 	}
 
-	:is(#content, #content-vue).app-mail:has(#mail-thread-header) .app-navigation.mail-navigation:hover {
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+		.app-navigation.mail-navigation:hover {
 		animation: thematiq-mail-rail-unfold 1ms 200ms forwards;
 	}
 
-	:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue {
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+		#app-navigation-vue {
 		position: absolute;
 		inset-block: 0;
 		inset-inline-start: 0;
@@ -262,28 +319,44 @@
 	}
 
 	@container style(--thematiq-mail-rail: 1) {
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue {
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue {
 			width: 64px;
 			box-shadow: none;
 			padding-inline: 4px !important;
 			overflow: hidden;
 		}
 
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue :is(.refresh__button, .button-vue__text, .app-navigation-entry__actions, .app-navigation-caption__actions, .app-navigation-caption__name) {
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			:is(
+				.refresh__button,
+				.button-vue__text,
+				.app-navigation-entry__actions,
+				.app-navigation-caption__actions,
+				.app-navigation-caption__name
+			) {
 			display: none !important;
 		}
 
 		/* A row without an icon ("Show all folders") has nothing to show in the rail. */
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-entry-wrapper:has(.app-navigation-entry-icon:empty) {
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.app-navigation-entry-wrapper:has(.app-navigation-entry-icon:empty) {
 			display: none !important;
 		}
 
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .mail-navigation__new-message-button {
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.mail-navigation__new-message-button {
 			justify-content: center;
 			padding: 0 !important;
 		}
 
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .mail-navigation__new-message-button .button-vue {
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.mail-navigation__new-message-button
+			.button-vue {
 			width: 40px !important;
 			min-width: 40px !important;
 			height: 40px !important;
@@ -291,23 +364,31 @@
 			padding: 0 !important;
 		}
 
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-caption {
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.app-navigation-caption {
 			height: 1px;
 			margin: 8px 12px !important;
 			padding: 0 !important;
 			border-top: 1px solid var(--color-border);
 		}
 
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-list {
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.app-navigation-list {
 			padding-inline: 0 !important;
 		}
 
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue :is(.app-navigation-entry, .app-navigation-entry-link) {
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			:is(.app-navigation-entry, .app-navigation-entry-link) {
 			height: auto !important;
 			min-height: 48px !important;
 		}
 
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-entry-link {
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.app-navigation-entry-link {
 			position: relative;
 			flex-direction: column;
 			justify-content: center;
@@ -316,14 +397,18 @@
 			padding: 4px 0 !important;
 		}
 
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-entry-icon {
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.app-navigation-entry-icon {
 			width: 20px !important;
 			height: 22px !important;
 			min-height: 22px !important;
 			margin: 0 !important;
 		}
 
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-entry__name {
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.app-navigation-entry__name {
 			max-width: 56px;
 			height: auto !important;
 			min-height: 0 !important;
@@ -336,7 +421,9 @@
 			white-space: nowrap;
 		}
 
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-entry__utils {
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.app-navigation-entry__utils {
 			position: absolute;
 			top: 2px;
 			inset-inline-end: 8px;
@@ -346,11 +433,16 @@
 			padding: 0 !important;
 		}
 
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-entry__counter-wrapper {
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.app-navigation-entry__counter-wrapper {
 			margin: 0 !important;
 		}
 
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-entry__counter-wrapper .counter-bubble__counter {
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.app-navigation-entry__counter-wrapper
+			.counter-bubble__counter {
 			min-width: 16px !important;
 			height: 16px !important;
 			padding: 0 4px !important;
@@ -358,7 +450,10 @@
 			line-height: 16px !important;
 		}
 
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .mail-settings .app-navigation-entry__name {
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.mail-settings
+			.app-navigation-entry__name {
 			display: none;
 		}
 
@@ -368,18 +463,41 @@
 		 * inbox, All inboxes) unless one of them is open, wait in the full
 		 * column. An account's caption and folders are siblings in one list,
 		 * so the account is told apart by the caption before it. */
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-list:has(.app-navigation-caption ~ li .active) > li:not(.app-navigation-caption ~ li):not(.app-navigation-caption):not(:has(.active)),
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-list > li:has(.active) ~ .app-navigation-caption,
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-list > li:has(.active) ~ .app-navigation-caption ~ li,
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-list > .app-navigation-caption:has(~ .app-navigation-caption ~ li .active),
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header) #app-navigation-vue .app-navigation-list > .app-navigation-caption ~ li:has(~ .app-navigation-caption ~ li .active) {
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.app-navigation-list:has(.app-navigation-caption ~ li .active)
+			> li:not(.app-navigation-caption ~ li):not(.app-navigation-caption):not(
+				:has(.active)
+			),
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.app-navigation-list
+			> li:has(.active)
+			~ .app-navigation-caption,
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.app-navigation-list
+			> li:has(.active)
+			~ .app-navigation-caption
+			~ li,
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.app-navigation-list
+			> .app-navigation-caption:has(~ .app-navigation-caption ~ li .active),
+		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+			#app-navigation-vue
+			.app-navigation-list
+			> .app-navigation-caption
+			~ li:has(~ .app-navigation-caption ~ li .active) {
 			display: none !important;
 		}
 	}
 }
 
 /* Unread is an 8px primary dot before the avatar, not a circle beside the date. */
-:is(#content, #content-vue).app-mail .envelope-list .list-item-content__inner__details__extra__indicator {
+:is(#content, #content-vue).app-mail
+	.envelope-list
+	.list-item-content__inner__details__extra__indicator {
 	position: absolute;
 	top: 50%;
 	inset-inline-start: 7px;
@@ -390,27 +508,39 @@
 	background-color: var(--color-primary-element);
 }
 
-:is(#content, #content-vue).app-mail .envelope-list .list-item-content__inner__details__extra__indicator svg {
+:is(#content, #content-vue).app-mail
+	.envelope-list
+	.list-item-content__inner__details__extra__indicator
+	svg {
 	display: none;
 }
 
 /* New message is a 34px button with a pencil; the boards have no refresh button. */
-:is(#content, #content-vue).app-mail .mail-navigation__new-message-button .refresh__button {
+:is(#content, #content-vue).app-mail
+	.mail-navigation__new-message-button
+	.refresh__button {
 	display: none !important;
 }
 
-:is(#content, #content-vue).app-mail .mail-navigation__new-message-button .plus-icon svg {
+:is(#content, #content-vue).app-mail
+	.mail-navigation__new-message-button
+	.plus-icon
+	svg {
 	visibility: hidden;
 }
 
-:is(#content, #content-vue).app-mail .mail-navigation__new-message-button .plus-icon {
+:is(#content, #content-vue).app-mail
+	.mail-navigation__new-message-button
+	.plus-icon {
 	background-color: currentColor;
-	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M14.06,9L15,9.94L5.92,19H5V18.08L14.06,9M17.66,3C17.41,3 17.15,3.1 16.96,3.29L15.13,5.12L18.88,8.87L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18.17,3.09 17.92,3 17.66,3M14.06,6.19L3,17.25V21H6.75L17.81,9.94L14.06,6.19Z'/%3E%3C/svg%3E") center / 18px no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M14.06,9L15,9.94L5.92,19H5V18.08L14.06,9M17.66,3C17.41,3 17.15,3.1 16.96,3.29L15.13,5.12L18.88,8.87L20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18.17,3.09 17.92,3 17.66,3M14.06,6.19L3,17.25V21H6.75L17.81,9.94L14.06,6.19Z'/%3E%3C/svg%3E")
+		center / 18px no-repeat;
 }
 
 /* With no conversation open: an envelope in a white circle over Mail's own
  * heading, centred; the paragraph and the second New message button go. */
-:is(#content, #content-vue).app-mail .app-content-details:has(.no-message-selected__heading) {
+:is(#content, #content-vue).app-mail
+	.app-content-details:has(.no-message-selected__heading) {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -427,7 +557,7 @@
 
 :is(#content, #content-vue).app-mail .no-message-selected__heading::before,
 :is(#content, #content-vue).app-mail .no-message-selected__heading::after {
-	content: "";
+	content: '';
 	position: absolute;
 	inset-inline-start: 50%;
 	transform: translateX(-50%);
@@ -448,21 +578,27 @@
 	width: 26px;
 	height: 26px;
 	background-color: var(--color-text-maxcontrast);
-	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M22 6C22 4.9 21.1 4 20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6M20 6L12 11L4 6H20M20 18H4V8L12 13L20 8V18Z'/%3E%3C/svg%3E") center / 26px no-repeat;
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M22 6C22 4.9 21.1 4 20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6M20 6L12 11L4 6H20M20 18H4V8L12 13L20 8V18Z'/%3E%3C/svg%3E")
+		center / 26px no-repeat;
 }
 
-:is(#content, #content-vue).app-mail :is(.no-message-selected__text, .no-message-selected__action) {
+:is(#content, #content-vue).app-mail
+	:is(.no-message-selected__text, .no-message-selected__action) {
 	display: none !important;
 }
 
 /* "Select a conversation", as MlInbox reads, where Mail writes "Welcome to
  * <name> Mail" (js/workplace-apps.js sets the translated words). The
  * heading's own text goes; the words follow the envelope. */
-:root[style*='--thematiq-mail-empty-title'] :is(#content, #content-vue).app-mail .app-content-details:has(.no-message-selected__heading) {
+:root[style*='--thematiq-mail-empty-title']
+	:is(#content, #content-vue).app-mail
+	.app-content-details:has(.no-message-selected__heading) {
 	flex-direction: column;
 }
 
-:root[style*='--thematiq-mail-empty-title'] :is(#content, #content-vue).app-mail .no-message-selected__heading {
+:root[style*='--thematiq-mail-empty-title']
+	:is(#content, #content-vue).app-mail
+	.no-message-selected__heading {
 	width: 64px;
 	height: 0;
 	overflow: visible;
@@ -470,7 +606,9 @@
 	font-size: 0 !important;
 }
 
-:root[style*='--thematiq-mail-empty-title'] :is(#content, #content-vue).app-mail .app-content-details:has(.no-message-selected__heading)::after {
+:root[style*='--thematiq-mail-empty-title']
+	:is(#content, #content-vue).app-mail
+	.app-content-details:has(.no-message-selected__heading)::after {
 	content: var(--thematiq-mail-empty-title);
 	margin-top: 8px;
 	color: var(--color-main-text);
@@ -500,7 +638,9 @@
 	background: transparent !important;
 }
 
-:is(#content, #content-vue).app-mail #mail-message .mail-attachment-img--wrapper:has(img.attachment-icon) {
+:is(#content, #content-vue).app-mail
+	#mail-message
+	.mail-attachment-img--wrapper:has(img.attachment-icon) {
 	flex: none;
 	display: flex;
 	align-items: center;
@@ -510,11 +650,26 @@
 	margin: 0 !important;
 }
 
-:is(#content, #content-vue).app-mail #mail-message .mail-attachment-img--wrapper:has(img.attachment-icon[src*="application-pdf"], img.attachment-icon[src*="spreadsheet"], img.attachment-icon[src*="x-office-document"], img.attachment-icon[src*="/image."]) img {
+:is(#content, #content-vue).app-mail
+	#mail-message
+	.mail-attachment-img--wrapper:has(
+		img.attachment-icon[src*='application-pdf'],
+		img.attachment-icon[src*='spreadsheet'],
+		img.attachment-icon[src*='x-office-document'],
+		img.attachment-icon[src*='/image.']
+	)
+	img {
 	display: none;
 }
 
-:is(#content, #content-vue).app-mail #mail-message .mail-attachment-img--wrapper:has(img.attachment-icon[src*="application-pdf"], img.attachment-icon[src*="spreadsheet"], img.attachment-icon[src*="x-office-document"], img.attachment-icon[src*="/image."])::before {
+:is(#content, #content-vue).app-mail
+	#mail-message
+	.mail-attachment-img--wrapper:has(
+		img.attachment-icon[src*='application-pdf'],
+		img.attachment-icon[src*='spreadsheet'],
+		img.attachment-icon[src*='x-office-document'],
+		img.attachment-icon[src*='/image.']
+	)::before {
 	width: 34px;
 	height: 22px;
 	border-radius: var(--border-radius-element, 8px);
@@ -526,23 +681,37 @@
 	text-align: center;
 }
 
-:is(#content, #content-vue).app-mail #mail-message .mail-attachment-img--wrapper:has(img.attachment-icon[src*="application-pdf"])::before {
-	content: "PDF";
+:is(#content, #content-vue).app-mail
+	#mail-message
+	.mail-attachment-img--wrapper:has(
+		img.attachment-icon[src*='application-pdf']
+	)::before {
+	content: 'PDF';
 	background-color: var(--color-error);
 }
 
-:is(#content, #content-vue).app-mail #mail-message .mail-attachment-img--wrapper:has(img.attachment-icon[src*="spreadsheet"])::before {
-	content: "XLSX";
+:is(#content, #content-vue).app-mail
+	#mail-message
+	.mail-attachment-img--wrapper:has(
+		img.attachment-icon[src*='spreadsheet']
+	)::before {
+	content: 'XLSX';
 	background-color: var(--color-success);
 }
 
-:is(#content, #content-vue).app-mail #mail-message .mail-attachment-img--wrapper:has(img.attachment-icon[src*="x-office-document"])::before {
-	content: "DOCX";
+:is(#content, #content-vue).app-mail
+	#mail-message
+	.mail-attachment-img--wrapper:has(
+		img.attachment-icon[src*='x-office-document']
+	)::before {
+	content: 'DOCX';
 	background-color: var(--color-primary-element);
 }
 
-:is(#content, #content-vue).app-mail #mail-message .mail-attachment-img--wrapper:has(img.attachment-icon[src*="/image."])::before {
-	content: "IMG";
+:is(#content, #content-vue).app-mail
+	#mail-message
+	.mail-attachment-img--wrapper:has(img.attachment-icon[src*='/image.'])::before {
+	content: 'IMG';
 	background-color: var(--color-info, var(--color-primary-element));
 }
 
@@ -584,7 +753,8 @@
 /* Reduced motion: the rail unfolds on hover at once, without the delayed
  * one-frame animation that stands in for a hover delay. */
 @media (prefers-reduced-motion: reduce) and (min-width: 1024px) {
-	:is(#content, #content-vue).app-mail:has(#mail-thread-header) .app-navigation.mail-navigation:hover {
+	:is(#content, #content-vue).app-mail:has(#mail-thread-header)
+		.app-navigation.mail-navigation:hover {
 		--thematiq-mail-rail: 0;
 
 		animation: none;
@@ -602,7 +772,9 @@
 	gap: 4px;
 }
 
-:is(#content, #content-vue).app-mail #app-navigation-vue .app-navigation-caption__name {
+:is(#content, #content-vue).app-mail
+	#app-navigation-vue
+	.app-navigation-caption__name {
 	flex: 1 1 auto;
 	width: auto;
 	min-width: 0;
@@ -611,7 +783,9 @@
 	white-space: nowrap;
 }
 
-:is(#content, #content-vue).app-mail #app-navigation-vue .app-navigation-caption__actions {
+:is(#content, #content-vue).app-mail
+	#app-navigation-vue
+	.app-navigation-caption__actions {
 	flex: none;
 	width: auto;
 }
@@ -637,7 +811,7 @@
  * by the caption before it. Without style queries every account stays open.
  */
 @property --thematiq-mail-fold {
-	syntax: "<integer>";
+	syntax: '<integer>';
 	inherits: true;
 	initial-value: 0;
 }
@@ -650,35 +824,59 @@
 }
 
 @media (min-width: 1024px) {
-	:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header)) .app-navigation.mail-navigation {
+	:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header))
+		.app-navigation.mail-navigation {
 		--thematiq-mail-fold: 1;
 	}
 
-	:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header)) .app-navigation.mail-navigation:has(:focus-visible) {
+	:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header))
+		.app-navigation.mail-navigation:has(:focus-visible) {
 		--thematiq-mail-fold: 0;
 	}
 
 	@media (prefers-reduced-motion: no-preference) {
-		:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header)) .app-navigation.mail-navigation:hover {
+		:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header))
+			.app-navigation.mail-navigation:hover {
 			animation: thematiq-mail-fold-open 1ms 400ms forwards;
 		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header)) .app-navigation.mail-navigation:hover {
+		:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header))
+			.app-navigation.mail-navigation:hover {
 			--thematiq-mail-fold: 0;
 		}
 	}
 
 	/* The open account comes first: an account before it goes after it. */
-	:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header)) #app-navigation-vue .app-navigation-list > .app-navigation-caption:has(~ .app-navigation-caption ~ li .active),
-	:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header)) #app-navigation-vue .app-navigation-list > .app-navigation-caption ~ li:not(.app-navigation-caption):has(~ .app-navigation-caption ~ li .active) {
+	:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header))
+		#app-navigation-vue
+		.app-navigation-list
+		> .app-navigation-caption:has(~ .app-navigation-caption ~ li .active),
+	:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header))
+		#app-navigation-vue
+		.app-navigation-list
+		> .app-navigation-caption
+		~ li:not(.app-navigation-caption):has(
+			~ .app-navigation-caption ~ li .active
+		) {
 		order: 1;
 	}
 
 	@container style(--thematiq-mail-fold: 1) {
-		:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header)) #app-navigation-vue .app-navigation-list > li:has(.active) ~ .app-navigation-caption ~ li:not(.app-navigation-caption),
-		:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header)) #app-navigation-vue .app-navigation-list > .app-navigation-caption ~ li:not(.app-navigation-caption):has(~ .app-navigation-caption ~ li .active) {
+		:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header))
+			#app-navigation-vue
+			.app-navigation-list
+			> li:has(.active)
+			~ .app-navigation-caption
+			~ li:not(.app-navigation-caption),
+		:is(#content, #content-vue).app-mail:not(:has(#mail-thread-header))
+			#app-navigation-vue
+			.app-navigation-list
+			> .app-navigation-caption
+			~ li:not(.app-navigation-caption):has(
+				~ .app-navigation-caption ~ li .active
+			) {
 			display: none !important;
 		}
 	}

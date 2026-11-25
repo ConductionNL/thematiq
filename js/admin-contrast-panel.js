@@ -56,10 +56,15 @@
 	 * @return {string} The ratio.
 	 */
 	function ratio(value, digits) {
-		return Number(value).toLocaleString(document.documentElement.lang || undefined, {
-			minimumFractionDigits: digits,
-			maximumFractionDigits: digits,
-		}) + ':1'
+		return (
+			Number(value).toLocaleString(
+				document.documentElement.lang || undefined,
+				{
+					minimumFractionDigits: digits,
+					maximumFractionDigits: digits,
+				},
+			) + ':1'
+		)
 	}
 
 	/**
@@ -78,7 +83,17 @@
 		}
 		var text = el('span', 'thematiq-contrast-panel__colour-text')
 		text.appendChild(el('code', '', token))
-		text.appendChild(el('span', 'thematiq-contrast-panel__value', value ? (/^#[0-9a-f]{3,8}$/i.test(value) ? String(value).toUpperCase() : String(value)) : '–'))
+		text.appendChild(
+			el(
+				'span',
+				'thematiq-contrast-panel__value',
+				value
+					? /^#[0-9a-f]{3,8}$/i.test(value)
+						? String(value).toUpperCase()
+						: String(value)
+					: '–',
+			),
+		)
 		wrap.appendChild(swatch)
 		wrap.appendChild(text)
 		cell.appendChild(wrap)
@@ -105,28 +120,67 @@
 	 */
 	function drawRows(panel) {
 		var body = panel.querySelector('.thematiq-contrast-panel__rows')
-		body.replaceChildren.apply(body, (report.pairs || []).map(function (pair) {
-			var row = el('tr', '')
-			row.appendChild(colourCell(pair.foreground, pair.foregroundValue))
-			row.appendChild(colourCell(pair.background, pair.backgroundValue))
-			var example = el('span', 'thematiq-contrast-panel__example', tr('Text Aa'))
-			if (pair.foregroundValue && pair.backgroundValue) {
-				example.style.color = pair.foregroundValue
-				example.style.background = pair.backgroundValue
-			}
-			row.appendChild(cellWith(example))
-			row.appendChild(cellWith(el('strong', 'thematiq-contrast-panel__ratio', typeof pair.ratio === 'number' ? ratio(pair.ratio, 2) : '–')))
-			row.appendChild(cellWith(el('span', '', pair.basis === 'ui-component'
-				? tr('{ratio} part', { ratio: ratio(pair.threshold, 1) })
-				: tr('{ratio} text', { ratio: ratio(pair.threshold, 1) }))))
-			var verdict = pair.verdict === 'pass' ? tr('Meets') : pair.verdict === 'fail' ? tr('Too low') : tr('Cannot be assessed')
-			var pill = el('span', 'thematiq-contrast-panel__pill thematiq-contrast-panel__pill--' + pair.verdict, verdict)
-			if (pair.note) {
-				pill.title = pair.note
-			}
-			row.appendChild(cellWith(pill))
-			return row
-		}))
+		body.replaceChildren.apply(
+			body,
+			(report.pairs || []).map(function (pair) {
+				var row = el('tr', '')
+				row.appendChild(colourCell(pair.foreground, pair.foregroundValue))
+				row.appendChild(colourCell(pair.background, pair.backgroundValue))
+				var example = el(
+					'span',
+					'thematiq-contrast-panel__example',
+					tr('Text Aa'),
+				)
+				if (pair.foregroundValue && pair.backgroundValue) {
+					example.style.color = pair.foregroundValue
+					example.style.background = pair.backgroundValue
+				}
+				row.appendChild(cellWith(example))
+				row.appendChild(
+					cellWith(
+						el(
+							'strong',
+							'thematiq-contrast-panel__ratio',
+							typeof pair.ratio === 'number'
+								? ratio(pair.ratio, 2)
+								: '–',
+						),
+					),
+				)
+				row.appendChild(
+					cellWith(
+						el(
+							'span',
+							'',
+							pair.basis === 'ui-component'
+								? tr('{ratio} part', {
+										ratio: ratio(pair.threshold, 1),
+									})
+								: tr('{ratio} text', {
+										ratio: ratio(pair.threshold, 1),
+									}),
+						),
+					),
+				)
+				var verdict =
+					pair.verdict === 'pass'
+						? tr('Meets')
+						: pair.verdict === 'fail'
+							? tr('Too low')
+							: tr('Cannot be assessed')
+				var pill = el(
+					'span',
+					'thematiq-contrast-panel__pill thematiq-contrast-panel__pill--'
+						+ pair.verdict,
+					verdict,
+				)
+				if (pair.note) {
+					pill.title = pair.note
+				}
+				row.appendChild(cellWith(pill))
+				return row
+			}),
+		)
 	}
 
 	/**
@@ -139,17 +193,28 @@
 		var summary = report.summary || {}
 		var total = (report.pairs || []).length
 		var tiles = panel.querySelector('.thematiq-contrast-panel__tiles')
-		tiles.replaceChildren.apply(tiles, [
-			[total, tr('pairs measured'), 'total'],
-			[summary.passed || 0, tr('pass WCAG 2.1 AA'), 'pass'],
-			[summary.failed || 0, tr('too low'), 'fail'],
-			[summary.unevaluated || 0, tr('cannot be assessed'), 'unevaluated'],
-		].map(function (tile) {
-			var card = el('div', 'thematiq-card thematiq-contrast-panel__tile thematiq-contrast-panel__tile--' + tile[2])
-			card.appendChild(el('span', 'thematiq-contrast-panel__number', String(tile[0])))
-			card.appendChild(el('span', 'thematiq-contrast-panel__label', tile[1]))
-			return card
-		}))
+		tiles.replaceChildren.apply(
+			tiles,
+			[
+				[total, tr('pairs measured'), 'total'],
+				[summary.passed || 0, tr('pass WCAG 2.1 AA'), 'pass'],
+				[summary.failed || 0, tr('too low'), 'fail'],
+				[summary.unevaluated || 0, tr('cannot be assessed'), 'unevaluated'],
+			].map(function (tile) {
+				var card = el(
+					'div',
+					'thematiq-card thematiq-contrast-panel__tile thematiq-contrast-panel__tile--'
+						+ tile[2],
+				)
+				card.appendChild(
+					el('span', 'thematiq-contrast-panel__number', String(tile[0])),
+				)
+				card.appendChild(
+					el('span', 'thematiq-contrast-panel__label', tile[1]),
+				)
+				return card
+			}),
+		)
 	}
 
 	/**
@@ -163,18 +228,34 @@
 		var made = meta.generatedAt ? new Date(meta.generatedAt) : null
 		var rows = [
 			[tr('Token set'), meta.tokenSet ? meta.tokenSet.name : ''],
-			[tr('Design system'), ({ nldesign: 'NL Design System', lasuite: 'La Suite' })[meta.designSystem] || meta.designSystem || ''],
-			[tr('Made'), made !== null && !isNaN(made.getTime())
-				? made.toLocaleString(document.documentElement.lang || undefined, { dateStyle: 'medium', timeStyle: 'short' })
-				: ''],
+			[
+				tr('Design system'),
+				{ nldesign: 'NL Design System', lasuite: 'La Suite' }[
+					meta.designSystem
+				]
+					|| meta.designSystem
+					|| '',
+			],
+			[
+				tr('Made'),
+				made !== null && !isNaN(made.getTime())
+					? made.toLocaleString(
+							document.documentElement.lang || undefined,
+							{ dateStyle: 'medium', timeStyle: 'short' },
+						)
+					: '',
+			],
 		]
 		var about = panel.querySelector('.thematiq-contrast-panel__about')
-		about.replaceChildren.apply(about, rows.map(function (row) {
-			var line = el('div', '')
-			line.appendChild(el('span', '', row[0]))
-			line.appendChild(el('strong', '', String(row[1])))
-			return line
-		}))
+		about.replaceChildren.apply(
+			about,
+			rows.map(function (row) {
+				var line = el('div', '')
+				line.appendChild(el('span', '', row[0]))
+				line.appendChild(el('strong', '', String(row[1])))
+				return line
+			}),
+		)
 	}
 
 	/**
@@ -207,8 +288,13 @@
 		drawTiles(panel)
 		drawRows(panel)
 		drawAbout(panel)
-		if (window.ThematiqPanels !== undefined && window.ThematiqPanels.current() === 'contrast') {
-			var intro = document.querySelector('#thematiq-page-header .thematiq-page-header__intro')
+		if (
+			window.ThematiqPanels !== undefined
+			&& window.ThematiqPanels.current() === 'contrast'
+		) {
+			var intro = document.querySelector(
+				'#thematiq-page-header .thematiq-page-header__intro',
+			)
 			if (intro !== null) {
 				intro.textContent = line()
 			}
@@ -221,9 +307,13 @@
 	 * @return {Promise<void>} Done.
 	 */
 	function load() {
-		return fetch(window.OC.generateUrl('/apps/thematiq/settings/compliance-report') + '?format=json', {
-			headers: { requesttoken: window.OC.requestToken },
-		})
+		return fetch(
+			window.OC.generateUrl('/apps/thematiq/settings/compliance-report')
+				+ '?format=json',
+			{
+				headers: { requesttoken: window.OC.requestToken },
+			},
+		)
 			.then(function (r) {
 				return r.json()
 			})
@@ -235,7 +325,13 @@
 				var rows = document.querySelector('.thematiq-contrast-panel__rows')
 				if (rows !== null) {
 					rows.replaceChildren(el('tr', ''))
-					rows.firstChild.appendChild(el('td', 'settings-hint', tr('The contrast report could not be loaded.')))
+					rows.firstChild.appendChild(
+						el(
+							'td',
+							'settings-hint',
+							tr('The contrast report could not be loaded.'),
+						),
+					)
 					rows.firstChild.firstChild.setAttribute('colspan', '6')
 				}
 			})

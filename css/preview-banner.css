@@ -18,9 +18,18 @@
 	justify-content: center;
 	gap: 12px;
 	padding: 10px 16px;
-	background-color: color-mix(in srgb, var(--color-warning-hover, #c79a00) 25%, var(--color-main-background, #fff));
+	background-color: color-mix(
+		in srgb,
+		var(--color-warning-hover, #c79a00) 25%,
+		var(--color-main-background, #fff)
+	);
 	color: var(--color-warning-text, #7a4f00);
-	border-top: 1px solid color-mix(in srgb, var(--color-warning, #c79a00) 55%, var(--color-main-background, #fff));
+	border-top: 1px solid
+		color-mix(
+			in srgb,
+			var(--color-warning, #c79a00) 55%,
+			var(--color-main-background, #fff)
+		);
 	box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
 	font-size: 15px;
 }

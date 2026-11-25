@@ -25,6 +25,7 @@ use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
@@ -33,6 +34,8 @@ use ReflectionMethod;
  */
 #[CoversClass(TokenSetLicenceController::class)]
 #[CoversClass(RestrictedSetInUseException::class)]
+#[UsesClass(\OCA\Thematiq\Middleware\Support\ApiPathAliases::class)]
+#[UsesClass(\OCA\Thematiq\Middleware\Support\StandardProtocolPaths::class)]
 class TokenSetLicenceControllerTest extends TestCase {
 
 	/**

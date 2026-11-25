@@ -365,9 +365,7 @@ body:not(#body-login)
 	flex: 0 0 calc((100% - 32px) / 5);
 }
 
-body:not(#body-login)
-	.app-menu__popover-base
-	button.thematiq-app-menu__create:hover,
+body:not(#body-login) .app-menu__popover-base button.thematiq-app-menu__create:hover,
 body:not(#body-login)
 	.app-menu__popover-base
 	button.thematiq-app-menu__create:focus-visible {
@@ -394,10 +392,7 @@ body:not(#body-login) .app-menu__popover-base .thematiq-app-menu__create-icon {
 	);
 }
 
-body:not(#body-login)
-	.app-menu__popover-base
-	.thematiq-app-menu__create-icon
-	svg {
+body:not(#body-login) .app-menu__popover-base .thematiq-app-menu__create-icon svg {
 	width: 22px;
 	height: 22px;
 }
@@ -696,7 +691,8 @@ body:not(#body-login) .thematiq-app-pins__icon {
 	height: 20px;
 }
 
-body:not(#body-login) .thematiq-app-pins__icon[style*='--thematiq-app-icon']::before {
+body:not(#body-login)
+	.thematiq-app-pins__icon[style*='--thematiq-app-icon']::before {
 	content: '';
 	width: 20px;
 	height: 20px;
@@ -767,7 +763,10 @@ body:not(#body-login) .thematiq-app-pins__ghost > .thematiq-app-pins__hint[hidde
 /* A menu the pointer opened draws no focus ring on the tile it focused, as
  * AppMenu draws it; the first key press brings the ring back
  * (js/app-menu.js sets the marker on a hover open). */
-:root[data-thematiq-app-menu-peek] body:not(#body-login) .app-menu__popover-base :focus-visible:not([data-thematiq-dragging]) {
+:root[data-thematiq-app-menu-peek]
+	body:not(#body-login)
+	.app-menu__popover-base
+	:focus-visible:not([data-thematiq-dragging]) {
 	outline: none !important;
 	box-shadow: none !important;
 }

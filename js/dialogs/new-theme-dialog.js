@@ -72,15 +72,30 @@
 			eyebrow: tr('Save'),
 			title: tr('Save these changes as a new theme?'),
 			body: [
-				frame.notice(tr('This question only comes when you work on the Nextcloud default theme and save.'), 'info'),
-				h('p', { class: 'thematiq-admin-dialog__lead', text: tr('Save the changes as a custom token set, or write them over the Nextcloud theme itself. Writing over Nextcloud changes Nextcloud for everyone; with Back to the Nextcloud theme you undo that later.') }),
+				frame.notice(
+					tr(
+						'This question only comes when you work on the Nextcloud default theme and save.',
+					),
+					'info',
+				),
+				h('p', {
+					class: 'thematiq-admin-dialog__lead',
+					text: tr(
+						'Save the changes as a custom token set, or write them over the Nextcloud theme itself. Writing over Nextcloud changes Nextcloud for everyone; with Back to the Nextcloud theme you undo that later.',
+					),
+				}),
 				frame.field({
 					id: NAME_ID,
 					label: tr('Name of the new theme'),
 					placeholder: tr('My organisation'),
 					hint: tr('You then choose it in the active token set list.'),
 				}),
-				h('p', { class: 'thematiq-admin-dialog__note', text: tr('Values that do not fit in a token set are kept as overrides. You then see which.') }),
+				h('p', {
+					class: 'thematiq-admin-dialog__note',
+					text: tr(
+						'Values that do not fit in a token set are kept as overrides. You then see which.',
+					),
+				}),
 			],
 			actions: [
 				{
@@ -92,7 +107,11 @@
 						options.proceed('overrides')
 					},
 				},
-				{ label: tr('Cancel'), cancel: true, className: 'nldesign-dialog-cancel' },
+				{
+					label: tr('Cancel'),
+					cancel: true,
+					className: 'nldesign-dialog-cancel',
+				},
 				{
 					label: tr('Save as new theme'),
 					variant: 'primary',

@@ -61,8 +61,7 @@
 	var CREATE_MAX = 4
 	var CREATE_TRIES = 20
 	var TEMPLATES_URL = '/ocs/v2.php/apps/files/api/v1/templates'
-	var CHEVRON_DOWN =
-		'M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z'
+	var CHEVRON_DOWN = 'M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z'
 	var CHEVRON_UP = 'M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z'
 	// The kinds of the Create row, in the row's order: the label key, the
 	// icon, and the mimetypes or app a Files template creator must offer.
@@ -198,14 +197,21 @@
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-menu-is-drawn-from-the-settings
 	 */
 	function settingsOf(menu) {
-		var given = menu.settings && typeof menu.settings === 'object' ? menu.settings : {}
+		var given =
+			menu.settings && typeof menu.settings === 'object' ? menu.settings : {}
 		var out = {}
 		Object.keys(DEFAULTS).forEach(function (key) {
-			out[key] = typeof given[key] === typeof DEFAULTS[key] ? given[key] : DEFAULTS[key]
+			out[key] =
+				typeof given[key] === typeof DEFAULTS[key]
+					? given[key]
+					: DEFAULTS[key]
 		})
 		out.hidden = Array.isArray(given.hidden) ? given.hidden : []
 		Object.keys(RANGES).forEach(function (key) {
-			out[key] = Math.max(RANGES[key][0], Math.min(RANGES[key][1], Math.round(out[key])))
+			out[key] = Math.max(
+				RANGES[key][0],
+				Math.min(RANGES[key][1], Math.round(out[key])),
+			)
 		})
 		return out
 	}
@@ -288,12 +294,14 @@
 				var data = body && body.ocs ? body.ocs.data : null
 				return Array.isArray(data)
 					? data.filter(function (creator) {
-						return (
-							creator
-							&& text(creator, 'label') !== ''
-							&& /^\.[a-z0-9]{1,10}$/i.test(creator.extension || '')
-						)
-					})
+							return (
+								creator
+								&& text(creator, 'label') !== ''
+								&& /^\.[a-z0-9]{1,10}$/i.test(
+									creator.extension || '',
+								)
+							)
+						})
 					: []
 			})
 			.catch(function () {
@@ -315,20 +323,24 @@
 		return KINDS.map(function (kind) {
 			var found = null
 			kind.mimetypes.some(function (type) {
-				found = list.filter(function (creator) {
-					return (
-						taken.indexOf(creator) === -1
-						&& (Array.isArray(creator.mimetypes)
-							? creator.mimetypes.indexOf(type) !== -1
-							: false)
-					)
-				})[0] || null
+				found =
+					list.filter(function (creator) {
+						return (
+							taken.indexOf(creator) === -1
+							&& (Array.isArray(creator.mimetypes)
+								? creator.mimetypes.indexOf(type) !== -1
+								: false)
+						)
+					})[0] || null
 				return found !== null
 			})
 			if (found === null && kind.app) {
-				found = list.filter(function (creator) {
-					return creator.app === kind.app && taken.indexOf(creator) === -1
-				})[0] || null
+				found =
+					list.filter(function (creator) {
+						return (
+							creator.app === kind.app && taken.indexOf(creator) === -1
+						)
+					})[0] || null
 			}
 			if (found !== null) {
 				taken.push(found)
@@ -365,20 +377,23 @@
 	 */
 	function createFile(creator, failed) {
 		var attempt = function (n) {
-			return fetch((OC.webroot || '') + TEMPLATES_URL + '/create?format=json', {
-				method: 'POST',
-				headers: {
-					'OCS-APIRequest': 'true',
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-					requesttoken: OC.requestToken,
+			return fetch(
+				(OC.webroot || '') + TEMPLATES_URL + '/create?format=json',
+				{
+					method: 'POST',
+					headers: {
+						'OCS-APIRequest': 'true',
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+						requesttoken: OC.requestToken,
+					},
+					body: JSON.stringify({
+						filePath: '/' + fileName(creator, n),
+						templatePath: '',
+						templateType: 'user',
+					}),
 				},
-				body: JSON.stringify({
-					filePath: '/' + fileName(creator, n),
-					templatePath: '',
-					templateType: 'user',
-				}),
-			}).then(function (res) {
+			).then(function (res) {
 				if (res.status === 403 && n < CREATE_TRIES) {
 					return attempt(n + 1)
 				}
@@ -386,7 +401,10 @@
 					throw new Error('create')
 				}
 				return res.json().then(function (body) {
-					var id = body && body.ocs && body.ocs.data ? body.ocs.data.fileid : null
+					var id =
+						body && body.ocs && body.ocs.data
+							? body.ocs.data.fileid
+							: null
 					if (typeof id !== 'number' && !/^\d+$/.test(String(id))) {
 						throw new Error('create')
 					}
@@ -407,7 +425,10 @@
 	function runAction(action) {
 		if (linkable(action.href)) {
 			window.location.assign(action.href)
-		} else if (window._nc_event_bus && typeof window._nc_event_bus.emit === 'function') {
+		} else if (
+			window._nc_event_bus
+			&& typeof window._nc_event_bus.emit === 'function'
+		) {
 			window._nc_event_bus.emit('core:navigation:action', action)
 		}
 	}
@@ -428,8 +449,8 @@
 		}
 		return Array.isArray(list)
 			? list.filter(function (action) {
-				return action && text(action, 'name') !== ''
-			})
+					return action && text(action, 'name') !== ''
+				})
 			: []
 	}
 
@@ -483,7 +504,9 @@
 					var row = rowCreators(list)
 					var entries = row.map(function (item) {
 						return {
-							name: text(labels, item.kind.label) || text(item.creator, 'label'),
+							name:
+								text(labels, item.kind.label)
+								|| text(item.creator, 'label'),
 							icon: item.kind.icon,
 							run: function (failed) {
 								return createFile(item.creator, failed)
@@ -496,7 +519,9 @@
 						})
 						if (!inRow) {
 							entries.push({
-								name: text(creator, 'actionLabel') || text(creator, 'label'),
+								name:
+									text(creator, 'actionLabel')
+									|| text(creator, 'label'),
 								icon: FILE_ICON,
 								run: function (failed) {
 									return createFile(creator, failed)
@@ -534,11 +559,16 @@
 	 */
 	function createRow(grid, menu) {
 		var labels = menu.labels || {}
-		var off = text(labels, 'create') === '' || !settingsOf(menu).showCreateActions
-		var heading = grid.querySelector(':scope > [data-thematiq-row="create-title"]')
+		var off =
+			text(labels, 'create') === '' || !settingsOf(menu).showCreateActions
+		var heading = grid.querySelector(
+			':scope > [data-thematiq-row="create-title"]',
+		)
 		if (off) {
 			;['create-title', 'create', 'create-more'].forEach(function (key) {
-				var el = grid.querySelector(':scope > [data-thematiq-row="' + key + '"]')
+				var el = grid.querySelector(
+					':scope > [data-thematiq-row="' + key + '"]',
+				)
 				if (el !== null) {
 					fold(el, true)
 				}
@@ -554,7 +584,10 @@
 			return
 		}
 		creators().then(function (list) {
-			if (grid.querySelector(':scope > [data-thematiq-row="create-title"]') !== null) {
+			if (
+				grid.querySelector(':scope > [data-thematiq-row="create-title"]')
+				!== null
+			) {
 				return
 			}
 			var actions = coreActions()
@@ -563,7 +596,9 @@
 				return
 			}
 			var live = function (message) {
-				var region = grid.querySelector(':scope > [data-thematiq-row="live"]')
+				var region = grid.querySelector(
+					':scope > [data-thematiq-row="live"]',
+				)
 				if (region !== null && message !== '') {
 					region.textContent = message
 				}
@@ -584,7 +619,8 @@
 			bar.setAttribute('role', 'group')
 			bar.setAttribute('aria-labelledby', h.id)
 			items.forEach(function (item) {
-				var name = text(labels, item.kind.label) || text(item.creator, 'label')
+				var name =
+					text(labels, item.kind.label) || text(item.creator, 'label')
 				bar.appendChild(
 					chip(name, item.kind.icon, function () {
 						createFile(item.creator, failed)
@@ -796,9 +832,11 @@
 		if (settings.showExternalApps) {
 			external = externalLinks(grid, menu.external)
 		} else {
-			grid.querySelectorAll(':scope > a[data-thematiq-external]').forEach(function (a) {
-				fold(a, true)
-			})
+			grid.querySelectorAll(':scope > a[data-thematiq-external]').forEach(
+				function (a) {
+					fold(a, true)
+				},
+			)
 		}
 		if (!payoff) {
 			external.forEach(function (a) {
@@ -881,8 +919,12 @@
 		grid.setAttribute('data-' + BLOCK, '')
 		var labels = menu.labels || {}
 		var settings = settingsOf(menu)
-		var shown = settings.columns * Math.min(settings.rowsAboveFold, settings.rows)
-		grid.style.setProperty('--thematiq-app-menu-columns', String(settings.columns))
+		var shown =
+			settings.columns * Math.min(settings.rowsAboveFold, settings.rows)
+		grid.style.setProperty(
+			'--thematiq-app-menu-columns',
+			String(settings.columns),
+		)
 		grid.style.setProperty('--thematiq-app-menu-rows', String(settings.rows))
 		grid.setAttribute('data-thematiq-shape', settings.shape)
 		grid.setAttribute('data-thematiq-icon-size', settings.iconSize)
@@ -1037,7 +1079,11 @@
 		})
 		el.appendChild(hints)
 		var dialog = window.ThematiqMenuSettingsDialog
-		if (dialog && typeof dialog.open === 'function' && text(labels, 'menuSettings') !== '') {
+		if (
+			dialog
+			&& typeof dialog.open === 'function'
+			&& text(labels, 'menuSettings') !== ''
+		) {
 			var gear = document.createElement('button')
 			gear.type = 'button'
 			gear.className = BLOCK + '__settings'
@@ -1045,7 +1091,11 @@
 			gear.appendChild(icon(COG))
 			gear.appendChild(document.createTextNode(text(labels, 'menuSettings')))
 			gear.addEventListener('click', function () {
-				dialog.open({ menu: menu, entries: dialogEntries(grid, menu), opener: gear })
+				dialog.open({
+					menu: menu,
+					entries: dialogEntries(grid, menu),
+					opener: gear,
+				})
 			})
 			el.appendChild(gear)
 			grid.setAttribute('data-thematiq-app-menu-manage', '')
@@ -1226,11 +1276,13 @@
 				if (
 					event.altKey
 					&& !event.shiftKey
-					&& (event.code === 'KeyP' || String(event.key).toLowerCase() === 'p')
+					&& (event.code === 'KeyP'
+						|| String(event.key).toLowerCase() === 'p')
 				) {
 					event.preventDefault()
 					event.stopImmediatePropagation()
-					var pinKey = current.tagName === 'A' ? keyOf(current, menu, grid) : ''
+					var pinKey =
+						current.tagName === 'A' ? keyOf(current, menu, grid) : ''
 					if (pinKey !== '' && menu.pinBar) {
 						menu.pinBar.toggle(pinKey, nameOf(current))
 					}
@@ -1446,17 +1498,24 @@
 				active: app.active === true,
 			}
 		}
-		var external = menu.external && Array.isArray(menu.external.apps)
-			? menu.external.apps.filter(function (entry) {
-				return entry && entry.key === key
-			})[0]
-			: null
-		if (external && /^https?:\/\//i.test(external.url || '') && text(external, 'label') !== '') {
+		var external =
+			menu.external && Array.isArray(menu.external.apps)
+				? menu.external.apps.filter(function (entry) {
+						return entry && entry.key === key
+					})[0]
+				: null
+		if (
+			external
+			&& /^https?:\/\//i.test(external.url || '')
+			&& text(external, 'label') !== ''
+		) {
 			return {
 				key: key,
 				name: text(external, 'label'),
 				href: external.url,
-				path: /^[MmLlHhVvCcSsQqTtAaZz0-9 .,-]+$/.test(external.icon || '') ? external.icon : '',
+				path: /^[MmLlHhVvCcSsQqTtAaZz0-9 .,-]+$/.test(external.icon || '')
+					? external.icon
+					: '',
 				external: true,
 				active: false,
 			}
@@ -1503,9 +1562,11 @@
 		var drop = null
 		var dropHint = null
 		menu.pins = Array.isArray(menu.pins)
-			? menu.pins.filter(function (key) {
-				return typeof key === 'string'
-			}).slice(0, PINS_MAX)
+			? menu.pins
+					.filter(function (key) {
+						return typeof key === 'string'
+					})
+					.slice(0, PINS_MAX)
 			: []
 
 		var liveRegion = function () {
@@ -1555,7 +1616,9 @@
 			}, SAVE_DELAY)
 		}
 		var anchor = function () {
-			return document.querySelector('#header .app-menu, .header-start .app-menu')
+			return document.querySelector(
+				'#header .app-menu, .header-start .app-menu',
+			)
 		}
 		var nav = function () {
 			var el = document.querySelector('nav.' + PINS)
@@ -1566,7 +1629,10 @@
 			if (el === null) {
 				el = document.createElement('nav')
 				el.className = PINS
-				el.setAttribute('aria-label', text(labels, 'pinned') || 'Pinned apps')
+				el.setAttribute(
+					'aria-label',
+					text(labels, 'pinned') || 'Pinned apps',
+				)
 			}
 			if (after.nextSibling !== el) {
 				after.parentNode.insertBefore(el, after.nextSibling)
@@ -1582,7 +1648,10 @@
 			announce: announce,
 			ensure: function () {
 				var el = nav()
-				if (el !== null && el.getAttribute('data-thematiq-pins') !== menu.pins.join(',')) {
+				if (
+					el !== null
+					&& el.getAttribute('data-thematiq-pins') !== menu.pins.join(',')
+				) {
 					bar.render()
 				}
 			},
@@ -1596,9 +1665,11 @@
 					focused && focused.parentNode === el
 						? focused.getAttribute('data-thematiq-pin')
 						: null
-				Array.prototype.slice.call(el.querySelectorAll(':scope > a')).forEach(function (a) {
-					a.remove()
-				})
+				Array.prototype.slice
+					.call(el.querySelectorAll(':scope > a'))
+					.forEach(function (a) {
+						a.remove()
+					})
 				menu.pins.forEach(function (key) {
 					var info = resolvePin(menu, key)
 					if (info === null) {
@@ -1674,7 +1745,12 @@
 					return false
 				}
 				var box = header.getBoundingClientRect()
-				return x >= box.left && x <= box.right && y >= box.top && y <= box.bottom
+				return (
+					x >= box.left
+					&& x <= box.right
+					&& y >= box.top
+					&& y <= box.bottom
+				)
 			},
 			inBar: function (x, y) {
 				var el = nav()
@@ -1682,7 +1758,12 @@
 					return false
 				}
 				var box = el.getBoundingClientRect()
-				return x >= box.left && x <= box.right && y >= box.top && y <= box.bottom
+				return (
+					x >= box.left
+					&& x <= box.right
+					&& y >= box.top
+					&& y <= box.bottom
+				)
 			},
 			slot: function (on) {
 				var el = nav()
@@ -1759,7 +1840,10 @@
 		var drag = null
 		var swallowUntil = 0
 		var pinOf = function (target) {
-			var a = target && target.closest ? target.closest('a[data-thematiq-pin]') : null
+			var a =
+				target && target.closest
+					? target.closest('a[data-thematiq-pin]')
+					: null
 			return a !== null && a.parentNode === el ? a : null
 		}
 		el.addEventListener('dragstart', function (event) {
@@ -1785,9 +1869,14 @@
 				event.preventDefault()
 				var next = a.nextElementSibling || a.previousElementSibling
 				bar.toggle(key, a.getAttribute('aria-label'))
-				var target = next && next.matches('a[data-thematiq-pin]')
-					? el.querySelector('a[data-thematiq-pin="' + next.getAttribute('data-thematiq-pin') + '"]')
-					: document.querySelector('.app-menu__waffle')
+				var target =
+					next && next.matches('a[data-thematiq-pin]')
+						? el.querySelector(
+								'a[data-thematiq-pin="'
+									+ next.getAttribute('data-thematiq-pin')
+									+ '"]',
+							)
+						: document.querySelector('.app-menu__waffle')
 				if (target !== null) {
 					target.focus()
 				}
@@ -1810,15 +1899,27 @@
 				return
 			}
 			if (!drag.moved) {
-				if (Math.abs(event.clientX - drag.x) + Math.abs(event.clientY - drag.y) < DRAG_START) {
+				if (
+					Math.abs(event.clientX - drag.x)
+						+ Math.abs(event.clientY - drag.y)
+					< DRAG_START
+				) {
 					return
 				}
 				drag.moved = true
-				drag.info = resolvePin(menu, drag.el.getAttribute('data-thematiq-pin'))
+				drag.info = resolvePin(
+					menu,
+					drag.el.getAttribute('data-thematiq-pin'),
+				)
 				drag.el.setAttribute('data-thematiq-dragging', '')
 			}
 			var off = !bar.inBar(event.clientX, event.clientY)
-			bar.ghost(drag.info, event.clientX, event.clientY, off ? text(labels, 'releaseToRemove') : '')
+			bar.ghost(
+				drag.info,
+				event.clientX,
+				event.clientY,
+				off ? text(labels, 'releaseToRemove') : '',
+			)
 		})
 		var end = function (event) {
 			if (drag === null) {
@@ -1832,8 +1933,14 @@
 			done.el.removeAttribute('data-thematiq-dragging')
 			bar.ghost(null)
 			swallowUntil = Date.now() + 300
-			if (event.type === 'pointerup' && !bar.inBar(event.clientX, event.clientY)) {
-				bar.toggle(done.el.getAttribute('data-thematiq-pin'), done.el.getAttribute('aria-label'))
+			if (
+				event.type === 'pointerup'
+				&& !bar.inBar(event.clientX, event.clientY)
+			) {
+				bar.toggle(
+					done.el.getAttribute('data-thematiq-pin'),
+					done.el.getAttribute('aria-label'),
+				)
 			}
 		}
 		document.addEventListener('pointerup', end)
@@ -1930,7 +2037,8 @@
 		}
 		var zone =
 			TRIGGERS
-			+ ', .app-menu, .app-menu__popover, .app-menu__trigger, .' + PINS
+			+ ', .app-menu, .app-menu__popover, .app-menu__trigger, .'
+			+ PINS
 
 		var waffle = function () {
 			return document.querySelector('.app-menu__waffle')
@@ -2098,7 +2206,9 @@
 				return
 			}
 			document.querySelectorAll('.app-menu__grid').forEach(function (grid) {
-				if (grid.querySelector(':scope > .' + BLOCK + '__classic') !== null) {
+				if (
+					grid.querySelector(':scope > .' + BLOCK + '__classic') !== null
+				) {
 					return
 				}
 				var gear = document.createElement('button')
@@ -2106,9 +2216,15 @@
 				gear.className = BLOCK + '__settings'
 				gear.setAttribute('aria-haspopup', 'dialog')
 				gear.appendChild(icon(COG))
-				gear.appendChild(document.createTextNode(text(labels, 'menuSettings')))
+				gear.appendChild(
+					document.createTextNode(text(labels, 'menuSettings')),
+				)
 				gear.addEventListener('click', function () {
-					dialog.open({ menu: menu, entries: dialogEntries(grid, menu), opener: gear })
+					dialog.open({
+						menu: menu,
+						entries: dialogEntries(grid, menu),
+						opener: gear,
+					})
 				})
 				var holder = document.createElement('div')
 				holder.className = BLOCK + '__classic'
@@ -2118,7 +2234,10 @@
 		}
 		add()
 		if (typeof MutationObserver === 'function') {
-			new MutationObserver(add).observe(document.body, { childList: true, subtree: true })
+			new MutationObserver(add).observe(document.body, {
+				childList: true,
+				subtree: true,
+			})
 		}
 	}
 

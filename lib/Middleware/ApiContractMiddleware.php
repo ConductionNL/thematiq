@@ -26,6 +26,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Middleware;
 
+use Exception;
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Middleware\Support\ApiPathAliases;
 use OCA\Thematiq\Middleware\Support\StandardProtocolPaths;
@@ -164,7 +165,13 @@ class ApiContractMiddleware extends Middleware {
 	 * @spec openspec/specs/api-contract/spec.md
 	 */
 	private function isApiRequest(): bool {
-		$path = $this->request->getPathInfo();
+		try {
+			$path = $this->request->getPathInfo();
+		} catch (Exception) {
+			// A request whose URI the server cannot split, such as one dispatched from the CLI, has no API path.
+			return false;
+		}
+
 		if (is_string($path) === false || str_contains($path, self::API_PATH_MARKER) === false) {
 			return false;
 		}

@@ -2436,8 +2436,10 @@
 					renderMarkup(
 						container,
 						'<p class="settings-hint">'
-						+ escapeHtml(t('thematiq', 'Could not load token editor.'))
-						+ '</p>',
+							+ escapeHtml(
+								t('thematiq', 'Could not load token editor.'),
+							)
+							+ '</p>',
 					)
 				})
 		}
@@ -2499,96 +2501,96 @@
 			renderMarkup(
 				container,
 				''
-				+ '<div class="nldesign-token-editor">'
-				+ '<div class="nldesign-token-editor-header">'
-				+ '<h3>'
-				+ escapeHtml(t('thematiq', 'Custom token overrides'))
-				+ '</h3>'
-				+ '<div class="nldesign-token-editor-actions">'
-				+ '<button type="button" class="nldesign-btn nldesign-btn--small" id="nldesign-export-btn">'
-				+ escapeHtml(t('thematiq', 'Download'))
-				+ '</button>'
-				// A real button, so it is drawn like the ones beside it; the file
-				// input stays hidden and is only opened once the dialog is read.
-				+ '<button type="button" class="nldesign-btn nldesign-btn--small" id="nldesign-import-btn">'
-				+ escapeHtml(t('thematiq', 'Upload'))
-				+ '</button>'
-				+ '<input type="file" id="nldesign-import-input" accept=".css" style="display:none" aria-label="'
-				+ escapeHtml(t('thematiq', 'Overrides file to upload (CSS)'))
-				+ '">'
-				+ '</div>'
-				+ '</div>'
-				+ '<p class="settings-hint nldesign-token-count" id="nldesign-token-count">'
-				+ escapeHtml(
-					t('thematiq', '{count} editable tokens', {
-						count: tokenEditableCount,
-					}),
-				)
-				+ '</p>'
-				+ '<div class="nldesign-token-search">'
-				+ '<label for="nldesign-token-search">'
-				+ escapeHtml(t('thematiq', 'Search tokens'))
-				+ '</label>'
-				+ '<input type="search" id="nldesign-token-search" autocomplete="off" placeholder="'
-				+ escapeHtml(t('thematiq', 'Name, variable or component'))
-				+ '">'
-				+ '<p class="nldesign-token-search-empty" id="nldesign-token-search-empty" hidden>'
-				+ escapeHtml(t('thematiq', 'No token matches your search.'))
-				+ '</p>'
-				+ '</div>'
-				+ '<div class="nldesign-tabs">'
-				+ tabsHtml
-				+ '</div>'
-				+ panelsHtml
-				+ buildTokenGroups()
-				+ '<div class="nldesign-save-bar">'
-				+ '<span class="nldesign-save-status" id="nldesign-save-status"></span>'
-				+ '<button class="nldesign-btn nldesign-btn--primary" id="nldesign-save-btn">'
-				+ escapeHtml(t('thematiq', 'Save overrides'))
-				+ '</button>'
-				+ '</div>'
-				+ '</div>'
-				// The way back. "Do not ask again" lives inside a dialog the
-				// admin has just dismissed, so without these two the offer to
-				// keep a set of changes as its own theme would be gone for good
-				// after one careless click. Worded the same way round as that
-				// dialog: ticked means "stop asking".
-				+ '<div class="nldesign-confirm-controls">'
-				// Nextcloud's own base tokens stay locked until asked for; see
-				// baseTokensUnlocked and confirmBaseUnlock(). With the editor's
-				// other settings, as a checkbox like them.
-				+ '<div class="nldesign-base-unlock">'
-				+ '<input type="checkbox" class="checkbox" id="nldesign-base-unlock"'
-				+ (baseTokensUnlocked === true ? ' checked' : '')
-				+ '>'
-				+ '<label for="nldesign-base-unlock">'
-				+ escapeHtml(t('thematiq', "Also edit Nextcloud's base tokens"))
-				+ '</label>'
-				+ '</div>'
-				+ '<div>'
-				+ '<input type="checkbox" class="checkbox" id="nldesign-confirm-save-stock">'
-				+ '<label for="nldesign-confirm-save-stock">'
-				+ escapeHtml(
-					t(
-						'thematiq',
-						"Don't ask before saving while the stock Nextcloud theme is active",
-					),
-				)
-				+ '</label>'
-				+ '</div>'
-				+ '<div>'
-				+ '<input type="checkbox" class="checkbox" id="nldesign-confirm-save-theme">'
-				+ '<label for="nldesign-confirm-save-theme">'
-				+ escapeHtml(
-					t(
-						'thematiq',
-						"Don't ask before saving while a token set is active",
-					),
-				)
-				+ '</label>'
-				+ '</div>'
-				+ '</div>'
-				+ '<div id="nldesign-import-result" class="nldesign-import-result" style="display:none"></div>',
+					+ '<div class="nldesign-token-editor">'
+					+ '<div class="nldesign-token-editor-header">'
+					+ '<h3>'
+					+ escapeHtml(t('thematiq', 'Custom token overrides'))
+					+ '</h3>'
+					+ '<div class="nldesign-token-editor-actions">'
+					+ '<button type="button" class="nldesign-btn nldesign-btn--small" id="nldesign-export-btn">'
+					+ escapeHtml(t('thematiq', 'Download'))
+					+ '</button>'
+					// A real button, so it is drawn like the ones beside it; the file
+					// input stays hidden and is only opened once the dialog is read.
+					+ '<button type="button" class="nldesign-btn nldesign-btn--small" id="nldesign-import-btn">'
+					+ escapeHtml(t('thematiq', 'Upload'))
+					+ '</button>'
+					+ '<input type="file" id="nldesign-import-input" accept=".css" style="display:none" aria-label="'
+					+ escapeHtml(t('thematiq', 'Overrides file to upload (CSS)'))
+					+ '">'
+					+ '</div>'
+					+ '</div>'
+					+ '<p class="settings-hint nldesign-token-count" id="nldesign-token-count">'
+					+ escapeHtml(
+						t('thematiq', '{count} editable tokens', {
+							count: tokenEditableCount,
+						}),
+					)
+					+ '</p>'
+					+ '<div class="nldesign-token-search">'
+					+ '<label for="nldesign-token-search">'
+					+ escapeHtml(t('thematiq', 'Search tokens'))
+					+ '</label>'
+					+ '<input type="search" id="nldesign-token-search" autocomplete="off" placeholder="'
+					+ escapeHtml(t('thematiq', 'Name, variable or component'))
+					+ '">'
+					+ '<p class="nldesign-token-search-empty" id="nldesign-token-search-empty" hidden>'
+					+ escapeHtml(t('thematiq', 'No token matches your search.'))
+					+ '</p>'
+					+ '</div>'
+					+ '<div class="nldesign-tabs">'
+					+ tabsHtml
+					+ '</div>'
+					+ panelsHtml
+					+ buildTokenGroups()
+					+ '<div class="nldesign-save-bar">'
+					+ '<span class="nldesign-save-status" id="nldesign-save-status"></span>'
+					+ '<button class="nldesign-btn nldesign-btn--primary" id="nldesign-save-btn">'
+					+ escapeHtml(t('thematiq', 'Save overrides'))
+					+ '</button>'
+					+ '</div>'
+					+ '</div>'
+					// The way back. "Do not ask again" lives inside a dialog the
+					// admin has just dismissed, so without these two the offer to
+					// keep a set of changes as its own theme would be gone for good
+					// after one careless click. Worded the same way round as that
+					// dialog: ticked means "stop asking".
+					+ '<div class="nldesign-confirm-controls">'
+					// Nextcloud's own base tokens stay locked until asked for; see
+					// baseTokensUnlocked and confirmBaseUnlock(). With the editor's
+					// other settings, as a checkbox like them.
+					+ '<div class="nldesign-base-unlock">'
+					+ '<input type="checkbox" class="checkbox" id="nldesign-base-unlock"'
+					+ (baseTokensUnlocked === true ? ' checked' : '')
+					+ '>'
+					+ '<label for="nldesign-base-unlock">'
+					+ escapeHtml(t('thematiq', "Also edit Nextcloud's base tokens"))
+					+ '</label>'
+					+ '</div>'
+					+ '<div>'
+					+ '<input type="checkbox" class="checkbox" id="nldesign-confirm-save-stock">'
+					+ '<label for="nldesign-confirm-save-stock">'
+					+ escapeHtml(
+						t(
+							'thematiq',
+							"Don't ask before saving while the stock Nextcloud theme is active",
+						),
+					)
+					+ '</label>'
+					+ '</div>'
+					+ '<div>'
+					+ '<input type="checkbox" class="checkbox" id="nldesign-confirm-save-theme">'
+					+ '<label for="nldesign-confirm-save-theme">'
+					+ escapeHtml(
+						t(
+							'thematiq',
+							"Don't ask before saving while a token set is active",
+						),
+					)
+					+ '</label>'
+					+ '</div>'
+					+ '</div>'
+					+ '<div id="nldesign-import-result" class="nldesign-import-result" style="display:none"></div>',
 			)
 
 			container.querySelectorAll('.nldesign-tab-btn').forEach(function (btn) {
@@ -3190,9 +3192,7 @@
 		 */
 		function paintSwatches(name, value) {
 			document
-				.querySelectorAll(
-					tokenSelector('.nldesign-color-swatch', name),
-				)
+				.querySelectorAll(tokenSelector('.nldesign-color-swatch', name))
 				.forEach(function (swatch) {
 					var fill = swatch.querySelector('.nldesign-color-swatch-fill')
 					var picker = swatch.querySelector('.nldesign-color-picker')
@@ -3322,7 +3322,8 @@
 				return ''
 			}
 			var resolved =
-				typeof window !== 'undefined' && typeof window.getComputedStyle === 'function'
+				typeof window !== 'undefined'
+				&& typeof window.getComputedStyle === 'function'
 					? window
 							.getComputedStyle(document.documentElement)
 							.getPropertyValue(target)
@@ -4317,7 +4318,8 @@
 					return {
 						name: name,
 						label: meta.label || name,
-						was: state.saved !== undefined ? state.saved : state.resolved,
+						was:
+							state.saved !== undefined ? state.saved : state.resolved,
 						becomes: state.current,
 					}
 				})
@@ -4988,7 +4990,11 @@
 				title: title,
 				body: body,
 				actions: [
-					{ label: t('thematiq', 'Cancel'), cancel: true, className: 'nldesign-dialog-cancel' },
+					{
+						label: t('thematiq', 'Cancel'),
+						cancel: true,
+						className: 'nldesign-dialog-cancel',
+					},
 					{
 						label: confirmLabel,
 						variant: 'primary',
@@ -5058,7 +5064,10 @@
 						),
 					}),
 					h('div', { class: 'thematiq-admin-dialog__file' }, [
-						h('span', { class: 'thematiq-admin-dialog__file-label', text: t('thematiq', 'File') }),
+						h('span', {
+							class: 'thematiq-admin-dialog__file-label',
+							text: t('thematiq', 'File'),
+						}),
 						h('div', { class: 'thematiq-admin-dialog__file-row' }, [
 							h('button', {
 								type: 'button',
@@ -5066,22 +5075,55 @@
 								text: t('thematiq', 'Choose file'),
 								on: { click: chooseFile },
 							}),
-							h('span', { class: 'thematiq-admin-dialog__hint', text: t('thematiq', 'custom-overrides.css, CSS only') }),
+							h('span', {
+								class: 'thematiq-admin-dialog__hint',
+								text: t(
+									'thematiq',
+									'custom-overrides.css, CSS only',
+								),
+							}),
 						]),
 					]),
 					frame.notice(
-						t('thematiq', 'After the upload you see how many tokens were imported and how many were skipped because they were not recognised.'),
+						t(
+							'thematiq',
+							'After the upload you see how many tokens were imported and how many were skipped because they were not recognised.',
+						),
 						'neutral',
 					),
 					h('p', { class: 'thematiq-admin-dialog__aside' }, [
-						t('thematiq', 'Want to add a whole theme as a new token set? Then use') + ' ',
-						h('a', { href: '#own-sets', text: t('thematiq', 'Own token sets') }),
+						t(
+							'thematiq',
+							'Want to add a whole theme as a new token set? Then use',
+						) + ' ',
+						h('a', {
+							href: '#own-sets',
+							text: t('thematiq', 'Own token sets'),
+						}),
 						'.',
 					]),
 				],
 				t('thematiq', 'Choose and upload file'),
 				chooseFile,
 			)
+		}
+
+		/**
+		 * Run a panel block's loader now when the block is on screen, else once its
+		 * panel opens: a closed panel asks the server for nothing (PERF-HANDOFF
+		 * thematiq Theming settings). Without js/lib/whenShown.js it runs at once.
+		 *
+		 * @spec openspec/specs/admin-settings/spec.md
+		 * @param {string} id The id of the element the loader fills.
+		 * @param {Function} run The loader.
+		 * @return {void}
+		 */
+		function whenPanelShown(id, run) {
+			if (typeof window.ThematiqWhenShown !== 'function') {
+				run()
+				return
+			}
+			window.ThematiqWhenShown(document.getElementById(id), run)
 		}
 
 		/**
@@ -5280,7 +5322,8 @@
 				buildTokenSetWarningsHtml(newTokenSetId)
 					// A set other than the running switch's would be put back within
 					// five minutes; say so before it is applied.
-					+ (runningSwitch !== null && runningSwitch.tokenSet !== newTokenSetId
+					+ (runningSwitch !== null
+					&& runningSwitch.tokenSet !== newTokenSetId
 						? '<p class="settings-hint nldesign-apply-switch-warning">'
 							+ escapeHtml(runningSwitchText())
 							+ '</p>'
@@ -5313,8 +5356,13 @@
 					}),
 					chosen,
 				]),
-				tokensTable = frame.table(
-					[t('thematiq', 'Take over'), t('thematiq', 'Token'), t('thematiq', 'Current'), t('thematiq', 'New')],
+				(tokensTable = frame.table(
+					[
+						t('thematiq', 'Take over'),
+						t('thematiq', 'Token'),
+						t('thematiq', 'Current'),
+						t('thematiq', 'New'),
+					],
 					changes.map(function (change) {
 						var meta = tokenRegistry[change.name] || { type: 'text' }
 						var colour = meta.type === 'color'
@@ -5324,14 +5372,25 @@
 								class: 'nldesign-apply-check',
 								'data-token': change.name,
 								checked: true,
-								'aria-label': t('thematiq', 'Take over {token}', { token: change.name }),
+								'aria-label': t('thematiq', 'Take over {token}', {
+									token: change.name,
+								}),
 							}),
-							h('code', { text: change.name, title: meta.label || change.name }),
-							frame.value(change.current, { colour: colour, large: true }),
-							frame.value(change.newVal, { colour: colour, large: true }),
+							h('code', {
+								text: change.name,
+								title: meta.label || change.name,
+							}),
+							frame.value(change.current, {
+								colour: colour,
+								large: true,
+							}),
+							frame.value(change.newVal, {
+								colour: colour,
+								large: true,
+							}),
 						]
 					}),
-				),
+				)),
 			]
 			tokensTable.classList.add('thematiq-apply-tokens')
 			tokensTable.querySelector('th').classList.add('hidden-visually')
@@ -5339,30 +5398,64 @@
 			// there is one confirm and not a second dialog afterwards.
 			if (plan.mode !== 'none') {
 				body.push(
-					h('h3', { class: 'thematiq-admin-dialog__subtitle', text: t('thematiq', 'Nextcloud theme') }),
+					h('h3', {
+						class: 'thematiq-admin-dialog__subtitle',
+						text: t('thematiq', 'Nextcloud theme'),
+					}),
 					frame.table(
-						[t('thematiq', 'Setting'), t('thematiq', 'Current'), t('thematiq', 'Proposed')],
+						[
+							t('thematiq', 'Setting'),
+							t('thematiq', 'Current'),
+							t('thematiq', 'Proposed'),
+						],
 						plan.diffs.map(function (diff) {
 							var colour = diff.kind === 'color'
 							return [
 								diff.label,
-								frame.value(diff.current, { colour: colour, large: true }),
-								frame.value(diff.proposed, { colour: colour, large: true, note: diff.proposedNote }),
+								frame.value(diff.current, {
+									colour: colour,
+									large: true,
+								}),
+								frame.value(diff.proposed, {
+									colour: colour,
+									large: true,
+									note: diff.proposedNote,
+								}),
 							]
 						}),
 					),
-					h('label', { class: 'thematiq-admin-dialog__check', id: 'nldesign-apply-theming' }, [
-						h('input', { type: 'checkbox', id: 'nldesign-apply-theming-check', checked: true }),
-						h('span', {}, [
-							plan.mode === 'reset'
-								? t('thematiq', 'Also reset the Nextcloud theme to the default')
-								: t('thematiq', 'Also update the Nextcloud theme'),
-							h('span', {
-								class: 'thematiq-admin-dialog__check-hint',
-								text: t('thematiq', 'Sign-in page, emails and the apps on phone and computer.'),
+					h(
+						'label',
+						{
+							class: 'thematiq-admin-dialog__check',
+							id: 'nldesign-apply-theming',
+						},
+						[
+							h('input', {
+								type: 'checkbox',
+								id: 'nldesign-apply-theming-check',
+								checked: true,
 							}),
-						]),
-					]),
+							h('span', {}, [
+								plan.mode === 'reset'
+									? t(
+											'thematiq',
+											'Also reset the Nextcloud theme to the default',
+										)
+									: t(
+											'thematiq',
+											'Also update the Nextcloud theme',
+										),
+								h('span', {
+									class: 'thematiq-admin-dialog__check-hint',
+									text: t(
+										'thematiq',
+										'Sign-in page, emails and the apps on phone and computer.',
+									),
+								}),
+							]),
+						],
+					),
 				)
 			}
 
@@ -5683,7 +5776,10 @@
 								cancelBtn.disabled = false
 							}
 							console.error('Error applying token set:', err)
-							if (err && err.message === 'restricted_set_not_confirmed') {
+							if (
+								err
+								&& err.message === 'restricted_set_not_confirmed'
+							) {
 								notify(
 									t(
 										'thematiq',
@@ -6068,7 +6164,11 @@
 
 			listEl.replaceChildren()
 
-			document.dispatchEvent(new CustomEvent('thematiq:group-theming', { detail: { rows: groupThemingRows } }))
+			document.dispatchEvent(
+				new CustomEvent('thematiq:group-theming', {
+					detail: { rows: groupThemingRows },
+				}),
+			)
 
 			if (groupThemingRows.length === 0) {
 				var empty = document.createElement('tr')
@@ -6087,7 +6187,10 @@
 
 				var groupSelect = document.createElement('select')
 				groupSelect.setAttribute('data-field', 'group')
-				groupSelect.setAttribute('aria-label', t('thematiq', 'Group of row {rank}', { rank: index + 1 }))
+				groupSelect.setAttribute(
+					'aria-label',
+					t('thematiq', 'Group of row {rank}', { rank: index + 1 }),
+				)
 				groupThemingGroups.forEach(function (g) {
 					var opt = document.createElement('option')
 					opt.value = g.id
@@ -6103,7 +6206,10 @@
 
 				var tokenSetSelect = document.createElement('select')
 				tokenSetSelect.setAttribute('data-field', 'tokenSet')
-				tokenSetSelect.setAttribute('aria-label', t('thematiq', 'Token set of row {rank}', { rank: index + 1 }))
+				tokenSetSelect.setAttribute(
+					'aria-label',
+					t('thematiq', 'Token set of row {rank}', { rank: index + 1 }),
+				)
 				groupThemingTokenSets.forEach(function (ts) {
 					var opt = document.createElement('option')
 					opt.value = ts.id
@@ -6404,8 +6510,8 @@
 				})
 		}
 
-		// Initialise the group theming panel on page load.
-		initGroupTheming()
+		// Initialise the group theming panel once the groups panel opens.
+		whenPanelShown('nldesign-group-theming-list', initGroupTheming)
 
 		/* ==========================================================================
 		 * CUSTOM TOKEN SETS — upload / list / download / delete (eigen huisstijl)
@@ -6712,7 +6818,10 @@
 		 * @return {HTMLTableElement} The table.
 		 */
 		function buildNoticeTable(rows, first, second) {
-			var table = resultNode('table', 'nldesign-audit-table thematiq-upload-result__table')
+			var table = resultNode(
+				'table',
+				'nldesign-audit-table thematiq-upload-result__table',
+			)
 			var head = table.createTHead().insertRow()
 			;[first, second].forEach(function (label) {
 				var th = document.createElement('th')
@@ -6742,82 +6851,164 @@
 		function buildStoredResult(model, data) {
 			var box = resultNode('div', 'thematiq-upload-result')
 			var head = resultNode('div', 'thematiq-upload-result__head')
-			head.appendChild(resultNode('span', 'thematiq-upload-result__pill thematiq-upload-result__pill--pass', t('thematiq', 'Uploaded')))
+			head.appendChild(
+				resultNode(
+					'span',
+					'thematiq-upload-result__pill thematiq-upload-result__pill--pass',
+					t('thematiq', 'Uploaded'),
+				),
+			)
 			if (model.fileName !== '') {
-				head.appendChild(resultNode('span', 'thematiq-upload-result__file', model.fileName))
+				head.appendChild(
+					resultNode(
+						'span',
+						'thematiq-upload-result__file',
+						model.fileName,
+					),
+				)
 			}
 			if (model.version !== '') {
-				head.appendChild(resultNode('span', 'thematiq-upload-result__version', t('thematiq', 'Package version: {version}', { version: model.version })))
+				head.appendChild(
+					resultNode(
+						'span',
+						'thematiq-upload-result__version',
+						t('thematiq', 'Package version: {version}', {
+							version: model.version,
+						}),
+					),
+				)
 			}
 			box.appendChild(head)
 
-			var summary = t('thematiq', '"{name}" is saved and is now in the list. Choose it there to apply it.', { name: model.name })
-				+ ' ' + t('thematiq', '{imported} tokens imported, {skipped} skipped.', { imported: model.imported, skipped: model.skipped })
+			var summary =
+				t(
+					'thematiq',
+					'"{name}" is saved and is now in the list. Choose it there to apply it.',
+					{ name: model.name },
+				)
+				+ ' '
+				+ t('thematiq', '{imported} tokens imported, {skipped} skipped.', {
+					imported: model.imported,
+					skipped: model.skipped,
+				})
 			if (model.darkValues > 0) {
-				summary += ' ' + t('thematiq', '{count} dark values from the file are kept for dark mode and win over the derived dark variant.', { count: model.darkValues })
+				summary +=
+					' '
+					+ t(
+						'thematiq',
+						'{count} dark values from the file are kept for dark mode and win over the derived dark variant.',
+						{ count: model.darkValues },
+					)
 			}
 			var text = resultNode('p', 'thematiq-upload-result__summary', summary)
 			if (data && data.counts) {
 				text.appendChild(document.createTextNode(' '))
-				text.appendChild(resultNode('span', 'nldesign-conversion-counts', t(
-					'thematiq',
-					'{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.',
-					{
-						applied: data.counts.applied || 0,
-						adapted: data.counts.adapted || 0,
-						kept: data.counts.kept || 0,
-						skipped: data.counts.skipped || 0,
-					},
-				)))
+				text.appendChild(
+					resultNode(
+						'span',
+						'nldesign-conversion-counts',
+						t(
+							'thematiq',
+							'{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.',
+							{
+								applied: data.counts.applied || 0,
+								adapted: data.counts.adapted || 0,
+								kept: data.counts.kept || 0,
+								skipped: data.counts.skipped || 0,
+							},
+						),
+					),
+				)
 			}
 			box.appendChild(text)
 
 			if (model.notices.length > 0) {
-				box.appendChild(resultNode('h3', 'thematiq-upload-result__title', n(
-					'thematiq',
-					'{count} notice while reading',
-					'{count} notices while reading',
-					model.notices.length,
-					{ count: model.notices.length },
-				)))
-				box.appendChild(buildNoticeTable(model.notices, t('thematiq', 'Token in the file'), t('thematiq', 'What thematiq reports')))
+				box.appendChild(
+					resultNode(
+						'h3',
+						'thematiq-upload-result__title',
+						n(
+							'thematiq',
+							'{count} notice while reading',
+							'{count} notices while reading',
+							model.notices.length,
+							{ count: model.notices.length },
+						),
+					),
+				)
+				box.appendChild(
+					buildNoticeTable(
+						model.notices,
+						t('thematiq', 'Token in the file'),
+						t('thematiq', 'What thematiq reports'),
+					),
+				)
 			}
 
 			var pills = resultNode('div', 'thematiq-upload-result__pills')
-			var incomplete = resultNode('span', 'thematiq-upload-result__pill thematiq-upload-result__pill--warn thematiq-upload-result__incomplete', t('thematiq', 'Incomplete set'))
+			var incomplete = resultNode(
+				'span',
+				'thematiq-upload-result__pill thematiq-upload-result__pill--warn thematiq-upload-result__incomplete',
+				t('thematiq', 'Incomplete set'),
+			)
 			incomplete.hidden = true
 			pills.appendChild(incomplete)
 			if (model.contrast > 0) {
-				pills.appendChild(resultNode('span', 'thematiq-upload-result__pill thematiq-upload-result__pill--warn', n(
-					'thematiq',
-					'{count} contrast warning',
-					'{count} contrast warnings',
-					model.contrast,
-					{ count: model.contrast },
-				)))
+				pills.appendChild(
+					resultNode(
+						'span',
+						'thematiq-upload-result__pill thematiq-upload-result__pill--warn',
+						n(
+							'thematiq',
+							'{count} contrast warning',
+							'{count} contrast warnings',
+							model.contrast,
+							{ count: model.contrast },
+						),
+					),
+				)
 			}
 			var explain = resultNode('p', 'thematiq-upload-result__hint')
 			explain.dataset.contrast = String(model.contrast)
 			pills.hidden = model.contrast === 0
 			explain.hidden = model.contrast === 0
 			if (model.contrast > 0) {
-				explain.textContent = t('thematiq', 'You see the contrast warning again in the dialog when applying.')
+				explain.textContent = t(
+					'thematiq',
+					'You see the contrast warning again in the dialog when applying.',
+				)
 			}
 			box.appendChild(pills)
 			box.appendChild(explain)
 
 			if (model.deprecations.length > 0) {
-				var notice = resultNode('div', 'thematiq-upload-result__deprecations')
-				notice.appendChild(resultNode('span', 'thematiq-upload-result__deprecations-text', n(
-					'thematiq',
-					'The file reports {count} deprecated token, with its replacement and date. If you record it, it is listed under Custom tokens and apps can read it.',
-					'The file reports {count} deprecated tokens, with their replacement and date. If you record them, they are listed under Custom tokens and apps can read them.',
-					model.deprecations.length,
-					{ count: model.deprecations.length },
-				)))
+				var notice = resultNode(
+					'div',
+					'thematiq-upload-result__deprecations',
+				)
+				notice.appendChild(
+					resultNode(
+						'span',
+						'thematiq-upload-result__deprecations-text',
+						n(
+							'thematiq',
+							'The file reports {count} deprecated token, with its replacement and date. If you record it, it is listed under Custom tokens and apps can read it.',
+							'The file reports {count} deprecated tokens, with their replacement and date. If you record them, they are listed under Custom tokens and apps can read them.',
+							model.deprecations.length,
+							{ count: model.deprecations.length },
+						),
+					),
+				)
 				var list = resultNode('ul', 'nldesign-deprecation-list')
 				model.deprecations.forEach(function (warning) {
-					list.appendChild(resultNode('li', '', warning.path + (warning.message ? ': ' + warning.message : '')))
+					list.appendChild(
+						resultNode(
+							'li',
+							'',
+							warning.path
+								+ (warning.message ? ': ' + warning.message : ''),
+						),
+					)
 				})
 				notice.appendChild(list)
 				if (model.adoptable.length > 0) {
@@ -6836,13 +7027,17 @@
 		 * @return {void}
 		 */
 		function markIncompleteUpload(sets) {
-			var box = document.querySelector('#nldesign-upload-result .thematiq-upload-result')
+			var box = document.querySelector(
+				'#nldesign-upload-result .thematiq-upload-result',
+			)
 			if (box === null || lastUploadId === null) {
 				return
 			}
-			var count = UR.missing(sets.find(function (set) {
-				return set.id === lastUploadId
-			}))
+			var count = UR.missing(
+				sets.find(function (set) {
+					return set.id === lastUploadId
+				}),
+			)
 			if (count === 0) {
 				return
 			}
@@ -6850,13 +7045,21 @@
 			box.querySelector('.thematiq-upload-result__incomplete').hidden = false
 			box.querySelector('.thematiq-upload-result__pills').hidden = false
 			hint.hidden = false
-			hint.textContent = n(
-				'thematiq',
-				'This set does not define every token the design system reads: {count} token falls back to the design system.',
-				'This set does not define every token the design system reads: {count} tokens fall back to the design system.',
-				count,
-				{ count: count },
-			) + (hint.dataset.contrast !== '0' ? ' ' + t('thematiq', 'You see the contrast warning again in the dialog when applying.') : '')
+			hint.textContent =
+				n(
+					'thematiq',
+					'This set does not define every token the design system reads: {count} token falls back to the design system.',
+					'This set does not define every token the design system reads: {count} tokens fall back to the design system.',
+					count,
+					{ count: count },
+				)
+				+ (hint.dataset.contrast !== '0'
+					? ' '
+						+ t(
+							'thematiq',
+							'You see the contrast warning again in the dialog when applying.',
+						)
+					: '')
 		}
 
 		/**
@@ -6867,23 +7070,70 @@
 		 * @return {HTMLElement} The result.
 		 */
 		function buildRefusedResult(model) {
-			var box = resultNode('div', 'thematiq-upload-result thematiq-upload-result--refused')
-			box.appendChild(resultNode('h3', 'thematiq-upload-result__title', t('thematiq', 'Refused file')))
-			box.appendChild(resultNode('p', 'thematiq-upload-result__hint', t('thematiq', 'What an upload may never put in a token set: script, a reference to the outside or a rule that loads something. Such a file is refused as a whole.')))
+			var box = resultNode(
+				'div',
+				'thematiq-upload-result thematiq-upload-result--refused',
+			)
+			box.appendChild(
+				resultNode(
+					'h3',
+					'thematiq-upload-result__title',
+					t('thematiq', 'Refused file'),
+				),
+			)
+			box.appendChild(
+				resultNode(
+					'p',
+					'thematiq-upload-result__hint',
+					t(
+						'thematiq',
+						'What an upload may never put in a token set: script, a reference to the outside or a rule that loads something. Such a file is refused as a whole.',
+					),
+				),
+			)
 			var notice = resultNode('div', 'thematiq-upload-result__refusal')
 			var lines = resultNode('div', 'thematiq-upload-result__refusal-text')
-			lines.appendChild(resultNode('strong', '', model.fileName !== ''
-				? t('thematiq', '{file} was refused ({status}). Nothing was saved.', { file: model.fileName, status: model.status })
-				: t('thematiq', 'The pasted contents were refused ({status}). Nothing was saved.', { status: model.status })))
+			lines.appendChild(
+				resultNode(
+					'strong',
+					'',
+					model.fileName !== ''
+						? t(
+								'thematiq',
+								'{file} was refused ({status}). Nothing was saved.',
+								{ file: model.fileName, status: model.status },
+							)
+						: t(
+								'thematiq',
+								'The pasted contents were refused ({status}). Nothing was saved.',
+								{ status: model.status },
+							),
+				),
+			)
 			if (model.error !== '') {
 				lines.appendChild(resultNode('span', '', model.error))
 			}
 			notice.appendChild(lines)
 			box.appendChild(notice)
 			if (model.notices.length > 0) {
-				box.appendChild(buildNoticeTable(model.notices, t('thematiq', 'Token in the file'), t('thematiq', 'What thematiq reports')))
+				box.appendChild(
+					buildNoticeTable(
+						model.notices,
+						t('thematiq', 'Token in the file'),
+						t('thematiq', 'What thematiq reports'),
+					),
+				)
 			}
-			box.appendChild(resultNode('p', 'thematiq-upload-result__hint', t('thematiq', 'An @import, an @font-face or a comment does not survive the import: thematiq rewrites every token as one property. Such lines do not invalidate the upload; they simply do not get in.')))
+			box.appendChild(
+				resultNode(
+					'p',
+					'thematiq-upload-result__hint',
+					t(
+						'thematiq',
+						'An @import, an @font-face or a comment does not survive the import: thematiq rewrites every token as one property. Such lines do not invalidate the upload; they simply do not get in.',
+					),
+				),
+			)
 			return box
 		}
 
@@ -6981,11 +7231,16 @@
 				var line = document.createElement('div')
 				line.className = 'nldesign-brand-ratio'
 				var pill = document.createElement('span')
-				pill.className = 'nldesign-brand-ratio__pill'
+				pill.className =
+					'nldesign-brand-ratio__pill'
 					+ (value < minimum ? ' nldesign-brand-ratio__pill--below' : '')
-				pill.textContent = value < minimum ? t('thematiq', 'Below') : t('thematiq', 'Meets')
+				pill.textContent =
+					value < minimum ? t('thematiq', 'Below') : t('thematiq', 'Meets')
 				var text = document.createElement('span')
-				text.textContent = t('thematiq', '{label}: {ratio}:1, needs {min}:1.')
+				text.textContent = t(
+					'thematiq',
+					'{label}: {ratio}:1, needs {min}:1.',
+				)
 					.replace('{label}', label)
 					.replace('{ratio}', value.toFixed(2))
 					.replace('{min}', String(minimum))
@@ -7343,22 +7598,42 @@
 						{ count: brands.length },
 					),
 				}),
-				file && file.name ? h('code', { class: 'thematiq-brand-file', text: file.name }) : null,
-				h('div', { class: 'thematiq-brand-list' }, brands.map(function (brand, index) {
-					var id = 'nldesign-brand-pick-' + index
-					return h('div', { class: 'thematiq-brand-row' }, [
-						h('input', { type: 'checkbox', id: id, value: brand.key, checked: true }),
-						h('label', { for: id }, [
-							h('span', { class: 'thematiq-brand-row__name', text: brand.name }),
-							' ',
-							h('span', {
-								class: 'thematiq-brand-row__meta',
-								text: n('thematiq', '({count} token)', '({count} tokens)', brand.tokenCount, { count: brand.tokenCount })
-									+ (brand.group ? ' · ' + brand.group : ''),
+				file && file.name
+					? h('code', { class: 'thematiq-brand-file', text: file.name })
+					: null,
+				h(
+					'div',
+					{ class: 'thematiq-brand-list' },
+					brands.map(function (brand, index) {
+						var id = 'nldesign-brand-pick-' + index
+						return h('div', { class: 'thematiq-brand-row' }, [
+							h('input', {
+								type: 'checkbox',
+								id: id,
+								value: brand.key,
+								checked: true,
 							}),
-						]),
-					])
-				})),
+							h('label', { for: id }, [
+								h('span', {
+									class: 'thematiq-brand-row__name',
+									text: brand.name,
+								}),
+								' ',
+								h('span', {
+									class: 'thematiq-brand-row__meta',
+									text:
+										n(
+											'thematiq',
+											'({count} token)',
+											'({count} tokens)',
+											brand.tokenCount,
+											{ count: brand.tokenCount },
+										) + (brand.group ? ' · ' + brand.group : ''),
+								}),
+							]),
+						])
+					}),
+				),
 			])
 
 			/**
@@ -7384,7 +7659,10 @@
 				body: [
 					picker,
 					frame.notice(
-						t('thematiq', 'Each brand becomes its own token set that stays linked to this file. When a new version comes, Update source updates all brands at once.'),
+						t(
+							'thematiq',
+							'Each brand becomes its own token set that stays linked to this file. When a new version comes, Update source updates all brands at once.',
+						),
 						'info',
 					),
 				],
@@ -7403,7 +7681,11 @@
 						className: 'nldesign-brand-import',
 						onClick: function (open) {
 							var chosen = Array.prototype.slice
-								.call(picker.querySelectorAll('input[type="checkbox"]:checked'))
+								.call(
+									picker.querySelectorAll(
+										'input[type="checkbox"]:checked',
+									),
+								)
 								.map(function (box) {
 									return box.value
 								})
@@ -7721,7 +8003,11 @@
 					var sets = (data && data.sets) || []
 					renderCustomSetList(listEl, sets)
 					markIncompleteUpload(sets)
-					document.dispatchEvent(new CustomEvent('thematiq:custom-sets', { detail: { sets: sets } }))
+					document.dispatchEvent(
+						new CustomEvent('thematiq:custom-sets', {
+							detail: { sets: sets },
+						}),
+					)
 				})
 				.catch(function (err) {
 					console.error('Error loading custom token sets:', err)
@@ -7792,7 +8078,9 @@
 			toggle.setAttribute('aria-expanded', 'false')
 			toggle.setAttribute(
 				'aria-label',
-				t('thematiq', 'Actions for {name}', { name: name }, undefined, { escape: false }),
+				t('thematiq', 'Actions for {name}', { name: name }, undefined, {
+					escape: false,
+				}),
 			)
 			var menu = document.createElement('div')
 			menu.className = 'nldesign-custom-set-menu'
@@ -7806,12 +8094,16 @@
 			})
 			toggle.addEventListener('click', function () {
 				var open = menu.hidden === true
-				document.querySelectorAll('.nldesign-custom-set-menu').forEach(function (other) {
-					other.hidden = true
-				})
-				document.querySelectorAll('.nldesign-custom-set-menu-toggle').forEach(function (other) {
-					other.setAttribute('aria-expanded', 'false')
-				})
+				document
+					.querySelectorAll('.nldesign-custom-set-menu')
+					.forEach(function (other) {
+						other.hidden = true
+					})
+				document
+					.querySelectorAll('.nldesign-custom-set-menu-toggle')
+					.forEach(function (other) {
+						other.setAttribute('aria-expanded', 'false')
+					})
 				menu.hidden = !open
 				toggle.setAttribute('aria-expanded', open ? 'true' : 'false')
 			})
@@ -8197,7 +8489,10 @@
 				}
 				resetDialog.open({
 					opener: resetThemeBtn,
-					themeName: tokenSetsData[setId] !== undefined ? tokenSetsData[setId].name : setId,
+					themeName:
+						tokenSetsData[setId] !== undefined
+							? tokenSetsData[setId].name
+							: setId,
 					overrideCount: tokenEditorSavedCount,
 					onConfirm: function (dialog) {
 						dialog.busy(true)
@@ -8385,17 +8680,21 @@
 					deleteFont(font.id, font.name || font.id)
 				})
 				actions.appendChild(deleteBtn)
-				listEl.appendChild(fontRow({
-					name: font.name || font.id,
-					meta: t('thematiq', 'uploaded, {size} kB', {
-						size: Math.max(1, Math.round((font.size || 0) / 1024)),
+				listEl.appendChild(
+					fontRow({
+						name: font.name || font.id,
+						meta: t('thematiq', 'uploaded, {size} kB', {
+							size: Math.max(1, Math.round((font.size || 0) / 1024)),
+						}),
+						licence: t('thematiq', 'Own licence'),
+						status: t('thematiq', 'In use for {role}', {
+							role: fontUseLabel(font.role),
+						}),
+						inUse: true,
+						uses: [font.role],
+						actions: actions,
 					}),
-					licence: t('thematiq', 'Own licence'),
-					status: t('thematiq', 'In use for {role}', { role: fontUseLabel(font.role) }),
-					inUse: true,
-					uses: [font.role],
-					actions: actions,
-				}))
+				)
 			})
 		}
 
@@ -8426,14 +8725,17 @@
 			name.appendChild(meta)
 			var sample = document.createElement('span')
 			sample.className = 'thematiq-font-row__sample'
-			sample.style.fontFamily = JSON.stringify(String(font.name)) + ', var(--font-face)'
+			sample.style.fontFamily =
+				JSON.stringify(String(font.name)) + ', var(--font-face)'
 			sample.textContent = t('thematiq', 'Waste and recycling')
 			var licence = document.createElement('span')
 			licence.className = 'thematiq-font-row__licence'
 			licence.textContent = font.licence
 			var status = document.createElement('span')
 			var pill = document.createElement('span')
-			pill.className = 'thematiq-font-row__pill' + (font.inUse === true ? ' thematiq-font-row__pill--in-use' : '')
+			pill.className =
+				'thematiq-font-row__pill'
+				+ (font.inUse === true ? ' thematiq-font-row__pill--in-use' : '')
 			pill.textContent = font.status
 			status.appendChild(pill)
 			font.actions.className = 'thematiq-font-row__actions'
@@ -8452,7 +8754,11 @@
 		 * own stylesheet; they are still written with textContent only.
 		 */
 		function fontUseLabel(role) {
-			return (role === 'heading' ? t('thematiq', 'Headings') : t('thematiq', 'Body text')).toLowerCase()
+			return (
+				role === 'heading'
+					? t('thematiq', 'Headings')
+					: t('thematiq', 'Body text')
+			).toLowerCase()
 		}
 
 		function fontRoleLabel(role) {
@@ -8478,7 +8784,10 @@
 				.catch(function (err) {
 					console.error('Error loading the font library:', err)
 					listRole(libraryEl, false)
-					libraryEl.textContent = t('thematiq', 'Failed to load the font library.')
+					libraryEl.textContent = t(
+						'thematiq',
+						'Failed to load the font library.',
+					)
 				})
 		}
 
@@ -8506,37 +8815,48 @@
 				var roles = font.roles || []
 				var actions = document.createElement('div')
 				;['heading', 'body'].forEach(function (role) {
-					var button = roles.indexOf(role) !== -1
-						? libraryButton(
-							t('thematiq', 'Stop using for {role}').replace('{role}', fontRoleLabel(role).toLowerCase()),
-							function () {
-								unassignLibraryFont(role)
-							},
-						)
-						: libraryButton(
-							role === 'heading'
-								? t('thematiq', 'Use for headings')
-								: t('thematiq', 'Use for body text'),
-							function () {
-								assignLibraryFont(font.name, role)
-							},
-						)
+					var button =
+						roles.indexOf(role) !== -1
+							? libraryButton(
+									t('thematiq', 'Stop using for {role}').replace(
+										'{role}',
+										fontRoleLabel(role).toLowerCase(),
+									),
+									function () {
+										unassignLibraryFont(role)
+									},
+								)
+							: libraryButton(
+									role === 'heading'
+										? t('thematiq', 'Use for headings')
+										: t('thematiq', 'Use for body text'),
+									function () {
+										assignLibraryFont(font.name, role)
+									},
+								)
 					actions.appendChild(button)
 				})
-				var status = roles.length === 0
-					? t('thematiq', 'Available')
-					: roles.map(function (role) {
-						return t('thematiq', 'In use for {role}', { role: fontUseLabel(role) })
-					}).join(', ')
-				libraryEl.appendChild(fontRow({
-					name: font.name,
-					meta: t('thematiq', 'bundled'),
-					licence: font.licence,
-					status: status,
-					inUse: roles.length > 0,
-					uses: roles,
-					actions: actions,
-				}))
+				var status =
+					roles.length === 0
+						? t('thematiq', 'Available')
+						: roles
+								.map(function (role) {
+									return t('thematiq', 'In use for {role}', {
+										role: fontUseLabel(role),
+									})
+								})
+								.join(', ')
+				libraryEl.appendChild(
+					fontRow({
+						name: font.name,
+						meta: t('thematiq', 'bundled'),
+						licence: font.licence,
+						status: status,
+						inUse: roles.length > 0,
+						uses: roles,
+						actions: actions,
+					}),
+				)
 			})
 		}
 
@@ -8587,7 +8907,10 @@
 					method: 'DELETE',
 					headers: { requesttoken: OC.requestToken },
 				},
-				t('thematiq', 'Font removed from the role. Reload the page to apply it.'),
+				t(
+					'thematiq',
+					'Font removed from the role. Reload the page to apply it.',
+				),
 			)
 		}
 
@@ -8600,15 +8923,28 @@
 				id: 'thematiq-delete-font-dialog',
 				width: 560,
 				eyebrow: t('thematiq', 'Typefaces'),
-				title: t('thematiq', 'Delete font {name}?', { name: name }, undefined, { escape: false }),
+				title: t(
+					'thematiq',
+					'Delete font {name}?',
+					{ name: name },
+					undefined,
+					{ escape: false },
+				),
 				body: [
 					frame.h('p', {
 						class: 'thematiq-admin-dialog__lead',
-						text: t('thematiq', 'Pages that use it fall back to the font of the token set. Then reload the page to refresh the style.'),
+						text: t(
+							'thematiq',
+							'Pages that use it fall back to the font of the token set. Then reload the page to refresh the style.',
+						),
 					}),
 				],
 				actions: [
-					{ label: t('thematiq', 'Cancel'), cancel: true, className: 'nldesign-dialog-cancel' },
+					{
+						label: t('thematiq', 'Cancel'),
+						cancel: true,
+						className: 'nldesign-dialog-cancel',
+					},
 					{
 						label: t('thematiq', 'Delete font'),
 						variant: 'danger',
@@ -8640,7 +8976,9 @@
 										)
 										loadFonts()
 									} else {
-										notify(t('thematiq', 'Failed to delete font.'))
+										notify(
+											t('thematiq', 'Failed to delete font.'),
+										)
 									}
 								})
 								.catch(function (err) {
@@ -8758,8 +9096,12 @@
 				// One fact per cell, set with textContent throughout: an entry
 				// can carry an admin-supplied custom token set name.
 				var when = auditCell('nldesign-audit-ts')
-				when.appendChild(auditText('strong', 'nldesign-audit-date', moment.date))
-				when.appendChild(auditText('span', 'nldesign-audit-time', moment.time))
+				when.appendChild(
+					auditText('strong', 'nldesign-audit-date', moment.date),
+				)
+				when.appendChild(
+					auditText('span', 'nldesign-audit-time', moment.time),
+				)
 				row.appendChild(when)
 
 				var who = auditCell('nldesign-audit-actor')
@@ -8767,8 +9109,16 @@
 				row.appendChild(who)
 
 				var what = auditCell('nldesign-audit-action')
-				what.appendChild(auditText('span', 'nldesign-audit-pill nldesign-audit-pill--' + action.kind, action.label))
-				what.appendChild(auditText('code', 'nldesign-audit-code', entry.action || ''))
+				what.appendChild(
+					auditText(
+						'span',
+						'nldesign-audit-pill nldesign-audit-pill--' + action.kind,
+						action.label,
+					),
+				)
+				what.appendChild(
+					auditText('code', 'nldesign-audit-code', entry.action || ''),
+				)
 				row.appendChild(what)
 
 				;[
@@ -8797,7 +9147,11 @@
 						}),
 					)
 					restoreBtn.addEventListener('click', function () {
-						restoreVersion(entry.versionId, restoreBtn, auditFormat.formatAuditTimestamp(entry.ts))
+						restoreVersion(
+							entry.versionId,
+							restoreBtn,
+							auditFormat.formatAuditTimestamp(entry.ts),
+						)
 					})
 					restoreCell.appendChild(restoreBtn)
 				}
@@ -8811,9 +9165,15 @@
 					detail: {
 						count: entries.length,
 						versions: entries.filter(function (entry) {
-							return typeof entry.versionId === 'string' && entry.versionId !== ''
+							return (
+								typeof entry.versionId === 'string'
+								&& entry.versionId !== ''
+							)
 						}).length,
-						since: entries.length > 0 ? entries[entries.length - 1].ts : null,
+						since:
+							entries.length > 0
+								? entries[entries.length - 1].ts
+								: null,
 					},
 				}),
 			)
@@ -8934,8 +9294,14 @@
 				h('p', {
 					class: 'thematiq-admin-dialog__lead',
 					text: same
-						? t('thematiq', 'This version matches the current configuration.')
-						: t('thematiq', 'This changes when you restore. Nothing is written until you click Restore version.'),
+						? t(
+								'thematiq',
+								'This version matches the current configuration.',
+							)
+						: t(
+								'thematiq',
+								'This changes when you restore. Nothing is written until you click Restore version.',
+							),
 				}),
 			]
 			if (described.changes.length > 0) {
@@ -8944,20 +9310,31 @@
 			described.fonts.forEach(function (line) {
 				body.push(frame.notice(line, 'caution'))
 			})
-			body.push(h('p', {
-				class: 'thematiq-admin-dialog__aside thematiq-admin-dialog__aside--muted',
-				text: t('thematiq', 'Restoring is itself a change with its own version in the log. So you can undo it again.'),
-			}))
+			body.push(
+				h('p', {
+					class: 'thematiq-admin-dialog__aside thematiq-admin-dialog__aside--muted',
+					text: t(
+						'thematiq',
+						'Restoring is itself a change with its own version in the log. So you can undo it again.',
+					),
+				}),
+			)
 
 			frame.open({
 				id: 'nldesign-restore-version-dialog',
 				width: 560,
 				opener: button,
-				eyebrow: t('thematiq', 'Log, version of {time}', { time: time || '' }),
+				eyebrow: t('thematiq', 'Log, version of {time}', {
+					time: time || '',
+				}),
 				title: t('thematiq', 'Restore this version?'),
 				body: body,
 				actions: [
-					{ label: t('thematiq', 'Cancel'), cancel: true, className: 'nldesign-dialog-cancel' },
+					{
+						label: t('thematiq', 'Cancel'),
+						cancel: true,
+						className: 'nldesign-dialog-cancel',
+					},
 					{
 						label: t('thematiq', 'Restore version'),
 						variant: 'primary',
@@ -9045,7 +9422,7 @@
 				})
 		}
 
-		initAuditLog()
+		whenPanelShown('nldesign-audit-table-body', initAuditLog)
 
 		/**
 		 * Point the contrast evidence report links at the export endpoint, one
@@ -9218,9 +9595,13 @@
 							)
 						: t('thematiq', 'not run yet')
 				}
-				var active = document.querySelector('.thematiq-switches-panel__active')
+				var active = document.querySelector(
+					'.thematiq-switches-panel__active',
+				)
 				if (active !== null) {
-					active.textContent = status.activeTokenSet ? tokenSetName(status.activeTokenSet) : ''
+					active.textContent = status.activeTokenSet
+						? tokenSetName(status.activeTokenSet)
+						: ''
 				}
 				if (warning !== null) {
 					warning.hidden = status.cronWarning !== true
@@ -9248,10 +9629,18 @@
 				var when = new Date(iso)
 				var day = document.createElement('span')
 				day.className = 'thematiq-switches-panel__day'
-				day.textContent = when.toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
+				day.textContent = when.toLocaleDateString([], {
+					weekday: 'short',
+					day: 'numeric',
+					month: 'short',
+					year: 'numeric',
+				})
 				var time = document.createElement('span')
 				time.className = 'thematiq-switches-panel__time'
-				time.textContent = when.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+				time.textContent = when.toLocaleTimeString([], {
+					hour: '2-digit',
+					minute: '2-digit',
+				})
 				cell.append(day, time)
 				return cell
 			}
@@ -9281,7 +9670,9 @@
 					name.appendChild(strong)
 					var state = document.createElement('td')
 					var pill = document.createElement('span')
-					pill.className = 'thematiq-contrast-panel__pill thematiq-switches-panel__status thematiq-switches-panel__status--' + status
+					pill.className =
+						'thematiq-contrast-panel__pill thematiq-switches-panel__status thematiq-switches-panel__status--'
+						+ status
 					pill.textContent = statusNames[status] || status
 					state.appendChild(pill)
 					if (status === 'failed' && entry.failureReason) {
@@ -9309,7 +9700,13 @@
 						cancelSwitch(entry.id, cancel)
 					})
 					actions.appendChild(cancel)
-					row.append(name, timeCell(entry.startAt), timeCell(entry.endAt), state, actions)
+					row.append(
+						name,
+						timeCell(entry.startAt),
+						timeCell(entry.endAt),
+						state,
+						actions,
+					)
 					list.appendChild(row)
 				})
 			}
@@ -9322,7 +9719,11 @@
 					.then(function (data) {
 						renderStatus(data.status)
 						renderList(data.switches)
-						document.dispatchEvent(new CustomEvent('thematiq:scheduled-switches', { detail: data }))
+						document.dispatchEvent(
+							new CustomEvent('thematiq:scheduled-switches', {
+								detail: data,
+							}),
+						)
 					})
 					.catch(function (err) {
 						console.error('Error loading planned switches:', err)
@@ -9562,6 +9963,8 @@
 			if (occHint !== null) {
 				occHint.style.display = 'none'
 			}
+			// The email panel's examples and header line read these fields: tell it they changed.
+			document.dispatchEvent(new CustomEvent('thematiq:email-theming', { detail: { state: state || null, footer: footer || null } }))
 		}
 
 		function initEmailTheming() {
@@ -9703,8 +10106,8 @@
 				})
 		}
 
-		// Initialise the email theming panel on page load.
-		initEmailTheming()
+		// Initialise the email theming block once the email panel opens.
+		whenPanelShown('nldesign-email-theming', initEmailTheming)
 
 		/* ==========================================================================
 		 * UPSTREAM TOKEN FRESHNESS — opt-in daily check against upstream
@@ -9805,11 +10208,15 @@
 				if (notice.detectedAt) {
 					var found = document.createElement('span')
 					found.className = 'nldesign-upstream-notice__found'
-					found.textContent = t(
-						'thematiq',
-						'found on {date}',
-						{ date: new Date(Number(notice.detectedAt) * 1000).toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' }) },
-					)
+					found.textContent = t('thematiq', 'found on {date}', {
+						date: new Date(
+							Number(notice.detectedAt) * 1000,
+						).toLocaleDateString([], {
+							day: 'numeric',
+							month: 'short',
+							year: 'numeric',
+						}),
+					})
 					text.appendChild(found)
 				}
 				row.appendChild(text)
@@ -9838,7 +10245,9 @@
 
 				noticesEl.appendChild(row)
 			})
-			document.dispatchEvent(new CustomEvent('thematiq:upstream-freshness', { detail: data }))
+			document.dispatchEvent(
+				new CustomEvent('thematiq:upstream-freshness', { detail: data }),
+			)
 		}
 
 		function loadUpstreamFreshness() {
@@ -9924,8 +10333,8 @@
 			loadUpstreamFreshness()
 		}
 
-		// Initialise the upstream freshness panel on page load.
-		initUpstreamFreshness()
+		// Initialise the upstream freshness block once the gallery panel opens.
+		whenPanelShown('nldesign-upstream-freshness-toggle', initUpstreamFreshness)
 
 		/**
 		 * Theme gallery (openspec/specs/theme-gallery/spec.md): an opt-in
@@ -9999,7 +10408,14 @@
 							'{organisation}, added {date}',
 							{
 								organisation: entry.organisation,
-								date: new Date(entry.addedOn).toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' }),
+								date: new Date(entry.addedOn).toLocaleDateString(
+									[],
+									{
+										day: 'numeric',
+										month: 'short',
+										year: 'numeric',
+									},
+								),
 							},
 							undefined,
 							{ escape: false },
@@ -10059,14 +10475,26 @@
 					button.textContent = t('thematiq', 'Update')
 					button.setAttribute(
 						'aria-label',
-						t('thematiq', 'Update {name}', { name: entry.name }, undefined, { escape: false }),
+						t(
+							'thematiq',
+							'Update {name}',
+							{ name: entry.name },
+							undefined,
+							{ escape: false },
+						),
 					)
 				} else {
 					button.className = 'nldesign-gallery-install'
 					button.textContent = t('thematiq', 'Install')
 					button.setAttribute(
 						'aria-label',
-						t('thematiq', 'Install {name}', { name: entry.name }, undefined, { escape: false }),
+						t(
+							'thematiq',
+							'Install {name}',
+							{ name: entry.name },
+							undefined,
+							{ escape: false },
+						),
 					)
 				}
 				button.addEventListener('click', function () {
@@ -10085,7 +10513,9 @@
 						{ host: data.host },
 					)
 				}
-				document.dispatchEvent(new CustomEvent('thematiq:gallery', { detail: data }))
+				document.dispatchEvent(
+					new CustomEvent('thematiq:gallery', { detail: data }),
+				)
 				list.replaceChildren()
 				if (data.enabled !== true) {
 					setStatus('')
@@ -10194,7 +10624,7 @@
 			load()
 		}
 
-		initGallery()
+		whenPanelShown('nldesign-gallery-list', initGallery)
 
 		/**
 		 * Freeform custom CSS panel.

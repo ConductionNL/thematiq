@@ -31,7 +31,9 @@ describe('markupRender', () => {
 		expect(row.getAttribute('style')).toBe('color:red')
 		expect(row.getAttribute('aria-label')).toBe('Row')
 		expect(target.querySelector('#c').checked).toBe(true)
-		expect(target.querySelector('svg path').namespaceURI).toBe('http://www.w3.org/2000/svg')
+		expect(target.querySelector('svg path').namespaceURI).toBe(
+			'http://www.w3.org/2000/svg',
+		)
 	})
 
 	it('drops scripts, frames, handlers and javascript: URLs', () => {
@@ -49,7 +51,9 @@ describe('markupRender', () => {
 		expect(target.querySelector('iframe')).toBe(null)
 		expect(target.querySelector('p').hasAttribute('onclick')).toBe(false)
 		expect(target.querySelector('img').hasAttribute('onerror')).toBe(false)
-		expect(target.querySelector('img').getAttribute('src')).toBe('data:image/png;base64,AA')
+		expect(target.querySelector('img').getAttribute('src')).toBe(
+			'data:image/png;base64,AA',
+		)
 		const links = target.querySelectorAll('a')
 		expect(links[0].hasAttribute('href')).toBe(false)
 		expect(links[1].getAttribute('href')).toBe('#ok')

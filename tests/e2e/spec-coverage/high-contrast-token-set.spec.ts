@@ -66,147 +66,167 @@ test.describe('high-contrast-token-set', () => {
 		offer = null
 	})
 
-	test(// @e2e openspec/specs/high-contrast-token-set/spec.md#high-contrast-set-is-selectable-and-themes-the-instance
-	'Selecting the high-contrast set is offered and previews an AAA primary/text pair', async ({
-		page,
-	}) => {
-		// A shipped brand is offered only once it is selectable: see
-		// openspec/specs/token-sets/spec.md, "Only Fully Functional Brands Are
-		// Selectable". hoog-contrast is not on the allowlist today, so the
-		// scenario's GIVEN is established through a group mapping, which the
-		// same requirement names as a path that keeps a set selectable.
-		await page.goto(THEMING_URL)
-		await page.waitForSelector('#nldesign-token-set-select', { timeout: 15_000 })
-		const token = await requestToken(page)
-		offer = await offerTokenSets(page, token, ['hoog-contrast'])
-		await page.goto(THEMING_URL)
-		await page.waitForSelector('#nldesign-token-set-select', { timeout: 15_000 })
-		await dismissThemingSyncDialog(page)
-
-		const select = page.locator('#nldesign-token-set-select')
-		const option = select.locator('option[value="hoog-contrast"]')
-		await expect(
-			option,
-			'The "Hoog contrast (WCAG AAA)" set must be selectable',
-		).toHaveCount(1)
-
-		// Resolve the set's primary/primary-text pair via the preview API and
-		// assert AAA (>= 7:1) without mutating the shared instance's active set.
-		const ratio = await page.evaluate(async () => {
-			const oc = (
-				window as unknown as {
-					OC: { generateUrl: (p: string) => string; requestToken: string }
-				}
-			).OC
-			const url = oc.generateUrl(
-				'/apps/thematiq/settings/tokenset-preview/hoog-contrast',
-			)
-			const r = await fetch(url, {
-				headers: { requesttoken: oc.requestToken },
-			})
-			const data = (await r.json()) as { resolved?: Record<string, string> }
-			return data.resolved || {}
-		})
-
-		const primary = (
-			ratio['--color-primary']
-			|| ratio['--color-primary-element']
-			|| '#000000'
-		).trim()
-		const text = (
-			ratio['--color-primary-text']
-			|| ratio['--color-primary-element-text']
-			|| '#ffffff'
-		).trim()
-
-		if (primary.startsWith('#') && text.startsWith('#')) {
-			const l1 = luminance(primary)
-			const l2 = luminance(text)
-			const contrast = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05)
-			expect(
-				contrast,
-				`primary/text contrast ${contrast.toFixed(2)} must be >= 7:1 (AAA)`,
-			).toBeGreaterThanOrEqual(7)
-		}
-	})
-	test(// @e2e openspec/specs/high-contrast-token-set/spec.md#dark-mode-turns-the-high-contrast-set-white-on-black
-	'In dark mode the high-contrast set paints white text on a black page at AAA', async ({
-		page,
-	}) => {
-		// The set has to be ACTIVE for its dark layer to load; the previous
-		// set is put back in the finally block below.
-		await page.goto(THEMING_URL)
-		await page.waitForSelector('#nldesign-token-set-select', { timeout: 15_000 })
-		const token = await requestToken(page)
-		const previous = await getTokenSet(page, token)
-		offer = await offerTokenSets(page, token, ['hoog-contrast'])
-		await setTokenSet(page, token, 'hoog-contrast')
-		try {
-			const surface = async (): Promise<{ bg: string; text: string }> =>
-				await page.evaluate(() => {
-					const style = getComputedStyle(document.body)
-					return {
-						bg: style.getPropertyValue('--color-main-background').trim(),
-						text: style.getPropertyValue('--color-main-text').trim(),
-					}
-				})
-			const ratioOf = (a: string, b: string): number => {
-				const l1 = luminance(a)
-				const l2 = luminance(b)
-				return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05)
-			}
-
-			// Positive control: light stays black on white.
-			await page.emulateMedia({ colorScheme: 'light' })
-			await page.goto('/apps/files/')
-			const light = await surface()
-			expect(light.bg.toLowerCase(), 'light page background').toBe('#ffffff')
-
-			// The system dark preference (no explicit theme chosen).
-			await page.emulateMedia({ colorScheme: 'dark' })
-			await page.goto('/apps/files/')
-			const dark = await surface()
-			expect(dark.bg.toLowerCase(), 'dark page background').toBe('#000000')
-			expect(
-				ratioOf(dark.text, dark.bg),
-				'dark text contrast',
-			).toBeGreaterThanOrEqual(7)
-			// The app shell behind the navigation is painted, not just declared:
-			// it uses --color-main-background-blur through a backdrop blur, and
-			// left unmapped it is Nextcloud's translucent #171717 over the
-			// background image (found in the live run).
-			const shell = await page.evaluate(() => {
-				const el = document.querySelector('#content, .content')
-				if (el === null) return null
-				const s = getComputedStyle(el)
-				return { bg: s.backgroundColor, filter: s.backdropFilter }
-			})
-			expect(shell, 'the app shell is on the page').not.toBeNull()
-			expect(shell?.bg, 'dark app shell').toBe('rgb(0, 0, 0)')
-			expect(shell?.filter, 'no blur over the background image').toBe('none')
-
-			// Nextcloud's dark-highcontrast theme, as its body attributes mark it.
-			await page.emulateMedia({ colorScheme: 'light' })
-			await page.goto('/apps/files/')
-			await page.evaluate(() => {
-				document.body.setAttribute('data-themes', 'dark-highcontrast')
-				document.body.setAttribute('data-theme-dark-highcontrast', '')
-				document.body.removeAttribute('data-theme-light')
-				document.body.removeAttribute('data-theme-default')
-			})
-			const highcontrast = await surface()
-			expect(
-				highcontrast.bg.toLowerCase(),
-				'dark-highcontrast page background',
-			).toBe('#000000')
-			expect(
-				ratioOf(highcontrast.text, highcontrast.bg),
-				'dark-highcontrast text contrast',
-			).toBeGreaterThanOrEqual(7)
-		} finally {
-			await page.emulateMedia({ colorScheme: 'light' })
+	test(
+		// @e2e openspec/specs/high-contrast-token-set/spec.md#high-contrast-set-is-selectable-and-themes-the-instance
+		'Selecting the high-contrast set is offered and previews an AAA primary/text pair',
+		async ({ page }) => {
+			// A shipped brand is offered only once it is selectable: see
+			// openspec/specs/token-sets/spec.md, "Only Fully Functional Brands Are
+			// Selectable". hoog-contrast is not on the allowlist today, so the
+			// scenario's GIVEN is established through a group mapping, which the
+			// same requirement names as a path that keeps a set selectable.
 			await page.goto(THEMING_URL)
-			await setTokenSet(page, await requestToken(page), previous)
-		}
-	})
+			await page.waitForSelector('#nldesign-token-set-select', {
+				timeout: 15_000,
+			})
+			const token = await requestToken(page)
+			offer = await offerTokenSets(page, token, ['hoog-contrast'])
+			await page.goto(THEMING_URL)
+			await page.waitForSelector('#nldesign-token-set-select', {
+				timeout: 15_000,
+			})
+			await dismissThemingSyncDialog(page)
+
+			const select = page.locator('#nldesign-token-set-select')
+			const option = select.locator('option[value="hoog-contrast"]')
+			await expect(
+				option,
+				'The "Hoog contrast (WCAG AAA)" set must be selectable',
+			).toHaveCount(1)
+
+			// Resolve the set's primary/primary-text pair via the preview API and
+			// assert AAA (>= 7:1) without mutating the shared instance's active set.
+			const ratio = await page.evaluate(async () => {
+				const oc = (
+					window as unknown as {
+						OC: {
+							generateUrl: (p: string) => string
+							requestToken: string
+						}
+					}
+				).OC
+				const url = oc.generateUrl(
+					'/apps/thematiq/settings/tokenset-preview/hoog-contrast',
+				)
+				const r = await fetch(url, {
+					headers: { requesttoken: oc.requestToken },
+				})
+				const data = (await r.json()) as {
+					resolved?: Record<string, string>
+				}
+				return data.resolved || {}
+			})
+
+			const primary = (
+				ratio['--color-primary']
+				|| ratio['--color-primary-element']
+				|| '#000000'
+			).trim()
+			const text = (
+				ratio['--color-primary-text']
+				|| ratio['--color-primary-element-text']
+				|| '#ffffff'
+			).trim()
+
+			if (primary.startsWith('#') && text.startsWith('#')) {
+				const l1 = luminance(primary)
+				const l2 = luminance(text)
+				const contrast =
+					(Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05)
+				expect(
+					contrast,
+					`primary/text contrast ${contrast.toFixed(2)} must be >= 7:1 (AAA)`,
+				).toBeGreaterThanOrEqual(7)
+			}
+		},
+	)
+	test(
+		// @e2e openspec/specs/high-contrast-token-set/spec.md#dark-mode-turns-the-high-contrast-set-white-on-black
+		'In dark mode the high-contrast set paints white text on a black page at AAA',
+		async ({ page }) => {
+			// The set has to be ACTIVE for its dark layer to load; the previous
+			// set is put back in the finally block below.
+			await page.goto(THEMING_URL)
+			await page.waitForSelector('#nldesign-token-set-select', {
+				timeout: 15_000,
+			})
+			const token = await requestToken(page)
+			const previous = await getTokenSet(page, token)
+			offer = await offerTokenSets(page, token, ['hoog-contrast'])
+			await setTokenSet(page, token, 'hoog-contrast')
+			try {
+				const surface = async (): Promise<{ bg: string; text: string }> =>
+					await page.evaluate(() => {
+						const style = getComputedStyle(document.body)
+						return {
+							bg: style
+								.getPropertyValue('--color-main-background')
+								.trim(),
+							text: style.getPropertyValue('--color-main-text').trim(),
+						}
+					})
+				const ratioOf = (a: string, b: string): number => {
+					const l1 = luminance(a)
+					const l2 = luminance(b)
+					return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05)
+				}
+
+				// Positive control: light stays black on white.
+				await page.emulateMedia({ colorScheme: 'light' })
+				await page.goto('/apps/files/')
+				const light = await surface()
+				expect(light.bg.toLowerCase(), 'light page background').toBe(
+					'#ffffff',
+				)
+
+				// The system dark preference (no explicit theme chosen).
+				await page.emulateMedia({ colorScheme: 'dark' })
+				await page.goto('/apps/files/')
+				const dark = await surface()
+				expect(dark.bg.toLowerCase(), 'dark page background').toBe('#000000')
+				expect(
+					ratioOf(dark.text, dark.bg),
+					'dark text contrast',
+				).toBeGreaterThanOrEqual(7)
+				// The app shell behind the navigation is painted, not just declared:
+				// it uses --color-main-background-blur through a backdrop blur, and
+				// left unmapped it is Nextcloud's translucent #171717 over the
+				// background image (found in the live run).
+				const shell = await page.evaluate(() => {
+					const el = document.querySelector('#content, .content')
+					if (el === null) return null
+					const s = getComputedStyle(el)
+					return { bg: s.backgroundColor, filter: s.backdropFilter }
+				})
+				expect(shell, 'the app shell is on the page').not.toBeNull()
+				expect(shell?.bg, 'dark app shell').toBe('rgb(0, 0, 0)')
+				expect(shell?.filter, 'no blur over the background image').toBe(
+					'none',
+				)
+
+				// Nextcloud's dark-highcontrast theme, as its body attributes mark it.
+				await page.emulateMedia({ colorScheme: 'light' })
+				await page.goto('/apps/files/')
+				await page.evaluate(() => {
+					document.body.setAttribute('data-themes', 'dark-highcontrast')
+					document.body.setAttribute('data-theme-dark-highcontrast', '')
+					document.body.removeAttribute('data-theme-light')
+					document.body.removeAttribute('data-theme-default')
+				})
+				const highcontrast = await surface()
+				expect(
+					highcontrast.bg.toLowerCase(),
+					'dark-highcontrast page background',
+				).toBe('#000000')
+				expect(
+					ratioOf(highcontrast.text, highcontrast.bg),
+					'dark-highcontrast text contrast',
+				).toBeGreaterThanOrEqual(7)
+			} finally {
+				await page.emulateMedia({ colorScheme: 'light' })
+				await page.goto(THEMING_URL)
+				await setTokenSet(page, await requestToken(page), previous)
+			}
+		},
+	)
 })

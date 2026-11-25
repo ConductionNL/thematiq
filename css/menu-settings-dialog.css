@@ -334,7 +334,8 @@ dialog.thematiq-menu-settings p.thematiq-menu-settings__note {
 }
 
 .thematiq-menu-settings__row[data-drop-before] {
-	box-shadow: inset 0 2px 0 var(--nldesign-color-primary, var(--color-primary-element));
+	box-shadow: inset 0 2px 0
+		var(--nldesign-color-primary, var(--color-primary-element));
 }
 
 .thematiq-menu-settings__handle {
@@ -405,7 +406,8 @@ dialog.thematiq-menu-settings p.thematiq-menu-settings__note {
 }
 
 /* An external app's row is 53px with its rule, as on the board. */
-.thematiq-menu-settings__list:not(.thematiq-menu-settings__list--apps) > .thematiq-menu-settings__row {
+.thematiq-menu-settings__list:not(.thematiq-menu-settings__list--apps)
+	> .thematiq-menu-settings__row {
 	min-height: 52px;
 }
 
@@ -532,8 +534,14 @@ dialog.thematiq-menu-settings label.thematiq-menu-settings__card {
 
 .thematiq-menu-settings__style-sample {
 	--sample-primary: var(--nldesign-color-primary, var(--color-primary-element));
-	--sample-light: var(--nldesign-color-primary-light, var(--color-primary-element-light));
-	--sample-deep: var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text));
+	--sample-light: var(
+		--nldesign-color-primary-light,
+		var(--color-primary-element-light)
+	);
+	--sample-deep: var(
+		--nldesign-color-primary-light-text,
+		var(--color-primary-element-light-text)
+	);
 	--sample-accent: var(--nldesign-color-accent, var(--color-error));
 
 	position: relative;
@@ -544,24 +552,32 @@ dialog.thematiq-menu-settings label.thematiq-menu-settings__card {
 	border: 1px solid var(--color-border);
 	border-radius: var(--border-radius-element, 8px);
 	background:
-		linear-gradient(var(--sample-primary), var(--sample-primary)) 8px 5px / 22px 8px no-repeat,
-		linear-gradient(var(--color-main-background), var(--color-main-background)) top / 100% 19px
-			no-repeat,
-		var(--nldesign-component-content-surface-background-color, var(--color-background-dark));
+		linear-gradient(var(--sample-primary), var(--sample-primary)) 8px 5px / 22px
+			8px no-repeat,
+		linear-gradient(var(--color-main-background), var(--color-main-background))
+			top / 100% 19px no-repeat,
+		var(
+			--nldesign-component-content-surface-background-color,
+			var(--color-background-dark)
+		);
 }
 
 /* The workplace menu: one apps button, and its menu open as a small grid. */
 .thematiq-menu-settings__style-sample--workplace {
 	background:
-		linear-gradient(var(--sample-primary), var(--sample-primary)) 8px 5px / 22px 8px no-repeat,
+		linear-gradient(var(--sample-primary), var(--sample-primary)) 8px 5px / 22px
+			8px no-repeat,
 		linear-gradient(
 				var(--nl-color-grey-text, var(--color-main-text)),
 				var(--nl-color-grey-text, var(--color-main-text))
 			)
 			40px 4px / 10px 10px no-repeat,
-		linear-gradient(var(--color-main-background), var(--color-main-background)) top / 100% 19px
-			no-repeat,
-		var(--nldesign-component-content-surface-background-color, var(--color-background-dark));
+		linear-gradient(var(--color-main-background), var(--color-main-background))
+			top / 100% 19px no-repeat,
+		var(
+			--nldesign-component-content-surface-background-color,
+			var(--color-background-dark)
+		);
 }
 
 .thematiq-menu-settings__style-sample--workplace::before {
@@ -574,19 +590,25 @@ dialog.thematiq-menu-settings label.thematiq-menu-settings__card {
 	border: 1px solid var(--color-border);
 	border-radius: 4px;
 	background:
-		linear-gradient(var(--sample-light), var(--sample-light)) 4px 4px / 23px 11px no-repeat,
+		linear-gradient(var(--sample-light), var(--sample-light)) 4px 4px / 23px 11px
+			no-repeat,
 		linear-gradient(
 				var(--nldesign-color-accent-light, var(--sample-light)),
 				var(--nldesign-color-accent-light, var(--sample-light))
 			)
 			30px 4px / 23px 11px no-repeat,
-		linear-gradient(var(--sample-light), var(--sample-light)) 57px 4px / 23px 11px no-repeat,
-		linear-gradient(var(--sample-light), var(--sample-light)) 83px 4px / 23px 11px no-repeat,
-		linear-gradient(var(--sample-light), var(--sample-light)) 4px 18px / 23px 11px no-repeat,
-		linear-gradient(var(--sample-light), var(--sample-light)) 30px 18px / 23px 11px no-repeat,
-		linear-gradient(var(--sample-light), var(--sample-light)) 57px 18px / 23px 11px no-repeat,
-		linear-gradient(var(--color-background-hover), var(--color-background-hover)) 83px 18px /
-			23px 11px no-repeat,
+		linear-gradient(var(--sample-light), var(--sample-light)) 57px 4px / 23px
+			11px no-repeat,
+		linear-gradient(var(--sample-light), var(--sample-light)) 83px 4px / 23px
+			11px no-repeat,
+		linear-gradient(var(--sample-light), var(--sample-light)) 4px 18px / 23px
+			11px no-repeat,
+		linear-gradient(var(--sample-light), var(--sample-light)) 30px 18px / 23px
+			11px no-repeat,
+		linear-gradient(var(--sample-light), var(--sample-light)) 57px 18px / 23px
+			11px no-repeat,
+		linear-gradient(var(--color-background-hover), var(--color-background-hover))
+			83px 18px / 23px 11px no-repeat,
 		var(--color-main-background);
 	box-shadow: 0 2px 6px rgba(27, 28, 29, 0.12);
 	content: '';
@@ -595,16 +617,26 @@ dialog.thematiq-menu-settings label.thematiq-menu-settings__card {
 /* The classic menu: a row of app icons in the bar, the current one in the accent. */
 .thematiq-menu-settings__style-sample--classic {
 	background:
-		linear-gradient(var(--sample-primary), var(--sample-primary)) 8px 5px / 22px 8px no-repeat,
-		linear-gradient(var(--sample-deep), var(--sample-deep)) 40px 4px / 10px 10px no-repeat,
-		linear-gradient(var(--sample-deep), var(--sample-deep)) 54px 4px / 10px 10px no-repeat,
-		linear-gradient(var(--sample-deep), var(--sample-deep)) 68px 4px / 10px 10px no-repeat,
-		linear-gradient(var(--sample-deep), var(--sample-deep)) 82px 4px / 10px 10px no-repeat,
-		linear-gradient(var(--sample-deep), var(--sample-deep)) 96px 4px / 10px 10px no-repeat,
-		linear-gradient(var(--sample-accent), var(--sample-accent)) 110px 4px / 10px 10px no-repeat,
-		linear-gradient(var(--color-main-background), var(--color-main-background)) top / 100% 19px
+		linear-gradient(var(--sample-primary), var(--sample-primary)) 8px 5px / 22px
+			8px no-repeat,
+		linear-gradient(var(--sample-deep), var(--sample-deep)) 40px 4px / 10px 10px
 			no-repeat,
-		var(--nldesign-component-content-surface-background-color, var(--color-background-dark));
+		linear-gradient(var(--sample-deep), var(--sample-deep)) 54px 4px / 10px 10px
+			no-repeat,
+		linear-gradient(var(--sample-deep), var(--sample-deep)) 68px 4px / 10px 10px
+			no-repeat,
+		linear-gradient(var(--sample-deep), var(--sample-deep)) 82px 4px / 10px 10px
+			no-repeat,
+		linear-gradient(var(--sample-deep), var(--sample-deep)) 96px 4px / 10px 10px
+			no-repeat,
+		linear-gradient(var(--sample-accent), var(--sample-accent)) 110px 4px / 10px
+			10px no-repeat,
+		linear-gradient(var(--color-main-background), var(--color-main-background))
+			top / 100% 19px no-repeat,
+		var(
+			--nldesign-component-content-surface-background-color,
+			var(--color-background-dark)
+		);
 }
 
 .thematiq-menu-settings__shape-sample {
@@ -614,7 +646,10 @@ dialog.thematiq-menu-settings label.thematiq-menu-settings__card {
 	padding: 14px;
 	border: 1px solid var(--color-border);
 	border-radius: var(--border-radius-element, 8px);
-	background: var(--nldesign-component-content-surface-background-color, var(--color-background-dark));
+	background: var(
+		--nldesign-component-content-surface-background-color,
+		var(--color-background-dark)
+	);
 }
 
 .thematiq-menu-settings__shape-sample > span {
@@ -622,7 +657,10 @@ dialog.thematiq-menu-settings label.thematiq-menu-settings__card {
 	height: 28px;
 	box-sizing: border-box;
 	border: 1px solid
-		var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text));
+		var(
+			--nldesign-color-primary-light-text,
+			var(--color-primary-element-light-text)
+		);
 	border-radius: 50%;
 	background: var(
 		--nldesign-color-primary-light,
@@ -639,7 +677,10 @@ dialog.thematiq-menu-settings label.thematiq-menu-settings__card {
 	height: 22px;
 	box-sizing: border-box;
 	border: 2px solid
-		var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text));
+		var(
+			--nldesign-color-primary-light-text,
+			var(--color-primary-element-light-text)
+		);
 	border-radius: 6px;
 	background: var(
 		--nldesign-color-primary-light,
@@ -701,7 +742,9 @@ dialog.thematiq-menu-settings label.thematiq-menu-settings__card {
 	border-radius: var(--border-radius-element, 8px);
 }
 
-dialog.thematiq-menu-settings .thematiq-menu-settings__stepper-controls button.thematiq-menu-settings__icon-button {
+dialog.thematiq-menu-settings
+	.thematiq-menu-settings__stepper-controls
+	button.thematiq-menu-settings__icon-button {
 	width: 40px !important;
 	min-width: 40px !important;
 	height: 40px !important;
@@ -757,20 +800,28 @@ dialog.thematiq-menu-settings .thematiq-menu-settings__stepper-controls button.t
 	background:
 		radial-gradient(
 				circle 6px at 6px 50%,
-				var(--nldesign-color-primary-light, var(--color-primary-element-light)) 98%,
+				var(
+						--nldesign-color-primary-light,
+						var(--color-primary-element-light)
+					)
+					98%,
 				transparent
 			)
 			no-repeat,
-		linear-gradient(var(--color-main-text), var(--color-main-text)) 22px 50% / 28px 3px
-			no-repeat;
+		linear-gradient(var(--color-main-text), var(--color-main-text)) 22px 50% /
+			28px 3px no-repeat;
 }
 
 .thematiq-menu-settings__cell--below {
 	background:
-		radial-gradient(circle 6px at 6px 50%, var(--color-background-dark) 98%, transparent)
+		radial-gradient(
+				circle 6px at 6px 50%,
+				var(--color-background-dark) 98%,
+				transparent
+			)
 			no-repeat,
-		linear-gradient(var(--color-text-maxcontrast), var(--color-text-maxcontrast)) 22px 50% /
-			28px 3px no-repeat;
+		linear-gradient(var(--color-text-maxcontrast), var(--color-text-maxcontrast))
+			22px 50% / 28px 3px no-repeat;
 }
 
 .thematiq-menu-settings__fold {
@@ -816,7 +867,8 @@ dialog.thematiq-menu-settings .thematiq-menu-settings__stepper-controls button.t
 	border-radius: 10px;
 }
 
-.thematiq-menu-settings__sample[data-tiles='true'] .thematiq-menu-settings__sample-item {
+.thematiq-menu-settings__sample[data-tiles='true']
+	.thematiq-menu-settings__sample-item {
 	border: 1px solid var(--color-border);
 	background: var(--color-background-hover);
 }
@@ -826,17 +878,21 @@ dialog.thematiq-menu-settings .thematiq-menu-settings__stepper-controls button.t
 	height: 40px;
 }
 
-.thematiq-menu-settings__sample[data-icon-size='small'] .thematiq-menu-settings__app-icon {
+.thematiq-menu-settings__sample[data-icon-size='small']
+	.thematiq-menu-settings__app-icon {
 	width: 32px;
 	height: 32px;
 }
 
-.thematiq-menu-settings__sample[data-shape='square'] .thematiq-menu-settings__app-icon {
+.thematiq-menu-settings__sample[data-shape='square']
+	.thematiq-menu-settings__app-icon {
 	border-radius: var(--border-radius-element, 8px);
 }
 
-.thematiq-menu-settings__sample[data-icon-colour='neutral'] .thematiq-menu-settings__app-icon,
-.thematiq-menu-settings__sample[data-icon-colour='neutral'] .thematiq-menu-settings__app-icon--work {
+.thematiq-menu-settings__sample[data-icon-colour='neutral']
+	.thematiq-menu-settings__app-icon,
+.thematiq-menu-settings__sample[data-icon-colour='neutral']
+	.thematiq-menu-settings__app-icon--work {
 	background: var(--color-background-dark);
 	color: var(--color-main-text);
 }
@@ -943,7 +999,9 @@ dialog.thematiq-menu-settings .thematiq-menu-settings__stepper-controls button.t
 }
 
 /* Upload is a quiet link with its icon, as the board draws it. */
-dialog.thematiq-menu-settings .thematiq-menu-settings__upload button.thematiq-menu-settings__button {
+dialog.thematiq-menu-settings
+	.thematiq-menu-settings__upload
+	button.thematiq-menu-settings__button {
 	min-height: 32px !important;
 	padding: 0 4px !important;
 	border-color: transparent !important;
@@ -1067,12 +1125,14 @@ dialog.thematiq-menu-settings button.thematiq-menu-settings__icon-button {
 	color: var(--color-text-maxcontrast) !important;
 }
 
-dialog.thematiq-menu-settings button.thematiq-menu-settings__icon-button:hover:not(:disabled) {
+dialog.thematiq-menu-settings
+	button.thematiq-menu-settings__icon-button:hover:not(:disabled) {
 	background: var(--color-background-hover) !important;
 	color: var(--color-main-text) !important;
 }
 
-dialog.thematiq-menu-settings button.thematiq-menu-settings__pin[aria-pressed='true'] {
+dialog.thematiq-menu-settings
+	button.thematiq-menu-settings__pin[aria-pressed='true'] {
 	background: var(
 		--nldesign-color-primary-light,
 		var(--color-primary-element-light)
@@ -1094,8 +1154,12 @@ dialog.thematiq-menu-settings button.thematiq-menu-settings__tab {
 	font-weight: 500 !important;
 }
 
-dialog.thematiq-menu-settings button.thematiq-menu-settings__tab[aria-selected='true'] {
-	border-bottom-color: var(--nldesign-color-primary, var(--color-primary-element)) !important;
+dialog.thematiq-menu-settings
+	button.thematiq-menu-settings__tab[aria-selected='true'] {
+	border-bottom-color: var(
+		--nldesign-color-primary,
+		var(--color-primary-element)
+	) !important;
 	color: var(--color-main-text) !important;
 	font-weight: 700 !important;
 }
@@ -1109,7 +1173,8 @@ dialog.thematiq-menu-settings button.thematiq-menu-settings__segment {
 	color: var(--color-text-maxcontrast) !important;
 }
 
-dialog.thematiq-menu-settings button.thematiq-menu-settings__segment[aria-checked='true'] {
+dialog.thematiq-menu-settings
+	button.thematiq-menu-settings__segment[aria-checked='true'] {
 	background: var(--color-main-background) !important;
 	box-shadow: 0 1px 3px rgba(27, 28, 29, 0.16) !important;
 	color: var(--color-main-text) !important;
@@ -1128,9 +1193,13 @@ dialog.thematiq-menu-settings button.thematiq-menu-settings__switch {
 	background: var(--color-border-maxcontrast) !important;
 }
 
-dialog.thematiq-menu-settings button.thematiq-menu-settings__switch[aria-checked='true'] {
+dialog.thematiq-menu-settings
+	button.thematiq-menu-settings__switch[aria-checked='true'] {
 	justify-content: flex-end !important;
-	background: var(--nldesign-color-primary, var(--color-primary-element)) !important;
+	background: var(
+		--nldesign-color-primary,
+		var(--color-primary-element)
+	) !important;
 }
 
 dialog.thematiq-menu-settings button.thematiq-menu-settings__icon-choice {
@@ -1144,7 +1213,8 @@ dialog.thematiq-menu-settings button.thematiq-menu-settings__icon-choice {
 	color: var(--color-main-text) !important;
 }
 
-dialog.thematiq-menu-settings button.thematiq-menu-settings__icon-choice[aria-checked='true'] {
+dialog.thematiq-menu-settings
+	button.thematiq-menu-settings__icon-choice[aria-checked='true'] {
 	border: 2px solid var(--nldesign-color-primary, var(--color-primary-element)) !important;
 	background: var(
 		--nldesign-color-primary-light,
@@ -1164,8 +1234,14 @@ dialog.thematiq-menu-settings button.thematiq-menu-settings__button {
 dialog.thematiq-menu-settings button.thematiq-menu-settings__button--primary,
 dialog.thematiq-menu-settings button.thematiq-menu-settings__button--primary * {
 	border-color: transparent !important;
-	background: var(--nldesign-color-primary, var(--color-primary-element)) !important;
-	color: var(--nldesign-color-primary-text, var(--color-primary-element-text)) !important;
+	background: var(
+		--nldesign-color-primary,
+		var(--color-primary-element)
+	) !important;
+	color: var(
+		--nldesign-color-primary-text,
+		var(--color-primary-element-text)
+	) !important;
 }
 
 dialog.thematiq-menu-settings button.thematiq-menu-settings__reset {
@@ -1229,7 +1305,9 @@ dialog.thematiq-menu-settings button.thematiq-menu-settings__reset {
 	box-shadow: 0 4px 12px rgba(27, 28, 29, 0.08);
 }
 
-.thematiq-menu-settings__panel--theming .thematiq-menu-settings__figure > .thematiq-menu-settings__field-name {
+.thematiq-menu-settings__panel--theming
+	.thematiq-menu-settings__figure
+	> .thematiq-menu-settings__field-name {
 	font-size: 13px;
 	font-weight: 700;
 	line-height: normal;

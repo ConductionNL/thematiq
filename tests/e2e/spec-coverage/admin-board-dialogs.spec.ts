@@ -25,9 +25,13 @@ const THEMING_URL = '/settings/admin/theming'
 async function openAt(page: Page, hash = ''): Promise<void> {
 	await page.goto(THEMING_URL + (hash === '' ? '' : '#' + hash))
 	await page.waitForLoadState('domcontentloaded')
-	await expect(page.locator('#thematiq-page-header')).toBeVisible({ timeout: 30_000 })
+	await expect(page.locator('#thematiq-page-header')).toBeVisible({
+		timeout: 30_000,
+	})
 	if (hash !== '') {
-		await expect(page.locator('section[data-thematiq-panel="' + hash + '"]')).toBeVisible()
+		await expect(
+			page.locator('section[data-thematiq-panel="' + hash + '"]'),
+		).toBeVisible()
 	}
 }
 
@@ -54,13 +58,17 @@ async function escapeReturnsFocus(page: Page, opener: Locator): Promise<void> {
 }
 
 test.describe('the dialogs of the admin Theming page', () => {
-	test('TqTerugNaarNextcloud opens from Back to Nextcloud, Cancel and Escape close it', async ({ page }) => {
+	test('TqTerugNaarNextcloud opens from Back to Nextcloud, Cancel and Escape close it', async ({
+		page,
+	}) => {
 		await openAt(page)
 		const opener = page.locator('#nldesign-reset-theme-btn')
 		await opener.click()
 		const dialog = openDialog(page)
 		await expect(dialog).toBeVisible()
-		await expect(dialog.locator('.thematiq-admin-dialog__button--danger')).toBeEnabled()
+		await expect(
+			dialog.locator('.thematiq-admin-dialog__button--danger'),
+		).toBeEnabled()
 
 		await dialog.getByRole('button', { name: 'Cancel' }).click()
 		await expect(dialog).toHaveCount(0)
@@ -71,7 +79,9 @@ test.describe('the dialogs of the admin Theming page', () => {
 		await escapeReturnsFocus(page, opener)
 	})
 
-	test('TqBasistokens unlocks the base tokens on confirm, and Escape leaves them locked', async ({ page }) => {
+	test('TqBasistokens unlocks the base tokens on confirm, and Escape leaves them locked', async ({
+		page,
+	}) => {
 		await openAt(page)
 		const box = page.locator('#nldesign-base-unlock')
 		const label = page.locator('label[for=nldesign-base-unlock]')
@@ -93,7 +103,9 @@ test.describe('the dialogs of the admin Theming page', () => {
 		await expect(box).not.toBeChecked()
 	})
 
-	test('TqOverridesUploaden opens from Import, offers the file, and Escape closes it', async ({ page }) => {
+	test('TqOverridesUploaden opens from Import, offers the file, and Escape closes it', async ({
+		page,
+	}) => {
 		await openAt(page)
 		const opener = page.locator('#nldesign-import-btn')
 		await opener.click()
@@ -103,14 +115,29 @@ test.describe('the dialogs of the admin Theming page', () => {
 		await escapeReturnsFocus(page, opener)
 	})
 
-	test('TqOverridesOpslaan or TqNieuwThema opens when an edited token is saved, and Escape keeps the edit unsaved', async ({ page }) => {
+	test('TqOverridesOpslaan or TqNieuwThema opens when an edited token is saved, and Escape keeps the edit unsaved', async ({
+		page,
+	}) => {
 		await openAt(page)
 		// With "do not ask again" stored, Save would write without a dialog.
-		const asks = await page.evaluate(() => ['nldesign-confirm-save-theme', 'nldesign-confirm-save-stock']
-			.every((id) => (document.getElementById(id) as HTMLInputElement | null)?.checked !== true))
-		test.skip(!asks, 'saving is set not to ask on this instance, so Save would write')
-		const field = page.locator('.nldesign-color-text:not([disabled]):visible').first()
-		test.skip(await field.count() === 0, 'no editable colour field is open in the token editor')
+		const asks = await page.evaluate(() =>
+			['nldesign-confirm-save-theme', 'nldesign-confirm-save-stock'].every(
+				(id) =>
+					(document.getElementById(id) as HTMLInputElement | null)?.checked
+					!== true,
+			),
+		)
+		test.skip(
+			!asks,
+			'saving is set not to ask on this instance, so Save would write',
+		)
+		const field = page
+			.locator('.nldesign-color-text:not([disabled]):visible')
+			.first()
+		test.skip(
+			(await field.count()) === 0,
+			'no editable colour field is open in the token editor',
+		)
 		const token = await field.getAttribute('data-token')
 		await field.fill('#a1b2c3')
 		await field.dispatchEvent('input')
@@ -119,9 +146,13 @@ test.describe('the dialogs of the admin Theming page', () => {
 		// On the stock theme the question is TqNieuwThema, on any other set TqOverridesOpslaan.
 		const dialog = openDialog(page)
 		await expect(dialog).toBeVisible()
-		const stock = await dialog.getByText('Save these changes as a new theme?').count() > 0
+		const stock =
+			(await dialog.getByText('Save these changes as a new theme?').count())
+			> 0
 		if (stock) {
-			await expect(dialog.getByRole('button', { name: 'Save as new theme' })).toBeVisible()
+			await expect(
+				dialog.getByRole('button', { name: 'Save as new theme' }),
+			).toBeVisible()
 		} else {
 			await expect(dialog).toContainText(token ?? '')
 		}
@@ -129,7 +160,9 @@ test.describe('the dialogs of the admin Theming page', () => {
 		await expect(page.locator('#nldesign-save-status')).toHaveText(/unsaved/i)
 	})
 
-	test('TqTokenToevoegen and TqTokenUitfaseren add, deprecate, withdraw and remove an own token', async ({ page }) => {
+	test('TqTokenToevoegen and TqTokenUitfaseren add, deprecate, withdraw and remove an own token', async ({
+		page,
+	}) => {
 		const slug = 'e2e-dialog-probe-' + Date.now()
 		const name = '--nldesign-org-' + slug
 		await openAt(page, 'own-tokens')
@@ -153,48 +186,112 @@ test.describe('the dialogs of the admin Theming page', () => {
 			await tokenDialog.locator('input[name="value"]').fill('#123456')
 			await tokenDialog.locator('button[type="submit"]').click()
 			await expect(tokenDialog).toBeHidden()
-			const row = page.locator('#nldesign-own-token-list tr', { hasText: name })
+			const row = page.locator('#nldesign-own-token-list tr', {
+				hasText: name,
+			})
 			await expect(row).toBeVisible()
 
 			await row.getByRole('button', { name: 'Deprecate ' + name }).click()
 			const deprecationDialog = page.locator('#nldesign-deprecation-dialog')
-			await expect(deprecationDialog.locator('input[name="token"]')).toHaveValue(name)
-			await deprecationDialog.locator('input[name="message"]').fill('E2E probe, removed by the test.')
+			await expect(
+				deprecationDialog.locator('input[name="token"]'),
+			).toHaveValue(name)
+			await deprecationDialog
+				.locator('input[name="message"]')
+				.fill('E2E probe, removed by the test.')
 			await deprecationDialog.locator('button[type="submit"]').click()
 			await expect(deprecationDialog).toBeHidden()
-			const deprecated = page.locator('#nldesign-deprecation-list tr', { hasText: name })
+			const deprecated = page.locator('#nldesign-deprecation-list tr', {
+				hasText: name,
+			})
 			await expect(deprecated).toBeVisible()
 
-			await deprecated.getByRole('button', { name: 'Withdraw the deprecation of ' + name }).click()
+			await deprecated
+				.getByRole('button', { name: 'Withdraw the deprecation of ' + name })
+				.click()
 			await expect(deprecated).toHaveCount(0)
-			await page.locator('#nldesign-own-token-list tr', { hasText: name }).getByRole('button', { name: 'Remove ' + name }).click()
-			await expect(page.locator('#nldesign-own-token-list tr', { hasText: name })).toHaveCount(0)
+			await page
+				.locator('#nldesign-own-token-list tr', { hasText: name })
+				.getByRole('button', { name: 'Remove ' + name })
+				.click()
+			await expect(
+				page.locator('#nldesign-own-token-list tr', { hasText: name }),
+			).toHaveCount(0)
 		} finally {
 			await page.evaluate(async (token) => {
-				const oc = (window as unknown as { OC: { generateUrl: (p: string) => string, requestToken: string } }).OC
+				const oc = (
+					window as unknown as {
+						OC: {
+							generateUrl: (p: string) => string
+							requestToken: string
+						}
+					}
+				).OC
 				const headers = { requesttoken: oc.requestToken }
 				const base = '/apps/thematiq/settings/tokens'
-				await fetch(oc.generateUrl(base + '/deprecations/' + encodeURIComponent(token)), { method: 'DELETE', headers })
-				await fetch(oc.generateUrl(base + '/own/' + encodeURIComponent(token)), { method: 'DELETE', headers })
+				await fetch(
+					oc.generateUrl(
+						base + '/deprecations/' + encodeURIComponent(token),
+					),
+					{ method: 'DELETE', headers },
+				)
+				await fetch(
+					oc.generateUrl(base + '/own/' + encodeURIComponent(token)),
+					{ method: 'DELETE', headers },
+				)
 			}, name)
 		}
 	})
 
-	test('TqVersieHerstellen opens from a version in the log, Cancel and Escape close it', async ({ page }) => {
+	test('TqVersieHerstellen opens from a version in the log, Cancel and Escape close it', async ({
+		page,
+	}) => {
 		// The log answers with one version and its preview; the restore itself
 		// is refused here, so nothing can be written.
-		await page.route((url) => url.pathname.endsWith('/apps/thematiq/settings/audit'), (route) => route.fulfill({
-			json: { entries: [{ ts: '2026-11-20T10:00:00Z', actor: 'admin', action: 'token_set_changed', new: 'zuiddrecht', versionId: '20261120100000-0001' }] },
-		}))
-		await page.route('**/apps/thematiq/settings/versions/**', (route) => (route.request().url().endsWith('/preview')
-			? route.fulfill({ json: { valid: true, errors: [], changes: [{ field: 'tokenSet', from: 'nextcloud', to: 'zuiddrecht' }], customTokenSets: { add: [], remove: [] }, missingFonts: [] } })
-			: route.abort()))
+		await page.route(
+			(url) => url.pathname.endsWith('/apps/thematiq/settings/audit'),
+			(route) =>
+				route.fulfill({
+					json: {
+						entries: [
+							{
+								ts: '2026-11-20T10:00:00Z',
+								actor: 'admin',
+								action: 'token_set_changed',
+								new: 'zuiddrecht',
+								versionId: '20261120100000-0001',
+							},
+						],
+					},
+				}),
+		)
+		await page.route('**/apps/thematiq/settings/versions/**', (route) =>
+			route.request().url().endsWith('/preview')
+				? route.fulfill({
+						json: {
+							valid: true,
+							errors: [],
+							changes: [
+								{
+									field: 'tokenSet',
+									from: 'nextcloud',
+									to: 'zuiddrecht',
+								},
+							],
+							customTokenSets: { add: [], remove: [] },
+							missingFonts: [],
+						},
+					})
+				: route.abort(),
+		)
 		await openAt(page, 'log')
 		const restore = page.locator('.nldesign-audit-restore').first()
 		await restore.click()
 		const dialog = openDialog(page)
 		await expect(dialog).toBeVisible()
-		await expect(dialog.getByRole('button', { name: 'Restore version' })).toBeVisible()
+		await expect(
+			dialog.getByRole('button', { name: 'Restore version' }),
+		).toBeVisible()
 		await dialog.getByRole('button', { name: 'Cancel' }).click()
 		await expect(dialog).toHaveCount(0)
 		await expect(restore).toBeFocused()
@@ -204,36 +301,74 @@ test.describe('the dialogs of the admin Theming page', () => {
 		await escapeReturnsFocus(page, restore)
 	})
 
-	test('TqMerkenKiezen opens after uploading a file with several brands, and Escape imports nothing', async ({ page }) => {
+	test('TqMerkenKiezen opens after uploading a file with several brands, and Escape imports nothing', async ({
+		page,
+	}) => {
 		// The upload is answered here with two brands; nothing reaches the server.
 		let uploads = 0
 		await page.route('**/apps/thematiq/settings/tokensets/upload', (route) => {
 			uploads++
 			return route.fulfill({
-				json: { multiBrand: true, stored: false, brands: [{ key: 'north', name: 'North', tokenCount: 12 }, { key: 'south', name: 'South', tokenCount: 9 }] },
+				json: {
+					multiBrand: true,
+					stored: false,
+					brands: [
+						{ key: 'north', name: 'North', tokenCount: 12 },
+						{ key: 'south', name: 'South', tokenCount: 9 },
+					],
+				},
 			})
 		})
 		await openAt(page, 'own-sets')
 		await page.locator('#nldesign-upload-name').fill('E2E brands probe')
 		const chooser = page.waitForEvent('filechooser')
 		await page.locator('#nldesign-upload-btn').click()
-		await (await chooser).setFiles({ name: 'brands.json', mimeType: 'application/json', buffer: Buffer.from('{}') })
+		await (
+			await chooser
+		).setFiles({
+			name: 'brands.json',
+			mimeType: 'application/json',
+			buffer: Buffer.from('{}'),
+		})
 		const dialog = openDialog(page)
 		await expect(dialog).toBeVisible()
-		await expect(dialog.locator('.nldesign-brand-picker input[type="checkbox"]')).toHaveCount(2)
+		await expect(
+			dialog.locator('.nldesign-brand-picker input[type="checkbox"]'),
+		).toHaveCount(2)
 		await page.keyboard.press('Escape')
 		await expect(dialog).toHaveCount(0)
 		expect(uploads).toBe(1)
 	})
 
-	test('the font delete dialog (TqLettertypen) opens from Delete, and Cancel and Escape keep the font', async ({ page }) => {
+	test('the font delete dialog (TqLettertypen) opens from Delete, and Cancel and Escape keep the font', async ({
+		page,
+	}) => {
 		// The uploaded-fonts list is answered with one font; a delete is refused here.
-		await page.route((url) => url.pathname.endsWith('/apps/thematiq/settings/fonts'), (route) => route.fulfill({
-			json: { fonts: [{ id: 'e2e-probe', name: 'E2E Probe Sans', role: 'body', size: 2048 }] },
-		}))
-		await page.route('**/apps/thematiq/settings/fonts/e2e-probe', (route) => route.abort())
+		await page.route(
+			(url) => url.pathname.endsWith('/apps/thematiq/settings/fonts'),
+			(route) =>
+				route.fulfill({
+					json: {
+						fonts: [
+							{
+								id: 'e2e-probe',
+								name: 'E2E Probe Sans',
+								role: 'body',
+								size: 2048,
+							},
+						],
+					},
+				}),
+		)
+		await page.route('**/apps/thematiq/settings/fonts/e2e-probe', (route) =>
+			route.abort(),
+		)
 		await openAt(page, 'fonts')
-		const remove = page.locator('#nldesign-font-list .thematiq-font-row', { hasText: 'E2E Probe Sans' }).getByRole('button', { name: /Delete/ })
+		const remove = page
+			.locator('#nldesign-font-list .thematiq-font-row', {
+				hasText: 'E2E Probe Sans',
+			})
+			.getByRole('button', { name: /Delete/ })
 		await remove.click()
 		const dialog = openDialog(page)
 		await expect(dialog).toContainText('E2E Probe Sans')
@@ -246,7 +381,9 @@ test.describe('the dialogs of the admin Theming page', () => {
 		await escapeReturnsFocus(page, remove)
 	})
 
-	test('TqThemingBijwerken and TqNieuwThema close on Escape and give focus back', async ({ page }) => {
+	test('TqThemingBijwerken and TqNieuwThema close on Escape and give focus back', async ({
+		page,
+	}) => {
 		// Their real triggers apply a token set or save over the stock theme,
 		// which changes the shared instance; the frame's behaviour is checked
 		// by opening them as admin.js does.
@@ -254,12 +391,21 @@ test.describe('the dialogs of the admin Theming page', () => {
 		const opener = page.locator('#nldesign-import-btn')
 		await opener.focus()
 		await page.evaluate(() => {
-			const w = window as unknown as { ThematiqThemingUpdateDialog: { open: (o: object) => void } }
+			const w = window as unknown as {
+				ThematiqThemingUpdateDialog: { open: (o: object) => void }
+			}
 			w.ThematiqThemingUpdateDialog.open({
 				opener: document.getElementById('nldesign-import-btn'),
 				mode: 'match',
 				setName: 'Gemeente Zuiddrecht',
-				diffs: [{ label: 'Primary colour', kind: 'color', current: '#00679e', proposed: '#3669a5' }],
+				diffs: [
+					{
+						label: 'Primary colour',
+						kind: 'color',
+						current: '#00679e',
+						proposed: '#3669a5',
+					},
+				],
 				onConfirm: () => undefined,
 			})
 		})
@@ -267,8 +413,13 @@ test.describe('the dialogs of the admin Theming page', () => {
 		await escapeReturnsFocus(page, opener)
 
 		await page.evaluate(() => {
-			const w = window as unknown as { ThematiqNewThemeDialog: { open: (o: object) => void } }
-			w.ThematiqNewThemeDialog.open({ opener: document.getElementById('nldesign-import-btn'), proceed: () => undefined })
+			const w = window as unknown as {
+				ThematiqNewThemeDialog: { open: (o: object) => void }
+			}
+			w.ThematiqNewThemeDialog.open({
+				opener: document.getElementById('nldesign-import-btn'),
+				proceed: () => undefined,
+			})
 		})
 		await expect(openDialog(page)).toBeVisible()
 		await escapeReturnsFocus(page, opener)

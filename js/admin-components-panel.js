@@ -14,7 +14,11 @@
  */
 ;(function thematiqComponentsPanel() {
 	/** The instrument's parts, in the order the panel shows them. */
-	var PARTS = ['.nldesign-pg-selector', '#nldesign-preview', '#nldesign-token-editor']
+	var PARTS = [
+		'.nldesign-pg-selector',
+		'#nldesign-preview',
+		'#nldesign-token-editor',
+	]
 	var lent = []
 	var waiting = null
 
@@ -45,7 +49,10 @@
 			return { id: '', name: '' }
 		}
 		var option = select.options[select.selectedIndex]
-		return { id: select.value, name: option !== undefined ? option.textContent.trim() : select.value }
+		return {
+			id: select.value,
+			name: option !== undefined ? option.textContent.trim() : select.value,
+		}
 	}
 
 	/**
@@ -72,7 +79,9 @@
 	function headerButton(label, id, primary) {
 		var button = document.createElement('button')
 		button.type = 'button'
-		button.className = 'thematiq-page-header__action' + (primary === true ? ' thematiq-page-header__action--primary' : '')
+		button.className =
+			'thematiq-page-header__action'
+			+ (primary === true ? ' thematiq-page-header__action--primary' : '')
 		button.textContent = label
 		button.addEventListener('click', function () {
 			press(id)
@@ -88,13 +97,37 @@
 	function actions() {
 		var reference = document.getElementById('nldesign-token-reference-download')
 		var items = [
-			{ text: tr('Upload'), hint: tr('Read an overrides file into this theme'), run: function () { press('nldesign-import-btn') } },
-			{ text: tr('Export as token set'), hint: tr('All values together as a new, complete set'), run: function () { press('nldesign-pg-export-btn') } },
-			{ text: tr('Own component'), hint: tr('Preview HTML and CSS safely'), href: '#components/own' },
-			{ text: tr('Motion tokens'), hint: tr('Speed and curve of every transition'), href: '#motion' },
+			{
+				text: tr('Upload'),
+				hint: tr('Read an overrides file into this theme'),
+				run: function () {
+					press('nldesign-import-btn')
+				},
+			},
+			{
+				text: tr('Export as token set'),
+				hint: tr('All values together as a new, complete set'),
+				run: function () {
+					press('nldesign-pg-export-btn')
+				},
+			},
+			{
+				text: tr('Own component'),
+				hint: tr('Preview HTML and CSS safely'),
+				href: '#components/own',
+			},
+			{
+				text: tr('Motion tokens'),
+				hint: tr('Speed and curve of every transition'),
+				href: '#motion',
+			},
 		]
 		if (reference !== null && reference.getAttribute('href')) {
-			items.push({ text: tr('Download token overview'), hint: tr('All tokens of this set as Markdown'), href: reference.getAttribute('href') })
+			items.push({
+				text: tr('Download token overview'),
+				hint: tr('All tokens of this set as Markdown'),
+				href: reference.getAttribute('href'),
+			})
 		}
 		return [
 			headerButton(tr('Download'), 'nldesign-export-btn', false),
@@ -111,7 +144,8 @@
 	function introNodes() {
 		var nodes = []
 		var active = document.createElement('span')
-		active.className = 'thematiq-set-panel__status thematiq-set-panel__status--active'
+		active.className =
+			'thematiq-set-panel__status thematiq-set-panel__status--active'
 		active.textContent = tr('Active')
 		nodes.push(active)
 		var count = document.getElementById('nldesign-token-count')
@@ -182,7 +216,9 @@
 			return
 		}
 		var find = function () {
-			return section.querySelector('.nldesign-pg-selector .nldesign-tab-btn[data-tab="own"]')
+			return section.querySelector(
+				'.nldesign-pg-selector .nldesign-tab-btn[data-tab="own"]',
+			)
 		}
 		if (find() !== null) {
 			find().click()
@@ -211,7 +247,10 @@
 			crumb: tr('Components'),
 			crumbs: function () {
 				var set = activeSet()
-				return [{ text: tr('Token sets'), href: '#' }, { text: set.id, href: '#set/' + encodeURIComponent(set.id) }]
+				return [
+					{ text: tr('Token sets'), href: '#' },
+					{ text: set.id, href: '#set/' + encodeURIComponent(set.id) },
+				]
 			},
 			intro: introNodes,
 			actions: actions,
@@ -220,7 +259,9 @@
 				chooseTab(section, argument)
 			},
 			onClose: function () {
-				var section = document.querySelector('section[data-thematiq-panel="components"]')
+				var section = document.querySelector(
+					'section[data-thematiq-panel="components"]',
+				)
 				if (section !== null) {
 					chooseTab(section, '')
 					giveBack(section)

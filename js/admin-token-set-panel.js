@@ -23,40 +23,59 @@
 
 	/** The colours the Colours tab names, per group: label, token and what it is measured as. */
 	var GROUPS = [
-		['Surface', [
-			['Background', '--nldesign-color-background', 'surface'],
-			['Top bar', '--nldesign-color-header-background', 'surface'],
-			['Menu', '--nldesign-color-nav-background', 'surface'],
-			['Hover', '--nldesign-color-background-hover', 'surface'],
-			['Line', '--nldesign-color-border', 'surface'],
-			['Line dark', '--nldesign-color-border-dark', 'border'],
-		]],
-		['Ink', [
-			['Text', '--nldesign-color-text', 'text'],
-			['Grey text', '--nldesign-color-text-muted', 'text'],
-			['Top bar text', '--nldesign-color-header-text', 'text'],
-			['Link', '--nldesign-color-link', 'text'],
-			['Link on hover', '--nldesign-color-link-hover', 'text'],
-		]],
-		['Action', [
-			['Primary', '--nldesign-color-primary', 'text'],
-			['Text on primary', '--nldesign-color-primary-text', 'on-primary'],
-			['Primary on hover', '--nldesign-color-primary-hover', 'text'],
-			['Primary soft', '--nldesign-color-primary-light', 'surface'],
-			['Focus', '--nldesign-color-focus', 'text'],
-		]],
-		['Accent', [
-			['Accent', '--nldesign-color-accent', 'text'],
-			['Accent soft', '--nldesign-color-accent-light', 'surface'],
-			['Accent text', '--nldesign-color-accent-text', 'text'],
-			['Selected menu item', '--nldesign-component-navigation-active-color', 'text'],
-		]],
-		['Status', [
-			['Error', '--nldesign-color-error', 'text'],
-			['Warning', '--nldesign-color-warning', 'text'],
-			['Success', '--nldesign-color-success', 'text'],
-			['Information', '--nldesign-color-info', 'text'],
-		]],
+		[
+			'Surface',
+			[
+				['Background', '--nldesign-color-background', 'surface'],
+				['Top bar', '--nldesign-color-header-background', 'surface'],
+				['Menu', '--nldesign-color-nav-background', 'surface'],
+				['Hover', '--nldesign-color-background-hover', 'surface'],
+				['Line', '--nldesign-color-border', 'surface'],
+				['Line dark', '--nldesign-color-border-dark', 'border'],
+			],
+		],
+		[
+			'Ink',
+			[
+				['Text', '--nldesign-color-text', 'text'],
+				['Grey text', '--nldesign-color-text-muted', 'text'],
+				['Top bar text', '--nldesign-color-header-text', 'text'],
+				['Link', '--nldesign-color-link', 'text'],
+				['Link on hover', '--nldesign-color-link-hover', 'text'],
+			],
+		],
+		[
+			'Action',
+			[
+				['Primary', '--nldesign-color-primary', 'text'],
+				['Text on primary', '--nldesign-color-primary-text', 'on-primary'],
+				['Primary on hover', '--nldesign-color-primary-hover', 'text'],
+				['Primary soft', '--nldesign-color-primary-light', 'surface'],
+				['Focus', '--nldesign-color-focus', 'text'],
+			],
+		],
+		[
+			'Accent',
+			[
+				['Accent', '--nldesign-color-accent', 'text'],
+				['Accent soft', '--nldesign-color-accent-light', 'surface'],
+				['Accent text', '--nldesign-color-accent-text', 'text'],
+				[
+					'Selected menu item',
+					'--nldesign-component-navigation-active-color',
+					'text',
+				],
+			],
+		],
+		[
+			'Status',
+			[
+				['Error', '--nldesign-color-error', 'text'],
+				['Warning', '--nldesign-color-warning', 'text'],
+				['Success', '--nldesign-color-success', 'text'],
+				['Information', '--nldesign-color-info', 'text'],
+			],
+		],
 	]
 
 	var TABS = [
@@ -67,7 +86,15 @@
 		['website', 'Website'],
 	]
 
-	var state = { id: '', tokens: {}, dark: {}, darkVersion: '', tab: 'colours', mode: 'light', query: '' }
+	var state = {
+		id: '',
+		tokens: {},
+		dark: {},
+		darkVersion: '',
+		tab: 'colours',
+		mode: 'light',
+		query: '',
+	}
 
 	/**
 	 * A translated string of the app, with `{name}` placeholders filled.
@@ -148,12 +175,15 @@
 	function resolve(value, tokens) {
 		var text = String(value || '')
 		for (var depth = 0; depth < 8 && text.indexOf('var(') !== -1; depth++) {
-			var next = text.replace(/var\(\s*(--[a-z0-9_-]+)\s*(?:,\s*([^()]*))?\)/gi, function (all, name, fallback) {
-				if (tokens[name] !== undefined) {
-					return tokens[name]
-				}
-				return fallback !== undefined ? fallback.trim() : all
-			})
+			var next = text.replace(
+				/var\(\s*(--[a-z0-9_-]+)\s*(?:,\s*([^()]*))?\)/gi,
+				function (all, name, fallback) {
+					if (tokens[name] !== undefined) {
+						return tokens[name]
+					}
+					return fallback !== undefined ? fallback.trim() : all
+				},
+			)
 			if (next === text) {
 				break
 			}
@@ -169,10 +199,14 @@
 	 * @return {string|null} The colour.
 	 */
 	function hex(value) {
-		var text = String(value || '').trim().toLowerCase()
+		var text = String(value || '')
+			.trim()
+			.toLowerCase()
 		var short = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/.exec(text)
 		if (short !== null) {
-			return '#' + short[1] + short[1] + short[2] + short[2] + short[3] + short[3]
+			return (
+				'#' + short[1] + short[1] + short[2] + short[2] + short[3] + short[3]
+			)
 		}
 		var long = /^#([0-9a-f]{6})([0-9a-f]{2})?$/.exec(text)
 		if (long !== null) {
@@ -180,9 +214,16 @@
 		}
 		var rgb = /^rgba?\(\s*(\d+)[\s,]+(\d+)[\s,]+(\d+)/.exec(text)
 		if (rgb !== null) {
-			return '#' + [rgb[1], rgb[2], rgb[3]].map(function (part) {
-				return ('0' + Math.min(255, parseInt(part, 10)).toString(16)).slice(-2)
-			}).join('')
+			return (
+				'#'
+				+ [rgb[1], rgb[2], rgb[3]]
+					.map(function (part) {
+						return (
+							'0' + Math.min(255, parseInt(part, 10)).toString(16)
+						).slice(-2)
+					})
+					.join('')
+			)
 		}
 		if (text === 'white') {
 			return '#ffffff'
@@ -251,7 +292,11 @@
 	 * @return {string} The label.
 	 */
 	function labelOf(name) {
-		var words = name.replace(/^--/, '').replace(/^.*?-colou?r-/, '').replace(/^(nldesign|nl)-/, '').replace(/-/g, ' ')
+		var words = name
+			.replace(/^--/, '')
+			.replace(/^.*?-colou?r-/, '')
+			.replace(/^(nldesign|nl)-/, '')
+			.replace(/-/g, ' ')
 		return words.charAt(0).toUpperCase() + words.slice(1)
 	}
 
@@ -263,7 +308,10 @@
 	 * @return {string} surface, border or text.
 	 */
 	function kindOf(name, colour) {
-		if (/text|ink|link|-color$|foreground/.test(name) && !/background/.test(name)) {
+		if (
+			/text|ink|link|-color$|foreground/.test(name)
+			&& !/background/.test(name)
+		) {
 			return 'text'
 		}
 		if (/border|line|outline/.test(name)) {
@@ -284,21 +332,35 @@
 	function row(label, name, kind, tokens) {
 		var value = resolve(tokens[name], tokens)
 		var colour = hex(value)
-		var entry = { label: label, name: name, value: value, colour: colour, kind: null, ratio: null, pass: true, verdict: '' }
+		var entry = {
+			label: label,
+			name: name,
+			value: value,
+			colour: colour,
+			kind: null,
+			ratio: null,
+			pass: true,
+			verdict: '',
+		}
 		if (colour === null) {
 			return entry
 		}
 		entry.kind = kind || kindOf(name, colour)
 		if (entry.kind === 'on-primary') {
-			var primary = hex(resolve(tokens['--nldesign-color-primary'], tokens)) || '#ffffff'
+			var primary =
+				hex(resolve(tokens['--nldesign-color-primary'], tokens)) || '#ffffff'
 			entry.ratio = ratio(colour, primary)
 			entry.pass = entry.ratio >= 4.5
-			entry.verdict = tr('{ratio} on action', { ratio: formatRatio(entry.ratio) })
+			entry.verdict = tr('{ratio} on action', {
+				ratio: formatRatio(entry.ratio),
+			})
 			return entry
 		}
 		entry.ratio = ratio(colour, '#ffffff')
 		if (entry.kind === 'surface') {
-			entry.verdict = tr('Surface, {ratio}', { ratio: formatRatio(entry.ratio) })
+			entry.verdict = tr('Surface, {ratio}', {
+				ratio: formatRatio(entry.ratio),
+			})
 			return entry
 		}
 		entry.pass = entry.ratio >= (entry.kind === 'border' ? 3 : 4.5)
@@ -314,24 +376,40 @@
 	 */
 	function classify(tokens) {
 		var named = {}
-		var tabs = { colours: [], typography: [], shape: [], components: [], website: [] }
+		var tabs = {
+			colours: [],
+			typography: [],
+			shape: [],
+			components: [],
+			website: [],
+		}
 		GROUPS.forEach(function (group) {
-			var rows = group[1].filter(function (item) {
-				return tokens[item[1]] !== undefined
-			}).map(function (item) {
-				named[item[1]] = true
-				return row(tr(item[0]), item[1], item[2], tokens)
-			})
+			var rows = group[1]
+				.filter(function (item) {
+					return tokens[item[1]] !== undefined
+				})
+				.map(function (item) {
+					named[item[1]] = true
+					return row(tr(item[0]), item[1], item[2], tokens)
+				})
 			if (rows.length > 0) {
 				tabs.colours.push({ title: tr(group[0]), rows: rows })
 			}
 		})
-		var rest = { colours: [], typography: [], shape: [], components: [], website: [] }
+		var rest = {
+			colours: [],
+			typography: [],
+			shape: [],
+			components: [],
+			website: [],
+		}
 		Object.keys(tokens).forEach(function (name) {
 			if (named[name] === true) {
 				return
 			}
-			rest[tabOf(name, resolve(tokens[name], tokens))].push(row(labelOf(name), name, null, tokens))
+			rest[tabOf(name, resolve(tokens[name], tokens))].push(
+				row(labelOf(name), name, null, tokens),
+			)
 		})
 		if (rest.colours.length > 0) {
 			tabs.colours.push({ title: tr('Other colours'), rows: rest.colours })
@@ -364,7 +442,12 @@
 	 * @return {boolean} Whether it matches.
 	 */
 	function matches(entry, query) {
-		return query === '' || (entry.label + ' ' + entry.name + ' ' + entry.value).toLowerCase().indexOf(query) !== -1
+		return (
+			query === ''
+			|| (entry.label + ' ' + entry.name + ' ' + entry.value)
+				.toLowerCase()
+				.indexOf(query) !== -1
+		)
 	}
 
 	/**
@@ -393,9 +476,12 @@
 	 */
 	function setById(id) {
 		var sets = initial('tokenSets', [])
-		var found = Array.isArray(sets) === true ? sets.filter(function (set) {
-			return set.id === id
-		})[0] : undefined
+		var found =
+			Array.isArray(sets) === true
+				? sets.filter(function (set) {
+						return set.id === id
+					})[0]
+				: undefined
 		return found || { id: id, name: id }
 	}
 
@@ -405,7 +491,9 @@
 	 * @return {string} The set.
 	 */
 	function activeId() {
-		return state.active !== undefined ? state.active : initial('currentTokenSet', '')
+		return state.active !== undefined
+			? state.active
+			: initial('currentTokenSet', '')
 	}
 
 	/**
@@ -415,7 +503,12 @@
 	 * @return {string} The family, or an empty string.
 	 */
 	function fontOf(tokens) {
-		var family = resolve(tokens['--nldesign-font-family'] || tokens['--nldesign-typography-sans-serif-font-family'] || '', tokens)
+		var family = resolve(
+			tokens['--nldesign-font-family']
+				|| tokens['--nldesign-typography-sans-serif-font-family']
+				|| '',
+			tokens,
+		)
 		return family.split(',')[0].replace(/["']/g, '').trim()
 	}
 
@@ -427,8 +520,12 @@
 	 * @return {string} The URL.
 	 */
 	function referenceUrl(id, download) {
-		var path = '/apps/thematiq/api/token-sets/' + encodeURIComponent(id) + '/reference'
-		var base = window.OC && typeof window.OC.generateUrl === 'function' ? window.OC.generateUrl(path) : path
+		var path =
+			'/apps/thematiq/api/token-sets/' + encodeURIComponent(id) + '/reference'
+		var base =
+			window.OC && typeof window.OC.generateUrl === 'function'
+				? window.OC.generateUrl(path)
+				: path
 		return base + '?format=' + (download ? 'md&download=1' : 'html')
 	}
 
@@ -450,26 +547,39 @@
 	 */
 	function drawTabs(root, tabs) {
 		var list = root.querySelector('.thematiq-set-panel__tabs')
-		list.replaceChildren.apply(list, TABS.map(function (tab) {
-			var button = el('button', 'thematiq-set-panel__tab')
-			button.type = 'button'
-			button.id = 'thematiq-set-tab-' + tab[0]
-			button.dataset.tab = tab[0]
-			button.setAttribute('role', 'tab')
-			button.setAttribute('aria-controls', 'thematiq-set-tokens')
-			var selected = state.tab === tab[0]
-			button.setAttribute('aria-selected', selected ? 'true' : 'false')
-			button.tabIndex = selected ? 0 : -1
-			button.appendChild(document.createTextNode(tr(tab[1])))
-			var n = count(tabs[tab[0]])
-			if (n > 0 && tab[0] !== 'typography' && tab[0] !== 'shape') {
-				button.appendChild(document.createTextNode(' '))
-				button.appendChild(el('span', 'thematiq-set-panel__tab-count', String(n)))
-			}
-			button.setAttribute('aria-label', n === 1 ? tr('{tab} 1 token', { tab: tr(tab[1]) }) : tr('{tab} {count} tokens', { tab: tr(tab[1]), count: n }))
-			return button
-		}))
-		root.querySelector('.thematiq-set-panel__tokens').setAttribute('aria-labelledby', 'thematiq-set-tab-' + state.tab)
+		list.replaceChildren.apply(
+			list,
+			TABS.map(function (tab) {
+				var button = el('button', 'thematiq-set-panel__tab')
+				button.type = 'button'
+				button.id = 'thematiq-set-tab-' + tab[0]
+				button.dataset.tab = tab[0]
+				button.setAttribute('role', 'tab')
+				button.setAttribute('aria-controls', 'thematiq-set-tokens')
+				var selected = state.tab === tab[0]
+				button.setAttribute('aria-selected', selected ? 'true' : 'false')
+				button.tabIndex = selected ? 0 : -1
+				button.appendChild(document.createTextNode(tr(tab[1])))
+				var n = count(tabs[tab[0]])
+				if (n > 0 && tab[0] !== 'typography' && tab[0] !== 'shape') {
+					button.appendChild(document.createTextNode(' '))
+					button.appendChild(
+						el('span', 'thematiq-set-panel__tab-count', String(n)),
+					)
+				}
+				button.setAttribute(
+					'aria-label',
+					n === 1
+						? tr('{tab} 1 token', { tab: tr(tab[1]) })
+						: tr('{tab} {count} tokens', { tab: tr(tab[1]), count: n }),
+				)
+				return button
+			}),
+		)
+		root.querySelector('.thematiq-set-panel__tokens').setAttribute(
+			'aria-labelledby',
+			'thematiq-set-tab-' + state.tab,
+		)
 	}
 
 	/**
@@ -492,7 +602,9 @@
 			}
 			var block = el('div', 'thematiq-set-panel__group')
 			if (group.title !== '') {
-				block.appendChild(el('h3', 'thematiq-set-panel__group-title', group.title))
+				block.appendChild(
+					el('h3', 'thematiq-set-panel__group-title', group.title),
+				)
 			}
 			var items = el('div', 'thematiq-set-panel__group-rows')
 			items.setAttribute('role', 'list')
@@ -509,13 +621,34 @@
 				}
 				line.appendChild(chip)
 				var name = el('span', 'thematiq-set-panel__name')
-				name.appendChild(el('span', 'thematiq-set-panel__label', entry.label))
+				name.appendChild(
+					el('span', 'thematiq-set-panel__label', entry.label),
+				)
 				name.appendChild(el('code', 'thematiq-set-panel__token', entry.name))
 				line.appendChild(name)
-				line.appendChild(el('code', 'thematiq-set-panel__value', entry.colour !== null && entry.value.charAt(0) === '#' ? entry.value.toUpperCase() : entry.value))
+				line.appendChild(
+					el(
+						'code',
+						'thematiq-set-panel__value',
+						entry.colour !== null && entry.value.charAt(0) === '#'
+							? entry.value.toUpperCase()
+							: entry.value,
+					),
+				)
 				var verdict = el('span', 'thematiq-set-panel__verdict')
 				if (entry.ratio !== null) {
-					verdict.appendChild(el('span', 'thematiq-set-panel__pill thematiq-set-panel__pill--' + (entry.kind === 'surface' ? 'surface' : (entry.pass ? 'pass' : 'warn')), entry.verdict))
+					verdict.appendChild(
+						el(
+							'span',
+							'thematiq-set-panel__pill thematiq-set-panel__pill--'
+								+ (entry.kind === 'surface'
+									? 'surface'
+									: entry.pass
+										? 'pass'
+										: 'warn'),
+							entry.verdict,
+						),
+					)
 				}
 				line.appendChild(verdict)
 				items.appendChild(line)
@@ -523,15 +656,31 @@
 			nodes.push(block)
 		})
 		if (nodes.length === 0) {
-			nodes.push(el('p', 'thematiq-panel__fact-hint thematiq-set-panel__empty', query !== '' ? tr('No token matches the search.') : tr('This set brings no tokens of this kind.')))
+			nodes.push(
+				el(
+					'p',
+					'thematiq-panel__fact-hint thematiq-set-panel__empty',
+					query !== ''
+						? tr('No token matches the search.')
+						: tr('This set brings no tokens of this kind.'),
+				),
+			)
 		}
 		list.replaceChildren.apply(list, nodes)
 		var short = shortfalls(tabs.colours)
 		var summary = root.querySelector('.thematiq-set-panel__summary')
-		summary.classList.toggle('thematiq-set-panel__summary--warn', short.length > 0)
-		summary.textContent = short.length === 0
-			? tr('All text colours reach 4.5 : 1 on white')
-			: (short.length === 1 ? tr('1 colour falls short on white') : tr('{count} colours fall short on white', { count: short.length }))
+		summary.classList.toggle(
+			'thematiq-set-panel__summary--warn',
+			short.length > 0,
+		)
+		summary.textContent =
+			short.length === 0
+				? tr('All text colours reach 4.5 : 1 on white')
+				: short.length === 1
+					? tr('1 colour falls short on white')
+					: tr('{count} colours fall short on white', {
+							count: short.length,
+						})
 	}
 
 	/**
@@ -542,7 +691,9 @@
 	 */
 	function drawPreview(root) {
 		var dark = state.mode === 'dark' && Object.keys(state.dark).length > 0
-		var tokens = dark ? Object.assign({}, state.tokens, state.dark) : state.tokens
+		var tokens = dark
+			? Object.assign({}, state.tokens, state.dark)
+			: state.tokens
 		var pick = function (names, fallback) {
 			for (var i = 0; i < names.length; i++) {
 				var value = hex(resolve(tokens[names[i]], tokens))
@@ -554,31 +705,106 @@
 		}
 		var frame = root.querySelector('.thematiq-set-panel__frame')
 		var vars = {
-			'--frame-ground': pick(dark ? ['--nldesign-color-background'] : ['--nldesign-component-content-surface-background-color', '--nldesign-color-background'], dark ? '#171a20' : '#f5f6f8'),
-			'--frame-card': pick(dark ? ['--nldesign-color-background-dark', '--nldesign-color-background'] : ['--nldesign-color-background'], dark ? '#22262e' : '#ffffff'),
-			'--frame-bar': pick(['--nldesign-color-header-background'], dark ? '#22262e' : '#ffffff'),
-			'--frame-bar-ink': pick(['--nldesign-color-header-text', '--nldesign-color-text'], dark ? '#e2e3e4' : '#1b1c1d'),
-			'--frame-ink': pick(['--nldesign-color-text'], dark ? '#e2e3e4' : '#1b1c1d'),
+			'--frame-ground': pick(
+				dark
+					? ['--nldesign-color-background']
+					: [
+							'--nldesign-component-content-surface-background-color',
+							'--nldesign-color-background',
+						],
+				dark ? '#171a20' : '#f5f6f8',
+			),
+			'--frame-card': pick(
+				dark
+					? [
+							'--nldesign-color-background-dark',
+							'--nldesign-color-background',
+						]
+					: ['--nldesign-color-background'],
+				dark ? '#22262e' : '#ffffff',
+			),
+			'--frame-bar': pick(
+				['--nldesign-color-header-background'],
+				dark ? '#22262e' : '#ffffff',
+			),
+			'--frame-bar-ink': pick(
+				['--nldesign-color-header-text', '--nldesign-color-text'],
+				dark ? '#e2e3e4' : '#1b1c1d',
+			),
+			'--frame-ink': pick(
+				['--nldesign-color-text'],
+				dark ? '#e2e3e4' : '#1b1c1d',
+			),
 			'--frame-muted': pick(['--nldesign-color-text-muted'], '#5e6168'),
 			'--frame-line': pick(['--nldesign-color-border'], '#e4e6ea'),
-			'--frame-link': pick(['--nldesign-color-link', '--nldesign-color-primary'], '#3669a5'),
-			'--frame-button': pick(['--nldesign-color-button-primary-background', '--nldesign-color-primary'], '#3669a5'),
-			'--frame-button-ink': pick(['--nldesign-color-button-primary-text', '--nldesign-color-primary-text'], '#ffffff'),
-			'--frame-active': pick(['--nldesign-color-accent-light', '--nldesign-color-primary-light'], '#eaf0f7'),
-			'--frame-active-ink': pick(['--nldesign-component-navigation-active-color', '--nldesign-color-accent-text', '--nldesign-color-primary'], '#234a78'),
-			'--frame-info': pick(['--nldesign-component-status-badge-info-background-color', '--nldesign-color-primary-light'], '#eaf0f7'),
-			'--frame-info-ink': pick(['--nldesign-component-status-badge-info-color', '--nldesign-color-primary-hover'], '#234a78'),
-			'--frame-alert': pick(['--nldesign-color-accent-light', '--nldesign-component-status-badge-error-background-color'], '#fcedec'),
-			'--frame-alert-ink': pick(['--nldesign-color-accent-text', '--nldesign-color-error'], '#a30000'),
+			'--frame-link': pick(
+				['--nldesign-color-link', '--nldesign-color-primary'],
+				'#3669a5',
+			),
+			'--frame-button': pick(
+				[
+					'--nldesign-color-button-primary-background',
+					'--nldesign-color-primary',
+				],
+				'#3669a5',
+			),
+			'--frame-button-ink': pick(
+				[
+					'--nldesign-color-button-primary-text',
+					'--nldesign-color-primary-text',
+				],
+				'#ffffff',
+			),
+			'--frame-active': pick(
+				['--nldesign-color-accent-light', '--nldesign-color-primary-light'],
+				'#eaf0f7',
+			),
+			'--frame-active-ink': pick(
+				[
+					'--nldesign-component-navigation-active-color',
+					'--nldesign-color-accent-text',
+					'--nldesign-color-primary',
+				],
+				'#234a78',
+			),
+			'--frame-info': pick(
+				[
+					'--nldesign-component-status-badge-info-background-color',
+					'--nldesign-color-primary-light',
+				],
+				'#eaf0f7',
+			),
+			'--frame-info-ink': pick(
+				[
+					'--nldesign-component-status-badge-info-color',
+					'--nldesign-color-primary-hover',
+				],
+				'#234a78',
+			),
+			'--frame-alert': pick(
+				[
+					'--nldesign-color-accent-light',
+					'--nldesign-component-status-badge-error-background-color',
+				],
+				'#fcedec',
+			),
+			'--frame-alert-ink': pick(
+				['--nldesign-color-accent-text', '--nldesign-color-error'],
+				'#a30000',
+			),
 		}
 		Object.keys(vars).forEach(function (name) {
 			frame.style.setProperty(name, vars[name])
 		})
-		root.querySelectorAll('.thematiq-set-panel__mode').forEach(function (button) {
-			var pressed = button.dataset.mode === state.mode
-			button.setAttribute('aria-pressed', pressed ? 'true' : 'false')
-			button.disabled = button.dataset.mode === 'dark' && Object.keys(state.dark).length === 0
-		})
+		root.querySelectorAll('.thematiq-set-panel__mode').forEach(
+			function (button) {
+				var pressed = button.dataset.mode === state.mode
+				button.setAttribute('aria-pressed', pressed ? 'true' : 'false')
+				button.disabled =
+					button.dataset.mode === 'dark'
+					&& Object.keys(state.dark).length === 0
+			},
+		)
 	}
 
 	/**
@@ -590,39 +816,62 @@
 	 */
 	function drawStripe(root, set) {
 		var card = root.querySelector('.thematiq-set-panel__stripe')
-		var colours = [1, 2, 3].map(function (i) {
-			return hex(resolve(state.tokens['--nldesign-brand-stripe-color-' + i], state.tokens))
-		}).filter(function (colour) {
-			return colour !== null
-		})
+		var colours = [1, 2, 3]
+			.map(function (i) {
+				return hex(
+					resolve(
+						state.tokens['--nldesign-brand-stripe-color-' + i],
+						state.tokens,
+					),
+				)
+			})
+			.filter(function (colour) {
+				return colour !== null
+			})
 		var layout = set.layout || {}
 		card.hidden = colours.length === 0 || layout.brand_stripe === false
 		if (card.hidden === true) {
 			return
 		}
 		var ratios = colours.map(function (colour, i) {
-			var value = parseFloat(state.tokens['--nldesign-brand-stripe-ratio-' + (i + 1)])
+			var value = parseFloat(
+				state.tokens['--nldesign-brand-stripe-ratio-' + (i + 1)],
+			)
 			return isNaN(value) ? 1 : value
 		})
 		var bar = card.querySelector('.thematiq-set-panel__stripe-bar')
-		bar.replaceChildren.apply(bar, colours.map(function (colour, i) {
-			var part = el('span', '')
-			part.style.background = colour
-			part.style.flexGrow = String(ratios[i])
-			return part
-		}))
-		var height = resolve(state.tokens['--nldesign-brand-stripe-height'] || '', state.tokens)
-		card.querySelector('.thematiq-set-panel__stripe-line').textContent = tr('{colours} in {ratios}, {height} high', {
-			colours: colours.map(function (colour) {
-				return colour.toUpperCase()
-			}).join(', '),
-			ratios: ratios.join(' : '),
-			height: height || '–',
-		})
+		bar.replaceChildren.apply(
+			bar,
+			colours.map(function (colour, i) {
+				var part = el('span', '')
+				part.style.background = colour
+				part.style.flexGrow = String(ratios[i])
+				return part
+			}),
+		)
+		var height = resolve(
+			state.tokens['--nldesign-brand-stripe-height'] || '',
+			state.tokens,
+		)
+		card.querySelector('.thematiq-set-panel__stripe-line').textContent = tr(
+			'{colours} in {ratios}, {height} high',
+			{
+				colours: colours
+					.map(function (colour) {
+						return colour.toUpperCase()
+					})
+					.join(', '),
+				ratios: ratios.join(' : '),
+				height: height || '–',
+			},
+		)
 		var placement = layout.brand_stripe_placement || 'header-and-login'
-		card.querySelector('.thematiq-set-panel__stripe-where').textContent = placement === 'login'
-			? tr('Drawn on the sign-in card')
-			: (placement === 'header' ? tr('Drawn under the top bar') : tr('Drawn under the top bar and on the sign-in card'))
+		card.querySelector('.thematiq-set-panel__stripe-where').textContent =
+			placement === 'login'
+				? tr('Drawn on the sign-in card')
+				: placement === 'header'
+					? tr('Drawn under the top bar')
+					: tr('Drawn under the top bar and on the sign-in card')
 	}
 
 	/**
@@ -638,14 +887,38 @@
 		var facts = root.querySelector('.thematiq-set-panel__facts')
 		var logo = theming.logo ? String(theming.logo).split('/').pop() : ''
 		var rows = [
-			[tr('Design system'), DESIGN_SYSTEMS[set.design_system] || set.design_system || '–'],
-			[tr('Layout'), layout.workplace_layout === 'light'
-				? (layout.navigation_width ? tr('Light workplace, menu {width} px', { width: layout.navigation_width }) : tr('Light workplace'))
-				: tr('Follows Nextcloud')],
-			[tr('Logo'), logo === '' ? tr('None, Nextcloud\'s own') : (theming.logo_dark ? tr('{file} and a dark version', { file: logo }) : logo)],
-			[tr('Dark'), Object.keys(state.dark).length === 0
-				? tr('Not generated')
-				: (state.darkVersion !== '' ? tr('Generated, version {version}', { version: state.darkVersion }) : tr('Generated'))],
+			[
+				tr('Design system'),
+				DESIGN_SYSTEMS[set.design_system] || set.design_system || '–',
+			],
+			[
+				tr('Layout'),
+				layout.workplace_layout === 'light'
+					? layout.navigation_width
+						? tr('Light workplace, menu {width} px', {
+								width: layout.navigation_width,
+							})
+						: tr('Light workplace')
+					: tr('Follows Nextcloud'),
+			],
+			[
+				tr('Logo'),
+				logo === ''
+					? tr("None, Nextcloud's own")
+					: theming.logo_dark
+						? tr('{file} and a dark version', { file: logo })
+						: logo,
+			],
+			[
+				tr('Dark'),
+				Object.keys(state.dark).length === 0
+					? tr('Not generated')
+					: state.darkVersion !== ''
+						? tr('Generated, version {version}', {
+								version: state.darkVersion,
+							})
+						: tr('Generated'),
+			],
 		]
 		var nodes = []
 		rows.forEach(function (fact) {
@@ -653,9 +926,14 @@
 			nodes.push(el('dd', '', fact[1]))
 		})
 		facts.replaceChildren.apply(facts, nodes)
-		root.querySelector('.thematiq-set-panel__dark-link').hidden = set.id !== activeId() || Object.keys(state.dark).length === 0
-		root.querySelector('.thematiq-set-panel__components-link').hidden = set.id !== activeId()
-		root.querySelector('.thematiq-set-panel__download').href = referenceUrl(set.id, true)
+		root.querySelector('.thematiq-set-panel__dark-link').hidden =
+			set.id !== activeId() || Object.keys(state.dark).length === 0
+		root.querySelector('.thematiq-set-panel__components-link').hidden =
+			set.id !== activeId()
+		root.querySelector('.thematiq-set-panel__download').href = referenceUrl(
+			set.id,
+			true,
+		)
 	}
 
 	/**
@@ -675,8 +953,14 @@
 		drawPreview(root)
 		drawStripe(root, set)
 		drawAbout(root, set)
-		var intro = document.querySelector('#thematiq-page-header .thematiq-page-header__intro')
-		if (intro !== null && window.ThematiqPanels !== undefined && window.ThematiqPanels.current() === 'set') {
+		var intro = document.querySelector(
+			'#thematiq-page-header .thematiq-page-header__intro',
+		)
+		if (
+			intro !== null
+			&& window.ThematiqPanels !== undefined
+			&& window.ThematiqPanels.current() === 'set'
+		) {
 			intro.replaceChildren.apply(intro, introNodes(state.id))
 		}
 	}
@@ -691,23 +975,45 @@
 		var set = setById(id)
 		var nodes = []
 		if (id === activeId()) {
-			nodes.push(el('span', 'thematiq-set-panel__status thematiq-set-panel__status--active', tr('Active')))
+			nodes.push(
+				el(
+					'span',
+					'thematiq-set-panel__status thematiq-set-panel__status--active',
+					tr('Active'),
+				),
+			)
 		}
 		if (state.id === id && Object.keys(state.dark).length > 0) {
-			nodes.push(el('span', 'thematiq-set-panel__status thematiq-set-panel__status--dark', tr('Light and dark')))
+			nodes.push(
+				el(
+					'span',
+					'thematiq-set-panel__status thematiq-set-panel__status--dark',
+					tr('Light and dark'),
+				),
+			)
 		}
 		var parts = [DESIGN_SYSTEMS[set.design_system] || set.design_system || '']
 		if (state.id === id) {
 			var total = Object.keys(state.tokens).length
-			parts.push(total === 1 ? tr('1 token') : tr('{count} tokens', { count: total }))
+			parts.push(
+				total === 1 ? tr('1 token') : tr('{count} tokens', { count: total }),
+			)
 			var font = fontOf(state.tokens)
 			if (font !== '') {
 				parts.push(font)
 			}
 		}
-		nodes.push(el('span', 'thematiq-set-panel__line', parts.filter(function (part) {
-			return part !== ''
-		}).join(', ')))
+		nodes.push(
+			el(
+				'span',
+				'thematiq-set-panel__line',
+				parts
+					.filter(function (part) {
+						return part !== ''
+					})
+					.join(', '),
+			),
+		)
 		return nodes
 	}
 
@@ -720,12 +1026,24 @@
 	 */
 	function actions(id) {
 		var wrap = window.ThematiqPanels.menu(tr('More'), [
-			{ text: tr('Open the token reference'), hint: tr('All tokens of this set on one page'), href: referenceUrl(id, false) },
-			{ text: tr('Download token overview'), hint: tr('All tokens of this set as Markdown'), href: referenceUrl(id, true) },
+			{
+				text: tr('Open the token reference'),
+				hint: tr('All tokens of this set on one page'),
+				href: referenceUrl(id, false),
+			},
+			{
+				text: tr('Download token overview'),
+				hint: tr('All tokens of this set as Markdown'),
+				href: referenceUrl(id, true),
+			},
 		])
 		var buttons = [wrap]
 		if (id !== activeId()) {
-			var use = el('button', 'thematiq-page-header__action thematiq-page-header__action--primary thematiq-set-panel__use', tr('Use this token set'))
+			var use = el(
+				'button',
+				'thematiq-page-header__action thematiq-page-header__action--primary thematiq-set-panel__use',
+				tr('Use this token set'),
+			)
 			use.type = 'button'
 			use.addEventListener('click', function () {
 				var picker = document.getElementById('nldesign-token-set-select')
@@ -760,13 +1078,18 @@
 			root.querySelector('.thematiq-set-panel__search').value = ''
 		}
 		var file = function (path) {
-			return fetch(window.OC.linkTo('thematiq', path)).then(function (r) {
-				return r.ok ? r.text() : ''
-			}).catch(function () {
-				return ''
-			})
+			return fetch(window.OC.linkTo('thematiq', path))
+				.then(function (r) {
+					return r.ok ? r.text() : ''
+				})
+				.catch(function () {
+					return ''
+				})
 		}
-		return Promise.all([file('css/tokens/' + id + '.css'), file('css/tokens/dark/' + id + '.css')]).then(function (files) {
+		return Promise.all([
+			file('css/tokens/' + id + '.css'),
+			file('css/tokens/dark/' + id + '.css'),
+		]).then(function (files) {
 			if (state.id !== id) {
 				return
 			}
@@ -802,24 +1125,42 @@
 			var at = TABS.map(function (tab) {
 				return tab[0]
 			}).indexOf(state.tab)
-			state.tab = TABS[(at + (event.key === 'ArrowRight' ? 1 : TABS.length - 1)) % TABS.length][0]
+			state.tab =
+				TABS[
+					(at + (event.key === 'ArrowRight' ? 1 : TABS.length - 1))
+						% TABS.length
+				][0]
 			draw()
 			root.querySelector('#thematiq-set-tab-' + state.tab).focus()
 		})
-		root.querySelector('.thematiq-set-panel__search').addEventListener('input', function (event) {
-			state.query = event.target.value
-			drawRows(root, classify(state.tokens))
-		})
-		root.querySelectorAll('.thematiq-set-panel__mode').forEach(function (button) {
-			button.addEventListener('click', function () {
-				state.mode = button.dataset.mode
-				drawPreview(root)
-			})
-		})
+		root.querySelector('.thematiq-set-panel__search').addEventListener(
+			'input',
+			function (event) {
+				state.query = event.target.value
+				drawRows(root, classify(state.tokens))
+			},
+		)
+		root.querySelectorAll('.thematiq-set-panel__mode').forEach(
+			function (button) {
+				button.addEventListener('click', function () {
+					state.mode = button.dataset.mode
+					drawPreview(root)
+				})
+			},
+		)
 	}
 
 	if (typeof module !== 'undefined' && module.exports) {
-		module.exports = { declarations: declarations, resolve: resolve, hex: hex, tabOf: tabOf, labelOf: labelOf, classify: classify, shortfalls: shortfalls, count: count }
+		module.exports = {
+			declarations: declarations,
+			resolve: resolve,
+			hex: hex,
+			tabOf: tabOf,
+			labelOf: labelOf,
+			classify: classify,
+			shortfalls: shortfalls,
+			count: count,
+		}
 	}
 
 	var root = panel()
@@ -827,7 +1168,10 @@
 		wire(root)
 	}
 	document.addEventListener('thematiq:theme-applied', function (event) {
-		state.active = event.detail && event.detail.tokenSet ? event.detail.tokenSet : state.active
+		state.active =
+			event.detail && event.detail.tokenSet
+				? event.detail.tokenSet
+				: state.active
 	})
 
 	if (window.ThematiqPanels !== undefined) {

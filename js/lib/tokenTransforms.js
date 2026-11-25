@@ -209,7 +209,9 @@
 	 * @return {string|null} The referred token's name.
 	 */
 	function referenceTarget(value) {
-		var match = /^var\(\s*(--nldesign-[a-z0-9-]+)\s*\)$/i.exec(String(value).trim())
+		var match = /^var\(\s*(--nldesign-[a-z0-9-]+)\s*\)$/i.exec(
+			String(value).trim(),
+		)
 		return match === null ? null : match[1].toLowerCase()
 	}
 

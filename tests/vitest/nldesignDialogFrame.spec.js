@@ -16,7 +16,9 @@ const ROOT = path.resolve(__dirname, '..', '..')
 
 /** The sheet without comments. */
 function sheet(file) {
-	return fs.readFileSync(path.join(ROOT, file), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
+	return fs
+		.readFileSync(path.join(ROOT, file), 'utf8')
+		.replace(/\/\*[\s\S]*?\*\//g, '')
 }
 
 /** The declaration blocks whose selector list holds `selector`. */
@@ -25,7 +27,12 @@ function blocksWith(css, selector) {
 	const re = /([^{}]+)\{([^{}]*)\}/g
 	let m
 	while ((m = re.exec(css)) !== null) {
-		if (m[1].split(',').map((s) => s.trim()).includes(selector)) {
+		if (
+			m[1]
+				.split(',')
+				.map((s) => s.trim())
+				.includes(selector)
+		) {
 			out.push(m[2])
 		}
 	}
@@ -33,7 +40,10 @@ function blocksWith(css, selector) {
 }
 
 describe('the nldesign dialog frame', () => {
-	for (const file of ['css/systems/nldesign/theme.css', 'css/systems/nldesign/element-overrides.css']) {
+	for (const file of [
+		'css/systems/nldesign/theme.css',
+		'css/systems/nldesign/element-overrides.css',
+	]) {
 		it(`${file} gives the dialog half again the brand radius`, () => {
 			const radius = blocksWith(sheet(file), '.modal-container')
 				.filter((b) => b.includes('border-radius'))
@@ -45,7 +55,10 @@ describe('the nldesign dialog frame', () => {
 	}
 
 	it('keeps the dialog shadow, which a set can change with its dialog token', () => {
-		const blocks = blocksWith(sheet('css/systems/nldesign/theme.css'), '.modal-container')
+		const blocks = blocksWith(
+			sheet('css/systems/nldesign/theme.css'),
+			'.modal-container',
+		)
 		expect(blocks.some((b) => /box-shadow:\s*none/.test(b))).toBe(false)
 		expect(blocks.join('\n')).toMatch(
 			/box-shadow:\s*var\(\s*--nldesign-component-dialog-box-shadow,\s*var\(--thematiq-dialog-shadow\)\s*\)\s*!important/,

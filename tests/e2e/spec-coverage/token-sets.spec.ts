@@ -904,7 +904,9 @@ test.describe('token-sets', () => {
 			await withActiveSet(page, id, async () => {
 				await openSettings(page)
 				const ribbon = await page.evaluate(() => {
-					const el = document.querySelector('#nextcloud') as HTMLElement | null
+					const el = document.querySelector(
+						'#nextcloud',
+					) as HTMLElement | null
 					if (el === null) return null
 					const s = getComputedStyle(el, '::before')
 					return {

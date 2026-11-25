@@ -21,12 +21,14 @@
 }
 
 @media (prefers-color-scheme: dark) {
-	body:not([data-theme-light]):not([data-theme-dark]):not([data-theme-light-highcontrast]):not([data-theme-dark-highcontrast]) {
+	body:not([data-theme-light]):not([data-theme-dark]):not(
+			[data-theme-light-highcontrast]
+		):not([data-theme-dark-highcontrast]) {
 		--nldesign-nc-color-mark: var(--utrecht-mark-background-color);
 	}
 }
 
 body[data-theme-dark],
-body[data-themes*=dark] {
+body[data-themes*='dark'] {
 	--nldesign-nc-color-mark: var(--utrecht-mark-background-color);
 }

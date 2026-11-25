@@ -30,11 +30,25 @@
  */
 ;(function thematiqWorkplaceAppsInit() {
 	var POINTER = 'data-thematiq-pointer'
-	var DAY_LINK = '.fc-timeGridWeek-view .fc-col-header-cell[data-date] .fc-col-header-cell-cushion'
+	var DAY_LINK =
+		'.fc-timeGridWeek-view .fc-col-header-cell[data-date] .fc-col-header-cell-cushion'
 	var DAY_NUMBER = 'thematiq-day-number'
 	var PRIORITY_LABELS = ['priority high', 'high priority', 'prioriteit hoog']
 	var deckCards = { board: null, at: 0, byId: {}, loading: false }
-	var MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+	var MONTHS = [
+		'january',
+		'february',
+		'march',
+		'april',
+		'may',
+		'june',
+		'july',
+		'august',
+		'september',
+		'october',
+		'november',
+		'december',
+	]
 
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', thematiqWorkplaceAppsMain)
@@ -50,7 +64,14 @@
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
 	 */
 	function cssString(text) {
-		return '"' + String(text).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, ' ') + '"'
+		return (
+			'"'
+			+ String(text)
+				.replace(/\\/g, '\\\\')
+				.replace(/"/g, '\\"')
+				.replace(/\n/g, ' ')
+			+ '"'
+		)
 	}
 
 	/**
@@ -96,7 +117,9 @@
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
 	 */
 	function shortDate(text, locale) {
-		var dayFirst = /(\d{1,2})(?:st|nd|rd|th)? ([A-Za-z]+),? (\d{4})/.exec(text || '')
+		var dayFirst = /(\d{1,2})(?:st|nd|rd|th)? ([A-Za-z]+),? (\d{4})/.exec(
+			text || '',
+		)
 		var monthFirst = /([A-Za-z]+) (\d{1,2}),? (\d{4})/.exec(text || '')
 		var day = null
 		var month = -1
@@ -105,7 +128,10 @@
 			day = Number(dayFirst[1])
 			month = MONTHS.indexOf(dayFirst[2].toLowerCase())
 			year = Number(dayFirst[3])
-		} else if (monthFirst !== null && MONTHS.indexOf(monthFirst[1].toLowerCase()) >= 0) {
+		} else if (
+			monthFirst !== null
+			&& MONTHS.indexOf(monthFirst[1].toLowerCase()) >= 0
+		) {
 			day = Number(monthFirst[2])
 			month = MONTHS.indexOf(monthFirst[1].toLowerCase())
 			year = Number(monthFirst[3])
@@ -114,7 +140,10 @@
 			return null
 		}
 		try {
-			return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short' }).format(new Date(year, month, day))
+			return new Intl.DateTimeFormat(locale, {
+				day: 'numeric',
+				month: 'short',
+			}).format(new Date(year, month, day))
 		} catch (e) {
 			return null
 		}
@@ -150,7 +179,9 @@
 	 */
 	function cardLines(description) {
 		var found = { mail: null, project: null }
-		var lines = String(description || '').split(/\r?\n/).slice(0, 4)
+		var lines = String(description || '')
+			.split(/\r?\n/)
+			.slice(0, 4)
 		lines.forEach(function (line) {
 			var mail = /^\s*(?:From mail|Uit mail):\s*(.+?)\s*$/i.exec(line)
 			var project = /^\s*(?:Project):\s*(.+?)\s*$/i.exec(line)
@@ -191,37 +222,65 @@
 	 */
 	function loadDeckCards(board, force) {
 		var now = Date.now()
-		if (deckCards.loading || typeof fetch !== 'function' || (deckCards.board === board && now - deckCards.at < (force ? 5000 : 30000))) {
+		if (
+			deckCards.loading
+			|| typeof fetch !== 'function'
+			|| (deckCards.board === board
+				&& now - deckCards.at < (force ? 5000 : 30000))
+		) {
 			return
 		}
 		deckCards.loading = true
-		var token = (window.OC && window.OC.requestToken) || (document.head && document.head.getAttribute('data-requesttoken')) || ''
+		var token =
+			(window.OC && window.OC.requestToken)
+			|| (document.head && document.head.getAttribute('data-requesttoken'))
+			|| ''
 		var webroot = (window.OC && window.OC.webroot) || ''
-		fetch(webroot + '/ocs/v2.php/apps/deck/api/v1.0/stacks/' + encodeURIComponent(board) + '?format=json', {
-			credentials: 'same-origin',
-			headers: { 'OCS-APIRequest': 'true', requesttoken: token, Accept: 'application/json' },
-		}).then(function (response) {
-			return response.ok ? response.json() : null
-		}).then(function (body) {
-			var stacks = body && body.ocs ? body.ocs.data : body
-			var byId = {}
-			;(Array.isArray(stacks) ? stacks : []).forEach(function (stack) {
-				;(stack.cards || []).forEach(function (card) {
-					var lines = cardLines(card.description)
-					lines.people = (card.assignedUsers || []).map(function (user) {
-						var who = user.participant || {}
-						return initials(who.displayname || who.uid || '')
-					})
-					byId[String(card.id)] = lines
-				})
+		fetch(
+			webroot
+				+ '/ocs/v2.php/apps/deck/api/v1.0/stacks/'
+				+ encodeURIComponent(board)
+				+ '?format=json',
+			{
+				credentials: 'same-origin',
+				headers: {
+					'OCS-APIRequest': 'true',
+					requesttoken: token,
+					Accept: 'application/json',
+				},
+			},
+		)
+			.then(function (response) {
+				return response.ok ? response.json() : null
 			})
-			deckCards = { board: board, at: Date.now(), byId: byId, loading: false }
-			drawDeckCards()
-		}).catch(function () {
-			deckCards.loading = false
-			deckCards.at = Date.now()
-			deckCards.board = board
-		})
+			.then(function (body) {
+				var stacks = body && body.ocs ? body.ocs.data : body
+				var byId = {}
+				;(Array.isArray(stacks) ? stacks : []).forEach(function (stack) {
+					;(stack.cards || []).forEach(function (card) {
+						var lines = cardLines(card.description)
+						lines.people = (card.assignedUsers || []).map(
+							function (user) {
+								var who = user.participant || {}
+								return initials(who.displayname || who.uid || '')
+							},
+						)
+						byId[String(card.id)] = lines
+					})
+				})
+				deckCards = {
+					board: board,
+					at: Date.now(),
+					byId: byId,
+					loading: false,
+				}
+				drawDeckCards()
+			})
+			.catch(function () {
+				deckCards.loading = false
+				deckCards.at = Date.now()
+				deckCards.board = board
+			})
 	}
 
 	/**
@@ -232,8 +291,13 @@
 	 */
 	function drawDeckCards() {
 		var root = document.documentElement
-		var locale = (root.getAttribute('data-locale') || root.lang || 'en').replace('_', '-')
-		var route = /\/apps\/deck\/(?:#\/)?board\/(\d+)/.exec(window.location.pathname + window.location.hash)
+		var locale = (root.getAttribute('data-locale') || root.lang || 'en').replace(
+			'_',
+			'-',
+		)
+		var route = /\/apps\/deck\/(?:#\/)?board\/(\d+)/.exec(
+			window.location.pathname + window.location.hash,
+		)
 		var board = route !== null ? route[1] : null
 		if (board !== null && deckCards.board !== board) {
 			loadDeckCards(board, false)
@@ -242,9 +306,18 @@
 			var labels = card.querySelector('.card-labels .labels')
 			var number = card.querySelector('.cardid span')
 			if (labels !== null) {
-				setData(labels, 'data-thematiq-number', number !== null ? (number.textContent || '').trim() || null : null)
+				setData(
+					labels,
+					'data-thematiq-number',
+					number !== null
+						? (number.textContent || '').trim() || null
+						: null,
+				)
 			}
-			var id = number !== null ? (number.textContent || '').replace(/[^0-9]/g, '') : ''
+			var id =
+				number !== null
+					? (number.textContent || '').replace(/[^0-9]/g, '')
+					: ''
 			var lines = deckCards.byId[id] || null
 			if (id !== '' && lines === null && board !== null) {
 				loadDeckCards(board, true)
@@ -252,38 +325,80 @@
 			var upper = card.querySelector('.card-upper')
 			var controls = card.querySelector('.card-controls')
 			if (upper !== null) {
-				setData(upper, 'data-thematiq-project', lines !== null ? lines.project : null)
+				setData(
+					upper,
+					'data-thematiq-project',
+					lines !== null ? lines.project : null,
+				)
 			}
 			if (controls !== null) {
-				var from = lines !== null && lines.mail !== null
-					? (typeof t === 'function' ? t('thematiq', 'From mail: {sender}', { sender: lines.mail }) : 'From mail: ' + lines.mail)
-					: null
+				var from =
+					lines !== null && lines.mail !== null
+						? typeof t === 'function'
+							? t('thematiq', 'From mail: {sender}', {
+									sender: lines.mail,
+								})
+							: 'From mail: ' + lines.mail
+						: null
 				setData(controls, 'data-thematiq-mail', from)
 			}
-			card.querySelectorAll('.avatars .avatardiv').forEach(function (avatar, index) {
-				var person = lines !== null && lines.people ? lines.people[index] : null
-				setData(avatar, 'data-thematiq-initials', person || null)
-			})
+			card.querySelectorAll('.avatars .avatardiv').forEach(
+				function (avatar, index) {
+					var person =
+						lines !== null && lines.people ? lines.people[index] : null
+					setData(avatar, 'data-thematiq-initials', person || null)
+				},
+			)
 			var high = false
-			card.querySelectorAll('.card-labels .labels li').forEach(function (label) {
-				var priority = PRIORITY_LABELS.indexOf((label.textContent || '').trim().toLowerCase()) >= 0
-				high = high || priority
-				setData(label, 'data-thematiq-priority', priority ? 'high' : null)
-			})
+			card.querySelectorAll('.card-labels .labels li').forEach(
+				function (label) {
+					var priority =
+						PRIORITY_LABELS.indexOf(
+							(label.textContent || '').trim().toLowerCase(),
+						) >= 0
+					high = high || priority
+					setData(
+						label,
+						'data-thematiq-priority',
+						priority ? 'high' : null,
+					)
+				},
+			)
 			var head = card.querySelector('.card-labels')
 			if (head !== null) {
-				setData(head, 'data-thematiq-priority', high ? (typeof t === 'function' ? t('thematiq', 'Priority high') : 'Priority high') : null)
+				setData(
+					head,
+					'data-thematiq-priority',
+					high
+						? typeof t === 'function'
+							? t('thematiq', 'Priority high')
+							: 'Priority high'
+						: null,
+				)
 			}
 			var due = card.querySelector('.duedate .due')
 			if (due !== null) {
-				setData(due, 'data-thematiq-due', shortDate(due.getAttribute('name'), locale))
+				setData(
+					due,
+					'data-thematiq-due',
+					shortDate(due.getAttribute('name'), locale),
+				)
 			}
 		})
 		var title = document.querySelector('.app-deck .controls .board-title')
 		if (title !== null) {
-			var open = document.querySelectorAll('.app-deck .stack:not(.stack--done-column) .dnd-container > .smooth-dnd-draggable-wrapper:not(.smooth-dnd-ghost)').length
-			var words = typeof n === 'function' ? n('thematiq', '%n open card', '%n open cards', open) : open + ' open cards'
-			setData(title, 'data-thematiq-open', document.querySelector('.app-deck .stack') !== null ? words : null)
+			var open = document.querySelectorAll(
+				'.app-deck .stack:not(.stack--done-column) .dnd-container > .smooth-dnd-draggable-wrapper:not(.smooth-dnd-ghost)',
+			).length
+			var words =
+				typeof n === 'function'
+					? n('thematiq', '%n open card', '%n open cards', open)
+					: open + ' open cards'
+			setData(
+				title,
+				'data-thematiq-open',
+				document.querySelector('.app-deck .stack') !== null ? words : null,
+			)
 		}
 	}
 
@@ -294,24 +409,47 @@
 	 */
 	function thematiqWorkplaceAppsMain() {
 		var root = document.documentElement
-		if (getComputedStyle(root).getPropertyValue('--thematiq-workplace-apps').trim() !== '1') {
+		if (
+			getComputedStyle(root)
+				.getPropertyValue('--thematiq-workplace-apps')
+				.trim() !== '1'
+		) {
 			return
 		}
 
 		if (typeof t === 'function') {
-			root.style.setProperty('--thematiq-mail-empty-title', cssString(t('thematiq', 'Select a conversation')))
-			root.style.setProperty('--thematiq-calendar-new-event', cssString(t('thematiq', 'New event')))
+			root.style.setProperty(
+				'--thematiq-mail-empty-title',
+				cssString(t('thematiq', 'Select a conversation')),
+			)
+			root.style.setProperty(
+				'--thematiq-calendar-new-event',
+				cssString(t('thematiq', 'New event')),
+			)
 		}
 
-		document.addEventListener('pointerdown', function () {
-			root.setAttribute(POINTER, '')
-		}, true)
-		document.addEventListener('keydown', function () {
-			root.removeAttribute(POINTER)
-		}, true)
+		document.addEventListener(
+			'pointerdown',
+			function () {
+				root.setAttribute(POINTER, '')
+			},
+			true,
+		)
+		document.addEventListener(
+			'keydown',
+			function () {
+				root.removeAttribute(POINTER)
+			},
+			true,
+		)
 
-		var calendar = document.querySelector('#content.app-calendar, #content-vue.app-calendar') !== null
-		var deck = document.querySelector('#content.app-deck, #content-vue.app-deck') !== null
+		var calendar =
+			document.querySelector(
+				'#content.app-calendar, #content-vue.app-calendar',
+			) !== null
+		var deck =
+			document.querySelector('#content.app-deck, #content-vue.app-deck')
+			!== null
 		if (!calendar && !deck) {
 			return
 		}

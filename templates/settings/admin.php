@@ -20,6 +20,8 @@
 // Load the pure token/colour transforms first so admin.js can consume them via
 // window.NldesignTokenTransforms (admin.js falls back to inline copies if absent).
 script('thematiq', 'lib/tokenTransforms');
+// Loaders of blocks inside a closed panel wait until it opens (window.ThematiqWhenShown).
+script('thematiq', 'lib/whenShown');
 // The stylesheet layer swap (window.NldesignLayerSwap): applies a token set to
 // the page the admin is on by replacing Thematiq's <link>/<style> elements with
 // the ones the server would emit for the new set — no reload. admin.js falls

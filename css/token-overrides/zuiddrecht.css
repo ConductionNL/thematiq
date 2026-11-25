@@ -139,7 +139,9 @@ div.guest-box.login-box::after {
 
 /* The greeting (DqDashboard: 32px, an h2 the heading token would hold at 30).
    A heading with the greeting on a line under it keeps its own 26px (LpVandaag). */
-#app-content-vue .cn-header-widget:not(.cn-header-widget--greeting-line) .cn-header-widget__title {
+#app-content-vue
+	.cn-header-widget:not(.cn-header-widget--greeting-line)
+	.cn-header-widget__title {
 	font-size: 32px !important;
 	letter-spacing: -0.01em;
 }
