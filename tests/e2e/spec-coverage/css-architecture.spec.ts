@@ -532,7 +532,12 @@ test.describe('css-architecture: the nldesign cascade on an nldesign set', () =>
 	'rijkshuisstijl hangs a coloured ribbon behind the header logo', async ({
 		page,
 	}) => {
-		const tokens = rootDeclarations(repoFile(`css/tokens/${NLDESIGN_SET}.css`))
+		// The set is its generated token file plus its own overrides layer,
+		// which loads after it and carries the lint (css/token-overrides/).
+		const tokens = new Map([
+			...rootDeclarations(repoFile(`css/tokens/${NLDESIGN_SET}.css`)),
+			...rootDeclarations(repoFile(`css/token-overrides/${NLDESIGN_SET}.css`)),
+		])
 		await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
 		await page.locator('#nextcloud').waitFor({ state: 'attached' })
 
