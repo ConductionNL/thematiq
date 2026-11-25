@@ -64,6 +64,9 @@ const PANELS: Array<{ task: string, hash: string, trigger: string, title: string
 const ACTIONS: Record<string, (page: Page, section: Locator) => Promise<void>> = {
 	dark: async (page, section) => {
 		const rows = section.locator('.thematiq-dark-panel__row:not(.thematiq-dark-panel__row--head)')
+		// The rows are drawn from a request after the panel opens: count them
+		// once they are there, or `all` is 0 and the last check fails on 15.
+		await expect(rows.first()).toBeAttached()
 		const all = await rows.count()
 		const only = section.locator('.thematiq-dark-panel__only-warnings')
 		await only.check()
