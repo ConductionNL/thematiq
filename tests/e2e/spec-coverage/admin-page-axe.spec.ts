@@ -80,7 +80,6 @@ async function openAt(page: Page, hash: string): Promise<void> {
 	if (hash !== '') {
 		await expect(page.locator('section[data-thematiq-panel="' + hash.split('/')[0] + '"]')).toBeVisible()
 	}
-	await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => undefined)
 }
 
 test.describe('the admin Theming page against WCAG 2.2 AA', () => {
