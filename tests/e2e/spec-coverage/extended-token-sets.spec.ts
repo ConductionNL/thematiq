@@ -295,7 +295,10 @@ test.describe('extended-token-sets', () => {
 			expect(root['--nldesign-font-family']).toMatch(
 				/^['"]Noto Sans Variable['"]/,
 			)
-			expect(root['--nldesign-border-radius']).toBe('4px')
+			// @utrecht/design-tokens 8 rounds corners at 8px; read from the file.
+			const radius = file.get('--nldesign-border-radius') ?? ''
+			expect(radius).toMatch(/^\d+px$/)
+			expect(root['--nldesign-border-radius']).toBe(radius)
 			// Nextcloud's own variables carry them to every app.
 			expect(normaliseCss(root['--font-face'])).toBe(
 				normaliseCss(root['--nldesign-font-family']),
@@ -305,7 +308,7 @@ test.describe('extended-token-sets', () => {
 				'--border-radius',
 			])
 			expect(body['--color-primary-element'].toLowerCase()).toBe('#24578f')
-			expect(body['--border-radius']).toBe('4px')
+			expect(body['--border-radius']).toBe(radius)
 		})
 	})
 

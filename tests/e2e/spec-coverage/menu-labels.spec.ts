@@ -915,22 +915,26 @@ test.describe('menu-labels', () => {
 		page,
 	}) => {
 		await page.setViewportSize({ width: 800, height: 900 })
+		// An app page: Nextcloud draws the current-app button only where an
+		// app is current, which a settings page is not.
+		const appPage = '/index.php/apps/files/'
 		const current = page.locator('#header .app-menu__current-app')
 		const name = page.locator('#header .app-menu__current-app-name')
 
 		// Control: without labels, core hides the button below 1024px.
 		await withThemeState(browser, { showMenuLabels: false }, async () => {
-			await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
+			await page.goto(appPage, { waitUntil: 'domcontentloaded' })
 			await page.locator('#header .app-menu').waitFor({ state: 'attached' })
 			test.skip(
 				(await page.locator('#header .app-menu__waffle').count()) === 0,
 				'Nextcloud 32 renders no waffle menu; its labels are covered by the fixture tests above',
 			)
+			await expect(current).toHaveCount(1)
 			await expect(current).toBeHidden()
 		})
 
 		await withThemeState(browser, { showMenuLabels: true }, async () => {
-			await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
+			await page.goto(appPage, { waitUntil: 'domcontentloaded' })
 			expect(await thematiqLayers(page)).toContain('show-menu-labels')
 			await expect(current).toBeVisible()
 			await expect(name).toBeVisible()
