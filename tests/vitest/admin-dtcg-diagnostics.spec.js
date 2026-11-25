@@ -175,16 +175,15 @@ describe('admin.js DTCG import diagnostics', () => {
 		expect(resultEl.style.display).toBe('block')
 		expect(resultEl.textContent).toContain('2.3.1')
 
-		const diagnosticsItems = resultEl.querySelectorAll(
-			'.nldesign-diagnostics-list li',
-		)
-		expect(diagnosticsItems.length).toBe(2)
-		const diagnosticsText = Array.from(diagnosticsItems)
-			.map((li) => li.textContent)
-			.join(' | ')
-		expect(diagnosticsText).toContain('shadow.elevation-1')
-		expect(diagnosticsText).toContain('color.other')
-		expect(diagnosticsText).toContain('color.accent')
+		expect(resultEl.querySelector('.thematiq-upload-result__file').textContent).toBe('theme.tokens.json')
+		const rows = Array.from(
+			resultEl.querySelectorAll('.thematiq-upload-result__row'),
+		).map((row) => row.cells[0].textContent + ' = ' + row.cells[1].textContent)
+		expect(rows).toEqual([
+			'shadow.elevation-1 = Not part of the --nldesign-* vocabulary',
+			'color.other = Not part of the --nldesign-* vocabulary',
+			'color.accent = Unsupported color space',
+		])
 
 		const warningItems = resultEl.querySelectorAll(
 			'.nldesign-deprecation-list li',
@@ -278,12 +277,12 @@ describe('admin.js DTCG import diagnostics', () => {
 		document.getElementById('nldesign-upload-name').value = 'P3'
 		await selectUploadFile('p3.tokens.json', '{}')
 
-		const items = document.querySelectorAll(
-			'#nldesign-upload-result .nldesign-diagnostics-list li',
+		const rows = document.querySelectorAll(
+			'#nldesign-upload-result .thematiq-upload-result__row',
 		)
-		expect(items).toHaveLength(1)
-		expect(items[0].textContent).toBe(
-			'Outside sRGB, clipped to the nearest colour (1): color.primary',
+		expect(rows).toHaveLength(1)
+		expect(rows[0].textContent).toBe(
+			'color.primaryOutside sRGB, clipped to the nearest colour',
 		)
 	})
 
@@ -361,8 +360,53 @@ describe('admin.js DTCG import diagnostics', () => {
 		)
 
 		const resultEl = document.getElementById('nldesign-upload-result')
-		expect(resultEl.querySelector('.nldesign-diagnostics-list')).toBeNull()
+		expect(resultEl.querySelector('.thematiq-upload-result__table')).toBeNull()
 		expect(resultEl.querySelector('.nldesign-deprecation-list')).toBeNull()
+	})
+
+	it('draws a refused file with its status, that nothing was saved and why', async () => {
+		buildDom()
+		installFetchRouter([
+			[
+				'/settings/tokensets/upload',
+				'POST',
+				{ error: 'Property --nldesign-link-color contains a forbidden value.' },
+				422,
+			],
+		])
+		await loadAdminScript()
+		document.getElementById('nldesign-upload-name').value = 'Promo'
+		await selectUploadFile('promo.css', ':root { --nldesign-link-color: javascript:alert(1); }')
+
+		const box = document.querySelector('#nldesign-upload-result .thematiq-upload-result--refused')
+		expect(box.querySelector('.thematiq-upload-result__title').textContent).toBe('Refused file')
+		expect(box.querySelector('strong').textContent).toBe('promo.css was refused (422). Nothing was saved.')
+		expect(box.textContent).toContain('Property --nldesign-link-color contains a forbidden value.')
+	})
+
+	it('shows the Incomplete set pill once the list says the stored set leaves tokens to the design system', async () => {
+		buildDom()
+		installFetchRouter([
+			[
+				'/settings/tokensets/upload',
+				'POST',
+				{ id: 'custom-zd', imported: 2, skipped: [], warnings: [{ pair: 'text on primary', ratio: 3.52 }] },
+			],
+			[
+				'/settings/tokensets/custom',
+				'GET',
+				{ sets: [{ id: 'custom-zd', name: 'ZD', warnings: [{ kind: 'incomplete', missing: ['a', 'b', 'c'] }] }] },
+			],
+		])
+		await loadAdminScript()
+		document.getElementById('nldesign-upload-name').value = 'ZD'
+		await selectUploadFile('zd.css', ':root { --nldesign-color-primary: #fff; }')
+
+		const box = document.querySelector('#nldesign-upload-result .thematiq-upload-result')
+		expect(box.querySelector('.thematiq-upload-result__pill--pass').textContent).toBe('Uploaded')
+		expect(box.querySelector('.thematiq-upload-result__file').textContent).toBe('zd.css')
+		expect(box.querySelector('.thematiq-upload-result__incomplete').hidden).toBe(false)
+		expect(box.querySelector('.thematiq-upload-result__hint').textContent).toContain('You see the contrast warning again in the dialog when applying.')
 	})
 
 	it('renders the recorded package version in the custom-set list', async () => {

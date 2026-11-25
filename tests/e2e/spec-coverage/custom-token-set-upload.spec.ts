@@ -94,10 +94,23 @@ test.describe('custom-token-set-upload', () => {
 				),
 			})
 
-			// The upload result area becomes visible with an import count.
-			const result = page.locator('#nldesign-upload-result')
+			// The result draws the TqSetUploaden board: Uploaded, the file, what was saved.
+			const result = page.locator(
+				'#nldesign-upload-result .thematiq-upload-result',
+			)
 			await expect(result).toBeVisible({ timeout: 10000 })
-			await expect(result).toContainText('imported')
+			await expect(
+				result.locator('.thematiq-upload-result__pill--pass'),
+			).toHaveText('Uploaded')
+			await expect(result.locator('.thematiq-upload-result__file')).toHaveText(
+				'huisstijl.css',
+			)
+			await expect(
+				result.locator('.thematiq-upload-result__summary'),
+			).toContainText(`"${setName}" is saved and is now in the list.`)
+			await expect(
+				result.locator('.thematiq-upload-result__summary'),
+			).toContainText('imported')
 
 			// The new set appears in the custom-set list.
 			await expect(page.locator('#nldesign-custom-set-list')).toContainText(
@@ -131,8 +144,38 @@ test.describe('custom-token-set-upload', () => {
 
 	// @e2e exclude openspec/specs/custom-token-sets/spec.md#disallowed-css-payload-is-rejected-with-a-structured-error
 	// Security validation branch — PHPUnit on the validator payload corpus.
-	// @e2e exclude openspec/specs/custom-token-sets/spec.md#external-url-in-a-token-value-is-rejected
-	// Security validation branch — PHPUnit on the validator.
+	test(
+		// @e2e openspec/specs/custom-token-sets/spec.md#external-url-in-a-token-value-is-rejected
+		'A refused file is drawn as Refused file: nothing saved, and why',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
+
+			const setName = 'E2E Refused ' + Date.now()
+			await page.fill('#nldesign-upload-name', setName)
+			await page.locator('#nldesign-upload-input').setInputFiles({
+				name: 'promo.css',
+				mimeType: 'text/css',
+				buffer: Buffer.from(
+					':root { --nldesign-color-primary: #154273; --nldesign-logo-url: url(https://cdn.example.org/zd.svg); }',
+				),
+			})
+
+			const refused = page.locator(
+				'#nldesign-upload-result .thematiq-upload-result--refused',
+			)
+			await expect(refused).toBeVisible({ timeout: 10000 })
+			await expect(
+				refused.locator('.thematiq-upload-result__title'),
+			).toHaveText('Refused file')
+			await expect(refused.locator('strong')).toHaveText(
+				'promo.css was refused (422). Nothing was saved.',
+			)
+			await expect(
+				page.locator('#nldesign-custom-set-list'),
+			).not.toContainText(setName)
+		},
+	)
 	// @e2e exclude openspec/specs/custom-token-sets/spec.md#unknown-properties-are-skipped-and-counted
 	// Parser behaviour — PHPUnit on the validator.
 	// @e2e exclude openspec/specs/custom-token-sets/spec.md#oversized-upload-is-rejected

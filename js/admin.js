@@ -28,6 +28,10 @@
 		// `|| {}` fallback keeps admin.js working even if the helper script is absent.
 		var TT =
 			(typeof window !== 'undefined' && window.NldesignTokenTransforms) || {}
+		// The upload result model (js/lib/uploadResult.js, loaded before this one).
+		var UR = window.ThematiqUploadResult
+		// The id of the set the last upload stored, for its Incomplete set pill.
+		var lastUploadId = null
 
 		/**
 		 * Show a transient toast, never breaking the flow that raised it.
@@ -6720,71 +6724,6 @@
 			loadCustomTokenSets()
 		}
 
-		/**
-		 * The conversion report of an upload: everything the converter did not
-		 * take over as-is, grouped by reason under the table's own sentence, and
-		 * the counts (nlds-theme-converter 6.3). Empty when the response has no
-		 * report, so a plain token-set upload shows nothing extra.
-		 *
-		 * @param {object} data The upload response.
-		 * @return {DocumentFragment} The report.
-		 */
-		function buildConversionReportFragment(data) {
-			var fragment = document.createDocumentFragment()
-			var reasons = data.reasons || {}
-			var entries = (data.report || []).filter(function (entry) {
-				// Colours moved into sRGB are listed by the diagnostics block.
-				return (
-					entry.action !== 'applied'
-					&& entry.reason
-					&& !/^out-of-gamut-/.test(entry.reason)
-				)
-			})
-			var groups =
-				typeof TT.groupDiagnosticsByReason === 'function'
-					? TT.groupDiagnosticsByReason(entries)
-					: groupDiagnosticsByReasonFallback(entries)
-
-			if (data.counts) {
-				var counts = document.createElement('p')
-				counts.className = 'nldesign-conversion-counts'
-				counts.textContent = t(
-					'thematiq',
-					'{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.',
-					{
-						applied: data.counts.applied || 0,
-						adapted: data.counts.adapted || 0,
-						kept: data.counts.kept || 0,
-						skipped: data.counts.skipped || 0,
-					},
-				)
-				fragment.appendChild(counts)
-			}
-
-			if (groups.length > 0) {
-				var list = document.createElement('ul')
-				list.className = 'nldesign-conversion-report'
-				groups.forEach(function (group) {
-					var item = document.createElement('li')
-					var sources = group.items
-						.map(function (entry) {
-							return entry.source
-						})
-						.join(', ')
-					item.textContent =
-						(reasons[group.reason] || group.reason)
-						+ ' ('
-						+ group.items.length
-						+ '): '
-						+ sources
-					list.appendChild(item)
-				})
-				fragment.appendChild(list)
-			}
-
-			return fragment
-		}
-
 		// Localised label for a DTCG import diagnostic `reason` code. Falls back to
 		// the raw code for any future reason this script does not yet know about,
 		// so a new mapper diagnostic never renders as blank.
@@ -6822,95 +6761,362 @@
 			return labels[reason] || reason
 		}
 
-		// Inline copy of tokenTransforms' groupDiagnosticsByReason, used when the
-		// transforms module is not present on `window` (the app template loads it
-		// first, but admin.js must degrade rather than silently render nothing).
-		// Keep in sync with js/lib/tokenTransforms.js.
-		function groupDiagnosticsByReasonFallback(entries) {
-			if (!Array.isArray(entries) || entries.length === 0) {
-				return []
-			}
-
-			var byReason = {}
-			entries.forEach(function (entry) {
-				var reason = (entry && entry.reason) || 'unknown'
-				if (byReason[reason] === undefined) {
-					byReason[reason] = []
-				}
-				byReason[reason].push(entry)
-			})
-
-			return Object.keys(byReason)
-				.sort()
-				.map(function (reason) {
-					return { reason: reason, items: byReason[reason] }
-				})
+		/**
+		 * The text for a reason code of an upload: the converter's own label when the response
+		 * carries one, else the page's.
+		 *
+		 * @param {string} reason The reason code.
+		 * @param {object} reasons The converter's labels from the response.
+		 * @return {string} The text.
+		 */
+		function reasonText(reason, reasons) {
+			return (reasons && reasons[reason]) || reasonLabel(reason)
 		}
 
-		// Build the DTCG import-diagnostics fragment for an upload response:
-		// skipped/error paths grouped by reason, plus $deprecated import warnings.
-		// Returns an empty (childless) fragment when both arrays are absent/empty,
-		// so a CSS upload's plain-text summary is never followed by empty markup.
-		function buildDiagnosticsFragment(data) {
-			var fragment = document.createDocumentFragment()
+		/**
+		 * An element with a class and optional text.
+		 *
+		 * @param {string} tag The tag.
+		 * @param {string} className The class.
+		 * @param {string} [text] The text.
+		 * @return {HTMLElement} The element.
+		 */
+		function resultNode(tag, className, text) {
+			var node = document.createElement(tag)
+			node.className = className
+			if (text !== undefined) {
+				node.textContent = text
+			}
+			return node
+		}
 
-			// Colours moved into sRGB are listed too, so the change is visible.
-			var adapted = (data.report || [])
-				.filter(function (entry) {
-					return /^out-of-gamut-/.test(entry.reason || '')
-				})
-				.map(function (entry) {
-					return { path: entry.source, reason: entry.reason }
-				})
-			var diagnostics = [].concat(
-				data.skipped || [],
-				data.errors || [],
-				adapted,
+		/**
+		 * The table of the tokens an upload reports on (TqSetUploaden): the token as the file
+		 * names it and what thematiq reports.
+		 *
+		 * @param {Array<{token: string, reason: string}>} rows The rows.
+		 * @param {string} first The first column's heading.
+		 * @param {string} second The second column's heading.
+		 * @return {HTMLTableElement} The table.
+		 */
+		function buildNoticeTable(rows, first, second) {
+			var table = resultNode(
+				'table',
+				'nldesign-audit-table thematiq-upload-result__table',
 			)
-			var groups =
-				typeof TT.groupDiagnosticsByReason === 'function'
-					? TT.groupDiagnosticsByReason(diagnostics)
-					: groupDiagnosticsByReasonFallback(diagnostics)
+			var head = table.createTHead().insertRow()
+			;[first, second].forEach(function (label) {
+				var th = document.createElement('th')
+				th.scope = 'col'
+				th.textContent = label
+				head.appendChild(th)
+			})
+			var body = table.createTBody()
+			rows.forEach(function (row) {
+				var tr = body.insertRow()
+				tr.className = 'thematiq-upload-result__row'
+				tr.insertCell().appendChild(resultNode('code', '', row.token))
+				tr.insertCell().textContent = row.reason
+			})
+			return table
+		}
 
-			if (groups.length > 0) {
-				var list = document.createElement('ul')
-				list.className = 'nldesign-diagnostics-list'
-				groups.forEach(function (group) {
-					var item = document.createElement('li')
-					var paths = group.items
-						.map(function (entry) {
-							return entry.path
-						})
-						.join(', ')
-					item.textContent =
-						reasonLabel(group.reason)
-						+ ' ('
-						+ group.items.length
-						+ '): '
-						+ paths
-					list.appendChild(item)
+		/**
+		 * A stored upload as the TqSetUploaden board draws it: the Uploaded pill with the file and
+		 * its package version, what was saved, the notices while reading, the warning pills and
+		 * the deprecations the file names.
+		 *
+		 * @param {object} model The model from ThematiqUploadResult.stored().
+		 * @param {object} data The upload response, for the converter's counts.
+		 * @return {HTMLElement} The result.
+		 */
+		function buildStoredResult(model, data) {
+			var box = resultNode('div', 'thematiq-upload-result')
+			var head = resultNode('div', 'thematiq-upload-result__head')
+			head.appendChild(
+				resultNode(
+					'span',
+					'thematiq-upload-result__pill thematiq-upload-result__pill--pass',
+					t('thematiq', 'Uploaded'),
+				),
+			)
+			if (model.fileName !== '') {
+				head.appendChild(
+					resultNode(
+						'span',
+						'thematiq-upload-result__file',
+						model.fileName,
+					),
+				)
+			}
+			if (model.version !== '') {
+				head.appendChild(
+					resultNode(
+						'span',
+						'thematiq-upload-result__version',
+						t('thematiq', 'Package version: {version}', {
+							version: model.version,
+						}),
+					),
+				)
+			}
+			box.appendChild(head)
+
+			var summary =
+				t(
+					'thematiq',
+					'"{name}" is saved and is now in the list. Choose it there to apply it.',
+					{ name: model.name },
+				)
+				+ ' '
+				+ t('thematiq', '{imported} tokens imported, {skipped} skipped.', {
+					imported: model.imported,
+					skipped: model.skipped,
 				})
-				fragment.appendChild(list)
+			if (model.darkValues > 0) {
+				summary +=
+					' '
+					+ t(
+						'thematiq',
+						'{count} dark values from the file are kept for dark mode and win over the derived dark variant.',
+						{ count: model.darkValues },
+					)
+			}
+			var text = resultNode('p', 'thematiq-upload-result__summary', summary)
+			if (data && data.counts) {
+				text.appendChild(document.createTextNode(' '))
+				text.appendChild(
+					resultNode(
+						'span',
+						'nldesign-conversion-counts',
+						t(
+							'thematiq',
+							'{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.',
+							{
+								applied: data.counts.applied || 0,
+								adapted: data.counts.adapted || 0,
+								kept: data.counts.kept || 0,
+								skipped: data.counts.skipped || 0,
+							},
+						),
+					),
+				)
+			}
+			box.appendChild(text)
+
+			if (model.notices.length > 0) {
+				box.appendChild(
+					resultNode(
+						'h3',
+						'thematiq-upload-result__title',
+						n(
+							'thematiq',
+							'{count} notice while reading',
+							'{count} notices while reading',
+							model.notices.length,
+							{ count: model.notices.length },
+						),
+					),
+				)
+				box.appendChild(
+					buildNoticeTable(
+						model.notices,
+						t('thematiq', 'Token in the file'),
+						t('thematiq', 'What thematiq reports'),
+					),
+				)
 			}
 
-			if (data.importWarnings && data.importWarnings.length > 0) {
-				var warnList = document.createElement('ul')
-				warnList.className = 'nldesign-deprecation-list'
-				data.importWarnings.forEach(function (w) {
-					var item = document.createElement('li')
-					item.textContent = w.path + (w.message ? ': ' + w.message : '')
-					warnList.appendChild(item)
+			var pills = resultNode('div', 'thematiq-upload-result__pills')
+			var incomplete = resultNode(
+				'span',
+				'thematiq-upload-result__pill thematiq-upload-result__pill--warn thematiq-upload-result__incomplete',
+				t('thematiq', 'Incomplete set'),
+			)
+			incomplete.hidden = true
+			pills.appendChild(incomplete)
+			if (model.contrast > 0) {
+				pills.appendChild(
+					resultNode(
+						'span',
+						'thematiq-upload-result__pill thematiq-upload-result__pill--warn',
+						n(
+							'thematiq',
+							'{count} contrast warning',
+							'{count} contrast warnings',
+							model.contrast,
+							{ count: model.contrast },
+						),
+					),
+				)
+			}
+			var explain = resultNode('p', 'thematiq-upload-result__hint')
+			explain.dataset.contrast = String(model.contrast)
+			pills.hidden = model.contrast === 0
+			explain.hidden = model.contrast === 0
+			if (model.contrast > 0) {
+				explain.textContent = t(
+					'thematiq',
+					'You see the contrast warning again in the dialog when applying.',
+				)
+			}
+			box.appendChild(pills)
+			box.appendChild(explain)
+
+			if (model.deprecations.length > 0) {
+				var notice = resultNode(
+					'div',
+					'thematiq-upload-result__deprecations',
+				)
+				notice.appendChild(
+					resultNode(
+						'span',
+						'thematiq-upload-result__deprecations-text',
+						n(
+							'thematiq',
+							'The file reports {count} deprecated token, with its replacement and date. If you record it, it is listed under Custom tokens and apps can read it.',
+							'The file reports {count} deprecated tokens, with their replacement and date. If you record them, they are listed under Custom tokens and apps can read them.',
+							model.deprecations.length,
+							{ count: model.deprecations.length },
+						),
+					),
+				)
+				var list = resultNode('ul', 'nldesign-deprecation-list')
+				model.deprecations.forEach(function (warning) {
+					list.appendChild(
+						resultNode(
+							'li',
+							'',
+							warning.path
+								+ (warning.message ? ': ' + warning.message : ''),
+						),
+					)
 				})
-				fragment.appendChild(warnList)
-				var adoptable = data.importWarnings.filter(function (w) {
-					return Boolean(w.token)
-				})
-				if (adoptable.length > 0) {
-					fragment.appendChild(buildAdoptNoticesButton(adoptable))
+				notice.appendChild(list)
+				if (model.adoptable.length > 0) {
+					notice.appendChild(buildAdoptNoticesButton(model.adoptable))
 				}
+				box.appendChild(notice)
 			}
+			return box
+		}
 
-			return fragment
+		/**
+		 * Show the Incomplete set pill of the last upload once the list of own sets says how many
+		 * tokens it leaves to the design system.
+		 *
+		 * @param {Array<object>} sets The own sets.
+		 * @return {void}
+		 */
+		function markIncompleteUpload(sets) {
+			var box = document.querySelector(
+				'#nldesign-upload-result .thematiq-upload-result',
+			)
+			if (box === null || lastUploadId === null) {
+				return
+			}
+			var count = UR.missing(
+				sets.find(function (set) {
+					return set.id === lastUploadId
+				}),
+			)
+			if (count === 0) {
+				return
+			}
+			var hint = box.querySelector('.thematiq-upload-result__hint')
+			box.querySelector('.thematiq-upload-result__incomplete').hidden = false
+			box.querySelector('.thematiq-upload-result__pills').hidden = false
+			hint.hidden = false
+			hint.textContent =
+				n(
+					'thematiq',
+					'This set does not define every token the design system reads: {count} token falls back to the design system.',
+					'This set does not define every token the design system reads: {count} tokens fall back to the design system.',
+					count,
+					{ count: count },
+				)
+				+ (hint.dataset.contrast !== '0'
+					? ' '
+						+ t(
+							'thematiq',
+							'You see the contrast warning again in the dialog when applying.',
+						)
+					: '')
+		}
+
+		/**
+		 * A refused upload as the TqSetUploaden board draws it: Refused file, the file and its
+		 * status with Nothing was saved, the reason, and the tokens the response names.
+		 *
+		 * @param {object} model The model from ThematiqUploadResult.refused().
+		 * @return {HTMLElement} The result.
+		 */
+		function buildRefusedResult(model) {
+			var box = resultNode(
+				'div',
+				'thematiq-upload-result thematiq-upload-result--refused',
+			)
+			box.appendChild(
+				resultNode(
+					'h3',
+					'thematiq-upload-result__title',
+					t('thematiq', 'Refused file'),
+				),
+			)
+			box.appendChild(
+				resultNode(
+					'p',
+					'thematiq-upload-result__hint',
+					t(
+						'thematiq',
+						'What an upload may never put in a token set: script, a reference to the outside or a rule that loads something. Such a file is refused as a whole.',
+					),
+				),
+			)
+			var notice = resultNode('div', 'thematiq-upload-result__refusal')
+			var lines = resultNode('div', 'thematiq-upload-result__refusal-text')
+			lines.appendChild(
+				resultNode(
+					'strong',
+					'',
+					model.fileName !== ''
+						? t(
+								'thematiq',
+								'{file} was refused ({status}). Nothing was saved.',
+								{ file: model.fileName, status: model.status },
+							)
+						: t(
+								'thematiq',
+								'The pasted contents were refused ({status}). Nothing was saved.',
+								{ status: model.status },
+							),
+				),
+			)
+			if (model.error !== '') {
+				lines.appendChild(resultNode('span', '', model.error))
+			}
+			notice.appendChild(lines)
+			box.appendChild(notice)
+			if (model.notices.length > 0) {
+				box.appendChild(
+					buildNoticeTable(
+						model.notices,
+						t('thematiq', 'Token in the file'),
+						t('thematiq', 'What thematiq reports'),
+					),
+				)
+			}
+			box.appendChild(
+				resultNode(
+					'p',
+					'thematiq-upload-result__hint',
+					t(
+						'thematiq',
+						'An @import, an @font-face or a comment does not survive the import: thematiq rewrites every token as one property. Such lines do not invalidate the upload; they simply do not get in.',
+					),
+				),
+			)
+			return box
 		}
 
 		/**
@@ -7222,6 +7428,7 @@
 
 		function uploadCustomTokenSet(name, file, brands) {
 			var resultEl = document.getElementById('nldesign-upload-result')
+			var fileName = file instanceof Blob && file.name ? file.name : ''
 			var formData = new FormData()
 			formData.append('name', name)
 			// `file` is a File from the picker, or `{content}` from the paste box.
@@ -7252,13 +7459,14 @@
 					if (res.status >= 400) {
 						if (resultEl !== null) {
 							resultEl.appendChild(
-								document.createTextNode(
-									t('thematiq', 'Upload failed:')
-										+ ' '
-										+ (res.data.error || ''),
+								buildRefusedResult(
+									UR.refused(res.data, {
+										status: res.status,
+										fileName: fileName,
+										label: reasonText,
+									}),
 								),
 							)
-							resultEl.appendChild(buildDiagnosticsFragment(res.data))
 						}
 						notify(
 							t('thematiq', 'Upload failed:')
@@ -7297,42 +7505,19 @@
 						refreshTokenSetCatalogue().catch(function () {})
 						return
 					}
-					var msg = t(
-						'thematiq',
-						'{imported} tokens imported, {skipped} skipped.',
-					)
-						.replace('{imported}', res.data.imported)
-						.replace('{skipped}', (res.data.skipped || []).length)
-					// Dark values the file brought (dark-colours-from-a-file).
-					if (res.data.darkValues > 0) {
-						msg +=
-							' '
-							+ t(
-								'thematiq',
-								'{count} dark values from the file are kept for dark mode.',
-							).replace('{count}', res.data.darkValues)
-					}
-					if (res.data.version) {
-						msg +=
-							' '
-							+ t('thematiq', 'Package version: {version}').replace(
-								'{version}',
-								res.data.version,
-							)
-					}
-					if (res.data.warnings && res.data.warnings.length > 0) {
-						msg +=
-							' '
-							+ t(
-								'thematiq',
-								'{count} WCAG AA contrast warning(s) — see the apply dialog.',
-							).replace('{count}', res.data.warnings.length)
-					}
 					if (resultEl !== null) {
-						resultEl.appendChild(document.createTextNode(msg))
-						resultEl.appendChild(buildDiagnosticsFragment(res.data))
-						resultEl.appendChild(buildConversionReportFragment(res.data))
+						resultEl.appendChild(
+							buildStoredResult(
+								UR.stored(res.data, {
+									name: name,
+									fileName: fileName,
+									label: reasonText,
+								}),
+								res.data,
+							),
+						)
 					}
+					lastUploadId = res.data.id || null
 					loadCustomTokenSets()
 					// The dropdown and tokenSetsData were built from initial state
 					// at page load; bring both in line with the catalogue so the
@@ -7799,6 +7984,7 @@
 				.then(function (data) {
 					var sets = (data && data.sets) || []
 					renderCustomSetList(listEl, sets)
+					markIncompleteUpload(sets)
 					document.dispatchEvent(
 						new CustomEvent('thematiq:custom-sets', {
 							detail: { sets: sets },
