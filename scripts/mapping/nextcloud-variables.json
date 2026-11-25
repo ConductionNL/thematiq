@@ -7,7 +7,7 @@
 		"conduction": 51,
 		"icon": 484,
 		"runtime": 36,
-		"slot": 83,
+		"slot": 84,
 		"theme": 111,
 		"unread": 10
 	},
@@ -10854,6 +10854,14 @@
 				"apps/theming",
 				"core/css",
 				"dist/theming-theming-settings-personal-Tw2nBJ_u.chunk.css"
+			]
+		},
+		"--image-favicon": {
+			"class": "slot",
+			"owner": "image",
+			"sources": [
+				"apps/theming",
+				"core/css"
 			]
 		},
 		"--image-logo": {
