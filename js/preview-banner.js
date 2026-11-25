@@ -40,7 +40,7 @@
 		text.className = 'nldesign-preview-banner-text'
 		text.textContent = t(
 			'thematiq',
-			'Preview: {name} — this is only visible to you',
+			'Preview: {name}, visible to you only',
 			{ name: name },
 		)
 		banner.appendChild(text)

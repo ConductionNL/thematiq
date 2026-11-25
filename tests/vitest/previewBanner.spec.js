@@ -70,7 +70,7 @@ describe('the theme preview banner', () => {
 		await loadScript()
 
 		expect(banner().getAttribute('role')).toBe('status')
-		expect(banner().querySelector('.nldesign-preview-banner-text').textContent).toBe('Preview: Zuiddrecht — this is only visible to you')
+		expect(banner().querySelector('.nldesign-preview-banner-text').textContent).toBe('Preview: Zuiddrecht, visible to you only')
 		const publish = banner().querySelector('a.nldesign-preview-banner-publish')
 		expect(publish.getAttribute('href')).toBe('/index.php/settings/admin/theming#nldesign-settings')
 		expect(publish.textContent).toBe('Publish')

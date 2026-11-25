@@ -62,6 +62,7 @@ script('thematiq', 'admin-layout-panel');
 script('thematiq', 'admin-dark-panel');
 script('thematiq', 'admin-token-set-panel');
 script('thematiq', 'admin-components-panel');
+script('thematiq', 'admin-motion-panel');
 script('thematiq', 'admin-custom-css-panel');
 script('thematiq', 'admin-log-panel');
 script('thematiq', 'admin-fonts-panel');
@@ -696,6 +697,46 @@ if ($_['mockUi'] === true) {
 		<div class="thematiq-components-panel__instrument"></div>
 	</section>
 
+	<!-- Motion tokens (TqBeweging), a panel of this page at #motion (design.md): js/admin-motion-panel.js
+	     lends it the overview's token editor, which shows only its motion rows here, and plays
+	     the preview with their values. -->
+	<section class="thematiq-panel thematiq-motion-panel" data-thematiq-panel="motion" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-panel__columns">
+			<div class="thematiq-panel__main">
+				<section class="thematiq-card thematiq-panel__card" aria-labelledby="thematiq-motion-preview-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-motion-preview-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Full view')); ?></h2>
+						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t("No component chosen: Nextcloud's base tokens, which apply everywhere.")); ?></span>
+					</div>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('When the system asks for reduced motion the preview motion stands still: every duration becomes 0 ms, in the app itself too.')); ?></p>
+					<div class="thematiq-motion-panel__stage">
+						<div class="thematiq-motion-panel__sample thematiq-motion-panel__dialog"><?php p($l->t('Dialog slides in')); ?></div>
+						<div class="thematiq-motion-panel__sample thematiq-motion-panel__toast"><?php p($l->t('Notification: saved')); ?></div>
+					</div>
+					<div class="thematiq-css-panel__actions">
+						<button type="button" class="thematiq-css-panel__save thematiq-motion-panel__play"><?php p($l->t('Play motion')); ?></button>
+						<span class="thematiq-panel__fact-hint thematiq-motion-panel__readout" role="status" aria-live="polite"></span>
+					</div>
+				</section>
+				<section class="thematiq-card thematiq-panel__card" aria-labelledby="thematiq-motion-title">
+					<div class="thematiq-css-panel__head">
+						<h2 id="thematiq-motion-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('Motion')); ?></h2>
+					</div>
+					<p class="thematiq-fonts-panel__notice thematiq-motion-panel__notice"></p>
+					<div class="thematiq-motion-panel__editor"></div>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('A duration is a number with ms or s, up to 5 seconds. An easing is one of the five words or a custom curve with both x values between 0 and 1. Anything outside those rules the server does not save, and you see why.')); ?></p>
+				</section>
+			</div>
+			<aside class="thematiq-panel__aside" aria-label="<?php p($l->t('Explanation')); ?>">
+				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-motion-where-title">
+					<h2 id="thematiq-motion-where-title" class="thematiq-panel__card-title"><?php p($l->t('Where motion lives')); ?></h2>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('Every transition of Nextcloud and the Conduction apps reads these three tokens: menus, dialogs, the sidebar, notifications and tabs.')); ?></p>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('Motion tokens have a fixed type: the server checks every value before it saves anything.')); ?></p>
+				</section>
+			</aside>
+		</div>
+	</section>
+
 	<!-- Custom CSS (TqEigenCss), a panel of this page at #css (design.md): admin-authored
 	     rules, checked server-side and emitted after every other theming layer.
 	     js/admin.js saves them; js/admin-custom-css-panel.js numbers the lines. -->
@@ -840,7 +881,7 @@ if ($_['mockUi'] === true) {
 					<h2 id="nldesign-font-library-heading" class="thematiq-panel__card-title"><?php p($l->t('Library of approved fonts')); ?></h2>
 					<span class="thematiq-panel__fact-hint"><?php p($l->t('The fonts thematiq bundles, each with its licence. Pick one for the headings or the body text: no upload needed, the font goes into the token with its fallback chain.')); ?></span>
 				</div>
-				<div id="nldesign-font-library" class="thematiq-font-list" role="list" aria-labelledby="nldesign-font-library-heading">
+				<div id="nldesign-font-library" class="thematiq-font-list" aria-labelledby="nldesign-font-library-heading">
 					<p class="settings-hint"><?php p($l->t('Loading font library…')); ?></p>
 				</div>
 			</section>
@@ -849,7 +890,7 @@ if ($_['mockUi'] === true) {
 					<h2 id="thematiq-fonts-uploaded-title" class="thematiq-panel__card-title"><?php p($l->t('Uploaded fonts')); ?></h2>
 					<span class="thematiq-panel__fact-hint"><?php p($l->t('At most 20. After an upload, reload the page to see the font.')); ?></span>
 				</div>
-				<div id="nldesign-font-list" class="thematiq-font-list" role="list" aria-labelledby="thematiq-fonts-uploaded-title">
+				<div id="nldesign-font-list" class="thematiq-font-list" aria-labelledby="thematiq-fonts-uploaded-title">
 					<p class="settings-hint"><?php p($l->t('Loading fonts…')); ?></p>
 				</div>
 			</section>
@@ -1768,6 +1809,7 @@ if ($_['mockUi'] === true) {
 			<li><a href="#brands"><?php p($l->t('Brand per app')); ?></a></li>
 			<li><a href="#email"><?php p($l->t('Email and documents')); ?></a></li>
 			<li><a href="#own-tokens"><?php p($l->t('Own tokens')); ?></a></li>
+			<li><a href="#motion"><?php p($l->t('Motion tokens')); ?></a></li>
 			<li><a href="#environment"><?php p($l->t('Environment marker')); ?></a></li>
 			<li><a href="#gallery"><?php p($l->t('Theme gallery')); ?></a></li>
 			<li><a href="#bundle"><?php p($l->t('Configuration bundle')); ?></a></li>
