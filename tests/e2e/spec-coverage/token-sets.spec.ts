@@ -1712,6 +1712,10 @@ test.describe('token-sets', () => {
 	test('the custom-set list badge ranks incomplete over contrast over OK', async ({
 		page,
 	}) => {
+		// The page's first reads come with its render; this test stubs one, so the page fetches.
+		await page.addInitScript(() => {
+			(window as unknown as { ThematiqBootReadsOff: boolean }).ThematiqBootReadsOff = true
+		})
 		// The server never sends an incomplete finding for an upload today (the
 		// spec says so), so the list response is stubbed to hold all three
 		// states and the badge logic is what is under test.

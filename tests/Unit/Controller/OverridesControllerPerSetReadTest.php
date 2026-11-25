@@ -109,6 +109,31 @@ class OverridesControllerPerSetReadTest extends TestCase {
 	}//end testReadsTheNamedSetsOverrides()
 
 	/**
+	 * The payload the admin render hands over is what the route answers for the same set,
+	 * and it names the set without a request parameter.
+	 *
+	 * @return void
+	 */
+	public function testThePayloadIsWhatTheRouteAnswersForTheSameSet(): void {
+		$this->asking(tokenSet: 'custom-openwoo');
+		$this->overrides->method('read')->willReturnMap(
+			[
+				['custom-openwoo', ['--color-primary' => '#112233']],
+				['nextcloud', ['--color-primary' => '#445566']],
+			]
+		);
+
+		$this->assertSame(
+			expected: $this->controller->getOverrides()->getData(),
+			actual: $this->controller->overridesPayload(tokenSet: 'custom-openwoo')
+		);
+		$this->assertSame(
+			expected: ['--color-primary' => '#445566'],
+			actual: $this->controller->overridesPayload(tokenSet: 'nextcloud')['overrides']
+		);
+	}//end testThePayloadIsWhatTheRouteAnswersForTheSameSet()
+
+	/**
 	 * Anything but a non-empty string is no set named at all.
 	 *
 	 * @param mixed $tokenSet The parameter's value.

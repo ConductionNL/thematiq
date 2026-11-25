@@ -343,6 +343,10 @@ test.describe('the dialogs of the admin Theming page', () => {
 	test('the font delete dialog (TqLettertypen) opens from Delete, and Cancel and Escape keep the font', async ({
 		page,
 	}) => {
+		// The page's first reads come with its render; this test stubs one, so the page fetches.
+		await page.addInitScript(() => {
+			(window as unknown as { ThematiqBootReadsOff: boolean }).ThematiqBootReadsOff = true
+		})
 		// The uploaded-fonts list is answered with one font; a delete is refused here.
 		await page.route(
 			(url) => url.pathname.endsWith('/apps/thematiq/settings/fonts'),
