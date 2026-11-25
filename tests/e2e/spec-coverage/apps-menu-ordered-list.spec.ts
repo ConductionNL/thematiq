@@ -15,7 +15,12 @@
 import { test, expect, type Locator, type Page } from '@playwright/test'
 
 import { adminContext, api } from './_fixtures'
-import { withThemeState } from './_theme-state'
+import {
+	applyThemeState,
+	restoreThemeState,
+	withThemeState,
+	type ThemeSnapshot,
+} from './_theme-state'
 
 const ORDER = '/index.php/apps/thematiq/app-menu/order'
 const SETTINGS = '/index.php/apps/thematiq/app-menu/settings'
@@ -71,6 +76,33 @@ test.describe('the apps menu as one ordered list', () => {
 	test.describe.configure({ mode: 'serial' })
 
 	let admin: Page
+	let snapshot: ThemeSnapshot | null = null
+
+	// The thematiq apps menu exists only under a set with the workplace header
+	// (AppMenuService::inject() returns early otherwise), so every test here
+	// needs Zuiddrecht, not only the first. Without this the later tests ran on
+	// whatever set the instance had, found no `.app-menu__grid[data-thematiq-app-menu]`
+	// and, in serial mode, took the rest of the block down with them.
+	test.beforeAll(async ({ browser }) => {
+		const ctx = await adminContext(browser)
+		try {
+			snapshot = await applyThemeState(await ctx.newPage(), {
+				tokenSet: 'zuiddrecht',
+			})
+		} finally {
+			await ctx.close()
+		}
+	})
+
+	test.afterAll(async ({ browser }) => {
+		if (snapshot === null) return
+		const ctx = await adminContext(browser)
+		try {
+			await restoreThemeState(await ctx.newPage(), snapshot)
+		} finally {
+			await ctx.close()
+		}
+	})
 
 	test.beforeEach(async ({ page }) => {
 		admin = page
