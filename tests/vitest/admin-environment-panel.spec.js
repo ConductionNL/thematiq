@@ -37,10 +37,12 @@ describe('Environment marker panel', () => {
 		window.history.replaceState(null, '', window.location.pathname)
 		for (const target of [window, document]) {
 			const original = target.addEventListener.bind(target)
-			vi.spyOn(target, 'addEventListener').mockImplementation((type, listener, options) => {
-				added.push([target, type, listener])
-				original(type, listener, options)
-			})
+			vi.spyOn(target, 'addEventListener').mockImplementation(
+				(type, listener, options) => {
+					added.push([target, type, listener])
+					original(type, listener, options)
+				},
+			)
 		}
 		vi.resetModules()
 		await import('../../js/admin-panels.js?t=' + Math.random())
@@ -51,7 +53,9 @@ describe('Environment marker panel', () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks()
-		added.forEach(([target, type, listener]) => target.removeEventListener(type, listener))
+		added.forEach(([target, type, listener]) =>
+			target.removeEventListener(type, listener),
+		)
 		added = []
 		document.body.innerHTML = ''
 		delete window.ThematiqPanels
@@ -59,8 +63,12 @@ describe('Environment marker panel', () => {
 	})
 
 	it('puts the template line in the header', () => {
-		expect(document.querySelector('.thematiq-page-header__title').textContent).toBe('Environment marker')
-		expect(document.querySelector('.thematiq-page-header__intro').textContent).toBe('Environment: test, set in config.php')
+		expect(
+			document.querySelector('.thematiq-page-header__title').textContent,
+		).toBe('Environment marker')
+		expect(
+			document.querySelector('.thematiq-page-header__intro').textContent,
+		).toBe('Environment: test, set in config.php')
 	})
 
 	it('shows a copy of the Documentation link and gives the original back', () => {

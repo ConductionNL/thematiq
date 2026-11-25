@@ -49,8 +49,16 @@ describe('the Quick add button', () => {
 			failed: 'The file could not be created.',
 			list: vi.fn(() =>
 				Promise.resolve([
-					{ name: 'New document', icon: 'M0 0', run: () => ran.push('document') },
-					{ name: 'New spreadsheet', icon: 'M0 0', run: () => ran.push('spreadsheet') },
+					{
+						name: 'New document',
+						icon: 'M0 0',
+						run: () => ran.push('document'),
+					},
+					{
+						name: 'New spreadsheet',
+						icon: 'M0 0',
+						run: () => ran.push('spreadsheet'),
+					},
 				]),
 			),
 		}
@@ -67,7 +75,9 @@ describe('the Quick add button', () => {
 		installState('mail')
 		await loadScript()
 
-		const wrap = document.querySelector('#header .header-end > .thematiq-quick-add')
+		const wrap = document.querySelector(
+			'#header .header-end > .thematiq-quick-add',
+		)
 		expect(wrap.nextElementSibling.id).toBe('notifications')
 		const button = wrap.querySelector('button')
 		expect(button.getAttribute('aria-label')).toBe('Quick add')
@@ -105,7 +115,10 @@ describe('the Quick add button', () => {
 		expect(menu.hidden).toBe(false)
 		expect(button.getAttribute('aria-expanded')).toBe('true')
 		const items = Array.from(menu.querySelectorAll('[role="menuitem"]'))
-		expect(items.map((item) => item.textContent)).toEqual(['New document', 'New spreadsheet'])
+		expect(items.map((item) => item.textContent)).toEqual([
+			'New document',
+			'New spreadsheet',
+		])
 		expect(document.activeElement).toBe(items[0])
 
 		items[1].click()
@@ -125,7 +138,9 @@ describe('the Quick add button', () => {
 		button.click()
 		await flush()
 		const menu = document.querySelector('.thematiq-quick-add__menu')
-		menu.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+		menu.dispatchEvent(
+			new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+		)
 		expect(menu.hidden).toBe(true)
 		expect(document.activeElement).toBe(button)
 	})
@@ -137,9 +152,9 @@ describe('the Quick add button', () => {
 
 		document.querySelector('.thematiq-quick-add__button').click()
 		await flush()
-		expect(document.querySelector('.thematiq-quick-add__status').textContent).toBe(
-			'Nothing to create here.',
-		)
+		expect(
+			document.querySelector('.thematiq-quick-add__status').textContent,
+		).toBe('Nothing to create here.')
 	})
 
 	it('moves through the items with the arrows, wrapping, and closes on Tab', async () => {
@@ -149,7 +164,10 @@ describe('the Quick add button', () => {
 		await flush()
 		const menu = document.querySelector('.thematiq-quick-add__menu')
 		const items = Array.from(menu.querySelectorAll('[role="menuitem"]'))
-		const key = (name) => menu.dispatchEvent(new window.KeyboardEvent('keydown', { key: name, bubbles: true }))
+		const key = (name) =>
+			menu.dispatchEvent(
+				new window.KeyboardEvent('keydown', { key: name, bubbles: true }),
+			)
 
 		key('ArrowDown')
 		expect(document.activeElement).toBe(items[1])
@@ -183,19 +201,23 @@ describe('the Quick add button', () => {
 	})
 
 	it('says there is nothing to create when the actions cannot be listed', async () => {
-		window.thematiqCreateActions.list = () => Promise.reject(new Error('offline'))
+		window.thematiqCreateActions.list = () =>
+			Promise.reject(new Error('offline'))
 		installState('mail')
 		await loadScript()
 		document.querySelector('.thematiq-quick-add__button').click()
 		await flush()
 		await flush()
-		expect(document.querySelector('.thematiq-quick-add__status').textContent).toBe('Nothing to create here.')
+		expect(
+			document.querySelector('.thematiq-quick-add__status').textContent,
+		).toBe('Nothing to create here.')
 	})
 
 	it('opens again with the failure when an action reports one', async () => {
-		window.thematiqCreateActions.list = () => Promise.resolve([
-			{ name: 'New document', icon: 'M0 0', run: (failed) => failed() },
-		])
+		window.thematiqCreateActions.list = () =>
+			Promise.resolve([
+				{ name: 'New document', icon: 'M0 0', run: (failed) => failed() },
+			])
 		installState('deck')
 		await loadScript()
 		const button = document.querySelector('.thematiq-quick-add__button')
@@ -206,7 +228,9 @@ describe('the Quick add button', () => {
 		const menu = document.querySelector('.thematiq-quick-add__menu')
 		expect(menu.hidden).toBe(false)
 		expect(button.getAttribute('aria-expanded')).toBe('true')
-		expect(menu.querySelector('.thematiq-quick-add__status').textContent).toBe('The file could not be created.')
+		expect(menu.querySelector('.thematiq-quick-add__status').textContent).toBe(
+			'The file could not be created.',
+		)
 	})
 
 	it('puts the button back when Nextcloud re-renders the end of the bar', async () => {
@@ -232,14 +256,22 @@ describe('the Quick add button', () => {
 		expect(document.querySelector('.thematiq-quick-add')).toBeNull()
 
 		global.t = (app, text) => text
-		global.OCP = { InitialState: { loadState: () => { throw new Error('no state') } } }
+		global.OCP = {
+			InitialState: {
+				loadState: () => {
+					throw new Error('no state')
+				},
+			},
+		}
 		await loadScript()
 		expect(document.querySelector('.thematiq-quick-add')).toBeNull()
 	})
 
 	it('waits for DOMContentLoaded while the page is loading', async () => {
 		installState('mail')
-		const readyState = vi.spyOn(document, 'readyState', 'get').mockReturnValue('loading')
+		const readyState = vi
+			.spyOn(document, 'readyState', 'get')
+			.mockReturnValue('loading')
 		await loadScript()
 		expect(document.querySelector('.thematiq-quick-add')).toBeNull()
 

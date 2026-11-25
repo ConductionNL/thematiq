@@ -216,7 +216,9 @@ describe('admin.js pasted theme', () => {
 		const rows = result.querySelectorAll('.thematiq-upload-result__row')
 		expect(rows).toHaveLength(1)
 		expect(rows[0].cells[0].textContent).toBe('--utrecht-page-max-inline-size')
-		expect(rows[0].cells[1].textContent).toBe('Page width and paddings were not applied.')
+		expect(rows[0].cells[1].textContent).toBe(
+			'Page width and paddings were not applied.',
+		)
 		expect(result.querySelector('.thematiq-upload-result__file')).toBeNull()
 		expect(result.textContent).toContain(
 			'1 applied, 28 adapted, 0 kept, 1 skipped',

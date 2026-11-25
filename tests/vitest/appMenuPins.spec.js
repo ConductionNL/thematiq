@@ -149,13 +149,19 @@ describe('pinned apps in the top bar', () => {
 		installState({ labels: LABELS, order: [], pins: ['deck', 'gone', 'files'] })
 		await loadScript()
 
-		expect(bar().previousElementSibling.classList.contains('app-menu')).toBe(true)
+		expect(bar().previousElementSibling.classList.contains('app-menu')).toBe(
+			true,
+		)
 		expect(bar().getAttribute('aria-label')).toBe('Vastgezette apps')
 		expect(pinned()).toEqual(['deck', 'files'])
 		const deck = bar().querySelector('[data-thematiq-pin="deck"]')
 		expect(deck.getAttribute('aria-label')).toBe('Deck')
 		expect(deck.getAttribute('href')).toBe('/index.php/apps/deck/')
-		expect(bar().querySelector('[data-thematiq-pin="files"]').getAttribute('aria-current')).toBe('page')
+		expect(
+			bar()
+				.querySelector('[data-thematiq-pin="files"]')
+				.getAttribute('aria-current'),
+		).toBe('page')
 	})
 
 	it('hides the bar without pins', async () => {
@@ -177,7 +183,9 @@ describe('pinned apps in the top bar', () => {
 		expect(pinned()).toEqual(['mail'])
 		expect(live()).toBe('mail staat nu vast in de bovenbalk.')
 		vi.advanceTimersByTime(500)
-		expect(posted).toEqual([{ url: '/apps/thematiq/app-menu/pins', body: { pins: ['mail'] } }])
+		expect(posted).toEqual([
+			{ url: '/apps/thematiq/app-menu/pins', body: { pins: ['mail'] } },
+		])
 
 		altP(mail)
 		expect(pinned()).toEqual([])
@@ -188,7 +196,11 @@ describe('pinned apps in the top bar', () => {
 
 	it('pins at most five apps', async () => {
 		const grid = page()
-		installState({ labels: LABELS, order: [], pins: ['files', 'dossiq', 'calendar', 'pipelinq', 'mail'] })
+		installState({
+			labels: LABELS,
+			order: [],
+			pins: ['files', 'dossiq', 'calendar', 'pipelinq', 'mail'],
+		})
 		await loadScript()
 
 		const deck = grid.querySelector('a[href*="/apps/deck/"]')
@@ -212,8 +224,13 @@ describe('pinned apps in the top bar', () => {
 
 		pointer(document, 'pointermove', 300, 30)
 		expect(bar().querySelector('.thematiq-app-pins__drop')).not.toBeNull()
-		expect(document.querySelector('.thematiq-app-pins__drop-hint[role="status"]').textContent).toBe('Laat los om vast te zetten')
-		expect(document.querySelector('.thematiq-app-pins__ghost').textContent).toContain('Deck')
+		expect(
+			document.querySelector('.thematiq-app-pins__drop-hint[role="status"]')
+				.textContent,
+		).toBe('Laat los om vast te zetten')
+		expect(
+			document.querySelector('.thematiq-app-pins__ghost').textContent,
+		).toContain('Deck')
 
 		pointer(document, 'pointerup', 300, 30)
 		expect(bar().querySelector('.thematiq-app-pins__drop')).toBeNull()
@@ -221,21 +238,31 @@ describe('pinned apps in the top bar', () => {
 		expect(document.querySelector('.thematiq-app-pins__drop-hint')).toBeNull()
 		expect(pinned()).toEqual(['files', 'deck'])
 		vi.advanceTimersByTime(500)
-		expect(posted.filter((p) => p.url.endsWith('/pins'))[0].body.pins).toEqual(['files', 'deck'])
+		expect(posted.filter((p) => p.url.endsWith('/pins'))[0].body.pins).toEqual([
+			'files',
+			'deck',
+		])
 	})
 
 	it('unpins a pin dragged off the bar, with its hint, and the drag does not open the app', async () => {
 		page()
 		installState({ labels: LABELS, order: [], pins: ['files', 'deck'] })
 		await loadScript()
-		bar().getBoundingClientRect = () => ({ left: 100, right: 200, top: 14, bottom: 54 })
+		bar().getBoundingClientRect = () => ({
+			left: 100,
+			right: 200,
+			top: 14,
+			bottom: 54,
+		})
 
 		const deck = bar().querySelector('[data-thematiq-pin="deck"]')
 		pointer(deck, 'pointerdown', 170, 30)
 		pointer(document, 'pointermove', 170, 300)
 		expect(deck.hasAttribute('data-thematiq-dragging')).toBe(true)
 		const ghost = document.querySelector('.thematiq-app-pins__ghost')
-		expect(ghost.querySelector('.thematiq-app-pins__ghost-hint').textContent).toBe('Laat los om te verwijderen')
+		expect(
+			ghost.querySelector('.thematiq-app-pins__ghost-hint').textContent,
+		).toBe('Laat los om te verwijderen')
 
 		pointer(document, 'pointerup', 170, 300)
 		expect(pinned()).toEqual(['files'])
@@ -246,13 +273,20 @@ describe('pinned apps in the top bar', () => {
 		page()
 		installState({ labels: LABELS, order: [], pins: ['files', 'deck'] })
 		await loadScript()
-		bar().getBoundingClientRect = () => ({ left: 100, right: 200, top: 14, bottom: 54 })
+		bar().getBoundingClientRect = () => ({
+			left: 100,
+			right: 200,
+			top: 14,
+			bottom: 54,
+		})
 
 		const deck = bar().querySelector('[data-thematiq-pin="deck"]')
 		pointer(deck, 'pointerdown', 170, 30)
 		pointer(document, 'pointermove', 170, 300)
 		pointer(document, 'pointermove', 150, 30)
-		expect(document.querySelector('.thematiq-app-pins__ghost-hint').hidden).toBe(true)
+		expect(document.querySelector('.thematiq-app-pins__ghost-hint').hidden).toBe(
+			true,
+		)
 		pointer(document, 'pointerup', 150, 30)
 		expect(pinned()).toEqual(['files', 'deck'])
 
@@ -270,7 +304,14 @@ describe('pinned apps in the top bar', () => {
 
 		const files = bar().querySelector('[data-thematiq-pin="files"]')
 		files.focus()
-		files.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true, bubbles: true, cancelable: true }))
+		files.dispatchEvent(
+			new KeyboardEvent('keydown', {
+				key: 'ArrowRight',
+				altKey: true,
+				bubbles: true,
+				cancelable: true,
+			}),
+		)
 		expect(pinned()).toEqual(['deck', 'files', 'mail'])
 		expect(live()).toBe('Files staat nu op plaats 2 van 3.')
 		const moved = bar().querySelector('[data-thematiq-pin="files"]')

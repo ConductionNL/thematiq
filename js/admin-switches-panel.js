@@ -34,7 +34,9 @@
 	 * @return {Array<object>} The switches.
 	 */
 	function switches() {
-		return loaded !== null && Array.isArray(loaded.switches) === true ? loaded.switches : []
+		return loaded !== null && Array.isArray(loaded.switches) === true
+			? loaded.switches
+			: []
 	}
 
 	/**
@@ -49,11 +51,20 @@
 		if (planned.length === 0) {
 			return tr('Nothing scheduled')
 		}
-		var next = planned.map(function (entry) {
-			return entry.startAt
-		}).sort()[0]
-		var day = new Date(next).toLocaleDateString([], { day: 'numeric', month: 'long', year: 'numeric' })
-		return tr('{count} scheduled, next on {day}', { count: planned.length, day: day })
+		var next = planned
+			.map(function (entry) {
+				return entry.startAt
+			})
+			.sort()[0]
+		var day = new Date(next).toLocaleDateString([], {
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric',
+		})
+		return tr('{count} scheduled, next on {day}', {
+			count: planned.length,
+			day: day,
+		})
 	}
 
 	/**
@@ -69,7 +80,10 @@
 				count[status]++
 			}
 		})
-		return tr('{planned} scheduled, {failed} failed. A running switch sits at the top; a failed one shows the reason.', count)
+		return tr(
+			'{planned} scheduled, {failed} failed. A running switch sits at the top; a failed one shows the reason.',
+			count,
+		)
 	}
 
 	/**
@@ -86,13 +100,31 @@
 		var status = loaded !== null && loaded.status ? loaded.status : {}
 		if (mode !== null) {
 			var cron = status.cronMode || ''
-			mode.textContent = cron === 'ajax' ? 'AJAX' : (cron === 'webcron' ? 'Webcron' : (cron === '' ? '' : 'Cron'))
+			mode.textContent =
+				cron === 'ajax'
+					? 'AJAX'
+					: cron === 'webcron'
+						? 'Webcron'
+						: cron === ''
+							? ''
+							: 'Cron'
 			mode.hidden = cron === ''
-			mode.classList.toggle('thematiq-contrast-panel__pill--pass', cron !== '' && cron !== 'ajax')
-			mode.classList.toggle('thematiq-contrast-panel__pill--fail', cron === 'ajax')
+			mode.classList.toggle(
+				'thematiq-contrast-panel__pill--pass',
+				cron !== '' && cron !== 'ajax',
+			)
+			mode.classList.toggle(
+				'thematiq-contrast-panel__pill--fail',
+				cron === 'ajax',
+			)
 		}
-		if (window.ThematiqPanels !== undefined && window.ThematiqPanels.current() === 'switches') {
-			var intro = document.querySelector('#thematiq-page-header .thematiq-page-header__intro')
+		if (
+			window.ThematiqPanels !== undefined
+			&& window.ThematiqPanels.current() === 'switches'
+		) {
+			var intro = document.querySelector(
+				'#thematiq-page-header .thematiq-page-header__intro',
+			)
 			if (intro !== null) {
 				intro.textContent = line()
 			}
@@ -107,7 +139,8 @@
 	function actions() {
 		var plan = document.createElement('button')
 		plan.type = 'button'
-		plan.className = 'thematiq-page-header__action thematiq-page-header__action--primary'
+		plan.className =
+			'thematiq-page-header__action thematiq-page-header__action--primary'
 		plan.textContent = tr('Plan a switch')
 		plan.addEventListener('click', function () {
 			var field = document.getElementById('nldesign-scheduled-set')

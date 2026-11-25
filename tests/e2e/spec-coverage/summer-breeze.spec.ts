@@ -226,123 +226,148 @@ async function expectLegible(page: Page, scope: Scope): Promise<void> {
 }
 
 test.describe('summer-breeze', () => {
-	test(// @e2e openspec/specs/dark-mode/spec.md#text-buttons-links-and-status-colours-reach-aa-in-light-mode
-	'with summer-breeze active, text, buttons, links and inputs reach AA in light mode', async ({
-		browser,
-		page,
-	}) => {
-		await withThemeState(browser, { tokenSet: 'summer-breeze' }, async () => {
-			await openProbe(page)
-			await enterScope(page, 'light')
-			await expectLegible(page, 'light')
-		})
-	})
+	test(
+		// @e2e openspec/specs/dark-mode/spec.md#text-buttons-links-and-status-colours-reach-aa-in-light-mode
+		'with summer-breeze active, text, buttons, links and inputs reach AA in light mode',
+		async ({ browser, page }) => {
+			await withThemeState(
+				browser,
+				{ tokenSet: 'summer-breeze' },
+				async () => {
+					await openProbe(page)
+					await enterScope(page, 'light')
+					await expectLegible(page, 'light')
+				},
+			)
+		},
+	)
 
-	test(// @e2e openspec/specs/dark-mode/spec.md#both-dark-scopes-remap-every-colour-token-and-stay-legible
-	'with summer-breeze active, the auto dark theme and the explicit dark theme are dark and legible', async ({
-		browser,
-		page,
-	}) => {
-		await withThemeState(browser, { tokenSet: 'summer-breeze' }, async () => {
-			await openProbe(page)
-			const surfaces: Record<string, string> = {}
-			for (const scope of ['auto-dark', 'explicit-dark'] as Scope[]) {
-				await enterScope(page, scope)
-				await expect
-					.poll(
-						async () =>
-							luminance(
-								await paint(
-									page,
-									await bodyValue(page, '--summer-color-surface'),
-								),
-							),
-						{
-							message: `${scope}: --summer-color-surface turns dark`,
-							timeout: 10_000,
-						},
-					)
-					.toBeLessThan(0.05)
-				await expectLegible(page, scope)
-				surfaces[scope] = await bodyValue(page, '--summer-color-surface')
-			}
-			// One generated palette, two scopes: they must agree.
-			expect(surfaces['auto-dark']).toBe(surfaces['explicit-dark'])
-		})
-	})
-
-	test(// @e2e openspec/specs/dark-mode/spec.md#the-summer-breeze-focus-ring-reaches-31
-	'with summer-breeze active, the focus outline is the focus colour made opaque and reaches 3:1, light and dark', async ({
-		browser,
-		page,
-	}) => {
-		await withThemeState(browser, { tokenSet: 'summer-breeze' }, async () => {
-			await openProbe(page)
-			await page.evaluate(() => {
-				const wrap = document.createElement('div')
-				wrap.id = 'e2e-summer-focus'
-				wrap.style.cssText =
-					'position:fixed;top:120px;left:120px;z-index:100000;padding:8px'
-				wrap.innerHTML =
-					'<a id="e2e-summer-a" href="#a">first</a> <a id="e2e-summer-b" href="#b">second</a>'
-				document.body.appendChild(wrap)
-			})
-			for (const scope of ['light', 'auto-dark', 'explicit-dark'] as Scope[]) {
-				await enterScope(page, scope)
-				await page.locator('#e2e-summer-a').focus()
-				await page.keyboard.press('Tab')
-				const ring = await page.evaluate(() => {
-					const el = document.activeElement as HTMLElement
-					const s = getComputedStyle(el)
-					return {
-						id: el.id,
-						style: s.outlineStyle,
-						width: s.outlineWidth,
-						color: s.outlineColor,
-						shadow: s.boxShadow,
+	test(
+		// @e2e openspec/specs/dark-mode/spec.md#both-dark-scopes-remap-every-colour-token-and-stay-legible
+		'with summer-breeze active, the auto dark theme and the explicit dark theme are dark and legible',
+		async ({ browser, page }) => {
+			await withThemeState(
+				browser,
+				{ tokenSet: 'summer-breeze' },
+				async () => {
+					await openProbe(page)
+					const surfaces: Record<string, string> = {}
+					for (const scope of ['auto-dark', 'explicit-dark'] as Scope[]) {
+						await enterScope(page, scope)
+						await expect
+							.poll(
+								async () =>
+									luminance(
+										await paint(
+											page,
+											await bodyValue(
+												page,
+												'--summer-color-surface',
+											),
+										),
+									),
+								{
+									message: `${scope}: --summer-color-surface turns dark`,
+									timeout: 10_000,
+								},
+							)
+							.toBeLessThan(0.05)
+						await expectLegible(page, scope)
+						surfaces[scope] = await bodyValue(
+							page,
+							'--summer-color-surface',
+						)
 					}
-				})
-				expect(ring.id).toBe('e2e-summer-b')
-				expect(ring.style).toBe('solid')
-				expect(ring.width).toBe('2px')
+					// One generated palette, two scopes: they must agree.
+					expect(surfaces['auto-dark']).toBe(surfaces['explicit-dark'])
+				},
+			)
+		},
+	)
 
-				const token = await paint(
-					page,
-					await bodyValue(page, '--summer-color-focus'),
-				)
-				const outline = await paint(page, ring.color)
-				expect(outline[3], `${scope}: the outline is opaque`).toBe(1)
-				// Compare the resolved values, not the painted ones: the canvas
-				// rounds the translucent token's channels (see channels()).
-				const tokenRgb = await channels(
-					page,
-					await bodyValue(page, '--summer-color-focus'),
-				)
-				const outlineRgb = await channels(page, ring.color)
-				expect(outlineRgb[3], `${scope}: the outline is opaque`).toBe(1)
-				expect(
-					outlineRgb.slice(0, 3),
-					`${scope}: the outline is the focus colour`,
-				).toEqual(tokenRgb.slice(0, 3))
-				expect(
-					token[3],
-					`${scope}: the focus token stays translucent`,
-				).toBeLessThan(1)
-				expect(
-					ring.shadow,
-					`${scope}: the translucent token is the halo`,
-				).not.toBe('none')
+	test(
+		// @e2e openspec/specs/dark-mode/spec.md#the-summer-breeze-focus-ring-reaches-31
+		'with summer-breeze active, the focus outline is the focus colour made opaque and reaches 3:1, light and dark',
+		async ({ browser, page }) => {
+			await withThemeState(
+				browser,
+				{ tokenSet: 'summer-breeze' },
+				async () => {
+					await openProbe(page)
+					await page.evaluate(() => {
+						const wrap = document.createElement('div')
+						wrap.id = 'e2e-summer-focus'
+						wrap.style.cssText =
+							'position:fixed;top:120px;left:120px;z-index:100000;padding:8px'
+						wrap.innerHTML =
+							'<a id="e2e-summer-a" href="#a">first</a> <a id="e2e-summer-b" href="#b">second</a>'
+						document.body.appendChild(wrap)
+					})
+					for (const scope of [
+						'light',
+						'auto-dark',
+						'explicit-dark',
+					] as Scope[]) {
+						await enterScope(page, scope)
+						await page.locator('#e2e-summer-a').focus()
+						await page.keyboard.press('Tab')
+						const ring = await page.evaluate(() => {
+							const el = document.activeElement as HTMLElement
+							const s = getComputedStyle(el)
+							return {
+								id: el.id,
+								style: s.outlineStyle,
+								width: s.outlineWidth,
+								color: s.outlineColor,
+								shadow: s.boxShadow,
+							}
+						})
+						expect(ring.id).toBe('e2e-summer-b')
+						expect(ring.style).toBe('solid')
+						expect(ring.width).toBe('2px')
 
-				const page_ = await paint(
-					page,
-					await bodyValue(page, '--summer-color-background-plain'),
-				)
-				const r = ratio(outline, page_)
-				expect(
-					r,
-					`${scope}: focus outline ${r.toFixed(2)}:1`,
-				).toBeGreaterThanOrEqual(3)
-			}
-		})
-	})
+						const token = await paint(
+							page,
+							await bodyValue(page, '--summer-color-focus'),
+						)
+						const outline = await paint(page, ring.color)
+						expect(outline[3], `${scope}: the outline is opaque`).toBe(1)
+						// Compare the resolved values, not the painted ones: the canvas
+						// rounds the translucent token's channels (see channels()).
+						const tokenRgb = await channels(
+							page,
+							await bodyValue(page, '--summer-color-focus'),
+						)
+						const outlineRgb = await channels(page, ring.color)
+						expect(
+							outlineRgb[3],
+							`${scope}: the outline is opaque`,
+						).toBe(1)
+						expect(
+							outlineRgb.slice(0, 3),
+							`${scope}: the outline is the focus colour`,
+						).toEqual(tokenRgb.slice(0, 3))
+						expect(
+							token[3],
+							`${scope}: the focus token stays translucent`,
+						).toBeLessThan(1)
+						expect(
+							ring.shadow,
+							`${scope}: the translucent token is the halo`,
+						).not.toBe('none')
+
+						const page_ = await paint(
+							page,
+							await bodyValue(page, '--summer-color-background-plain'),
+						)
+						const r = ratio(outline, page_)
+						expect(
+							r,
+							`${scope}: focus outline ${r.toFixed(2)}:1`,
+						).toBeGreaterThanOrEqual(3)
+					}
+				},
+			)
+		},
+	)
 })

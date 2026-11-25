@@ -87,6 +87,7 @@ use RuntimeException;
  * @uses   \OCA\Thematiq\Service\SetFileReadRun
  * @uses   \OCA\Thematiq\Service\TokenSetDownload
  * @uses   \OCA\Thematiq\Service\TypedValue
+ * @uses   \OCA\Thematiq\Service\TokenReference
  */
 class TokenSetConverterGoldenTest extends TestCase {
 

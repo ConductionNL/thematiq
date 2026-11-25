@@ -1164,9 +1164,9 @@ test.describe('theming-sync', () => {
 		await inSyncDialog(page, SET_WITHOUT_DARK_LOGO, {}, async () => {
 			const dialog = page.locator('#nldesign-theming-dialog-overlay')
 			await expect(dialog).toBeVisible({ timeout: 15_000 })
-			await expect(dialog.locator('.thematiq-admin-dialog__title')).toContainText(
-				manifestEntry(SET_WITHOUT_DARK_LOGO).name,
-			)
+			await expect(
+				dialog.locator('.thematiq-admin-dialog__title'),
+			).toContainText(manifestEntry(SET_WITHOUT_DARK_LOGO).name)
 			await expect(
 				dialog.locator('.thematiq-admin-dialog__table tbody tr'),
 			).not.toHaveCount(0)
@@ -1182,9 +1182,12 @@ test.describe('theming-sync', () => {
 		await inSyncDialog(page, SET_WITHOUT_DARK_LOGO, {}, async () => {
 			const dialog = page.locator('#nldesign-theming-dialog-overlay')
 			await expect(dialog).toBeVisible({ timeout: 15_000 })
-			const primaryRow = dialog.locator('.thematiq-admin-dialog__table tbody tr', {
-				hasText: STUB_CURRENT.primary_color,
-			})
+			const primaryRow = dialog.locator(
+				'.thematiq-admin-dialog__table tbody tr',
+				{
+					hasText: STUB_CURRENT.primary_color,
+				},
+			)
 			await expect(primaryRow).toHaveCount(1)
 			await expect(primaryRow).toContainText(proposed.primary_color as string)
 			const swatches = primaryRow.locator('.thematiq-admin-dialog__swatch')

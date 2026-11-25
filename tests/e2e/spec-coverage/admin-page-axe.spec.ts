@@ -19,8 +19,11 @@ const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
  * Nextcloud core markup on the page, which thematiq does not draw. Each entry
  * names why it is left out of the scan.
  */
-const CORE_EXCLUSIONS: Array<{ selector: string, reason: string }> = [
-	{ selector: '#settings-admin-theming .v-select', reason: 'core theming\'s own NcSelect in the Theme card has no input label; its form is core markup thematiq only frames' },
+const CORE_EXCLUSIONS: Array<{ selector: string; reason: string }> = [
+	{
+		selector: '#settings-admin-theming .v-select',
+		reason: "core theming's own NcSelect in the Theme card has no input label; its form is core markup thematiq only frames",
+	},
 ]
 
 /**
@@ -28,8 +31,11 @@ const CORE_EXCLUSIONS: Array<{ selector: string, reason: string }> = [
  * and waits for the answer; a sandboxed frame without allow-scripts never
  * answers, so the scan hung until the test's timeout.
  */
-const FRAME_EXCLUSIONS: Array<{ selector: string, reason: string }> = [
-	{ selector: '.nldesign-own-frame', reason: 'the #components/own preview: the administrator\'s own component HTML in an iframe sandboxed without scripts (allow-same-origin only), the way it is shown on purpose; it is the administrator\'s content, not the page' },
+const FRAME_EXCLUSIONS: Array<{ selector: string; reason: string }> = [
+	{
+		selector: '.nldesign-own-frame',
+		reason: "the #components/own preview: the administrator's own component HTML in an iframe sandboxed without scripts (allow-same-origin only), the way it is shown on purpose; it is the administrator's content, not the page",
+	},
 ]
 
 /** The panels whose hash takes an argument, with the argument the scan opens. */
@@ -39,12 +45,20 @@ const PANEL_ARGUMENTS: Record<string, string[]> = {
 }
 
 /** The dialogs that open with one click, by the control that opens them. */
-const CLICK_DIALOGS: Array<{ name: string, hash: string, opener: string }> = [
+const CLICK_DIALOGS: Array<{ name: string; hash: string; opener: string }> = [
 	{ name: 'TqTerugNaarNextcloud', hash: '', opener: '#nldesign-reset-theme-btn' },
 	{ name: 'TqBasistokens', hash: '', opener: 'label[for=nldesign-base-unlock]' },
 	{ name: 'TqOverridesUploaden', hash: '', opener: '#nldesign-import-btn' },
-	{ name: 'TqTokenToevoegen', hash: 'own-tokens', opener: '#nldesign-own-token-add' },
-	{ name: 'TqTokenUitfaseren', hash: 'own-tokens', opener: '#nldesign-deprecation-add' },
+	{
+		name: 'TqTokenToevoegen',
+		hash: 'own-tokens',
+		opener: '#nldesign-own-token-add',
+	},
+	{
+		name: 'TqTokenUitfaseren',
+		hash: 'own-tokens',
+		opener: '#nldesign-deprecation-add',
+	},
 ]
 
 /**
@@ -53,9 +67,18 @@ const CLICK_DIALOGS: Array<{ name: string, hash: string, opener: string }> = [
  * @return {string[]} One entry per `data-thematiq-panel` value, in template order.
  */
 function panelHashes(): string[] {
-	const template = fs.readFileSync(path.resolve(__dirname, '../../../templates/settings/admin.php'), 'utf8')
-	const hashes = [...template.matchAll(/data-thematiq-panel="([^"]+)"/g)].map((match) => match[1])
-	return [...new Set(hashes)].flatMap((hash) => (PANEL_ARGUMENTS[hash] ?? ['']).map((arg) => (arg === '' ? hash : hash + '/' + arg)))
+	const template = fs.readFileSync(
+		path.resolve(__dirname, '../../../templates/settings/admin.php'),
+		'utf8',
+	)
+	const hashes = [...template.matchAll(/data-thematiq-panel="([^"]+)"/g)].map(
+		(match) => match[1],
+	)
+	return [...new Set(hashes)].flatMap((hash) =>
+		(PANEL_ARGUMENTS[hash] ?? ['']).map((arg) =>
+			arg === '' ? hash : hash + '/' + arg,
+		),
+	)
 }
 
 /**
@@ -68,16 +91,40 @@ async function expectNoViolations(page: Page, what: string): Promise<void> {
 	// Let the transitions settle. Only finite ones: an infinite animation (the
 	// code editor's blinking cursor on #components/own) never finishes, and
 	// waiting for it held the test until its timeout.
-	await page.evaluate(() => Promise.all(document.getAnimations()
-		.filter((animation) => animation.effect?.getComputedTiming().iterations !== Infinity)
-		.map((animation) => animation.finished.catch(() => undefined))))
+	await page.evaluate(() =>
+		Promise.all(
+			document
+				.getAnimations()
+				.filter(
+					(animation) =>
+						animation.effect?.getComputedTiming().iterations !== Infinity,
+				)
+				.map((animation) => animation.finished.catch(() => undefined)),
+		),
+	)
 	let builder = new AxeBuilder({ page }).withTags(TAGS)
 	for (const exclusion of [...CORE_EXCLUSIONS, ...FRAME_EXCLUSIONS]) {
 		builder = builder.exclude(exclusion.selector)
 	}
 	const { violations } = await builder.analyze()
-	const report = violations.map((violation) => violation.id + ' (' + violation.impact + '): '
-		+ violation.nodes.slice(0, 5).map((node) => node.target.join(' ') + ' ' + node.html.slice(0, 160) + ' ' + (node.failureSummary ?? '').replace(/\s+/g, ' ')).join(' | '))
+	const report = violations.map(
+		(violation) =>
+			violation.id
+			+ ' ('
+			+ violation.impact
+			+ '): '
+			+ violation.nodes
+				.slice(0, 5)
+				.map(
+					(node) =>
+						node.target.join(' ')
+						+ ' '
+						+ node.html.slice(0, 160)
+						+ ' '
+						+ (node.failureSummary ?? '').replace(/\s+/g, ' '),
+				)
+				.join(' | '),
+	)
 	expect(report, what).toEqual([])
 }
 
@@ -92,7 +139,11 @@ async function openAt(page: Page, hash: string): Promise<void> {
 	await page.waitForLoadState('domcontentloaded')
 	await expect(page.locator('#thematiq-page-header')).toBeVisible()
 	if (hash !== '') {
-		await expect(page.locator('section[data-thematiq-panel="' + hash.split('/')[0] + '"]')).toBeVisible()
+		await expect(
+			page.locator(
+				'section[data-thematiq-panel="' + hash.split('/')[0] + '"]',
+			),
+		).toBeVisible()
 	}
 }
 
@@ -113,7 +164,9 @@ test.describe('the admin Theming page against WCAG 2.2 AA', () => {
 		test('the ' + dialog.name + ' dialog', async ({ page }) => {
 			await openAt(page, dialog.hash)
 			await page.locator(dialog.opener).click()
-			const open = page.locator('dialog[open], [role="dialog"][aria-modal="true"]:visible').last()
+			const open = page
+				.locator('dialog[open], [role="dialog"][aria-modal="true"]:visible')
+				.last()
 			await expect(open).toBeVisible()
 			await expectNoViolations(page, dialog.name)
 			await page.keyboard.press('Escape')

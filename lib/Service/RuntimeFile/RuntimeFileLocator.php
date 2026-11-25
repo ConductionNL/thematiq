@@ -208,11 +208,12 @@ class RuntimeFileLocator {
 			return $this->store->read(name: $name);
 		}
 
-		if ($this->isShipped(name: $name) === false) {
+		$path = (new AppFilePath())->join(root: $this->appPath(), name: $name);
+		if ($path === null || $this->isShipped(name: $name) === false) {
 			return null;
 		}
 
-		$content = file_get_contents($this->appPath() . '/' . ltrim($name, '/'));
+		$content = file_get_contents($path);
 		if ($content === false) {
 			return null;
 		}

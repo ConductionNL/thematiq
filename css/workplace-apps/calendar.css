@@ -18,7 +18,10 @@
  */
 
 :is(#content, #content-vue).app-calendar #app-content-vue {
-	background-color: var(--thematiq-global-color-main-background, var(--color-main-background)) !important;
+	background-color: var(
+		--thematiq-global-color-main-background,
+		var(--color-main-background)
+	) !important;
 }
 
 /* The navigation: the date picker fits beside its two arrows. */
@@ -50,16 +53,26 @@
 
 /* The grid. */
 :is(#content, #content-vue).app-calendar .fc {
-	--fc-border-color: color-mix(in srgb, var(--color-border) 60%, var(--color-main-background));
+	--fc-border-color: color-mix(
+		in srgb,
+		var(--color-border) 60%,
+		var(--color-main-background)
+	);
 	--fc-today-bg-color: transparent;
-	--fc-neutral-bg-color: var(--nldesign-component-content-surface-background-color, var(--color-background-hover));
+	--fc-neutral-bg-color: var(
+		--nldesign-component-content-surface-background-color,
+		var(--color-background-hover)
+	);
 
 	font-size: 13px;
 }
 
 :is(#content, #content-vue).app-calendar .fc .fc-day-sat,
 :is(#content, #content-vue).app-calendar .fc .fc-day-sun {
-	background-color: var(--nldesign-component-content-surface-background-color, var(--color-background-hover));
+	background-color: var(
+		--nldesign-component-content-surface-background-color,
+		var(--color-background-hover)
+	);
 }
 
 :is(#content, #content-vue).app-calendar .fc .fc-col-header-cell {
@@ -83,7 +96,10 @@
 	background-color: transparent !important;
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-col-header-cell.fc-day-today .fc-col-header-cell-cushion {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-col-header-cell.fc-day-today
+	.fc-col-header-cell-cushion {
 	padding: 2px 6px !important;
 	border-radius: var(--border-radius-small, 4px);
 	background-color: var(--color-primary-element) !important;
@@ -165,9 +181,17 @@
 	background-color: transparent !important;
 }
 
-:is(#content, #content-vue).app-calendar .fc tr:hover td:is(.fc-day-sat, .fc-day-sun),
-:is(#content, #content-vue).app-calendar .fc th.fc-col-header-cell:is(.fc-day-sat, .fc-day-sun) {
-	background-color: var(--nldesign-component-content-surface-background-color, var(--color-background-hover)) !important;
+:is(#content, #content-vue).app-calendar
+	.fc
+	tr:hover
+	td:is(.fc-day-sat, .fc-day-sun),
+:is(#content, #content-vue).app-calendar
+	.fc
+	th.fc-col-header-cell:is(.fc-day-sat, .fc-day-sun) {
+	background-color: var(
+		--nldesign-component-content-surface-background-color,
+		var(--color-background-hover)
+	) !important;
 }
 
 :is(#content, #content-vue).app-calendar .fc .fc-timegrid-axis-cushion {
@@ -177,16 +201,32 @@
 
 /* An entry: the calendar's colour at 14% on white, its text the colour
    darkened, the title first and the time under it in muted text. */
-:is(#content, #content-vue).app-calendar .fc :is(.fc-timegrid-event, .fc-daygrid-block-event) {
-	background: color-mix(in srgb, var(--nc-event-color, var(--color-primary-element)) 14%, var(--color-main-background)) !important;
+:is(#content, #content-vue).app-calendar
+	.fc
+	:is(.fc-timegrid-event, .fc-daygrid-block-event) {
+	background: color-mix(
+		in srgb,
+		var(--nc-event-color, var(--color-primary-element)) 14%,
+		var(--color-main-background)
+	) !important;
 }
 
-:is(#content, #content-vue).app-calendar .fc :is(.fc-timegrid-event, .fc-daygrid-block-event) .fc-event-main {
+:is(#content, #content-vue).app-calendar
+	.fc
+	:is(.fc-timegrid-event, .fc-daygrid-block-event)
+	.fc-event-main {
 	padding: 4px 7px !important;
-	color: color-mix(in srgb, var(--nc-event-color, var(--color-primary-element)) 60%, var(--color-main-text)) !important;
+	color: color-mix(
+		in srgb,
+		var(--nc-event-color, var(--color-primary-element)) 60%,
+		var(--color-main-text)
+	) !important;
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-timegrid-event .fc-event-title-container {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-timegrid-event
+	.fc-event-title-container {
 	flex: 0 1 auto;
 	min-width: 0;
 	overflow: hidden;
@@ -200,32 +240,50 @@
 	color: var(--color-text-maxcontrast);
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-timegrid-event-short .fc-event-main {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-timegrid-event-short
+	.fc-event-main {
 	padding: 0 6px !important;
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-timegrid-event-short .fc-event-main-frame {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-timegrid-event-short
+	.fc-event-main-frame {
 	flex-direction: row;
 	align-items: baseline;
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-timegrid-event-short .fc-event-title-container {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-timegrid-event-short
+	.fc-event-title-container {
 	flex: 1 1 auto;
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-timegrid-event-short .fc-event-title {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-timegrid-event-short
+	.fc-event-title {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-timegrid-event-short .fc-event-time {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-timegrid-event-short
+	.fc-event-time {
 	display: block !important;
 	margin-inline-start: auto;
 	padding-inline-start: 4px;
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-timegrid-event-short .fc-event-time::after {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-timegrid-event-short
+	.fc-event-time::after {
 	content: none;
 }
 
@@ -236,7 +294,9 @@
 	border-radius: var(--border-radius-element, 8px);
 }
 
-:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-entry-link {
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.app-navigation-entry-link {
 	min-height: 34px;
 	height: 34px;
 	gap: 10px;
@@ -245,16 +305,23 @@
 	line-height: 21px;
 }
 
-:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-entry-icon {
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.app-navigation-entry-icon {
 	width: 16px;
 	min-width: 16px;
 }
 
-:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-entry-wrapper + .app-navigation-entry-wrapper {
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.app-navigation-entry-wrapper
+	+ .app-navigation-entry-wrapper {
 	margin-top: 1px;
 }
 
-:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-caption {
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.app-navigation-caption {
 	display: flex !important;
 	flex-wrap: nowrap;
 	align-items: center;
@@ -263,20 +330,28 @@
 	padding: 0 4px 4px 10px;
 }
 
-:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-caption__name {
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.app-navigation-caption__name {
 	flex: 1 1 auto;
 	width: auto;
 	min-width: 0;
 }
 
-:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-caption__actions {
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.app-navigation-caption__actions {
 	flex: none;
 	width: auto;
 }
 
 :is(#content, #content-vue).app-calendar
 	#app-navigation-vue
-	:is(.app-navigation-caption__actions, .app-navigation-entry__utils, .new-event-today-view-section)
+	:is(
+		.app-navigation-caption__actions,
+		.app-navigation-entry__utils,
+		.new-event-today-view-section
+	)
 	.button-vue {
 	min-height: 34px !important;
 	height: 34px !important;
@@ -286,34 +361,55 @@
 	#app-navigation-vue
 	:is(.app-navigation-caption__actions, .app-navigation-entry__utils)
 	.button-vue,
-:is(#content, #content-vue).app-calendar #app-navigation-vue .new-event-today-view-section .action-item .button-vue {
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.new-event-today-view-section
+	.action-item
+	.button-vue {
 	width: 34px !important;
 	min-width: 34px !important;
 	padding: 0 !important;
 }
 
-:is(#content, #content-vue).app-calendar #app-navigation-vue .new-event-today-view-section .button-vue:not(.button-vue--icon-only) {
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.new-event-today-view-section
+	.button-vue:not(.button-vue--icon-only) {
 	padding: 0 14px !important;
 	border-radius: var(--border-radius-element, 8px) !important;
 	font-size: 14px;
 }
 
-:is(#content, #content-vue).app-calendar #app-navigation-vue .new-event-today-view-section .button-vue__text {
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.new-event-today-view-section
+	.button-vue__text {
 	font-size: 14px;
 	font-weight: 600;
 }
 
-:is(#content, #content-vue).app-calendar #app-navigation-vue .new-event-today-view-section .new-event {
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.new-event-today-view-section
+	.new-event {
 	flex: 1 1 auto;
 }
 
 /* "New event", as ClMonth and ClWeek label it, where Calendar writes "Event"
  * (js/workplace-apps.js sets the translated words). */
-:root[style*='--thematiq-calendar-new-event'] :is(#content, #content-vue).app-calendar #app-navigation-vue .new-event .button-vue__text {
+:root[style*='--thematiq-calendar-new-event']
+	:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.new-event
+	.button-vue__text {
 	font-size: 0 !important;
 }
 
-:root[style*='--thematiq-calendar-new-event'] :is(#content, #content-vue).app-calendar #app-navigation-vue .new-event .button-vue__text::after {
+:root[style*='--thematiq-calendar-new-event']
+	:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.new-event
+	.button-vue__text::after {
 	content: var(--thematiq-calendar-new-event);
 	font-size: 14px;
 }
@@ -322,7 +418,10 @@
    3px edge, the time in 10px muted text and the title in 11px. Calendar
    gives a month entry its colour only on the dot, so the dot becomes the
    edge, and its ::after takes the dot's colour as the 14% tint. */
-:is(#content, #content-vue).app-calendar .fc .fc-dayGridMonth-view .fc-col-header-cell {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-dayGridMonth-view
+	.fc-col-header-cell {
 	height: 28px;
 	padding: 0 8px;
 	vertical-align: middle;
@@ -344,7 +443,10 @@
 	color: var(--color-main-text) !important;
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event .fc-daygrid-event-dot {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-daygrid-dot-event
+	.fc-daygrid-event-dot {
 	position: absolute;
 	inset: 0;
 	z-index: -1;
@@ -357,7 +459,10 @@
 	border-radius: 0;
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event .fc-daygrid-event-dot::after {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-daygrid-dot-event
+	.fc-daygrid-event-dot::after {
 	content: '';
 	position: absolute;
 	inset: 0;
@@ -405,7 +510,11 @@
 	line-height: 24px !important;
 }
 
-.event-popover :is(.property-title-time-picker-read-only-wrapper__label, .property-text__readonly-value) {
+.event-popover
+	:is(
+		.property-title-time-picker-read-only-wrapper__label,
+		.property-text__readonly-value
+	) {
 	font-size: 14px;
 }
 
@@ -448,33 +557,59 @@
  * muted text colour, which keeps 4.5:1 on that tint. Its colours are mixed,
  * not made transparent, so the text keeps its contrast.
  */
-:is(#content, #content-vue).app-calendar .fc :is(.fc-timegrid-event, .fc-daygrid-block-event).fc-event-past {
-	background: color-mix(in srgb, var(--nc-event-color, var(--color-primary-element)) 6%, var(--color-main-background)) !important;
-	border-color: color-mix(in srgb, var(--nc-event-color, var(--color-primary-element)) 45%, var(--color-main-background)) !important;
+:is(#content, #content-vue).app-calendar
+	.fc
+	:is(.fc-timegrid-event, .fc-daygrid-block-event).fc-event-past {
+	background: color-mix(
+		in srgb,
+		var(--nc-event-color, var(--color-primary-element)) 6%,
+		var(--color-main-background)
+	) !important;
+	border-color: color-mix(
+		in srgb,
+		var(--nc-event-color, var(--color-primary-element)) 45%,
+		var(--color-main-background)
+	) !important;
 }
 
-:is(#content, #content-vue).app-calendar .fc :is(.fc-timegrid-event, .fc-daygrid-block-event).fc-event-past .fc-event-main,
+:is(#content, #content-vue).app-calendar
+	.fc
+	:is(.fc-timegrid-event, .fc-daygrid-block-event).fc-event-past
+	.fc-event-main,
 :is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event.fc-event-past {
 	color: var(--color-text-maxcontrast) !important;
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event.fc-event-past .fc-daygrid-event-dot {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-daygrid-dot-event.fc-event-past
+	.fc-daygrid-event-dot {
 	opacity: 0.5;
 }
 
 /* An entry not answered yet, or answered tentatively: a dashed 1px frame and
    a dashed 3px edge in the calendar's colour on a white ground. */
-:is(#content, #content-vue).app-calendar .fc :is(.fc-timegrid-event, .fc-daygrid-block-event):is(.fc-event-nc-tentative, .fc-event-nc-needs-action) {
+:is(#content, #content-vue).app-calendar
+	.fc
+	:is(.fc-timegrid-event, .fc-daygrid-block-event):is(
+		.fc-event-nc-tentative,
+		.fc-event-nc-needs-action
+	) {
 	background: var(--color-main-background) !important;
 	border: 1px dashed var(--nc-event-color, var(--color-primary-element)) !important;
 	border-inline-start-width: 3px !important;
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event:is(.fc-event-nc-tentative, .fc-event-nc-needs-action) {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-daygrid-dot-event:is(.fc-event-nc-tentative, .fc-event-nc-needs-action) {
 	border: 1px dashed var(--nc-event-color, var(--color-primary-element)) !important;
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event:is(.fc-event-nc-tentative, .fc-event-nc-needs-action) .fc-daygrid-event-dot {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-daygrid-dot-event:is(.fc-event-nc-tentative, .fc-event-nc-needs-action)
+	.fc-daygrid-event-dot {
 	min-width: 0 !important;
 	min-height: 0 !important;
 	border-width: 0 0 0 3px !important;
@@ -482,7 +617,10 @@
 	background-image: none !important;
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-daygrid-dot-event:is(.fc-event-nc-tentative, .fc-event-nc-needs-action) .fc-daygrid-event-dot::after {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-daygrid-dot-event:is(.fc-event-nc-tentative, .fc-event-nc-needs-action)
+	.fc-daygrid-event-dot::after {
 	opacity: 0;
 }
 
@@ -501,30 +639,47 @@
 	gap: 8px 4px;
 }
 
-:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-header > .new-event-today-view-section {
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.app-navigation-header
+	> .new-event-today-view-section {
 	display: contents;
 }
 
-:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-header > .new-event-today-view-section > .new-event {
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.app-navigation-header
+	> .new-event-today-view-section
+	> .new-event {
 	order: 1;
 	flex: 1 1 100%;
 	margin: 0 !important;
 }
 
-:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-header > .datepicker-button-section {
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.app-navigation-header
+	> .datepicker-button-section {
 	order: 2;
 	flex: 1 1 100%;
 	margin: 0 !important;
 }
 
-:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-header > .app-navigation-header__filter {
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.app-navigation-header
+	> .app-navigation-header__filter {
 	order: 3;
 	flex: 1 1 0;
 	min-width: 0;
 	margin: 0 !important;
 }
 
-:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-header > .new-event-today-view-section > :not(.new-event) {
+:is(#content, #content-vue).app-calendar
+	#app-navigation-vue
+	.app-navigation-header
+	> .new-event-today-view-section
+	> :not(.new-event) {
 	order: 4;
 	flex: none;
 	margin: 0 !important;
@@ -533,11 +688,18 @@
 /* A day of the month before or after, as ClMonth draws it: its number in muted
  * text. The number is a link, so the rule outranks element-overrides.css's
  * link colour (one id, six classes, four elements). */
-:is(#content, #content-vue).app-calendar .fc .fc-daygrid-day.fc-day-other .fc-daygrid-day-frame .fc-daygrid-day-top a.fc-daygrid-day-number {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-daygrid-day.fc-day-other
+	.fc-daygrid-day-frame
+	.fc-daygrid-day-top
+	a.fc-daygrid-day-number {
 	color: var(--color-text-maxcontrast) !important;
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-daygrid-day.fc-day-other:not(.fc-day-sat, .fc-day-sun) {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-daygrid-day.fc-day-other:not(.fc-day-sat, .fc-day-sun) {
 	background-color: var(--color-main-background) !important;
 }
 
@@ -546,20 +708,29 @@
  * alone in the primary badge (js/workplace-apps.js puts the number in
  * `.thematiq-day-number`; without the script the whole heading keeps the
  * badge). */
-:is(#content, #content-vue).app-calendar .fc .fc-col-header-cell-cushion .thematiq-day-number {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-col-header-cell-cushion
+	.thematiq-day-number {
 	margin-inline-start: 2px;
 	font-weight: 600;
 	color: var(--color-main-text);
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-col-header-cell.fc-day-today .fc-col-header-cell-cushion:has(.thematiq-day-number) {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-col-header-cell.fc-day-today
+	.fc-col-header-cell-cushion:has(.thematiq-day-number) {
 	padding: 0 !important;
 	background-color: transparent !important;
 	font-weight: 400;
 	color: var(--color-text-maxcontrast) !important;
 }
 
-:is(#content, #content-vue).app-calendar .fc .fc-col-header-cell.fc-day-today .thematiq-day-number {
+:is(#content, #content-vue).app-calendar
+	.fc
+	.fc-col-header-cell.fc-day-today
+	.thematiq-day-number {
 	display: inline-block;
 	padding: 0 5px;
 	border-radius: var(--border-radius-small, 4px);

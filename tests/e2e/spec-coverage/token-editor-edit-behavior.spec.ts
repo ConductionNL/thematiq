@@ -56,122 +56,131 @@ function collectErrors(page: Page): { console: string[]; server: string[] } {
 }
 
 test.describe('token-editor-edit-behavior', () => {
-	test(// @e2e openspec/specs/token-editor-ui/spec.md#admin-changes-a-color-token
-	'Editing a colour hex field drives the live preview on <html> and shows a custom badge + unsaved status', async ({
-		page,
-	}) => {
-		const errs = collectErrors(page)
-		await page.goto(THEMING_URL)
-		await page.waitForSelector('#nldesign-token-editor', { timeout: 15_000 })
-		await dismissSyncDialog(page)
-		await openTokenTab(page, 'content')
+	test(
+		// @e2e openspec/specs/token-editor-ui/spec.md#admin-changes-a-color-token
+		'Editing a colour hex field drives the live preview on <html> and shows a custom badge + unsaved status',
+		async ({ page }) => {
+			const errs = collectErrors(page)
+			await page.goto(THEMING_URL)
+			await page.waitForSelector('#nldesign-token-editor', { timeout: 15_000 })
+			await dismissSyncDialog(page)
+			await openTokenTab(page, 'content')
 
-		// Pick the first EDITABLE colour text field and read its token name.
-		// Nextcloud's base tokens lead the list and stay locked until the
-		// admin opts in, so the first field overall is a disabled one.
-		const field = page.locator(EDITABLE_FIELD).first()
-		await expect(field).toBeVisible()
-		const tokenName = await field.getAttribute('data-token')
-		expect(tokenName, 'colour field must carry a data-token').toBeTruthy()
+			// Pick the first EDITABLE colour text field and read its token name.
+			// Nextcloud's base tokens lead the list and stay locked until the
+			// admin opts in, so the first field overall is a disabled one.
+			const field = page.locator(EDITABLE_FIELD).first()
+			await expect(field).toBeVisible()
+			const tokenName = await field.getAttribute('data-token')
+			expect(tokenName, 'colour field must carry a data-token').toBeTruthy()
 
-		const row = page.locator(`[data-token-row="${tokenName}"]`)
-		// Before editing, there must be no custom badge on this row (fresh load).
-		const badge = row.locator('.nldesign-token-custom-badge')
+			const row = page.locator(`[data-token-row="${tokenName}"]`)
+			// Before editing, there must be no custom badge on this row (fresh load).
+			const badge = row.locator('.nldesign-token-custom-badge')
 
-		// Type a distinct, valid hex value.
-		const NEW = '#a1b2c3'
-		await field.fill(NEW)
-		await field.dispatchEvent('input')
+			// Type a distinct, valid hex value.
+			const NEW = '#a1b2c3'
+			await field.fill(NEW)
+			await field.dispatchEvent('input')
 
-		// Live preview: the preview carries the new value for this token, and
-		// the page does not — an unsaved edit is a preview until it is saved
-		// (applyLivePreview → #nldesign-preview.style, never <html>).
-		const inline = await page.evaluate(
-			(name) => ({
-				preview: (
-					document.getElementById('nldesign-preview') as HTMLElement
-				).style
-					.getPropertyValue(name)
-					.trim(),
-				page: document.documentElement.style.getPropertyValue(name).trim(),
-			}),
-			tokenName as string,
-		)
-		expect(inline.preview.toLowerCase()).toBe(NEW)
-		expect(inline.page).toBe('')
+			// Live preview: the preview carries the new value for this token, and
+			// the page does not — an unsaved edit is a preview until it is saved
+			// (applyLivePreview → #nldesign-preview.style, never <html>).
+			const inline = await page.evaluate(
+				(name) => ({
+					preview: (
+						document.getElementById('nldesign-preview') as HTMLElement
+					).style
+						.getPropertyValue(name)
+						.trim(),
+					page: document.documentElement.style
+						.getPropertyValue(name)
+						.trim(),
+				}),
+				tokenName as string,
+			)
+			expect(inline.preview.toLowerCase()).toBe(NEW)
+			expect(inline.page).toBe('')
 
-		// A custom-value badge must appear on the edited row (markDirty).
-		await expect(badge).toHaveCount(1)
+			// A custom-value badge must appear on the edited row (markDirty).
+			await expect(badge).toHaveCount(1)
 
-		// The save-status must announce unsaved changes.
-		await expect(page.locator('#nldesign-save-status')).toHaveText(/unsaved/i)
+			// The save-status must announce unsaved changes.
+			await expect(page.locator('#nldesign-save-status')).toHaveText(
+				/unsaved/i,
+			)
 
-		// No nldesign-origin console error or 5xx during the interaction.
-		expect(errs.console, 'no nldesign console errors').toEqual([])
-		expect(errs.server, 'no nldesign 5xx').toEqual([])
-	})
+			// No nldesign-origin console error or 5xx during the interaction.
+			expect(errs.console, 'no nldesign console errors').toEqual([])
+			expect(errs.server, 'no nldesign 5xx').toEqual([])
+		},
+	)
 
-	test(// @e2e openspec/specs/token-editor-ui/spec.md#color-tokens-render-a-color-picker
-	'Colour picker and hex text field stay in sync when the hex field changes', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForSelector('#nldesign-token-editor', { timeout: 15_000 })
-		await dismissSyncDialog(page)
-		await openTokenTab(page, 'content')
+	test(
+		// @e2e openspec/specs/token-editor-ui/spec.md#color-tokens-render-a-color-picker
+		'Colour picker and hex text field stay in sync when the hex field changes',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForSelector('#nldesign-token-editor', { timeout: 15_000 })
+			await dismissSyncDialog(page)
+			await openTokenTab(page, 'content')
 
-		const field = page.locator(EDITABLE_FIELD).first()
-		const tokenName = await field.getAttribute('data-token')
-		const picker = page.locator(
-			`.nldesign-color-picker[data-token="${tokenName}"]`,
-		)
-		await expect(picker).toBeAttached()
+			const field = page.locator(EDITABLE_FIELD).first()
+			const tokenName = await field.getAttribute('data-token')
+			const picker = page.locator(
+				`.nldesign-color-picker[data-token="${tokenName}"]`,
+			)
+			await expect(picker).toBeAttached()
 
-		const NEW = '#0a141e'
-		await field.fill(NEW)
-		await field.dispatchEvent('input')
+			const NEW = '#0a141e'
+			await field.fill(NEW)
+			await field.dispatchEvent('input')
 
-		// The native colour <input type="color"> value mirrors the hex field.
-		await expect(picker).toHaveValue(NEW)
-	})
+			// The native colour <input type="color"> value mirrors the hex field.
+			await expect(picker).toHaveValue(NEW)
+		},
+	)
 
-	test(// @e2e openspec/specs/token-editor-ui/spec.md#admin-resets-a-customized-token
-	'Per-token reset clears the live preview and removes the custom badge after an edit', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForSelector('#nldesign-token-editor', { timeout: 15_000 })
-		await dismissSyncDialog(page)
-		await openTokenTab(page, 'content')
+	test(
+		// @e2e openspec/specs/token-editor-ui/spec.md#admin-resets-a-customized-token
+		'Per-token reset clears the live preview and removes the custom badge after an edit',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForSelector('#nldesign-token-editor', { timeout: 15_000 })
+			await dismissSyncDialog(page)
+			await openTokenTab(page, 'content')
 
-		const field = page.locator(EDITABLE_FIELD).first()
-		const tokenName = await field.getAttribute('data-token')
-		const row = page.locator(`[data-token-row="${tokenName}"]`)
-		const badge = row.locator('.nldesign-token-custom-badge')
+			const field = page.locator(EDITABLE_FIELD).first()
+			const tokenName = await field.getAttribute('data-token')
+			const row = page.locator(`[data-token-row="${tokenName}"]`)
+			const badge = row.locator('.nldesign-token-custom-badge')
 
-		// Edit to create a custom value + inline style + badge.
-		await field.fill('#fedcba')
-		await field.dispatchEvent('input')
-		await expect(badge).toHaveCount(1)
+			// Edit to create a custom value + inline style + badge.
+			await field.fill('#fedcba')
+			await field.dispatchEvent('input')
+			await expect(badge).toHaveCount(1)
 
-		// Click the reset button for this row.
-		const resetBtn = row.locator('.nldesign-reset-btn')
-		await expect(resetBtn).toBeVisible()
-		await resetBtn.click()
+			// Click the reset button for this row.
+			const resetBtn = row.locator('.nldesign-reset-btn')
+			await expect(resetBtn).toBeVisible()
+			await resetBtn.click()
 
-		// Reset removes the preview's inline style and removes the custom badge.
-		const inlineVal = await page.evaluate(
-			(name) =>
-				(document.getElementById('nldesign-preview') as HTMLElement).style
-					.getPropertyValue(name)
-					.trim(),
-			tokenName as string,
-		)
-		expect(inlineVal).toBe('')
-		await expect(badge).toHaveCount(0)
+			// Reset removes the preview's inline style and removes the custom badge.
+			const inlineVal = await page.evaluate(
+				(name) =>
+					(
+						document.getElementById('nldesign-preview') as HTMLElement
+					).style
+						.getPropertyValue(name)
+						.trim(),
+				tokenName as string,
+			)
+			expect(inlineVal).toBe('')
+			await expect(badge).toHaveCount(0)
 
-		// The field is restored to the resolved default (a non-empty value).
-		const restored = await field.inputValue()
-		expect(restored.trim().length).toBeGreaterThan(0)
-	})
+			// The field is restored to the resolved default (a non-empty value).
+			const restored = await field.inputValue()
+			expect(restored.trim().length).toBeGreaterThan(0)
+		},
+	)
 })

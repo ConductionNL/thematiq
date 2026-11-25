@@ -312,7 +312,7 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 		<admin>OCA\Thematiq\Settings\PageHeader</admin>
 		<admin>OCA\Thematiq\Settings\Admin</admin>
 		<admin>OCA\Thematiq\Settings\GroupHouseStyle</admin>
-		<personal>OCA\Thematiq\Settings\PersonalGroupHouseStyle</personal>
 		<admin-section>theming</admin-section>
+		<personal>OCA\Thematiq\Settings\PersonalGroupHouseStyle</personal>
 	</settings>
 </info>

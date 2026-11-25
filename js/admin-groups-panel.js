@@ -46,7 +46,10 @@
 	 * @return {string} The line.
 	 */
 	function line() {
-		return tr('{linked} groups linked, {delegated} with delegated choice', { linked: rows.length, delegated: delegated() })
+		return tr('{linked} groups linked, {delegated} with delegated choice', {
+			linked: rows.length,
+			delegated: delegated(),
+		})
 	}
 
 	/**
@@ -61,14 +64,26 @@
 				el.textContent = text
 			}
 		}
-		set('.thematiq-groups-panel__delegated', tr('{delegated} of {linked} groups choose themselves', { linked: rows.length, delegated: delegated() }))
+		set(
+			'.thematiq-groups-panel__delegated',
+			tr('{delegated} of {linked} groups choose themselves', {
+				linked: rows.length,
+				delegated: delegated(),
+			}),
+		)
 		set('.thematiq-groups-panel__linked', String(rows.length))
 		set('.thematiq-groups-panel__delegated-count', String(delegated()))
 		var select = document.getElementById('nldesign-token-set-select')
 		if (select !== null && select.selectedIndex >= 0) {
-			set('.thematiq-groups-panel__default', select.options[select.selectedIndex].textContent.trim())
+			set(
+				'.thematiq-groups-panel__default',
+				select.options[select.selectedIndex].textContent.trim(),
+			)
 		}
-		if (window.ThematiqPanels !== undefined && window.ThematiqPanels.current() === 'groups') {
+		if (
+			window.ThematiqPanels !== undefined
+			&& window.ThematiqPanels.current() === 'groups'
+		) {
 			set('#thematiq-page-header .thematiq-page-header__intro', line())
 		}
 	}
@@ -81,7 +96,8 @@
 	function actions() {
 		var add = document.createElement('button')
 		add.type = 'button'
-		add.className = 'thematiq-page-header__action thematiq-page-header__action--primary'
+		add.className =
+			'thematiq-page-header__action thematiq-page-header__action--primary'
 		add.textContent = tr('Add connection')
 		add.addEventListener('click', function () {
 			var own = document.getElementById('nldesign-group-theming-add')
@@ -93,11 +109,17 @@
 	}
 
 	document.addEventListener('thematiq:group-theming', function (event) {
-		rows = event.detail && Array.isArray(event.detail.rows) === true ? event.detail.rows : []
+		rows =
+			event.detail && Array.isArray(event.detail.rows) === true
+				? event.detail.rows
+				: []
 		render()
 	})
 	document.addEventListener('change', function (event) {
-		if (event.target !== null && event.target.getAttribute('data-field') === 'delegated') {
+		if (
+			event.target !== null
+			&& event.target.getAttribute('data-field') === 'delegated'
+		) {
 			render()
 		}
 	})

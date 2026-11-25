@@ -62,10 +62,12 @@ let added = []
 async function openAt(hash) {
 	for (const target of [window, document]) {
 		const original = target.addEventListener.bind(target)
-		vi.spyOn(target, 'addEventListener').mockImplementation((type, listener, options) => {
-			added.push([target, type, listener])
-			original(type, listener, options)
-		})
+		vi.spyOn(target, 'addEventListener').mockImplementation(
+			(type, listener, options) => {
+				added.push([target, type, listener])
+				original(type, listener, options)
+			},
+		)
 	}
 	vi.resetModules()
 	await import('../../js/admin-panels.js?t=' + Math.random())
@@ -88,7 +90,9 @@ describe('motion panel values', () => {
 	it('reads a keyword or a custom curve whose x values lie between 0 and 1', async () => {
 		const { toEasing } = await import('../../js/admin-motion-panel.js?t=easing')
 		expect(toEasing('ease-in-out', [])).toBe('ease-in-out')
-		expect(toEasing('custom', ['0.2', '0', '0', '1'])).toBe('cubic-bezier(0.2, 0, 0, 1)')
+		expect(toEasing('custom', ['0.2', '0', '0', '1'])).toBe(
+			'cubic-bezier(0.2, 0, 0, 1)',
+		)
 		expect(toEasing('custom', ['1.2', '0', '0', '1'])).toBeNull()
 		expect(toEasing('custom', ['0.2', '', '0', '1'])).toBeNull()
 	})
@@ -96,7 +100,10 @@ describe('motion panel values', () => {
 
 describe('motion panel', () => {
 	beforeEach(() => {
-		window.t = (app, text, vars) => String(text).replace(/\{(\w+)\}/g, (all, key) => (vars && key in vars ? String(vars[key]) : all))
+		window.t = (app, text, vars) =>
+			String(text).replace(/\{(\w+)\}/g, (all, key) =>
+				vars && key in vars ? String(vars[key]) : all,
+			)
 		window.scrollTo = vi.fn()
 		window.matchMedia = vi.fn(() => ({ matches: false }))
 		document.body.innerHTML = PAGE
@@ -105,7 +112,9 @@ describe('motion panel', () => {
 
 	afterEach(() => {
 		vi.restoreAllMocks()
-		added.forEach(([target, type, listener]) => target.removeEventListener(type, listener))
+		added.forEach(([target, type, listener]) =>
+			target.removeEventListener(type, listener),
+		)
 		added = []
 		window.history.replaceState(null, '', window.location.pathname)
 		document.body.innerHTML = ''
@@ -115,7 +124,9 @@ describe('motion panel', () => {
 
 	it('borrows the token editor on the content tab and gives it back on close', async () => {
 		const content = vi.fn()
-		document.querySelector('.nldesign-tab-btn[data-tab="content"]').addEventListener('click', content)
+		document
+			.querySelector('.nldesign-tab-btn[data-tab="content"]')
+			.addEventListener('click', content)
 		await openAt('#motion')
 		const slot = document.querySelector('.thematiq-motion-panel__editor')
 		expect(slot.querySelector('#nldesign-token-editor')).not.toBeNull()
@@ -124,18 +135,33 @@ describe('motion panel', () => {
 		window.history.replaceState(null, '', window.location.pathname)
 		window.dispatchEvent(new HashChangeEvent('hashchange'))
 		expect(slot.children).toHaveLength(0)
-		expect(document.getElementById('nldesign-token-editor').parentElement.id).toBe('nldesign-settings')
+		expect(
+			document.getElementById('nldesign-token-editor').parentElement.id,
+		).toBe('nldesign-settings')
 		expect(document.body.innerHTML).not.toContain('thematiq: motion')
 	})
 
 	it('titles the header, leads the breadcrumb through Components and presses Download and Save', async () => {
 		await openAt('#motion')
-		expect(document.querySelector('.thematiq-page-header__title').textContent).toBe('Motion tokens')
-		const crumbs = [...document.querySelectorAll('.thematiq-page-header__crumbs > :not([aria-hidden])')]
-		expect(crumbs.slice(-4).map((el) => el.textContent)).toEqual(['Token sets', 'zuiddrecht', 'Components', 'Motion'])
+		expect(
+			document.querySelector('.thematiq-page-header__title').textContent,
+		).toBe('Motion tokens')
+		const crumbs = [
+			...document.querySelectorAll(
+				'.thematiq-page-header__crumbs > :not([aria-hidden])',
+			),
+		]
+		expect(crumbs.slice(-4).map((el) => el.textContent)).toEqual([
+			'Token sets',
+			'zuiddrecht',
+			'Components',
+			'Motion',
+		])
 		const save = vi.fn()
 		document.getElementById('nldesign-save-btn').addEventListener('click', save)
-		const buttons = [...document.querySelectorAll('.thematiq-page-header__actions > button')]
+		const buttons = [
+			...document.querySelectorAll('.thematiq-page-header__actions > button'),
+		]
 		expect(buttons.map((b) => b.textContent)).toEqual(['Download', 'Save'])
 		buttons[1].click()
 		expect(save).toHaveBeenCalledTimes(1)
@@ -144,7 +170,9 @@ describe('motion panel', () => {
 	it('writes the readout from the rows and follows a change', async () => {
 		await openAt('#motion')
 		const readout = document.querySelector('.thematiq-motion-panel__readout')
-		expect(readout.textContent).toBe('Duration 300 ms, easing cubic-bezier(0.2, 0, 0, 1). Replays the dialog and the notification.')
+		expect(readout.textContent).toBe(
+			'Duration 300 ms, easing cubic-bezier(0.2, 0, 0, 1). Replays the dialog and the notification.',
+		)
 		const unit = document.querySelector('.nldesign-duration-unit')
 		unit.value = 's'
 		unit.dispatchEvent(new Event('change', { bubbles: true }))
@@ -157,7 +185,9 @@ describe('motion panel', () => {
 		editor.innerHTML = ''
 		await openAt('#motion')
 		const readout = document.querySelector('.thematiq-motion-panel__readout')
-		expect(readout.textContent).toBe('The values in the rows are not a valid motion yet.')
+		expect(readout.textContent).toBe(
+			'The values in the rows are not a valid motion yet.',
+		)
 		editor.innerHTML = rows
 		await flush()
 		expect(readout.textContent).toContain('Duration 300 ms')
@@ -166,23 +196,30 @@ describe('motion panel', () => {
 	it('says whether the base tokens are open', async () => {
 		await openAt('#motion')
 		const notice = document.querySelector('.thematiq-motion-panel__notice')
-		expect(notice.textContent).toContain('Tick "Also edit Nextcloud\'s base tokens"')
+		expect(notice.textContent).toContain(
+			'Tick "Also edit Nextcloud\'s base tokens"',
+		)
 		const box = document.getElementById('nldesign-base-unlock')
 		box.checked = true
 		box.dispatchEvent(new Event('change', { bubbles: true }))
 		expect(notice.textContent).toContain('They are open because')
 	})
 
-	it('plays the samples with the rows\' duration and easing, and not under reduced motion', async () => {
+	it("plays the samples with the rows' duration and easing, and not under reduced motion", async () => {
 		await openAt('#motion')
 		const sample = document.querySelector('.thematiq-motion-panel__sample')
 		sample.animate = vi.fn()
 		document.querySelector('.thematiq-motion-panel__play').click()
-		expect(sample.animate).toHaveBeenCalledWith(expect.any(Array), { duration: 300, easing: 'cubic-bezier(0.2, 0, 0, 1)' })
+		expect(sample.animate).toHaveBeenCalledWith(expect.any(Array), {
+			duration: 300,
+			easing: 'cubic-bezier(0.2, 0, 0, 1)',
+		})
 
 		window.matchMedia = vi.fn(() => ({ matches: true }))
 		document.querySelector('.thematiq-motion-panel__play').click()
 		expect(sample.animate).toHaveBeenCalledTimes(1)
-		expect(document.querySelector('.thematiq-motion-panel__readout').textContent).toContain('Duration 0 ms')
+		expect(
+			document.querySelector('.thematiq-motion-panel__readout').textContent,
+		).toContain('Duration 0 ms')
 	})
 })

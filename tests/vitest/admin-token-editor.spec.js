@@ -677,9 +677,7 @@ describe('admin.js token editor', () => {
 			click(document.getElementById('nldesign-save-btn'))
 
 			const dialog = saveDialog()
-			expect(dialog.textContent).toContain(
-				'They go on top of Rijkshuisstijl.',
-			)
+			expect(dialog.textContent).toContain('They go on top of Rijkshuisstijl.')
 			click(dialog.querySelector('.nldesign-dialog-cancel'))
 			expect(saveDialog()).toBeNull()
 			expect(sent('/settings/overrides', 'POST')).toHaveLength(0)
@@ -1439,8 +1437,13 @@ describe('admin.js token editor', () => {
 			expect(overlay.querySelector('h2').textContent).toBe(
 				'Upload overrides into Nextcloud (Base)?',
 			)
-			expect(overlay.querySelector('.thematiq-admin-dialog__file-label').textContent).toBe('File')
-			expect(overlay.querySelector('a[href="#own-sets"]').textContent).toBe('Own token sets')
+			expect(
+				overlay.querySelector('.thematiq-admin-dialog__file-label')
+					.textContent,
+			).toBe('File')
+			expect(overlay.querySelector('a[href="#own-sets"]').textContent).toBe(
+				'Own token sets',
+			)
 			expect(picker).not.toHaveBeenCalled()
 			click(overlay.querySelector('.thematiq-admin-dialog__file-row button'))
 			expect(picker).toHaveBeenCalledTimes(1)
@@ -1504,7 +1507,9 @@ describe('admin.js token editor', () => {
 
 			await pressReset(false)
 
-			expect(opened.opener).toBe(document.getElementById('nldesign-reset-theme-btn'))
+			expect(opened.opener).toBe(
+				document.getElementById('nldesign-reset-theme-btn'),
+			)
 			expect(typeof opened.themeName).toBe('string')
 			expect(typeof opened.overrideCount).toBe('number')
 		})

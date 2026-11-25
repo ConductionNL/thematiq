@@ -14,15 +14,38 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-const DOCX = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+const DOCX =
+	'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 const XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-const PPTX = 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+const PPTX =
+	'application/vnd.openxmlformats-officedocument.presentationml.presentation'
 
 const CREATORS = [
-	{ app: 'text', label: 'Text document', extension: '.md', mimetypes: ['text/markdown'], actionLabel: 'Create new text file' },
-	{ app: 'onlyoffice', label: 'New document', extension: '.docx', mimetypes: [DOCX] },
-	{ app: 'onlyoffice', label: 'New spreadsheet', extension: '.xlsx', mimetypes: [XLSX] },
-	{ app: 'onlyoffice', label: 'New presentation', extension: '.pptx', mimetypes: [PPTX] },
+	{
+		app: 'text',
+		label: 'Text document',
+		extension: '.md',
+		mimetypes: ['text/markdown'],
+		actionLabel: 'Create new text file',
+	},
+	{
+		app: 'onlyoffice',
+		label: 'New document',
+		extension: '.docx',
+		mimetypes: [DOCX],
+	},
+	{
+		app: 'onlyoffice',
+		label: 'New spreadsheet',
+		extension: '.xlsx',
+		mimetypes: [XLSX],
+	},
+	{
+		app: 'onlyoffice',
+		label: 'New presentation',
+		extension: '.pptx',
+		mimetypes: [PPTX],
+	},
 	{ app: 'bad', label: 'Bad', extension: 'docx/../x', mimetypes: [DOCX] },
 ]
 
@@ -39,7 +62,18 @@ const LABELS = {
 	createFailed: 'Het bestand kon niet worden gemaakt.',
 }
 
-const APPS = ['files', 'dossiq', 'calendar', 'pipelinq', 'mail', 'contacts', 'deck', 'photos', 'activity', 'talk']
+const APPS = [
+	'files',
+	'dossiq',
+	'calendar',
+	'pipelinq',
+	'mail',
+	'contacts',
+	'deck',
+	'photos',
+	'activity',
+	'talk',
+]
 
 function installState(state, coreActions = []) {
 	global.OCP = {
@@ -102,7 +136,8 @@ describe('the title, the chevron and the Create row', () => {
 		global.OC = {
 			webroot: '',
 			requestToken: 'token',
-			generateUrl: (url, params = {}) => url.replace(/\{(\w+)\}/g, (all, name) => params[name]),
+			generateUrl: (url, params = {}) =>
+				url.replace(/\{(\w+)\}/g, (all, name) => params[name]),
 		}
 		global.fetch = vi.fn((url, options = {}) => {
 			requests.push({ url, options })
@@ -155,20 +190,29 @@ describe('the title, the chevron and the Create row', () => {
 
 		const bar = grid.querySelector('[data-thematiq-row="create"]')
 		expect(bar.getAttribute('role')).toBe('group')
-		expect(grid.querySelector('#' + bar.getAttribute('aria-labelledby')).textContent).toBe('Nieuw maken')
-		expect(Array.from(bar.querySelectorAll('button')).map((b) => b.textContent)).toEqual([
+		expect(
+			grid.querySelector('#' + bar.getAttribute('aria-labelledby'))
+				.textContent,
+		).toBe('Nieuw maken')
+		expect(
+			Array.from(bar.querySelectorAll('button')).map((b) => b.textContent),
+		).toEqual([
 			'Nieuw document',
 			'Nieuwe spreadsheet',
 			'Nieuwe presentatie',
 			'Meer',
 		])
-		expect(requests.filter((r) => r.url.indexOf('/templates') !== -1)).toHaveLength(1)
+		expect(
+			requests.filter((r) => r.url.indexOf('/templates') !== -1),
+		).toHaveLength(1)
 		expect(requests[0].options.headers['OCS-APIRequest']).toBe('true')
 	})
 
 	it('unfolds every creator and Nextcloud action under More', async () => {
 		const grid = openMenu()
-		installState({ labels: LABELS, order: [] }, [{ id: 'note', name: 'New note', href: '/apps/notes/new' }])
+		installState({ labels: LABELS, order: [] }, [
+			{ id: 'note', name: 'New note', href: '/apps/notes/new' },
+		])
 		await loadScript()
 
 		const more = grid.querySelector('[data-thematiq-row="create-more"]')
@@ -177,7 +221,9 @@ describe('the title, the chevron and the Create row', () => {
 		button.click()
 		expect(button.getAttribute('aria-expanded')).toBe('true')
 		expect(more.hasAttribute('data-thematiq-folded')).toBe(false)
-		expect(Array.from(more.querySelectorAll('button')).map((b) => b.textContent)).toEqual([
+		expect(
+			Array.from(more.querySelectorAll('button')).map((b) => b.textContent),
+		).toEqual([
 			'Create new text file',
 			'New document',
 			'New spreadsheet',
@@ -198,7 +244,9 @@ describe('the title, the chevron and the Create row', () => {
 
 		grid.querySelector('[data-thematiq-row="create"] button').click()
 		await flush()
-		const creates = requests.filter((r) => r.url.indexOf('/templates/create') !== -1)
+		const creates = requests.filter(
+			(r) => r.url.indexOf('/templates/create') !== -1,
+		)
 		expect(creates.map((r) => JSON.parse(r.options.body).filePath)).toEqual([
 			'/New document.docx',
 			'/New document (2).docx',
@@ -229,9 +277,11 @@ describe('the title, the chevron and the Create row', () => {
 		expect(grid.querySelector('[data-thematiq-row="create"]')).toBeNull()
 	})
 
-	it('shares the same actions, in the same order, with the top bar\'s Quick add', async () => {
+	it("shares the same actions, in the same order, with the top bar's Quick add", async () => {
 		openMenu()
-		installState({ labels: LABELS, order: [] }, [{ id: 'talk', name: 'New conversation', href: '/apps/spreed/' }])
+		installState({ labels: LABELS, order: [] }, [
+			{ id: 'talk', name: 'New conversation', href: '/apps/spreed/' },
+		])
 		const announced = vi.fn()
 		document.addEventListener('thematiq:create-actions', announced)
 		await loadScript()
@@ -251,7 +301,11 @@ describe('the title, the chevron and the Create row', () => {
 
 	it('shares nothing when the create actions are switched off', async () => {
 		openMenu()
-		installState({ labels: LABELS, order: [], settings: { showCreateActions: false } })
+		installState({
+			labels: LABELS,
+			order: [],
+			settings: { showCreateActions: false },
+		})
 		await loadScript()
 
 		expect(await window.thematiqCreateActions.list()).toEqual([])
@@ -259,7 +313,11 @@ describe('the title, the chevron and the Create row', () => {
 
 	it('draws no row and asks nothing when the create actions are switched off', async () => {
 		const grid = openMenu()
-		installState({ labels: LABELS, order: [], settings: { showCreateActions: false } })
+		installState({
+			labels: LABELS,
+			order: [],
+			settings: { showCreateActions: false },
+		})
 		await loadScript()
 
 		expect(grid.querySelector('[data-thematiq-row="create"]')).toBeNull()

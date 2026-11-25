@@ -20,7 +20,9 @@
 	 * @return {string} The text in the reader's language.
 	 */
 	function tr(text, values) {
-		return typeof window.t === 'function' ? window.t('thematiq', text, values) : text
+		return typeof window.t === 'function'
+			? window.t('thematiq', text, values)
+			: text
 	}
 
 	/**
@@ -32,12 +34,19 @@
 	 */
 	function overridesLine(themeName, count) {
 		if (typeof count !== 'number' || count === 0) {
-			return tr('The overrides of the current theme {name}', { name: themeName })
+			return tr('The overrides of the current theme {name}', {
+				name: themeName,
+			})
 		}
 		if (count === 1) {
-			return tr('The override of the current theme {name}', { name: themeName })
+			return tr('The override of the current theme {name}', {
+				name: themeName,
+			})
 		}
-		return tr('The {count} overrides of the current theme {name}', { count: count, name: themeName })
+		return tr('The {count} overrides of the current theme {name}', {
+			count: count,
+			name: themeName,
+		})
 	}
 
 	/**
@@ -64,15 +73,34 @@
 			eyebrow: tr('Active token set'),
 			title: tr('Reset theme to Nextcloud?'),
 			body: [
-				h('p', { class: 'thematiq-admin-dialog__lead', text: tr('This resets the theme completely to the Nextcloud default theme.') }),
-				h('h3', { class: 'thematiq-admin-dialog__subtitle', text: tr('This goes') }),
-				frame.list([
-					overridesLine(options.themeName, options.overrideCount),
-					tr('Every change written over the Nextcloud theme'),
-					tr('Colours and logo of Nextcloud: these go back to the default'),
-				], 'goes'),
-				h('h3', { class: 'thematiq-admin-dialog__subtitle', text: tr('This stays') }),
-				frame.list([tr('Own token sets'), tr('Typefaces'), tr('Custom CSS')], 'stays'),
+				h('p', {
+					class: 'thematiq-admin-dialog__lead',
+					text: tr(
+						'This resets the theme completely to the Nextcloud default theme.',
+					),
+				}),
+				h('h3', {
+					class: 'thematiq-admin-dialog__subtitle',
+					text: tr('This goes'),
+				}),
+				frame.list(
+					[
+						overridesLine(options.themeName, options.overrideCount),
+						tr('Every change written over the Nextcloud theme'),
+						tr(
+							'Colours and logo of Nextcloud: these go back to the default',
+						),
+					],
+					'goes',
+				),
+				h('h3', {
+					class: 'thematiq-admin-dialog__subtitle',
+					text: tr('This stays'),
+				}),
+				frame.list(
+					[tr('Own token sets'), tr('Typefaces'), tr('Custom CSS')],
+					'stays',
+				),
 				frame.notice(tr('This cannot be undone.'), 'warning'),
 			],
 			actions: [

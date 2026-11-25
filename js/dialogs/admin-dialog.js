@@ -22,7 +22,8 @@
 		warning: 'M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16',
 		info: 'M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z',
 		swap: 'M21,9L17,5V8H10V10H17V13M7,11L3,15L7,19V16H14V14H7V11Z',
-		restore: 'M13,3A9,9 0 0,0 4,12H1L4.89,15.89L4.96,16.03L9,12H6A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3Z',
+		restore:
+			'M13,3A9,9 0 0,0 4,12H1L4.89,15.89L4.96,16.03L9,12H6A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3Z',
 	}
 
 	/**
@@ -62,7 +63,11 @@
 		})
 		;(children || []).forEach(function (child) {
 			if (child !== null && child !== undefined && child !== false) {
-				el.appendChild(typeof child === 'string' ? document.createTextNode(child) : child)
+				el.appendChild(
+					typeof child === 'string'
+						? document.createTextNode(child)
+						: child,
+				)
 			}
 		})
 		return el
@@ -98,9 +103,16 @@
 	 * @return {HTMLElement} The list.
 	 */
 	function list(items, kind) {
-		return h('ul', { class: BLOCK + '__list ' + BLOCK + '__list--' + kind }, items.map(function (item) {
-			return h('li', {}, [icon(LIST_ICONS[kind] || 'check', 18), h('span', { text: item })])
-		}))
+		return h(
+			'ul',
+			{ class: BLOCK + '__list ' + BLOCK + '__list--' + kind },
+			items.map(function (item) {
+				return h('li', {}, [
+					icon(LIST_ICONS[kind] || 'check', 18),
+					h('span', { text: item }),
+				])
+			}),
+		)
 	}
 
 	/**
@@ -111,7 +123,17 @@
 	 * @return {HTMLElement} The notice.
 	 */
 	function notice(text, kind) {
-		return h('div', { class: BLOCK + '__notice ' + BLOCK + '__notice--' + kind }, [icon(kind === 'warning' || kind === 'caution' ? 'warning' : 'info', 18), h('span', { text: text })])
+		return h(
+			'div',
+			{ class: BLOCK + '__notice ' + BLOCK + '__notice--' + kind },
+			[
+				icon(
+					kind === 'warning' || kind === 'caution' ? 'warning' : 'info',
+					18,
+				),
+				h('span', { text: text }),
+			],
+		)
 	}
 
 	/**
@@ -130,15 +152,26 @@
 		var shown = typeof value === 'string' && value !== '' ? value : '–'
 		var swatch = null
 		if (opts.colour === true && typeof value === 'string' && value !== '') {
-			swatch = h('span', { class: BLOCK + '__swatch' + (opts.large === true ? ' ' + BLOCK + '__swatch--large' : ''), 'aria-hidden': 'true' })
+			swatch = h('span', {
+				class:
+					BLOCK
+					+ '__swatch'
+					+ (opts.large === true ? ' ' + BLOCK + '__swatch--large' : ''),
+				'aria-hidden': 'true',
+			})
 			swatch.style.background = value
 		}
-		var text = opts.colour === true || opts.code === true ? h('code', { text: shown }) : h('span', { text: shown })
+		var text =
+			opts.colour === true || opts.code === true
+				? h('code', { text: shown })
+				: h('span', { text: shown })
 		return h('span', { class: BLOCK + '__value' }, [
 			swatch,
 			text,
 			opts.note ? ' ' : null,
-			opts.note ? h('span', { class: BLOCK + '__value-note', text: opts.note }) : null,
+			opts.note
+				? h('span', { class: BLOCK + '__value-note', text: opts.note })
+				: null,
 		])
 	}
 
@@ -151,14 +184,28 @@
 	 */
 	function table(heads, rows) {
 		return h('table', { class: BLOCK + '__table' }, [
-			h('thead', {}, [h('tr', {}, heads.map(function (head) {
-				return h('th', { scope: 'col', text: head })
-			}))]),
-			h('tbody', {}, rows.map(function (cells) {
-				return h('tr', {}, cells.map(function (cell) {
-					return h('td', {}, [cell])
-				}))
-			})),
+			h('thead', {}, [
+				h(
+					'tr',
+					{},
+					heads.map(function (head) {
+						return h('th', { scope: 'col', text: head })
+					}),
+				),
+			]),
+			h(
+				'tbody',
+				{},
+				rows.map(function (cells) {
+					return h(
+						'tr',
+						{},
+						cells.map(function (cell) {
+							return h('td', {}, [cell])
+						}),
+					)
+				}),
+			),
 		])
 	}
 
@@ -176,9 +223,25 @@
 		var hintId = options.hint ? options.id + '-hint' : null
 		return h('div', { class: BLOCK + '__field' }, [
 			h('label', { for: options.id, text: options.label }),
-			h('input', { type: 'text', id: options.id, placeholder: options.placeholder, 'aria-describedby': hintId }),
-			hintId ? h('span', { class: BLOCK + '__hint', id: hintId, text: options.hint }) : null,
-			h('p', { class: BLOCK + '__error', id: options.id.replace(/-name$/, '') + '-error', role: 'alert', hidden: true }),
+			h('input', {
+				type: 'text',
+				id: options.id,
+				placeholder: options.placeholder,
+				'aria-describedby': hintId,
+			}),
+			hintId
+				? h('span', {
+						class: BLOCK + '__hint',
+						id: hintId,
+						text: options.hint,
+					})
+				: null,
+			h('p', {
+				class: BLOCK + '__error',
+				id: options.id.replace(/-name$/, '') + '-error',
+				role: 'alert',
+				hidden: true,
+			}),
 		])
 	}
 
@@ -207,7 +270,10 @@
 			class: BLOCK,
 			id: options.id,
 			'aria-labelledby': titleId,
-			style: 'max-width: min(' + (options.width || 560) + 'px, calc(100vw - 32px))',
+			style:
+				'max-width: min('
+				+ (options.width || 560)
+				+ 'px, calc(100vw - 32px))',
 		})
 
 		/**
@@ -239,27 +305,41 @@
 		 * @return {void}
 		 */
 		function busy(on) {
-			el.querySelectorAll('button, input, select, textarea').forEach(function (control) {
-				control.disabled = on
-			})
+			el.querySelectorAll('button, input, select, textarea').forEach(
+				function (control) {
+					control.disabled = on
+				},
+			)
 			el.setAttribute('aria-busy', on ? 'true' : 'false')
 		}
 
 		var handle = { el: el, close: close, busy: busy }
 		var actions = (options.actions || []).map(function (action) {
-			return h('button', {
-				type: 'button',
-				class: BLOCK + '__button ' + BLOCK + '__button--' + (action.variant || 'secondary') + (action.className ? ' ' + action.className : ''),
-				on: { click: function () {
-					if (action.cancel === true) {
-						close()
-						return
-					}
-					if (typeof action.onClick === 'function') {
-						action.onClick(handle)
-					}
-				} },
-			}, [action.icon ? icon(action.icon, 16) : null, action.label])
+			return h(
+				'button',
+				{
+					type: 'button',
+					class:
+						BLOCK
+						+ '__button '
+						+ BLOCK
+						+ '__button--'
+						+ (action.variant || 'secondary')
+						+ (action.className ? ' ' + action.className : ''),
+					on: {
+						click: function () {
+							if (action.cancel === true) {
+								close()
+								return
+							}
+							if (typeof action.onClick === 'function') {
+								action.onClick(handle)
+							}
+						},
+					},
+				},
+				[action.icon ? icon(action.icon, 16) : null, action.label],
+			)
 		})
 
 		/**
@@ -275,13 +355,33 @@
 			close()
 		}
 
-		el.appendChild(h('div', { class: BLOCK + '__head' }, [
-			h('div', { class: BLOCK + '__heading' }, [
-				options.eyebrow ? h('span', { class: BLOCK + '__eyebrow', text: options.eyebrow }) : null,
-				h('h2', { class: BLOCK + '__title', id: titleId, text: options.title }),
+		el.appendChild(
+			h('div', { class: BLOCK + '__head' }, [
+				h('div', { class: BLOCK + '__heading' }, [
+					options.eyebrow
+						? h('span', {
+								class: BLOCK + '__eyebrow',
+								text: options.eyebrow,
+							})
+						: null,
+					h('h2', {
+						class: BLOCK + '__title',
+						id: titleId,
+						text: options.title,
+					}),
+				]),
+				h(
+					'button',
+					{
+						type: 'button',
+						class: BLOCK + '__close',
+						'aria-label': tr('Close'),
+						on: { click: dismiss },
+					},
+					[icon('close', 18)],
+				),
 			]),
-			h('button', { type: 'button', class: BLOCK + '__close', 'aria-label': tr('Close'), on: { click: dismiss } }, [icon('close', 18)]),
-		]))
+		)
 		el.appendChild(h('div', { class: BLOCK + '__body' }, options.body || []))
 		el.appendChild(h('div', { class: BLOCK + '__foot' }, actions))
 
@@ -302,8 +402,17 @@
 		} else {
 			el.setAttribute('open', '')
 		}
-		var first = (options.focus ? el.querySelector(options.focus) : null)
-			|| el.querySelector('.' + BLOCK + '__body input[type="text"], .' + BLOCK + '__body select, .' + BLOCK + '__body textarea')
+		var first =
+			(options.focus ? el.querySelector(options.focus) : null)
+			|| el.querySelector(
+				'.'
+					+ BLOCK
+					+ '__body input[type="text"], .'
+					+ BLOCK
+					+ '__body select, .'
+					+ BLOCK
+					+ '__body textarea',
+			)
 			|| el.querySelector('.' + BLOCK + '__foot button')
 		if (first !== null) {
 			first.focus()

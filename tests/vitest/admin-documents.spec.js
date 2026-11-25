@@ -144,23 +144,47 @@ describe('Documents block', () => {
 	})
 
 	it('saves the footer line and removes an image, each with its message', async () => {
-		answers.POST = { ok: true, body: { footerLine: 'Gemeente Zuiddrecht', assets: {}, profile: profile() } }
-		answers.DELETE = { ok: true, body: { footerLine: 'Gemeente Zuiddrecht', assets: {}, profile: profile({ logo: null }) } }
+		answers.POST = {
+			ok: true,
+			body: {
+				footerLine: 'Gemeente Zuiddrecht',
+				assets: {},
+				profile: profile(),
+			},
+		}
+		answers.DELETE = {
+			ok: true,
+			body: {
+				footerLine: 'Gemeente Zuiddrecht',
+				assets: {},
+				profile: profile({ logo: null }),
+			},
+		}
 		await loadScript()
 		const feedback = document.getElementById('nldesign-documents-feedback')
-		document.getElementById('nldesign-documents-footer-line').value = 'Gemeente Zuiddrecht'
+		document.getElementById('nldesign-documents-footer-line').value =
+			'Gemeente Zuiddrecht'
 		document.getElementById('nldesign-documents-footer-save').click()
 		await flush()
 
-		const post = global.fetch.mock.calls.find((c) => c[1] && c[1].method === 'POST')
+		const post = global.fetch.mock.calls.find(
+			(c) => c[1] && c[1].method === 'POST',
+		)
 		expect(post[0]).toBe('/apps/thematiq/settings/document-style')
-		expect(post[1].headers).toEqual({ requesttoken: 'token', 'Content-Type': 'application/json' })
-		expect(JSON.parse(post[1].body)).toEqual({ footerLine: 'Gemeente Zuiddrecht' })
+		expect(post[1].headers).toEqual({
+			requesttoken: 'token',
+			'Content-Type': 'application/json',
+		})
+		expect(JSON.parse(post[1].body)).toEqual({
+			footerLine: 'Gemeente Zuiddrecht',
+		})
 		expect(feedback.textContent).toBe('Footer line saved.')
 
 		document.getElementById('nldesign-documents-logo-remove').click()
 		await flush()
-		const del = global.fetch.mock.calls.find((c) => c[1] && c[1].method === 'DELETE')
+		const del = global.fetch.mock.calls.find(
+			(c) => c[1] && c[1].method === 'DELETE',
+		)
 		expect(del[0]).toBe('/apps/thematiq/settings/document-style/logo')
 		expect(feedback.textContent).toBe('Image removed.')
 		expect(document.querySelector('#nldesign-documents-preview img')).toBeNull()
@@ -172,17 +196,24 @@ describe('Documents block', () => {
 		const feedback = document.getElementById('nldesign-documents-feedback')
 		document.getElementById('nldesign-documents-footer-save').click()
 		await flush()
-		expect(feedback.textContent).toBe('The document settings could not be saved.')
+		expect(feedback.textContent).toBe(
+			'The document settings could not be saved.',
+		)
 
 		global.fetch.mockImplementation(() => Promise.reject(new Error('offline')))
 		feedback.textContent = 'stale'
 		document.getElementById('nldesign-documents-footer-save').click()
 		await flush()
-		expect(feedback.textContent).toBe('The document settings could not be saved.')
+		expect(feedback.textContent).toBe(
+			'The document settings could not be saved.',
+		)
 	})
 
 	it('opens the picker from its button, shows the chosen name, and sends nothing without a file', async () => {
-		document.body.insertAdjacentHTML('beforeend', '<button id="nldesign-documents-logo-btn"></button><span id="nldesign-documents-logo-name"></span>')
+		document.body.insertAdjacentHTML(
+			'beforeend',
+			'<button id="nldesign-documents-logo-btn"></button><span id="nldesign-documents-logo-name"></span>',
+		)
 		await loadScript()
 		const input = document.getElementById('nldesign-documents-logo')
 		const click = vi.spyOn(input, 'click').mockImplementation(() => {})
@@ -192,20 +223,35 @@ describe('Documents block', () => {
 		Object.defineProperty(input, 'files', { value: [], configurable: true })
 		input.dispatchEvent(new Event('change'))
 		await flush()
-		expect(document.getElementById('nldesign-documents-logo-name').textContent).toBe('No file chosen')
-		expect(global.fetch.mock.calls.some((c) => c[1] && c[1].method === 'POST')).toBe(false)
+		expect(
+			document.getElementById('nldesign-documents-logo-name').textContent,
+		).toBe('No file chosen')
+		expect(
+			global.fetch.mock.calls.some((c) => c[1] && c[1].method === 'POST'),
+		).toBe(false)
 
-		answers.POST = { ok: true, body: { footerLine: '', assets: {}, profile: profile() } }
-		Object.defineProperty(input, 'files', { value: [new File(['x'], 'print.png')], configurable: true })
+		answers.POST = {
+			ok: true,
+			body: { footerLine: '', assets: {}, profile: profile() },
+		}
+		Object.defineProperty(input, 'files', {
+			value: [new File(['x'], 'print.png')],
+			configurable: true,
+		})
 		input.dispatchEvent(new Event('change'))
-		expect(document.getElementById('nldesign-documents-logo-name').textContent).toBe('print.png')
+		expect(
+			document.getElementById('nldesign-documents-logo-name').textContent,
+		).toBe('print.png')
 	})
 
 	it('logs settings that cannot be loaded, and does nothing without its block', async () => {
 		global.fetch.mockImplementation(() => Promise.reject(new Error('offline')))
 		const error = vi.spyOn(console, 'error').mockImplementation(() => {})
 		await loadScript()
-		expect(error).toHaveBeenCalledWith('Error loading the document settings:', expect.any(Error))
+		expect(error).toHaveBeenCalledWith(
+			'Error loading the document settings:',
+			expect.any(Error),
+		)
 
 		global.fetch.mockClear()
 		document.body.innerHTML = '<div id="nldesign-documents-preview"></div>'
@@ -214,12 +260,16 @@ describe('Documents block', () => {
 	})
 
 	it('waits for DOMContentLoaded while the page is loading', async () => {
-		const readyState = vi.spyOn(document, 'readyState', 'get').mockReturnValue('loading')
+		const readyState = vi
+			.spyOn(document, 'readyState', 'get')
+			.mockReturnValue('loading')
 		await loadScript()
 		expect(global.fetch).not.toHaveBeenCalled()
 		readyState.mockReturnValue('complete')
 		document.dispatchEvent(new Event('DOMContentLoaded'))
 		await flush()
-		expect(document.querySelector('#nldesign-documents-preview img')).not.toBeNull()
+		expect(
+			document.querySelector('#nldesign-documents-preview img'),
+		).not.toBeNull()
 	})
 })

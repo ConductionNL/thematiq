@@ -104,7 +104,11 @@ async function pressRestore(button) {
 	await flush()
 	const dialog = document.getElementById('nldesign-restore-version-dialog')
 	calls.push({ dialog: dialog.textContent, el: dialog })
-	dialog.querySelector(confirmAnswer ? '.nldesign-dialog-confirm' : '.nldesign-dialog-cancel').click()
+	dialog
+		.querySelector(
+			confirmAnswer ? '.nldesign-dialog-confirm' : '.nldesign-dialog-cancel',
+		)
+		.click()
 	await flush()
 	return dialog
 }
@@ -128,7 +132,9 @@ describe('admin.js version restore', () => {
 		const row = document.querySelector('#nldesign-audit-table-body tr')
 		expect(row.querySelector('.nldesign-audit-date').textContent).not.toBe('')
 		expect(row.querySelector('.nldesign-audit-pill')).not.toBeNull()
-		expect(row.querySelector('.nldesign-audit-code').textContent).toBe(ENTRIES[0].action)
+		expect(row.querySelector('.nldesign-audit-code').textContent).toBe(
+			ENTRIES[0].action,
+		)
 		expect(rendered).toHaveBeenCalledTimes(1)
 		expect(rendered.mock.calls[0][0].detail.count).toBe(ENTRIES.length)
 	})
@@ -147,7 +153,9 @@ describe('admin.js version restore', () => {
 		confirmAnswer = true
 		await load()
 
-		await pressRestore(document.querySelectorAll('button.nldesign-audit-restore')[1])
+		await pressRestore(
+			document.querySelectorAll('button.nldesign-audit-restore')[1],
+		)
 
 		const preview = calls.find(
 			(c) =>
@@ -217,12 +225,21 @@ describe('admin.js version restore', () => {
 		await flush()
 
 		const dialog = document.getElementById('nldesign-restore-version-dialog')
-		expect(dialog.querySelector('.thematiq-admin-dialog__eyebrow').textContent).toMatch(/^Log, version of /)
-		expect(dialog.querySelector('.thematiq-admin-dialog__notice--caution').textContent).toContain('Gone Sans')
-		dialog.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+		expect(
+			dialog.querySelector('.thematiq-admin-dialog__eyebrow').textContent,
+		).toMatch(/^Log, version of /)
+		expect(
+			dialog.querySelector('.thematiq-admin-dialog__notice--caution')
+				.textContent,
+		).toContain('Gone Sans')
+		dialog.dispatchEvent(
+			new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+		)
 
 		expect(document.getElementById('nldesign-restore-version-dialog')).toBeNull()
 		expect(document.activeElement).toBe(button)
-		expect(calls.some((c) => c.url && c.url.indexOf('/restore') !== -1)).toBe(false)
+		expect(calls.some((c) => c.url && c.url.indexOf('/restore') !== -1)).toBe(
+			false,
+		)
 	})
 })

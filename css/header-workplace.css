@@ -416,8 +416,14 @@ body:not(#body-login) #header .thematiq-quick-add__mark {
 	width: 32px;
 	height: 32px;
 	border-radius: 50%;
-	background: var(--nldesign-color-primary-light, var(--color-primary-element-light));
-	color: var(--nldesign-color-primary-light-text, var(--color-primary-element-light-text)) !important;
+	background: var(
+		--nldesign-color-primary-light,
+		var(--color-primary-element-light)
+	);
+	color: var(
+		--nldesign-color-primary-light-text,
+		var(--color-primary-element-light-text)
+	) !important;
 }
 
 body:not(#body-login) #header .thematiq-quick-add__status {

@@ -27,8 +27,12 @@ describe('Reset theme to Nextcloud dialog', () => {
 	let opener
 
 	beforeEach(async () => {
-		window.t = (app, text, values) => String(text).replace(/\{(\w+)\}/g, (all, key) => (values && key in values ? String(values[key]) : all))
-		document.body.innerHTML = '<button id="opener">Back to the Nextcloud theme</button>'
+		window.t = (app, text, values) =>
+			String(text).replace(/\{(\w+)\}/g, (all, key) =>
+				values && key in values ? String(values[key]) : all,
+			)
+		document.body.innerHTML =
+			'<button id="opener">Back to the Nextcloud theme</button>'
 		opener = document.getElementById('opener')
 		await load()
 	})
@@ -40,41 +44,90 @@ describe('Reset theme to Nextcloud dialog', () => {
 	})
 
 	it('draws the board: eyebrow, title, what goes, what stays and the warning', () => {
-		window.ThematiqResetThemeDialog.open({ opener, themeName: 'Gemeente Zuiddrecht', overrideCount: 42, onConfirm: vi.fn() })
+		window.ThematiqResetThemeDialog.open({
+			opener,
+			themeName: 'Gemeente Zuiddrecht',
+			overrideCount: 42,
+			onConfirm: vi.fn(),
+		})
 
 		const dialog = document.getElementById('thematiq-reset-theme-dialog')
 		expect(dialog.tagName).toBe('DIALOG')
-		expect(dialog.querySelector('.thematiq-admin-dialog__eyebrow').textContent).toBe('Active token set')
+		expect(
+			dialog.querySelector('.thematiq-admin-dialog__eyebrow').textContent,
+		).toBe('Active token set')
 		const title = dialog.querySelector('h2')
 		expect(title.textContent).toBe('Reset theme to Nextcloud?')
 		expect(dialog.getAttribute('aria-labelledby')).toBe(title.id)
-		expect(texts('.thematiq-admin-dialog__subtitle')).toEqual(['This goes', 'This stays'])
+		expect(texts('.thematiq-admin-dialog__subtitle')).toEqual([
+			'This goes',
+			'This stays',
+		])
 		expect(texts('.thematiq-admin-dialog__list--goes li')).toEqual([
 			'The 42 overrides of the current theme Gemeente Zuiddrecht',
 			'Every change written over the Nextcloud theme',
 			'Colours and logo of Nextcloud: these go back to the default',
 		])
-		expect(texts('.thematiq-admin-dialog__list--stays li')).toEqual(['Own token sets', 'Typefaces', 'Custom CSS'])
-		expect(dialog.querySelector('.thematiq-admin-dialog__notice--warning').textContent).toBe('This cannot be undone.')
-		expect(texts('.thematiq-admin-dialog__foot button')).toEqual(['Cancel', 'Reset to Nextcloud'])
+		expect(texts('.thematiq-admin-dialog__list--stays li')).toEqual([
+			'Own token sets',
+			'Typefaces',
+			'Custom CSS',
+		])
+		expect(
+			dialog.querySelector('.thematiq-admin-dialog__notice--warning')
+				.textContent,
+		).toBe('This cannot be undone.')
+		expect(texts('.thematiq-admin-dialog__foot button')).toEqual([
+			'Cancel',
+			'Reset to Nextcloud',
+		])
 	})
 
 	it('words the overrides line for one override, for none and for an unknown count', () => {
-		window.ThematiqResetThemeDialog.open({ opener, themeName: 'Utrecht', overrideCount: 1, onConfirm: vi.fn() })
-		expect(document.querySelector('.thematiq-admin-dialog__list--goes li').textContent).toBe('The override of the current theme Utrecht')
+		window.ThematiqResetThemeDialog.open({
+			opener,
+			themeName: 'Utrecht',
+			overrideCount: 1,
+			onConfirm: vi.fn(),
+		})
+		expect(
+			document.querySelector('.thematiq-admin-dialog__list--goes li')
+				.textContent,
+		).toBe('The override of the current theme Utrecht')
 		document.querySelector('.thematiq-admin-dialog__close').click()
 
-		window.ThematiqResetThemeDialog.open({ opener, themeName: 'Utrecht', overrideCount: null, onConfirm: vi.fn() })
-		expect(document.querySelector('.thematiq-admin-dialog__list--goes li').textContent).toBe('The overrides of the current theme Utrecht')
+		window.ThematiqResetThemeDialog.open({
+			opener,
+			themeName: 'Utrecht',
+			overrideCount: null,
+			onConfirm: vi.fn(),
+		})
+		expect(
+			document.querySelector('.thematiq-admin-dialog__list--goes li')
+				.textContent,
+		).toBe('The overrides of the current theme Utrecht')
 		document.querySelector('.thematiq-admin-dialog__close').click()
 
-		window.ThematiqResetThemeDialog.open({ opener, themeName: 'Utrecht', overrideCount: 0, onConfirm: vi.fn() })
-		expect(document.querySelector('.thematiq-admin-dialog__list--goes li').textContent).toBe('The overrides of the current theme Utrecht')
+		window.ThematiqResetThemeDialog.open({
+			opener,
+			themeName: 'Utrecht',
+			overrideCount: 0,
+			onConfirm: vi.fn(),
+		})
+		expect(
+			document.querySelector('.thematiq-admin-dialog__list--goes li')
+				.textContent,
+		).toBe('The overrides of the current theme Utrecht')
 	})
 
 	it('gives focus to Cancel, and Cancel closes without resetting', () => {
 		const onConfirm = vi.fn()
-		window.ThematiqResetThemeDialog.open({ opener, themeName: 'X', overrideCount: 0, onConfirm })
+		window.ThematiqResetThemeDialog.open({
+			opener,
+			themeName: 'X',
+			overrideCount: 0,
+			onConfirm,
+		})
 
 		const cancel = document.querySelector('.thematiq-admin-dialog__foot button')
 		expect(document.activeElement).toBe(cancel)
@@ -86,10 +139,17 @@ describe('Reset theme to Nextcloud dialog', () => {
 	})
 
 	it('closes on Escape and gives focus back', () => {
-		window.ThematiqResetThemeDialog.open({ opener, themeName: 'X', overrideCount: 0, onConfirm: vi.fn() })
+		window.ThematiqResetThemeDialog.open({
+			opener,
+			themeName: 'X',
+			overrideCount: 0,
+			onConfirm: vi.fn(),
+		})
 		const dialog = document.getElementById('thematiq-reset-theme-dialog')
 
-		dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+		dialog.dispatchEvent(
+			new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+		)
 
 		expect(document.getElementById('thematiq-reset-theme-dialog')).toBeNull()
 		expect(document.activeElement).toBe(opener)
@@ -97,18 +157,35 @@ describe('Reset theme to Nextcloud dialog', () => {
 
 	it('hands the open dialog to onConfirm, which can lock it', () => {
 		const onConfirm = vi.fn((dialog) => dialog.busy(true))
-		window.ThematiqResetThemeDialog.open({ opener, themeName: 'X', overrideCount: 3, onConfirm })
+		window.ThematiqResetThemeDialog.open({
+			opener,
+			themeName: 'X',
+			overrideCount: 3,
+			onConfirm,
+		})
 
 		document.querySelector('.thematiq-admin-dialog__button--danger').click()
 
 		expect(onConfirm).toHaveBeenCalledTimes(1)
-		const buttons = [...document.querySelectorAll('#thematiq-reset-theme-dialog button')]
+		const buttons = [
+			...document.querySelectorAll('#thematiq-reset-theme-dialog button'),
+		]
 		expect(buttons.every((button) => button.disabled)).toBe(true)
-		expect(document.getElementById('thematiq-reset-theme-dialog').getAttribute('aria-busy')).toBe('true')
+		expect(
+			document
+				.getElementById('thematiq-reset-theme-dialog')
+				.getAttribute('aria-busy'),
+		).toBe('true')
 	})
 
 	it('opens nothing without the dialog frame', () => {
 		delete window.ThematiqAdminDialog
-		expect(window.ThematiqResetThemeDialog.open({ opener, themeName: 'X', onConfirm: vi.fn() })).toBeNull()
+		expect(
+			window.ThematiqResetThemeDialog.open({
+				opener,
+				themeName: 'X',
+				onConfirm: vi.fn(),
+			}),
+		).toBeNull()
 	})
 })

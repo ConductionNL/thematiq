@@ -23,7 +23,12 @@ describe('zuiddrecht greeting heading', () => {
 		const selectors = []
 		postcss.parse(css).walkRules((rule) => {
 			if (rule.selector.includes('.cn-header-widget__title')) {
-				rule.walkDecls('font-size', (d) => selectors.push(`${rule.selector} ${d.value}`))
+				// The formatter may wrap a long selector, so collapse its whitespace.
+				rule.walkDecls('font-size', (d) =>
+					selectors.push(
+						`${rule.selector.replace(/\s+/g, ' ')} ${d.value}`,
+					),
+				)
 			}
 		})
 		expect(selectors).toEqual([

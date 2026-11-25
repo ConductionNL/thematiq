@@ -39,16 +39,27 @@ describe("Edit Nextcloud's base tokens dialog", () => {
 	it('draws the board: the line, three base tokens with what reads them, the notice', () => {
 		window.ThematiqBaseTokensDialog.open({ opener, onConfirm: vi.fn() })
 
-		expect(dialog().querySelector('.thematiq-admin-dialog__eyebrow').textContent).toBe("Also edit Nextcloud's base tokens")
-		expect(dialog().querySelector('h2').textContent).toBe("Edit Nextcloud's base tokens?")
-		expect([...dialog().querySelectorAll('th')].map((th) => th.textContent)).toEqual(['Base token', 'Read by'])
-		expect([...dialog().querySelectorAll('tbody tr')].map((tr) => tr.cells[0].textContent)).toEqual([
-			'--color-main-text',
-			'--color-border',
-			'--border-radius-element',
-		])
-		expect(dialog().querySelector('.thematiq-admin-dialog__notice--info').textContent).toContain('its own rows')
-		expect(document.activeElement).toBe(dialog().querySelector('.nldesign-dialog-cancel'))
+		expect(
+			dialog().querySelector('.thematiq-admin-dialog__eyebrow').textContent,
+		).toBe("Also edit Nextcloud's base tokens")
+		expect(dialog().querySelector('h2').textContent).toBe(
+			"Edit Nextcloud's base tokens?",
+		)
+		expect(
+			[...dialog().querySelectorAll('th')].map((th) => th.textContent),
+		).toEqual(['Base token', 'Read by'])
+		expect(
+			[...dialog().querySelectorAll('tbody tr')].map(
+				(tr) => tr.cells[0].textContent,
+			),
+		).toEqual(['--color-main-text', '--color-border', '--border-radius-element'])
+		expect(
+			dialog().querySelector('.thematiq-admin-dialog__notice--info')
+				.textContent,
+		).toContain('its own rows')
+		expect(document.activeElement).toBe(
+			dialog().querySelector('.nldesign-dialog-cancel'),
+		)
 	})
 
 	it('unlocks on Edit anyway, and Cancel gives focus back to the box', () => {

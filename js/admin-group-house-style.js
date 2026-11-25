@@ -140,7 +140,8 @@
 			name.textContent = set.name
 			label.appendChild(name)
 			var contrast = document.createElement('span')
-			contrast.className = 'thematiq-my-group-contrast'
+			contrast.className =
+				'thematiq-my-group-contrast'
 				+ (set.wcagLevel ? '' : ' thematiq-my-group-contrast--below')
 			contrast.textContent = contrastText(set.wcagLevel)
 			label.appendChild(contrast)

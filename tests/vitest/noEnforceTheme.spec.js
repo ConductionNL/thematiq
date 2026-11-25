@@ -41,7 +41,8 @@ describe('the app never forces a theme', () => {
 			for (const file of filesUnder(abs)) {
 				const text = readFileSync(file, 'utf8')
 				for (const needle of ['enforce_theme', 'setEnabledThemes']) {
-					if (text.includes(needle)) hits.push(`${relative(root, file)}: ${needle}`)
+					if (text.includes(needle))
+						hits.push(`${relative(root, file)}: ${needle}`)
 				}
 			}
 		}

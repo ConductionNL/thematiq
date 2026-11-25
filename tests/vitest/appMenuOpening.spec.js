@@ -122,7 +122,7 @@ describe('the apps menu opens on hover and pins on click', () => {
 			'utf8',
 		)
 		expect(css).toMatch(
-			/:root\[data-thematiq-app-menu-peek\][^{]*\.app-menu__popover-base :focus-visible[^{]*\{\s*outline: none !important;\s*box-shadow: none !important;/,
+			/:root\[data-thematiq-app-menu-peek\][^{]*\.app-menu__popover-base\s+:focus-visible[^{]*\{\s*outline: none !important;\s*box-shadow: none !important;/,
 		)
 	})
 

@@ -170,8 +170,15 @@ class DirectoryRuntimeFileStore implements RuntimeFileStore {
 	 * @param string $name An allowed name.
 	 *
 	 * @return string The absolute path.
+	 *
+	 * @throws RuntimeException When the name could leave the root, which an allowed name never does.
 	 */
 	private function path(string $name): string {
-		return rtrim($this->root, '/') . '/' . $name;
+		$path = (new AppFilePath())->join(root: $this->root, name: $name);
+		if ($path === null) {
+			throw new RuntimeException('Not a file name under the store: ' . $name);
+		}
+
+		return $path;
 	}//end path()
 }//end class

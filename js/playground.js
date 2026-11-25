@@ -1067,7 +1067,11 @@
 	 */
 	function updateHash(state) {
 		var panels = window.ThematiqPanels
-		var hash = hashIn(panels !== undefined ? panels.current() : null, state.tab, state.component)
+		var hash = hashIn(
+			panels !== undefined ? panels.current() : null,
+			state.tab,
+			state.component,
+		)
 		if (window.location.hash !== hash) {
 			window.history.replaceState(null, '', hash)
 		}

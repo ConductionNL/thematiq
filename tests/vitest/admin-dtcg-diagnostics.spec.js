@@ -175,7 +175,9 @@ describe('admin.js DTCG import diagnostics', () => {
 		expect(resultEl.style.display).toBe('block')
 		expect(resultEl.textContent).toContain('2.3.1')
 
-		expect(resultEl.querySelector('.thematiq-upload-result__file').textContent).toBe('theme.tokens.json')
+		expect(
+			resultEl.querySelector('.thematiq-upload-result__file').textContent,
+		).toBe('theme.tokens.json')
 		const rows = Array.from(
 			resultEl.querySelectorAll('.thematiq-upload-result__row'),
 		).map((row) => row.cells[0].textContent + ' = ' + row.cells[1].textContent)
@@ -370,18 +372,31 @@ describe('admin.js DTCG import diagnostics', () => {
 			[
 				'/settings/tokensets/upload',
 				'POST',
-				{ error: 'Property --nldesign-link-color contains a forbidden value.' },
+				{
+					error: 'Property --nldesign-link-color contains a forbidden value.',
+				},
 				422,
 			],
 		])
 		await loadAdminScript()
 		document.getElementById('nldesign-upload-name').value = 'Promo'
-		await selectUploadFile('promo.css', ':root { --nldesign-link-color: javascript:alert(1); }')
+		await selectUploadFile(
+			'promo.css',
+			':root { --nldesign-link-color: javascript:alert(1); }',
+		)
 
-		const box = document.querySelector('#nldesign-upload-result .thematiq-upload-result--refused')
-		expect(box.querySelector('.thematiq-upload-result__title').textContent).toBe('Refused file')
-		expect(box.querySelector('strong').textContent).toBe('promo.css was refused (422). Nothing was saved.')
-		expect(box.textContent).toContain('Property --nldesign-link-color contains a forbidden value.')
+		const box = document.querySelector(
+			'#nldesign-upload-result .thematiq-upload-result--refused',
+		)
+		expect(box.querySelector('.thematiq-upload-result__title').textContent).toBe(
+			'Refused file',
+		)
+		expect(box.querySelector('strong').textContent).toBe(
+			'promo.css was refused (422). Nothing was saved.',
+		)
+		expect(box.textContent).toContain(
+			'Property --nldesign-link-color contains a forbidden value.',
+		)
 	})
 
 	it('shows the Incomplete set pill once the list says the stored set leaves tokens to the design system', async () => {
@@ -390,23 +405,50 @@ describe('admin.js DTCG import diagnostics', () => {
 			[
 				'/settings/tokensets/upload',
 				'POST',
-				{ id: 'custom-zd', imported: 2, skipped: [], warnings: [{ pair: 'text on primary', ratio: 3.52 }] },
+				{
+					id: 'custom-zd',
+					imported: 2,
+					skipped: [],
+					warnings: [{ pair: 'text on primary', ratio: 3.52 }],
+				},
 			],
 			[
 				'/settings/tokensets/custom',
 				'GET',
-				{ sets: [{ id: 'custom-zd', name: 'ZD', warnings: [{ kind: 'incomplete', missing: ['a', 'b', 'c'] }] }] },
+				{
+					sets: [
+						{
+							id: 'custom-zd',
+							name: 'ZD',
+							warnings: [
+								{ kind: 'incomplete', missing: ['a', 'b', 'c'] },
+							],
+						},
+					],
+				},
 			],
 		])
 		await loadAdminScript()
 		document.getElementById('nldesign-upload-name').value = 'ZD'
 		await selectUploadFile('zd.css', ':root { --nldesign-color-primary: #fff; }')
 
-		const box = document.querySelector('#nldesign-upload-result .thematiq-upload-result')
-		expect(box.querySelector('.thematiq-upload-result__pill--pass').textContent).toBe('Uploaded')
-		expect(box.querySelector('.thematiq-upload-result__file').textContent).toBe('zd.css')
-		expect(box.querySelector('.thematiq-upload-result__incomplete').hidden).toBe(false)
-		expect(box.querySelector('.thematiq-upload-result__hint').textContent).toContain('You see the contrast warning again in the dialog when applying.')
+		const box = document.querySelector(
+			'#nldesign-upload-result .thematiq-upload-result',
+		)
+		expect(
+			box.querySelector('.thematiq-upload-result__pill--pass').textContent,
+		).toBe('Uploaded')
+		expect(box.querySelector('.thematiq-upload-result__file').textContent).toBe(
+			'zd.css',
+		)
+		expect(box.querySelector('.thematiq-upload-result__incomplete').hidden).toBe(
+			false,
+		)
+		expect(
+			box.querySelector('.thematiq-upload-result__hint').textContent,
+		).toContain(
+			'You see the contrast warning again in the dialog when applying.',
+		)
 	})
 
 	it('renders the recorded package version in the custom-set list', async () => {

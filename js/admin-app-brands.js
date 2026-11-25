@@ -10,9 +10,24 @@
  */
 ;(function thematiqAppBrandsInit() {
 	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', thematiqAppBrandsMain)
+		document.addEventListener('DOMContentLoaded', thematiqWhenVisible)
 	} else {
-		thematiqAppBrandsMain()
+		thematiqWhenVisible()
+	}
+
+	/**
+	 * Load the block now when it is on screen, else once its panel opens: a closed
+	 * panel asks the server for nothing (PERF-HANDOFF thematiq Theming settings).
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md
+	 * @return {Promise|undefined} The request when it started at once.
+	 */
+	function thematiqWhenVisible() {
+		var block = document.getElementById('nldesign-app-brands-list')
+		if (typeof window.ThematiqWhenShown !== 'function') {
+			return thematiqAppBrandsMain()
+		}
+		return window.ThematiqWhenShown(block, thematiqAppBrandsMain)
 	}
 
 	/**
@@ -136,7 +151,9 @@
 		function render() {
 			list.textContent = ''
 			var ids = Object.keys(state.brands)
-			document.dispatchEvent(new CustomEvent('thematiq:app-brands', { detail: state }))
+			document.dispatchEvent(
+				new CustomEvent('thematiq:app-brands', { detail: state }),
+			)
 			if (ids.length === 0) {
 				var empty = document.createElement('tr')
 				var none = document.createElement('td')
@@ -171,7 +188,9 @@
 
 				var contrastCell = document.createElement('td')
 				var contrast = document.createElement('span')
-				contrast.className = 'nldesign-app-brand-contrast' + (set.wcagLevel ? '' : ' nldesign-app-brand-contrast--below')
+				contrast.className =
+					'nldesign-app-brand-contrast'
+					+ (set.wcagLevel ? '' : ' nldesign-app-brand-contrast--below')
 				contrast.textContent = set.wcagLevel
 					? t('thematiq', 'WCAG {level}', { level: set.wcagLevel })
 					: t('thematiq', 'Below WCAG AA')
