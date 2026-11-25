@@ -577,6 +577,17 @@ a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 }
 
 /*
+ * The greeting is a heading ON THE PAGE BACKGROUND, not on a surface, so the
+ * set's heading colour (`h2:not(.cn-look-board *)` in theme.css, 0,1,1, a
+ * colour meant for headings on the set's own light surface) must not paint it.
+ * A set that declares --nldesign-component-heading-2-color (Rijkshuisstijl:
+ * #0f172a) otherwise drew it dark on Nextcloud's blue background, 2.92:1.
+ */
+#app-dashboard > h2 {
+	color: var(--nldesign-color-on-surface, var(--nldesign-color-text)) !important;
+}
+
+/*
  * …but SOLID BACKGROUNDS above repaints every panel/widget INSIDE the dashboard
  * opaque white, and the property inherits. Those opt back in, with the same
  * selector list that painted them, or the widgets render white-on-white.
