@@ -26,7 +26,7 @@
  */
 import { test, expect, type Page } from '@playwright/test'
 
-import { adminContext } from './_fixtures'
+import { adminContext, coreLogoUploaded } from './_fixtures'
 import {
 	PROBE_URL,
 	applyThemeState,
@@ -264,8 +264,12 @@ test.describe('La Frankendesk token set', () => {
 	test('the header shows the La Frankendesk mark unmasked', async ({ page }) => {
 		const logo = await headerLogo(page)
 		const url = /url\("?([^")]+)"?\)/.exec(logo.image)?.[1]
+		// An uploaded core logo wins over the set's (REQ-TPLAT-001), and is
+		// shown unmasked the same way.
 		expect(url, `background-image ${logo.image}`).toMatch(
-			new RegExp(`img/logos/${SET_ID}\\.svg$`),
+			(await coreLogoUploaded(page))
+				? /\/apps\/theming\/image\/logo/
+				: new RegExp(`img/logos/${SET_ID}\\.svg$`),
 		)
 		expect(logo.mask).toBe('none')
 		expect(parseRgb(logo.fill)[3]).toBe(0)

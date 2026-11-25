@@ -1359,7 +1359,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
 				"spec": "openspec/specs/extended-token-sets",
-				"requirement": "openspec/specs/token-sets :: Organisations that are not a municipality have ready-made sets"
+				"requirement": "openspec/specs/token-sets :: Community brand sets sit beside the government ones"
 			},
 			"reachedOn": "Settings > Administration > Theming, 'Design token set' dropdown",
 			"evidence": {
@@ -4158,8 +4158,8 @@
 				"evidence": "lib/Service/OpenProjectModules.php and AppMenuService::inject() add the section; js/app-menu.js external(); lib/Controller/OpenProjectLinkController.php and the admin field; tests/vitest/appMenu.spec.js, tests/Unit/Service/AppMenuServiceTest.php",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"spec": "openspec/specs/openproject-in-the-app-menu",
-				"requirement": "openspec/specs/openproject-in-the-app-menu :: The apps menu lists OpenProject's modules"
+				"spec": "openspec/specs/external-apps-in-the-app-menu",
+				"requirement": "openspec/specs/external-apps-in-the-app-menu :: The apps menu lists the external apps from Menu settings"
 			},
 			"reachedOn": "Settings > Administration > Theming, OpenProject in the apps menu; the workplace top bar apps menu",
 			"evidence": {
@@ -5603,7 +5603,7 @@
 					"openspec/specs/token-sets :: Incomplete Sets Are Surfaced In The Admin Dropdown",
 					"openspec/specs/token-sets :: Shipped Token Set Vocabulary Completeness"
 				],
-				"plan": "openspec/changes/token-set-coverage-next-waves"
+				"plan": "openspec/changes/archive/2026-11-22-token-set-coverage-next-waves"
 			},
 			"reachedOn": "Settings > Administration > Theming, custom token set upload/list panel, 'Incomplete set' warning banner",
 			"evidence": {
@@ -7106,7 +7106,7 @@
 				"owner": "ConductionNL/thematiq",
 				"origin": "competitor",
 				"spec": "openspec/specs/token-editor-ui",
-				"requirement": "openspec/specs/nextcloud-variable-mapping :: The selection wash follows the brand primary"
+				"requirement": "openspec/specs/nextcloud-variable-mapping :: Selected text takes the brand colour in a readable, translucent form"
 			},
 			"reachedOn": "any page: selected text takes the brand primary at 20 percent",
 			"evidence": {
@@ -8256,13 +8256,13 @@
 				"evidence": "lib/Service/TokenSetLicenceService.php reads a set's licence and its confirmation; lib/Service/RestrictedSetGate.php mayApply() and assertMayApply() refuse a restricted set until an administrator confirms it (lib/Controller/TokenSetLicenceController.php), and every path that applies a set asks it: ActiveTokenSetService, ThemePreviewService, ScheduledSwitchService, GroupMappingRules, DelegatedGroupThemingService, AppBrandService and RestrictedSetsInBundle in lib/Service/; lib/Repair/RecordRestrictedSetsAwaitingConfirmation.php records sets applied before they were restricted",
 				"owner": "ConductionNL/thematiq",
 				"origin": "own",
-				"change": "openspec/changes/token-set-licence-gate",
+				"change": "openspec/changes/archive/2026-11-22-token-set-licence-gate",
 				"requirement": [
-					"openspec/changes/token-set-licence-gate/specs/token-set-licences :: A restricted set is refused until an administrator confirms it",
-					"openspec/changes/token-set-licence-gate/specs/token-set-licences :: An administrator confirms a restricted set",
-					"openspec/changes/token-set-licence-gate/specs/token-set-licences :: Every path that applies a set asks the same gate"
+					"openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences :: A restricted set is refused until an administrator confirms it",
+					"openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences :: An administrator confirms a restricted set",
+					"openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences :: Every path that applies a set asks the same gate"
 				],
-				"plan": "openspec/changes/token-set-licence-gate"
+				"plan": "openspec/changes/archive/2026-11-22-token-set-licence-gate"
 			},
 			"reachedOn": "Settings > Administration > Theming, the token set picker: a restricted set shows its licence and asks for confirmation",
 			"evidence": {

@@ -412,7 +412,7 @@ class SetLogoReachTest extends TestCase {
 	 * url in the same layer as its logo, because the rule that draws it sits
 	 * at another depth than the token file that names it.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
 	 *
 	 * @return void
 	 */
@@ -431,7 +431,7 @@ class SetLogoReachTest extends TestCase {
 	 * A set without that file gets no watermark declaration at all, so the
 	 * layer of every set that existed before is unchanged.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
 	 *
 	 * @return void
 	 */
@@ -460,8 +460,8 @@ class SetLogoReachTest extends TestCase {
 	 * Only Zuiddrecht and its four demo schools ship a grey emblem, so only
 	 * their layers change. Read off the real directory, not a mock.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
-	 * @spec openspec/changes/school-token-sets/specs/school-token-sets/spec.md#requirement-each-school-set-ships-its-logos-and-a-login-watermark
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
+	 * @spec openspec/specs/school-token-sets/spec.md#requirement-each-school-set-ships-its-logos-and-a-login-watermark
 	 *
 	 * @return void
 	 */

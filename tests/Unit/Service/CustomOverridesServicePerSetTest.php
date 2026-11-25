@@ -236,7 +236,7 @@ class CustomOverridesServicePerSetTest extends TestCase {
 	 * never writes or deletes an app config value, so a file that survives a
 	 * disable/enable cycle is all a re-enabled app needs.
 	 *
-	 * @spec openspec/specs/custom-css-overrides/spec.md#token-overrides-survive-app-reinstall-if-css-directory-is-preserved
+	 * @spec openspec/specs/custom-css-overrides/spec.md#scenario-token-overrides-survive-app-reinstall-if-css-directory-is-preserved
 	 *
 	 * @return void
 	 */

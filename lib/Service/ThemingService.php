@@ -13,10 +13,10 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
+ * @spec openspec/specs/theming-sync/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
  */
 
 declare(strict_types=1);
@@ -34,10 +34,10 @@ use OCA\Theming\ThemingDefaults;
  * Handles validation and application of color and image changes
  * to the Nextcloud theming system.
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
+ * @spec openspec/specs/theming-sync/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
  */
 class ThemingService {
 
@@ -86,7 +86,7 @@ class ThemingService {
 	 *
 	 * @return bool True if valid hex color.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function isValidHexColor(string $color): bool {
 		return (bool)preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $color);
@@ -99,7 +99,7 @@ class ThemingService {
 	 *
 	 * @return string|null An error message if validation fails, or null on success.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function validateColors(array $params): ?string {
 		foreach (['primary_color', 'background_color'] as $colorKey) {
@@ -130,7 +130,7 @@ class ThemingService {
 	 *
 	 * @return string|null An error message if validation fails, or null on success.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 * @spec openspec/specs/theming-sync/spec.md
 	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function validateImagePaths(array $params): ?string {
@@ -193,7 +193,7 @@ class ThemingService {
 	 *
 	 * @return string|null An error message if validation fails, or null on success.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	private function validateSinglePath(string $imageKey, string $imagePath): ?string {
 		$problem = $this->pathShapeProblem(imagePath: $imagePath);
@@ -238,7 +238,7 @@ class ThemingService {
 	 *
 	 * @return array The list of updated color keys.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function applyColors(array $params): array {
 		$updated = [];
@@ -261,7 +261,7 @@ class ThemingService {
 	 *
 	 * @return array The updated keys, plus `background_mode` when a mode was applied.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	private function applyBackgroundMode(array $params, array $updated): array {
 		// A theme that CAPTURED Nextcloud's branding says which of the three
@@ -329,10 +329,10 @@ class ThemingService {
 	 *
 	 * @return array The list of updated image keys.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
 	 * @spec openspec/specs/theming-sync/spec.md
-	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-002
-	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-003
+	 * @spec openspec/specs/theming-sync/spec.md
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-the-login-background-is-a-core-image-slot-req-tplat-002
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-the-favicon-is-a-core-image-slot-the-theming-sync-may-fill-req-tplat-003
 	 */
 	public function applyImages(array $params): array {
 		$updated = [];
@@ -362,7 +362,7 @@ class ThemingService {
 	 * logo and the favicon are among them because a theme can now bring them.
 	 *
 	 * @var string[]
-	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-002
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-the-login-background-is-a-core-image-slot-req-tplat-002
 	 */
 	public const RESETTABLE = ['primary_color', 'background_color', 'logo', 'logoheader', 'favicon', 'background'];
 
@@ -378,7 +378,7 @@ class ThemingService {
 	 *
 	 * @return array<int, string> The settings that were reset (always the full list; undo is idempotent).
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function resetToDefaults(): array {
 		foreach (self::RESETTABLE as $setting) {
@@ -399,7 +399,7 @@ class ThemingService {
 	 *
 	 * @return array{primary_color: string, background_color: string} The stock colours.
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @psalm-suppress UndefinedClass OCA\Theming is a first-party Nextcloud app,
 	 *                 present at runtime but not a composer dependency, so it is
@@ -418,7 +418,7 @@ class ThemingService {
 	 *
 	 * @return ImageManager The image manager instance.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
+	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function getImageManager(): ImageManager {
 		return $this->imageManager;

@@ -78,6 +78,41 @@ section MUST be cards. The theme picker's token set select MUST be 44px high.
 - WHEN the settings rules are read
 - THEN every section MUST carry the main background, a 1px border and the container radius
 
+### Requirement: The light layout draws Mail, Calendar and Deck as the boards
+While the layout is `light`, a page of Mail, Calendar or Deck MUST load `css/workplace-apps/common.css`
+and the app's own sheet `css/workplace-apps/<app>.css`, after the other conditional stylesheets; with
+the workplace header it MUST load `css/workplace-apps/brand.css` first. No other page MUST load them.
+The sheets MUST write no colour literal. Every rule MUST start at the app's content element, at the
+header, at a panel another app mounts on that page (OpenRegister's `#openregister-mail-sidebar`), or at
+Calendar's event popover (`.event-popover`), which Calendar mounts at the end of the body. `:has()` MAY
+only be used inside a rule that already starts at the app's content element, to read the app's own
+state (Mail: a conversation is open); a browser without `:has()` MUST keep the app as it ships. The
+boards are MlInbox, MlThreadList and MlThread for Mail, ClWeek and ClMonth for Calendar, TbBoard and
+TbCard for Deck: the selected navigation entry in the primary's light tint, the new-item button as the
+filled primary, rows and entries without link underlines, Deck's stacks as grey columns of white cards,
+and the bar showing the logo and the app's name. The theme MUST NOT change the apps themselves; what a
+board draws that an app cannot show is left out.
+
+#### Scenario: Deck loads its sheets
+@e2e exclude Unit check: tests/Unit/Service/CssInjectionServiceTest.php asserts the link order
+- GIVEN the light layout and the workplace header
+- WHEN a Deck page renders
+- THEN `workplace-apps/brand`, `workplace-apps/common` and `workplace-apps/deck` MUST be linked after `workplace-layout`
+
+#### Scenario: Another app loads none
+@e2e exclude Unit check: tests/Unit/Service/LayoutOptionsServiceTest.php
+- GIVEN the light layout
+- WHEN a Files page renders
+- THEN no `workplace-apps/` sheet MUST be linked
+
+#### Scenario: The sheets use tokens only
+@e2e exclude Static file check: tests/vitest/workplaceApps.spec.js reads the sheets
+- GIVEN the files under `css/workplace-apps/`
+- WHEN their declarations are read
+- THEN no value MUST hold a hex, rgb() or hsl() colour
+- AND every selector MUST start at `:is(#content, #content-vue)`, at `body:not(#body-login) #header`, at `#openregister-mail-sidebar` or at `.event-popover`
+- AND a selector with `:has(` MUST start at `:is(#content, #content-vue)`
+
 ### Requirement: The Workplace Layout Is An Admin Option
 The app MUST store the choice in the app config key `workplace_layout`. The value MUST be
 `default`, `light`, or empty for "follow the theme". `POST /settings/layout` MUST store it, MUST
@@ -349,6 +384,14 @@ Nextcloud's login page.
 - THEN the button MUST come before the form in the DOM, read "Inloggen met uw gemeenteaccount", and be followed by "of"
 - AND the password button MUST be drawn outlined
 
+#### Scenario: Remember me and Log in with a device stay on the card
+@e2e exclude Measured with compdiff against werkplek/NcLogin on the demo stack; unit: vitest tests/vitest/loginRememberMeAndDevice.spec.js
+- GIVEN the light workplace
+- WHEN the login page renders
+- THEN Remember me MUST show under the password, before the login button, with its box on the fields' left edge and its words in regular 14px
+- AND Forgot your password? MUST come before Log in with a device
+- AND Log in with a device MUST carry a phone icon in a strip of its own, under a hairline, at the foot of the card
+
 #### Scenario: Only the login page asks for the copy
 @e2e exclude Pure service logic: PHPUnit tests/Unit/Listener/ThemeInjectionListenerTest.php
 - GIVEN the light workplace
@@ -415,10 +458,11 @@ give way to them; without links it MUST stay. A failure MUST be logged and MUST 
 A token set's manifest entry MAY carry an `app_menu` block with `groups`, `others_title`, `hint`
 and `manage_label`. Each group MUST have a `title` and at least one app; an app is an id of lower
 case letters, digits and underscores, with an optional `description`; a group MAY carry a `link`
-`{label, url}`, shown only with an http(s) address or a path on this server. Texts MUST follow the
+`{label, url}`, kept only with an http(s) address or a path on this server. Texts MUST follow the
 login copy's rules (one string or a map per language). At most four groups of 24 apps MUST be
 kept. An administrator MAY store the same shape in the app config key `app_menu_config`; its keys
-MUST win over the set's, key by key.
+MUST win over the set's, key by key. The groups MUST give the apps menu its default order (the
+groups' apps first, in group order) and each app its second line (the `description`).
 
 #### Scenario: Zuiddrecht ships the board's section
 @e2e exclude Pure service logic: PHPUnit tests/Unit/Service/AppMenuServiceTest.php reads the shipped manifest
@@ -438,18 +482,44 @@ While the header style resolves to `workplace`, the open apps menu MUST be 640px
 than the window), MUST NOT scroll inside its grid, MUST NOT underline or break an app's name
 mid-word, and MUST draw each icon in a chip. The page MUST carry the initial state
 `thematiq/app-menu` and MUST load `js/app-menu.js`; without the workplace header neither MUST be
-emitted. The script MUST write text only and MUST NOT move the tiles in the DOM. It MUST place
-each group's heading (with its link) before the group's apps in the group's order, give those apps
-their description (hidden from assistive technology), then the other apps under `others_title`,
-then a footer with the hint and, when Nextcloud shows a "more apps" tile, `manage_label` linking to
-that tile's address, which then hides. Without groups no heading MUST be drawn.
+emitted. The script MUST write text only and MUST NOT move the tiles in the DOM.
+
+The menu MUST be one list in three columns, in the order of the apps-menu-order capability. Each
+app MUST show its name and, when its group gives one, its description as a second line (hidden
+from assistive technology). No group heading MUST be drawn. The first nine entries MUST show. With
+more than nine, a button "All apps" MUST follow them; it MUST unfold the rest under a line, carry
+`aria-expanded`, and then read "Hide apps". Without more than nine, no button MUST be drawn. The
+rest MUST list the Nextcloud apps first, then the external apps under their own heading. A footer
+MUST follow with the drag hint, the hint and, when Nextcloud shows a "more apps" tile,
+`manage_label` linking to that tile's address, which then hides.
 
 #### Scenario: Zuiddrecht's apps menu
-@e2e exclude Live-checked on :8080 against the AppMenu board with screens-diff.mjs --click; unit: vitest tests/vitest/appMenu.spec.js
-- GIVEN the token set `zuiddrecht` and a signed-in administrator
+- GIVEN the token set `zuiddrecht`, a signed-in administrator with more than nine apps and no stored order
 - WHEN the grid button opens the apps menu
-- THEN "WERK" and "Mijn werkdag in launchpad" MUST head the eight apps with their descriptions
-- AND the other apps MUST follow under "NEXTCLOUD", then the hint and "Apps beheren"
+- THEN the eight apps of "Werk" MUST come first with their descriptions, then one other app
+- AND every app after the ninth MUST be hidden
+- AND a button "All apps" with `aria-expanded="false"` MUST follow the nine
+- AND the footer MUST end with "Apps beheren"
+
+#### Scenario: All apps unfolds the rest
+- GIVEN the open apps menu of the previous scenario
+- WHEN "All apps" is activated
+- THEN every app MUST show, the rest under a line
+- AND the button MUST read "Hide apps" with `aria-expanded="true"`
+- WHEN it is activated again
+- THEN only the first nine MUST show
+
+#### Scenario: Nine apps or fewer
+@e2e exclude a test instance with nine apps or fewer is not kept; proven by tests/vitest/appMenu.spec.js (draws no toggle with nine entries)
+- GIVEN a user who sees nine apps
+- WHEN the apps menu opens
+- THEN every app MUST show and no "All apps" button MUST be drawn
+
+#### Scenario: The arrow keys follow the screen
+- GIVEN the open apps menu, focus on its first app
+- WHEN Arrow right, then End is pressed
+- THEN focus MUST move to the second app on screen, then to the last visible entry
+- AND an app past the nine MUST NOT receive focus while the rest is folded
 
 #### Scenario: The layer asks with the page's set
 @e2e exclude Pure service logic: PHPUnit tests/Unit/Service/CssInjectionServiceTest.php and AppMenuServiceTest.php

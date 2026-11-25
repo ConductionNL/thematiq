@@ -18,7 +18,7 @@
  *
  * No Nextcloud runtime required: pure filesystem work over `css/tokens/`.
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-converted-sets-carry-provenance-and-are-reproducible-from-it
+ * @spec openspec/specs/token-sets/spec.md#requirement-converted-sets-carry-provenance-and-are-reproducible-from-it
  */
 
 declare(strict_types=1);
@@ -111,7 +111,7 @@ class TokenSetProvenanceTest extends TestCase {
 	 * Every set the converter wrote names its input, source, converter
 	 * version, mapping table hash and counts.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-converted-sets-carry-provenance-and-are-reproducible-from-it
+	 * @spec openspec/specs/token-sets/spec.md#requirement-converted-sets-carry-provenance-and-are-reproducible-from-it
 	 *
 	 * @return void
 	 */
@@ -145,7 +145,7 @@ class TokenSetProvenanceTest extends TestCase {
 	 * A set built from a brand file names its generator and carries no
 	 * converter provenance, so the sync treats it as not its own.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-converted-sets-carry-provenance-and-are-reproducible-from-it
+	 * @spec openspec/specs/token-sets/spec.md#requirement-converted-sets-carry-provenance-and-are-reproducible-from-it
 	 *
 	 * @return void
 	 */
@@ -184,7 +184,7 @@ class TokenSetProvenanceTest extends TestCase {
 	 * Summer Breeze keeps its own vocabulary: no `--nldesign-*` layer, no
 	 * converter provenance.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-summer-breeze-keeps-its-own-vocabulary
+	 * @spec openspec/specs/token-sets/spec.md#requirement-summer-breeze-keeps-its-own-vocabulary
 	 *
 	 * @return void
 	 */

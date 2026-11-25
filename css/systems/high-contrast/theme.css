@@ -95,7 +95,9 @@ header#header {
  * edge or fill marks it, as on a <button>. */
 a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(
 		:where(.cn-banner-widget__action)
-	):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)) {
+	):not(:where(.cn-link-button-widget__button)):not(
+		:where(.cn-week-strip__item)
+	):not(:where(.cn-app-tile)) {
 	color: var(--nldesign-color-text) !important;
 	text-decoration: underline !important;
 }
@@ -104,7 +106,7 @@ a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not
 		:where(.cn-banner-widget__action)
 	):not(:where(.cn-link-button-widget__button)):not(
 		:where(.cn-week-strip__item)
-	):hover {
+	):not(:where(.cn-app-tile)):hover {
 	color: var(--nldesign-color-text) !important;
 	text-decoration: underline !important;
 }
@@ -115,24 +117,28 @@ a[role='button'],
 a.cn-banner-widget__action,
 a.cn-link-button-widget__button,
 a.cn-week-strip__item,
+a.cn-app-tile,
 a.button-vue:hover,
 a.button:hover,
 a[role='button']:hover,
 a.cn-banner-widget__action:hover,
 a.cn-link-button-widget__button:hover,
 a.cn-week-strip__item:hover,
+a.cn-app-tile:hover,
 a.button-vue:visited,
 a.button:visited,
 a[role='button']:visited,
 a.cn-banner-widget__action:visited,
 a.cn-link-button-widget__button:visited,
 a.cn-week-strip__item:visited,
+a.cn-app-tile:visited,
 a.button-vue:focus,
 a.button:focus,
 a[role='button']:focus,
 a.cn-banner-widget__action:focus,
 a.cn-link-button-widget__button:focus,
-a.cn-week-strip__item:focus {
+a.cn-week-strip__item:focus,
+a.cn-app-tile:focus {
 	text-decoration: none !important;
 }
 
@@ -151,7 +157,8 @@ body,
  * `!important` ring (0,3,0), which otherwise kept a 2px ring in the border
  * colour on every button (#1050). */
 *:focus-visible,
-body .button-vue.button-vue:focus-visible {
+body .button-vue.button-vue:focus-visible,
+body .button.primary.skip-navigation:focus-visible {
 	outline: 3px solid var(--nldesign-color-focus) !important;
 	outline-offset: 2px !important;
 }
@@ -176,7 +183,8 @@ body .button-vue.button-vue:focus-visible {
  * colours the OS overrides. Do NOT set forced-color-adjust:none here. */
 @media (forced-colors: active) {
 	*:focus-visible,
-	body .button-vue.button-vue:focus-visible {
+	body .button-vue.button-vue:focus-visible,
+	body .button.primary.skip-navigation:focus-visible {
 		outline: 3px solid CanvasText !important;
 		outline-offset: 2px !important;
 	}
@@ -185,17 +193,17 @@ body .button-vue.button-vue:focus-visible {
 			:where(.cn-banner-widget__action)
 		):not(:where(.cn-link-button-widget__button)):not(
 			:where(.cn-week-strip__item)
-		),
+		):not(:where(.cn-app-tile)),
 	a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(
 			:where(.cn-banner-widget__action)
 		):not(:where(.cn-link-button-widget__button)):not(
 			:where(.cn-week-strip__item)
-		):hover,
+		):not(:where(.cn-app-tile)):hover,
 	a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(
 			:where(.cn-banner-widget__action)
 		):not(:where(.cn-link-button-widget__button)):not(
 			:where(.cn-week-strip__item)
-		):visited {
+		):not(:where(.cn-app-tile)):visited {
 		color: LinkText !important;
 		text-decoration: underline !important;
 	}
@@ -206,18 +214,21 @@ body .button-vue.button-vue:focus-visible {
 	a.cn-banner-widget__action,
 	a.cn-link-button-widget__button,
 	a.cn-week-strip__item,
+	a.cn-app-tile,
 	a.button-vue:hover,
 	a.button:hover,
 	a[role='button']:hover,
 	a.cn-banner-widget__action:hover,
 	a.cn-link-button-widget__button:hover,
 	a.cn-week-strip__item:hover,
+	a.cn-app-tile:hover,
 	a.button-vue:visited,
 	a.button:visited,
 	a[role='button']:visited,
 	a.cn-banner-widget__action:visited,
 	a.cn-link-button-widget__button:visited,
-	a.cn-week-strip__item:visited {
+	a.cn-week-strip__item:visited,
+	a.cn-app-tile:visited {
 		color: ButtonText !important;
 		text-decoration: none !important;
 	}

@@ -335,6 +335,21 @@ class RuntimeFileStorageTest extends TestCase {
 	}//end testAShippedLocalPathAndAnUnfilteredListing()
 
 	/**
+	 * Only a shipped set's stylesheet, dark variant or logo is protected, with or without a leading slash.
+	 *
+	 * @return void
+	 */
+	public function testOnlyAShippedSetsFilesAreProtected(): void {
+		$locator = $this->locator();
+		$this->assertTrue(condition: $locator->isProtected('/css/tokens/utrecht.css'));
+		$this->assertTrue(condition: $locator->isProtected('/img/logos/utrecht.png'));
+		$this->assertFalse(condition: $locator->isProtected('img/logos/gemeente-voorbeeld.svg'));
+		$this->assertFalse(condition: $locator->isProtected('css/tokens/dark/sub/utrecht.css'));
+		$this->assertFalse(condition: $locator->isProtected('css/custom-overrides.css'));
+		$this->assertFalse(condition: $locator->isProtected('img/logos/utrecht'));
+	}//end testOnlyAShippedSetsFilesAreProtected()
+
+	/**
 	 * A manifest that is not a list protects nothing; an entry without an id is skipped.
 	 *
 	 * @return void

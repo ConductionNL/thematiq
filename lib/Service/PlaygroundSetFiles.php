@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+ * @spec openspec/specs/component-playground/spec.md
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ use OCP\ServerVersion;
  * Where uploaded sets and their dark files live, the reader for a set file, and the running server's version.
  * Each is optional, as it was on the playground service.
  *
- * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+ * @spec openspec/specs/component-playground/spec.md
  */
 final class PlaygroundSetFiles {
 
@@ -39,7 +39,7 @@ final class PlaygroundSetFiles {
 	 * @param SetFileReader $files Reads a set file from the release or the store.
 	 * @param ServerVersion|null $serverVersion The running server's version.
 	 *
-	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 * @spec openspec/specs/component-playground/spec.md
 	 */
 	public function __construct(
 		public readonly ?RuntimeFileStore $store = null,

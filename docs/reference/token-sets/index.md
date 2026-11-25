@@ -44,6 +44,7 @@ The tokens of every shipped token set: the value, the dark-mode value, whether i
 - [Gemeente Noordwijk](./noordwijk.md) `noordwijk`
 - [Nederlandse Overheid Referentie Architectuur (NORA)](./nora.md) `nora`
 - [OpenCatalogi](./opencatalogi.md) `opencatalogi`
+- [OpenWOO](./openwoo.md) `openwoo`
 - [Provincie Zuid-Holland](./provincie-zuid-holland.md) `provincie-zuid-holland`
 - [NL Design System Purmerend Thema](./purmerend.md) `purmerend`
 - [Riddeliemers](./riddeliemers.md) `riddeliemers`

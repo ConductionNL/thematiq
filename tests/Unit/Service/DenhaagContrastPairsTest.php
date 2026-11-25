@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
+ * @spec openspec/specs/token-set-contrast-audit/spec.md
  */
 
 declare(strict_types=1);

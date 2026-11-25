@@ -61,3 +61,8 @@ tests/integration/fixtures/
 css/component-scopes.css
 css/primary-lock.css
 css/theme-scopes.css
+
+# Same contract: both rendered by scripts/build-fonts.js and byte-compared
+# against the committed copies by `npm run test:fonts`.
+css/fonts.css
+css/systems/nldesign/fonts.css

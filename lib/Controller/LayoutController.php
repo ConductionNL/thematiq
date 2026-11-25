@@ -15,9 +15,9 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md
- * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
+ * @spec openspec/specs/brand-stripe/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -42,8 +42,8 @@ use OCP\IRequest;
  * the reason `LayerController` gives: that class is constructed by hand in
  * seven test files, and this needs three services of its own.
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
+ * @spec openspec/specs/brand-stripe/spec.md
  */
 class LayoutController extends Controller {
 
@@ -100,10 +100,10 @@ class LayoutController extends Controller {
 	 *
 	 * @return JSONResponse The stored and the resolved state, or HTTP 400 on an unknown value.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 * @spec openspec/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function save(): JSONResponse {

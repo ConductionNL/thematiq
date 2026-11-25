@@ -18,6 +18,7 @@ loaded before any shipped set, no such property MAY resolve to its initial value
 - **THEN** the card background, border, title and subtitle colours MUST resolve to the set's background, border, text and muted text colours
 
 #### Scenario: Every property the package reads is covered
+@e2e exclude Build-time check of the vendored package CSS, no page involved: vitest tests/vitest/denhaagBridge.spec.js (declares every property a pinned component reads without a fallback)
 - **GIVEN** the pinned package CSS files
 - **WHEN** the coverage test lists their `var(--denhaag-…)` and `var(--nl-data-badge-…)` names
 - **THEN** every name MUST be declared in the generated section of `css/public-bridge.css`
@@ -40,6 +41,7 @@ package versions and the mapping file's SHA-256. A check mode MUST fail when the
 section differs from what the mapping produces.
 
 #### Scenario: A hand edit in the generated section is caught
+@e2e exclude Build-time check of the generated file, no page involved: vitest tests/vitest/denhaagBridge.spec.js (a hand edit inside the section is caught) and npm run test:denhaag-bridge
 - **GIVEN** a property value edited by hand inside the generated section
 - **WHEN** `npm run test:denhaag-bridge` runs
 - **THEN** it MUST fail and name the property
@@ -61,6 +63,7 @@ name the portaliq change that links the bridge. A test MUST recompute the three 
 `token-sets.json` and `css/tokens/` and fail when the documented numbers differ.
 
 #### Scenario: A new set changes the numbers
+@e2e exclude Build-time check of the documented numbers, no page involved: vitest tests/vitest/denhaagBridge.spec.js (the documented coverage matches the shipped sets)
 - **GIVEN** a new set added with only `--nldesign-*` tokens
 - **WHEN** the coverage test runs without the documentation updated
 - **THEN** it MUST fail and print the measured numbers

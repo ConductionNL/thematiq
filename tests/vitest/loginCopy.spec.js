@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -128,6 +128,42 @@ describe('the login page of the board', () => {
 			document.querySelectorAll('#alternative-logins .button-vue__text'),
 		).map((el) => el.textContent)
 		expect(names).toEqual(['Login with provider 0', 'Login with provider 1'])
+	})
+
+	it('words the submit button and the lost password link as the set says', async () => {
+		page()
+		document
+			.querySelector('.login-form fieldset')
+			.insertAdjacentHTML(
+				'beforeend',
+				'<button type="button" id="lost-password"><span class="button-vue__wrapper"><span class="button-vue__text">Forgot password?</span></span></button>',
+			)
+		const submit = document.querySelector('button[type="submit"]')
+		submit.setAttribute('data-login-form-submit', '')
+		submit.innerHTML =
+			'<span class="button-vue__wrapper"><span class="button-vue__icon"></span><span class="button-vue__text">Log in</span></span>'
+		installState({
+			...ZUIDDRECHT,
+			submitLabel: 'Sign in',
+			resetLabel: 'Forgot your password?',
+		})
+		await loadScript()
+
+		expect(submit.querySelector('.button-vue__text').textContent).toBe('Sign in')
+		expect(submit.querySelector('.button-vue__icon')).not.toBeNull()
+		expect(document.querySelector('#lost-password').textContent).toBe(
+			'Forgot your password?',
+		)
+	})
+
+	it("keeps Nextcloud's words when the set names none", async () => {
+		page()
+		installState(ZUIDDRECHT)
+		await loadScript()
+
+		expect(document.querySelector('button[type="submit"]').textContent).toBe(
+			'Inloggen',
+		)
 	})
 
 	it('adds no divider and no SSO mark without an alternative login', async () => {

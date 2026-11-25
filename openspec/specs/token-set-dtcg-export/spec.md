@@ -1,7 +1,7 @@
 # token-set-dtcg-export Specification
 
 ## Purpose
-TBD - created by archiving change authoring-dtcg-export. Update Purpose after archive.
+Downloading any token set as a W3C Design Tokens (DTCG) document: what the set declares, each value typed by its shape, colours as colour objects with a colour space, and an exact round trip back into thematiq.
 
 ## Requirements
 

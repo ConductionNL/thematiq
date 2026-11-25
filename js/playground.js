@@ -30,7 +30,7 @@
  * `window.ThematiqPlayground` in the browser, where it also boots itself. No
  * `import`/`export`, because this app has no bundler.
  *
- * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+ * @spec openspec/specs/component-playground/spec.md
  */
 ;(function (root, factory) {
 	var api = factory()
@@ -409,6 +409,27 @@
 	 */
 	function hashFor(tab, component) {
 		return '#preview=' + tab + '/' + component
+	}
+
+	/**
+	 * The hash for a selection while a panel of the page may be open. Inside the components
+	 * panel the hash stays the panel's own (`#components`, or `#components/own` on Your
+	 * components), and so does the motion panel's (`#motion`), so the panel survives a reload
+	 * and the back button leaves it.
+	 *
+	 * @param {?string} panel The open panel of the page, or null.
+	 * @param {string} tab An editor tab id.
+	 * @param {string} component A component id, or the full-view sentinel.
+	 * @return {string} The hash, including its `#`.
+	 */
+	function hashIn(panel, tab, component) {
+		if (panel === 'components') {
+			return tab === OWN_TAB ? '#components/own' : '#components'
+		}
+		if (panel === 'motion') {
+			return '#motion'
+		}
+		return hashFor(tab, component)
 	}
 
 	/**
@@ -1045,7 +1066,12 @@
 	 * @return {void}
 	 */
 	function updateHash(state) {
-		var hash = hashFor(state.tab, state.component)
+		var panels = window.ThematiqPanels
+		var hash = hashIn(
+			panels !== undefined ? panels.current() : null,
+			state.tab,
+			state.component,
+		)
 		if (window.location.hash !== hash) {
 			window.history.replaceState(null, '', hash)
 		}
@@ -5813,6 +5839,7 @@
 		rowsByState: rowsByState,
 		parseHash: parseHash,
 		hashFor: hashFor,
+		hashIn: hashIn,
 		exportCss: exportCss,
 		liveTokens: liveTokens,
 		componentScopes: componentScopes,

@@ -37,6 +37,23 @@ use Psr\Log\LoggerInterface;
  * @covers \OCA\Thematiq\Service\TokenValueValidator
  * @covers \OCA\Thematiq\Service\OverridesCssBuilder
  * @covers \OCA\Thematiq\Service\DesignTokensMapper
+ * @uses   \OCA\Thematiq\Service\DarkPaletteService
+ * @uses   \OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore
+ * @uses   \OCA\Thematiq\Service\RuntimeFile\AppFilePath
+ * @uses   \OCA\Thematiq\Service\TokenRegistry
+ * @uses   \OCA\Thematiq\Service\AliasWalk
+ * @uses   \OCA\Thematiq\Service\DesignTokenRef
+ * @uses   \OCA\Thematiq\Service\DesignTokensAliasResolver
+ * @uses   \OCA\Thematiq\Service\DtcgColourSerializer
+ * @uses   \OCA\Thematiq\Service\DtcgValueSerializer
+ * @uses   \OCA\Thematiq\Service\LeafMappingRun
+ * @uses   \OCA\Thematiq\Service\LeafScope
+ * @uses   \OCA\Thematiq\Service\MappedToken
+ * @uses   \OCA\Thematiq\Service\TypedValue
+ * @uses   \OCA\Thematiq\Service\ColorSpaceConverter
+ * @uses   \OCA\Thematiq\Service\ColourRgba
+ * @uses   \OCA\Thematiq\Service\ContrastService
+ * @uses   \OCA\Thematiq\Service\OwnTokenCss
  */
 class TokenReferencesTest extends TestCase {
 
@@ -76,7 +93,7 @@ class TokenReferencesTest extends TestCase {
 		$this->assertNull(TokenReference::targetOf(value: 'var(--nldesign-color-primary, red)'));
 		$this->assertNull(TokenReference::targetOf(value: '#a00078'));
 		$this->assertNull(TokenReference::targetOf(value: null));
-		$this->assertSame('var(--nldesign-color-link)', TokenReference::to(tokenName: '--nldesign-color-link'));
+		$this->assertSame('var(--nldesign-color-link)', TokenReference::valueFor(tokenName: '--nldesign-color-link'));
 	}//end testAReferenceNamesItsTarget()
 
 	/**

@@ -1,7 +1,7 @@
 # dark-mode Specification
 
 ## Purpose
-TBD - created by archiving change dark-mode-token-variants. Update Purpose after archive.
+A dark variant of every house style: dark colours derived from the light palette and checked against WCAG, hand-written dark values that win over derived ones, generated dark files injected under Nextcloud's dark scopes, and an admin switch to turn dark variants on or off.
 
 ## Requirements
 
@@ -290,6 +290,7 @@ carrying an explicit light choice. Dark variants exclusively FOLLOW the theme st
 already established (user choice or OS preference).
 
 #### Scenario: No enforce_theme usage in the codebase
+@e2e exclude A search of the source, no page involved: vitest tests/vitest/noEnforceTheme.spec.js (has no enforce_theme or setEnabledThemes in its source)
 
 - GIVEN the implemented change
 - WHEN the app source is searched for `enforce_theme` and `setEnabledThemes`

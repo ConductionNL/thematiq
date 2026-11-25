@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -179,7 +179,7 @@ class LoginCopyServiceTest extends TestCase {
 	/**
 	 * The shipped Zuiddrecht copy, in Dutch, as the NcLogin board writes it.
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
 	 *
 	 * @return void
 	 */
@@ -195,13 +195,34 @@ class LoginCopyServiceTest extends TestCase {
 		$this->assertSame(expected: 'Inloggen met uw gemeenteaccount', actual: $copy['ssoLabel']);
 		$this->assertSame(expected: 'Gebruikersnaam of e-mail', actual: $copy['usernameLabel']);
 		$this->assertSame(expected: 'Gemeente Zuiddrecht · werkplek op Nextcloud', actual: $copy['footer']);
+		$this->assertSame(expected: 'Inloggen', actual: $copy['submitLabel']);
+		$this->assertSame(expected: 'Wachtwoord vergeten?', actual: $copy['resetLabel']);
 	}//end testZuiddrechtShipsTheBoardsCopy()
+
+	/**
+	 * The English copy of the shipped set words the login button and the lost
+	 * password link as the English NcLogin board does.
+	 *
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
+	 *
+	 * @return void
+	 */
+	public function testZuiddrechtWordsTheLoginActionsInEnglish(): void {
+		$manifest = json_decode((string)file_get_contents(__DIR__ . '/../../../token-sets.json'), true);
+		$entry = array_values(array_filter($manifest, fn (array $set) => $set['id'] === 'zuiddrecht'))[0];
+		$this->configure(login: $entry['login']);
+
+		$copy = $this->service()->resolveCopy(tokenSet: 'zuiddrecht', language: 'en');
+
+		$this->assertSame(expected: 'Sign in', actual: $copy['submitLabel']);
+		$this->assertSame(expected: 'Forgot your password?', actual: $copy['resetLabel']);
+	}//end testZuiddrechtWordsTheLoginActionsInEnglish()
 
 	/**
 	 * A language map picks the request's language, then its primary subtag;
 	 * a language it does not name gets nothing, so Nextcloud's words stay.
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
 	 *
 	 * @return void
 	 */
@@ -222,7 +243,7 @@ class LoginCopyServiceTest extends TestCase {
 	/**
 	 * The administrator's override wins key by key; the set's other keys stay.
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
 	 *
 	 * @return void
 	 */
@@ -248,7 +269,7 @@ class LoginCopyServiceTest extends TestCase {
 	 * What may not be shown is dropped: not text, empty, too long, an unknown
 	 * key, and a link that is not a web address or a path on this server.
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
 	 *
 	 * @return void
 	 */
@@ -271,7 +292,7 @@ class LoginCopyServiceTest extends TestCase {
 	/**
 	 * A protocol-relative link points off this server without saying so; it is dropped.
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-login-copy
 	 *
 	 * @return void
 	 */
@@ -286,7 +307,7 @@ class LoginCopyServiceTest extends TestCase {
 	 * script is loaded; a set without copy still gets the divider in the
 	 * request's language.
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
 	 *
 	 * @return void
 	 */
@@ -303,7 +324,7 @@ class LoginCopyServiceTest extends TestCase {
 	/**
 	 * Every other layout keeps Nextcloud's login page: no state, no script.
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
 	 *
 	 * @return void
 	 */
@@ -320,7 +341,7 @@ class LoginCopyServiceTest extends TestCase {
 	/**
 	 * A failure is logged and leaves the page alone.
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
 	 *
 	 * @return void
 	 */
@@ -339,7 +360,7 @@ class LoginCopyServiceTest extends TestCase {
 	 * The login page's entry resolves the set without an app brand and
 	 * injects for it; a resolver failure is logged and loads nothing.
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
 	 *
 	 * @return void
 	 */

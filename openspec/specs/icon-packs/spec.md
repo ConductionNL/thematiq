@@ -1,7 +1,7 @@
 # icon-packs Specification
 
 ## Purpose
-TBD - created by archiving change theme-switchable-iconography. Update Purpose after archive.
+The icon set a design system declares, resolved for the active house style: icons looked up by name, the active pack advertised on the public capability, the DSFR pack built at build time, a read-only indicator on the admin page, and existing icon users left working.
 ## Requirements
 ### Requirement: Icon Pack Declared on the Design System
 

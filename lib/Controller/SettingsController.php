@@ -13,18 +13,18 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-14
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-15
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-16
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-17
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-18
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-19
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-20
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-21
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-22
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-23
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-24
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-25
+ * @spec openspec/specs/token-sets/spec.md
+ * @spec openspec/specs/token-sets/spec.md
+ * @spec openspec/specs/token-sets/spec.md
+ * @spec openspec/specs/hide-slogan/spec.md
+ * @spec openspec/specs/hide-slogan/spec.md
+ * @spec openspec/specs/menu-labels/spec.md
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
+ * @spec openspec/specs/token-sets/spec.md
  * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
  */
 
@@ -54,18 +54,18 @@ use OCP\IRequest;
  * Handles API requests for managing token sets, theming, and display settings.
  * Override-related endpoints are handled by OverridesController.
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-14
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-15
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-16
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-17
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-18
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-19
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-20
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-21
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-22
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-23
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-24
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-25
+ * @spec openspec/specs/token-sets/spec.md
+ * @spec openspec/specs/token-sets/spec.md
+ * @spec openspec/specs/token-sets/spec.md
+ * @spec openspec/specs/hide-slogan/spec.md
+ * @spec openspec/specs/hide-slogan/spec.md
+ * @spec openspec/specs/menu-labels/spec.md
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
+ * @spec openspec/specs/token-sets/spec.md
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects) - This controller aggregates every settings
  * endpoint of the app (token set, toggles, theming sync, per-app theming, audit trail, email
@@ -112,9 +112,9 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The response with status and selected token set.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-14
+	 * @spec openspec/specs/token-sets/spec.md
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
-	 * @spec openspec/changes/archive/2026-09-30-apply-scheduled-theme-switch/tasks.md#task-1.1
+	 * @spec openspec/specs/scheduled-switch/spec.md
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setTokenSet(string $tokenSet): JSONResponse {
@@ -134,7 +134,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The list of available token sets.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-16
+	 * @spec openspec/specs/token-sets/spec.md
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getAvailableTokenSets(): JSONResponse {
@@ -160,7 +160,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-17
+	 * @spec openspec/specs/hide-slogan/spec.md
 	 */
 	private function saveBooleanSetting(string $key, bool $value): void {
 		$stored = '0';
@@ -219,9 +219,9 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The response with the status.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-18
+	 * @spec openspec/specs/hide-slogan/spec.md
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
-	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-006
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-name-slogan-and-web-address-are-core-theming-fields-req-tplat-006
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setSloganSetting(bool $hideSlogan): JSONResponse {
@@ -324,7 +324,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The response with the status.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-19
+	 * @spec openspec/specs/menu-labels/spec.md
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
@@ -342,7 +342,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The response with updated fields.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-22
+	 * @spec openspec/specs/theming-sync/spec.md
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
@@ -443,7 +443,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse `{status: "ok", reset: string[]}`.
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 * @spec openspec/specs/theming-sync/spec.md
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	private function resetThemingValues(): JSONResponse {
@@ -464,7 +464,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The current theming values.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-23
+	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getThemingValues(): JSONResponse {
@@ -492,7 +492,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The resolved color map.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-25
+	 * @spec openspec/specs/token-sets/spec.md
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getTokenSetPreview(string $tokenSetId): JSONResponse {
@@ -510,7 +510,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The list of { id, name, themed } entries.
 	 *
-	 * @spec openspec/changes/archive/2026-06-14-per-app-theming-toggle/tasks.md#task-3.1
+	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getAppTheming(): JSONResponse {
@@ -527,7 +527,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The persisted state after validation.
 	 *
-	 * @spec openspec/changes/archive/2026-06-14-per-app-theming-toggle/tasks.md#task-3.1
+	 * @spec openspec/specs/per-app-theming/spec.md
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]

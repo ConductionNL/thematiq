@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+ * @spec openspec/specs/component-playground/spec.md
  */
 
 declare(strict_types=1);
@@ -34,7 +34,7 @@ use Throwable;
  * instead of three, and so the assembly can be tested without rendering a
  * settings form.
  *
- * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+ * @spec openspec/specs/component-playground/spec.md
  */
 class PlaygroundStateService {
 
@@ -96,7 +96,7 @@ class PlaygroundStateService {
 	 *
 	 * @return array<string, mixed> Map of initial-state key to value.
 	 *
-	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 * @spec openspec/specs/component-playground/spec.md
 	 */
 	public function getInitialState(string $tokenSetId): array {
 		return [
@@ -179,7 +179,7 @@ class PlaygroundStateService {
 	 *
 	 * @return int The major version, or 0 when it cannot be read.
 	 *
-	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 * @spec openspec/specs/component-playground/spec.md
 	 */
 	protected function getServerMajor(): int {
 		if ($this->setFiles->serverVersion === null) {
@@ -207,7 +207,7 @@ class PlaygroundStateService {
 	 *
 	 * @return array<string, mixed> The decoded inventory, or an empty one.
 	 *
-	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 * @spec openspec/specs/component-playground/spec.md
 	 */
 	public function getInventory(): array {
 		$path = $this->sources->appManager->getAppPath(Application::APP_ID) . '/js/playground/components.json';
@@ -247,7 +247,7 @@ class PlaygroundStateService {
 	 *
 	 * @return array<string, mixed> The same inventory, its chrome translated.
 	 *
-	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 * @spec openspec/specs/component-playground/spec.md
 	 */
 	private function translateInventory(array $inventory): array {
 		foreach ($inventory['components'] as $index => $component) {
@@ -305,7 +305,7 @@ class PlaygroundStateService {
 	 *
 	 * @return array<string, mixed> The entry, those fields translated.
 	 *
-	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 * @spec openspec/specs/component-playground/spec.md
 	 */
 	private function translateFields(array $entry, array $fields): array {
 		foreach ($fields as $field) {
@@ -330,7 +330,7 @@ class PlaygroundStateService {
 	 *
 	 * @return string The translation, with any `%` back as a single `%`.
 	 *
-	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 * @spec openspec/specs/component-playground/spec.md
 	 */
 	private function translate(string $text): string {
 		return $this->l10n->t(str_replace('%', '%%', $text));
@@ -342,7 +342,7 @@ class PlaygroundStateService {
 	 *
 	 * @return array<string, string> Map of reason code to sentence.
 	 *
-	 * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+	 * @spec openspec/specs/component-playground/spec.md
 	 */
 	public function getReasons(): array {
 		try {

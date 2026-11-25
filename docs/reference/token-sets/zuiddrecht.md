@@ -2,7 +2,7 @@
 
 # Gemeente Zuiddrecht
 
-Token set `zuiddrecht`: 152 declared by this set, 129 from the defaults layer.
+Token set `zuiddrecht`: 155 declared by this set, 127 from the defaults layer.
 
 Contrast: primary text on primary 5.64:1, primary on background 5.22:1 (pass).
 
@@ -165,7 +165,7 @@ Contrast: primary text on primary 5.64:1, primary on background 5.22:1 (pass).
 | `--nldesign-component-button-font-size` | `1rem` | | defaults | |
 | `--nldesign-component-button-font-weight` | `700` | | defaults | |
 | `--nldesign-component-form-field-label-font-weight` | `700` | | defaults | |
-| `--nldesign-component-heading-1-font-size` | `2.5rem` | | defaults | |
+| `--nldesign-component-heading-1-font-size` | `28px` | | this set | |
 | `--nldesign-component-heading-1-font-weight` | `var(
 		--nldesign-component-heading-font-weight
 	)` | | defaults | |
@@ -175,7 +175,7 @@ Contrast: primary text on primary 5.64:1, primary on background 5.22:1 (pass).
 		--nldesign-component-heading-font-weight
 	)` | | defaults | |
 | `--nldesign-component-heading-2-line-height` | `1.25` | | defaults | |
-| `--nldesign-component-heading-3-font-size` | `1.5rem` | | defaults | |
+| `--nldesign-component-heading-3-font-size` | `17px` | | this set | |
 | `--nldesign-component-heading-3-font-weight` | `var(
 		--nldesign-component-heading-font-weight
 	)` | | defaults | |
@@ -293,6 +293,7 @@ Contrast: primary text on primary 5.64:1, primary on background 5.22:1 (pass).
 | `--nldesign-color-accent` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23CC0000%22%2F%3E%3C%2Fsvg%3E) `#CC0000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f43535%22%2F%3E%3C%2Fsvg%3E) `#f43535` | this set | |
 | `--nldesign-color-accent-light` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23FCEDEC%22%2F%3E%3C%2Fsvg%3E) `#FCEDEC` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23310d0a%22%2F%3E%3C%2Fsvg%3E) `#310d0a` | this set | |
 | `--nldesign-color-accent-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23A30000%22%2F%3E%3C%2Fsvg%3E) `#A30000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ff5c5c%22%2F%3E%3C%2Fsvg%3E) `#ff5c5c` | this set | |
+| `--nldesign-color-focus-ring` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%233669A5%22%2F%3E%3C%2Fsvg%3E) `#3669A5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%235b8ac2%22%2F%3E%3C%2Fsvg%3E) `#5b8ac2` | this set | |
 | `--nldesign-color-footer-background` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23234A78%22%2F%3E%3C%2Fsvg%3E) `#234A78` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%237fa6d4%22%2F%3E%3C%2Fsvg%3E) `#7fa6d4` | this set | |
 | `--nldesign-color-footer-text` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232e2e2e%22%2F%3E%3C%2Fsvg%3E) `#2e2e2e` | this set | |
 | `--nldesign-color-surface` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23F4F6F9%22%2F%3E%3C%2Fsvg%3E) `#F4F6F9` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141a23%22%2F%3E%3C%2Fsvg%3E) `#141a23` | this set | |

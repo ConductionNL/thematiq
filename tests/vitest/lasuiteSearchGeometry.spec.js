@@ -19,7 +19,7 @@
  * the field's own declarations from element-overrides.css, laid out the way
  * a browser does for that DOM.
  *
- * @spec openspec/changes/lasuite-shell-geometry/specs/lasuite-stack/spec.md
+ * @spec openspec/specs/lasuite-stack/spec.md
  */
 
 import fs from 'fs'

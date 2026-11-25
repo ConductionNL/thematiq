@@ -86,9 +86,9 @@ class AdminDelegationTest extends TestCase {
 	 * the "grant this section to a group" flow offer it.
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-theming-can-be-delegated-through-cores-admin-delegation-req-tplat-008
 	 *
 	 * @return void
-	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-008
 	 */
 	public function testThePanelIsADelegatedSetting(): void {
 		$this->assertInstanceOf(expected: IDelegatedSettings::class, actual: $this->admin());
@@ -137,9 +137,9 @@ class AdminDelegationTest extends TestCase {
 	 * @dataProvider writableKeyProvider
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-theming-can-be-delegated-through-cores-admin-delegation-req-tplat-008
 	 *
 	 * @return void
-	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-008
 	 */
 	public function testEveryKeyThePanelWritesIsAuthorized(string $key): void {
 		$this->assertContains(
@@ -182,9 +182,9 @@ class AdminDelegationTest extends TestCase {
 	 * @dataProvider jobOwnedKeyProvider
 	 *
 	 * @spec openspec/specs/upstream-freshness/spec.md
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-theming-can-be-delegated-through-cores-admin-delegation-req-tplat-008
 	 *
 	 * @return void
-	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-008
 	 */
 	public function testJobOwnedKeysAreNotDelegable(string $key): void {
 		$this->assertNotContains(

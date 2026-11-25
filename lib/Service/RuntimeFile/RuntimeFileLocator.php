@@ -109,13 +109,13 @@ class RuntimeFileLocator {
 	 */
 	public function isProtected(string $name): bool {
 		$name = ltrim($name, '/');
-		if (preg_match('#^css/tokens/(?:dark/)?([a-z0-9-]+)\.css$#', $name, $match) !== 1
-			&& preg_match('#^img/logos/([a-z0-9-]+)\.[a-z]+$#', $name, $match) !== 1
-		) {
-			return false;
+		foreach (['#^css/tokens/(?:dark/)?([a-z0-9-]+)\.css$#', '#^img/logos/([a-z0-9-]+)\.[a-z]+$#'] as $pattern) {
+			if (preg_match($pattern, $name, $match) === 1) {
+				return isset($this->shippedIds()[$match[1]]);
+			}
 		}
 
-		return isset($this->shippedIds()[$match[1]]);
+		return false;
 	}//end isProtected()
 
 	/**
@@ -208,11 +208,12 @@ class RuntimeFileLocator {
 			return $this->store->read(name: $name);
 		}
 
-		if ($this->isShipped(name: $name) === false) {
+		$path = (new AppFilePath())->join(root: $this->appPath(), name: $name);
+		if ($path === null || $this->isShipped(name: $name) === false) {
 			return null;
 		}
 
-		$content = file_get_contents($this->appPath() . '/' . ltrim($name, '/'));
+		$content = file_get_contents($path);
 		if ($content === false) {
 			return null;
 		}

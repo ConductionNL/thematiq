@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+ * @spec openspec/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
  */
 
 declare(strict_types=1);
@@ -133,6 +133,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 #[UsesClass(\OCA\Thematiq\Service\SwitchWindow::class)]
 #[UsesClass(\OCA\Thematiq\Service\AppBrandRecords::class)]
 #[UsesClass(\OCA\Thematiq\Service\DelegatedChoice::class)]
+#[UsesClass(\OCA\Thematiq\Service\RuntimeFile\AppFilePath::class)]
 class RestrictedSetWiringTest extends TestCase {
 
 	use RestrictedSetFixture;

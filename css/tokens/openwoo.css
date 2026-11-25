@@ -1,0 +1,52 @@
+/* NL Design — custom token set, exported from the component playground. Do not edit manually. */
+/* thematiq-token-set: design-system=nldesign */
+:root {
+  --nldesign-animation-quick: 100ms;
+  --nldesign-animation-slow: 300ms;
+  --nldesign-border-radius: 3px;
+  --nldesign-border-radius-large: 6px;
+  --nldesign-border-radius-pill: 999px;
+  --nldesign-border-radius-rounded: 999px;
+  --nldesign-border-radius-small: 2px;
+  --nldesign-color-background: #ffffff;
+  --nldesign-color-background-dark: #f2f2f2;
+  --nldesign-color-background-darker: #e6e6e6;
+  --nldesign-color-background-hover: #e8eff6;
+  --nldesign-color-border: #d1d1d1;
+  --nldesign-color-border-dark: #7a7a7a;
+  --nldesign-color-button-primary-background: #23845c;
+  --nldesign-color-button-primary-border: #23845c;
+  --nldesign-color-button-primary-hover: #1b6748;
+  --nldesign-color-button-primary-text: #ffffff;
+  --nldesign-color-error: #dc3545;
+  --nldesign-color-error-hover: #721c24;
+  --nldesign-color-error-rgb: 220, 53, 69;
+  --nldesign-color-favorite: #ffc107;
+  --nldesign-color-focus: rgba(17, 48, 78, 0.5);
+  --nldesign-color-focus-rgb: 17, 48, 78;
+  --nldesign-color-header-background: #e8eff6;
+  --nldesign-color-header-text: #11304e;
+  --nldesign-color-info: #004085;
+  --nldesign-color-info-rgb: 0, 64, 133;
+  --nldesign-color-link: #23845c;
+  --nldesign-color-link-hover: #1b6748;
+  --nldesign-color-link-visited: #23845c;
+  --nldesign-color-nav-background: #ffffff;
+  --nldesign-color-placeholder-dark: #d1d1d1;
+  --nldesign-color-placeholder-light: #f2f2f2;
+  --nldesign-color-primary: #23845c;
+  --nldesign-color-primary-hover: #1b6748;
+  --nldesign-color-primary-light: #e9f3ef;
+  --nldesign-color-primary-light-hover: #d3e6de;
+  --nldesign-color-primary-text: #ffffff;
+  --nldesign-color-success: #155724;
+  --nldesign-color-success-rgb: 21, 87, 36;
+  --nldesign-color-text: #000000;
+  --nldesign-color-text-light: #ffffff;
+  --nldesign-color-text-muted: #4f4f4f;
+  --nldesign-color-warning: #856404;
+  --nldesign-color-warning-rgb: 133, 100, 4;
+  --nldesign-font-family: Arial, sans-serif;
+  --nldesign-header-border-bottom: 1px solid #cbdbeb;
+  --nldesign-logo-url: none;
+}

@@ -152,7 +152,7 @@ class LogoLayerService {
 	 *                                                                          nothing can be said about the logo (core's logo.svg unresolvable).
 	 *
 	 * @spec openspec/specs/app-token-set-selection/spec.md
-	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-001
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-an-uploaded-core-logo-wins-over-the-sets-logo-req-tplat-001
 	 */
 	public function layer(string $tokenSet): ?array {
 		// A converter-extracted logo may be any raster or vector type Nextcloud's
@@ -357,7 +357,7 @@ class LogoLayerService {
 	 *
 	 * @return string One declaration starting with `;`, or the empty string.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-may-draw-a-login-watermark
 	 */
 	private function watermarkDeclaration(string $tokenSet): string {
 		$watermark = $this->shippedLogo(name: $tokenSet . self::WATERMARK_SUFFIX);

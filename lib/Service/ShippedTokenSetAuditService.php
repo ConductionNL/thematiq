@@ -296,7 +296,7 @@ class ShippedTokenSetAuditService implements ShippedTokenSetAuditServiceInterfac
 	 * }
 	 *
 	 * @spec openspec/specs/token-set-contrast-audit/spec.md#requirement-automated-contrast-audit-over-all-shipped-token-sets
-	 * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 */
 	public function auditSet(string $appPath, string $id, array $theming, string $level = 'AA'): array {
 		$declarations = $this->resolveDeclarations(appPath: $appPath, id: $id, theming: $theming);
@@ -355,7 +355,7 @@ class ShippedTokenSetAuditService implements ShippedTokenSetAuditServiceInterfac
 	 *
 	 * @return array<string, string> The merged declarations.
 	 *
-	 * @spec openspec/changes/denhaag-component-tokens/specs/token-set-contrast-audit/spec.md
+	 * @spec openspec/specs/token-set-contrast-audit/spec.md
 	 */
 	public function portalCascade(string $appPath, string $id): array {
 		$declarations = array_merge(

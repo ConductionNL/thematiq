@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 
 declare(strict_types=1);
@@ -30,7 +30,7 @@ namespace OCA\Thematiq\Service;
  * @phpstan-import-type ReportEntry from TokenSetConverterService
  * @psalm-import-type   ReportEntry from TokenSetConverterService
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 final class ConversionRun {
 
@@ -138,7 +138,7 @@ final class ConversionRun {
 	 * @param string $slug The token set slug, which is also the brand prefix.
 	 * @param string $displayName The human-readable set name.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 */
 	public function __construct(
 		public readonly string $slug,
@@ -152,7 +152,7 @@ final class ConversionRun {
 	 *
 	 * @return array{slug: string, displayName: string, sourceName: string|null, sourceVersion: string|null}
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 */
 	public function source(): array {
 		return [

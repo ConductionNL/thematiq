@@ -36,10 +36,19 @@
  * and the probe set must be non-empty. Without that, a page that failed to load
  * any nldesign CSS would report "light stayed light" and pass for the wrong
  * reason.
+ *
+ * GLOBAL STATE: a dark stylesheet only loads for a set on a design system
+ * that ships a generated dark variant, and the instance's own default is the
+ * stock `nextcloud` set, which has neither. So the dark probe set is made the active
+ * set (activateTokenSet) for the file, and the previous set and its overrides
+ * are put back afterwards. The probe tokens are still read from whatever dark
+ * file that set loads, nothing is hardcoded.
  */
 import { test, expect, Page } from '@playwright/test'
 
+import { DARK_PROBE_SET } from './_dark-probe-set'
 import { withThemeState } from './_theme-state'
+import { activateTokenSet } from './_token-css'
 
 const PROBE_URL = '/settings/user'
 
@@ -201,6 +210,18 @@ async function buildProbeSet(
 
 	return { dark: darkNarrowed, light }
 }
+
+let restore: (() => Promise<void>) | null = null
+
+test.beforeAll(async ({ browser }) => {
+	restore = await activateTokenSet(browser, DARK_PROBE_SET)
+})
+
+test.afterAll(async () => {
+	if (restore !== null) {
+		await restore()
+	}
+})
 
 test.describe('dark-mode scope selectors — light OS', () => {
 	test.use({ colorScheme: 'light' })

@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -43,7 +43,7 @@ use Throwable;
  * Presentation, never a dependency: with nobody signed in it does nothing,
  * and a failure is logged and leaves the page with Nextcloud's own avatar.
  *
- * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 class HeaderUserService {
 
@@ -60,6 +60,28 @@ class HeaderUserService {
 	 * @var string
 	 */
 	public const SCRIPT = 'header-user';
+
+	/**
+	 * The script that draws the brand block for an app that draws none (js/header-brand.js).
+	 *
+	 * @var string
+	 */
+	public const BRAND_SCRIPT = 'header-brand';
+
+	/**
+	 * The script that draws the Quick add button for the apps whose boards have it (js/header-create.js).
+	 *
+	 * @var string
+	 */
+	public const CREATE_SCRIPT = 'header-create';
+
+	/**
+	 * The script that gives Mail, Calendar and Deck the boards' words and day names (js/workplace-apps.js).
+	 * It acts only while css/workplace-apps/common.css is on the page.
+	 *
+	 * @var string
+	 */
+	public const APPS_SCRIPT = 'workplace-apps';
 
 	/**
 	 * Constructor.
@@ -82,7 +104,7 @@ class HeaderUserService {
 	 *
 	 * @return array{name: string, role: string}|null The person; the role is empty when the profile names none.
 	 *
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
 	 */
 	public function person(): ?array {
 		$user = $this->userSession->getUser();
@@ -110,7 +132,7 @@ class HeaderUserService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
 	 */
 	public function inject(string $tokenSet, LayoutOptionsService $layoutOptions): void {
 		try {
@@ -135,15 +157,18 @@ class HeaderUserService {
 	}//end inject()
 
 	/**
-	 * Load js/header-user.js. A seam, so unit tests need no Nextcloud bootstrap.
+	 * Load js/header-user.js, js/header-brand.js, js/header-create.js and js/workplace-apps.js. A seam, so unit tests need no Nextcloud bootstrap.
 	 *
 	 * @return void
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - \OCP\Util is the Nextcloud API for asset injection.
 	 *
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
 	 */
 	protected function emitScript(): void {
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::SCRIPT);
+		\OCP\Util::addScript(application: Application::APP_ID, file: self::BRAND_SCRIPT);
+		\OCP\Util::addScript(application: Application::APP_ID, file: self::CREATE_SCRIPT);
+		\OCP\Util::addScript(application: Application::APP_ID, file: self::APPS_SCRIPT);
 	}//end emitScript()
 }//end class

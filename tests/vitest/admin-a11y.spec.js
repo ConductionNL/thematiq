@@ -131,6 +131,8 @@ async function loadAdminScript() {
 	// admin.js; so does the fixture.
 	await import('../../js/lib/appTheming.js')
 	await import('../../js/lib/themingPlan.js')
+	await import('../../js/dialogs/admin-dialog.js?t=' + Math.random())
+	await import('../../js/dialogs/theming-update-dialog.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	// admin.js's fetch-driven init calls (initAppTheming, etc.) resolve
 	// asynchronously; flush them before assertions run.
@@ -200,18 +202,18 @@ describe('admin.js keyboard accessibility', () => {
 			return document.getElementById('nldesign-theming-dialog-overlay')
 		}
 
-		it('opens with dialog role, aria-modal, and focus on the first control', async () => {
+		it('opens as a modal dialog with its title, and focus on Cancel', async () => {
 			const overlay = await openThemingDialog()
 			expect(overlay).not.toBeNull()
 
-			const dialogEl = overlay.querySelector('.nldesign-dialog')
-			expect(dialogEl.getAttribute('role')).toBe('dialog')
-			expect(dialogEl.getAttribute('aria-modal')).toBe('true')
-			expect(dialogEl.getAttribute('aria-labelledby')).toBeTruthy()
-
-			// Cancel is the first focusable control in the dialog markup.
-			const cancelBtn = dialogEl.querySelector('.nldesign-dialog-cancel')
-			expect(document.activeElement).toBe(cancelBtn)
+			expect(overlay.tagName).toBe('DIALOG')
+			const title = document.getElementById(
+				overlay.getAttribute('aria-labelledby'),
+			)
+			expect(title.textContent).toContain('Update the Nextcloud theme')
+			expect(document.activeElement).toBe(
+				overlay.querySelector('.nldesign-dialog-cancel'),
+			)
 		})
 
 		it('closes on Escape and restores focus to the element that opened it', async () => {
@@ -236,27 +238,6 @@ describe('admin.js keyboard accessibility', () => {
 				document.getElementById('nldesign-theming-dialog-overlay'),
 			).toBeNull()
 			expect(document.activeElement).toBe(previouslyFocused)
-		})
-
-		it('traps Tab focus within the dialog (wraps from last back to first)', async () => {
-			const overlay = await openThemingDialog()
-			const dialogEl = overlay.querySelector('.nldesign-dialog')
-			const buttons = dialogEl.querySelectorAll('button')
-			const first = buttons[0]
-			const last = buttons[buttons.length - 1]
-
-			last.focus()
-			expect(document.activeElement).toBe(last)
-
-			overlay.dispatchEvent(
-				new window.KeyboardEvent('keydown', {
-					key: 'Tab',
-					bubbles: true,
-					cancelable: true,
-				}),
-			)
-
-			expect(document.activeElement).toBe(first)
 		})
 	})
 
@@ -420,15 +401,16 @@ describe('admin.js keyboard accessibility', () => {
 			}
 		}
 
-		it('opens as a modal dialog with focus on its first control', async () => {
+		it('opens as a modal dialog with its title, and focus inside it', async () => {
 			const { overlay } = await openApplyDialog()
 			expect(overlay).not.toBeNull()
 
-			const dialogEl = overlay.querySelector('.nldesign-dialog')
-			expect(dialogEl.getAttribute('role')).toBe('dialog')
-			expect(dialogEl.getAttribute('aria-modal')).toBe('true')
-			expect(dialogEl.getAttribute('aria-labelledby')).toBeTruthy()
-			expect(dialogEl.contains(document.activeElement)).toBe(true)
+			expect(overlay.tagName).toBe('DIALOG')
+			const title = document.getElementById(
+				overlay.getAttribute('aria-labelledby'),
+			)
+			expect(title.textContent).toContain('Apply token set')
+			expect(overlay.contains(document.activeElement)).toBe(true)
 		})
 
 		it('closes on Escape the way Cancel does: the old set comes back and focus returns', async () => {
@@ -454,27 +436,30 @@ describe('admin.js keyboard accessibility', () => {
 			expect(document.activeElement).toBe(select)
 		})
 
-		it('keeps Tab inside the dialog, with Select all and the checkboxes reachable', async () => {
+		it('counts the chosen values as boxes are ticked and Select none is pressed', async () => {
 			const { overlay } = await openApplyDialog()
-			const dialogEl = overlay.querySelector('.nldesign-dialog')
-			const focusable = dialogEl.querySelectorAll('button, input')
-			expect(
-				dialogEl.querySelector('#nldesign-apply-select-all'),
-			).not.toBeNull()
-			expect(dialogEl.querySelector('.nldesign-apply-check')).not.toBeNull()
-
-			const first = focusable[0]
-			const last = focusable[focusable.length - 1]
-			first.focus()
-			overlay.dispatchEvent(
-				new window.KeyboardEvent('keydown', {
-					key: 'Tab',
-					shiftKey: true,
-					bubbles: true,
-					cancelable: true,
-				}),
+			const count = overlay.querySelector('.thematiq-admin-dialog__count')
+			const checks = [...overlay.querySelectorAll('.nldesign-apply-check')]
+			expect(count.textContent).toBe(
+				checks.length + ' of ' + checks.length + ' chosen',
 			)
-			expect(document.activeElement).toBe(last)
+			overlay.querySelector('#nldesign-apply-deselect-all').click()
+			expect(count.textContent).toBe('0 of ' + checks.length + ' chosen')
+		})
+
+		it('reaches Select all, Select none and every checkbox, each with a name', async () => {
+			const { overlay } = await openApplyDialog()
+			expect(overlay.querySelector('#nldesign-apply-select-all').tagName).toBe(
+				'BUTTON',
+			)
+			expect(
+				overlay.querySelector('#nldesign-apply-deselect-all').tagName,
+			).toBe('BUTTON')
+			const checks = [...overlay.querySelectorAll('.nldesign-apply-check')]
+			expect(checks.length).toBeGreaterThan(0)
+			checks.forEach((check) =>
+				expect(check.getAttribute('aria-label')).toMatch(/^Take over --/),
+			)
 		})
 	})
 

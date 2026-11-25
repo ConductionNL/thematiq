@@ -140,7 +140,7 @@ class TokenSetVocabularyNldesignPathTest extends TestCase {
 	/**
 	 * Scenario "`--nldesign-*` names nothing reads are reported as foreign".
 	 *
-	 * @spec openspec/specs/token-sets/spec.md#nldesign-names-nothing-reads-are-reported-as-foreign
+	 * @spec openspec/specs/token-sets/spec.md#scenario---nldesign--names-nothing-reads-are-reported-as-foreign
 	 *
 	 * @return void
 	 */
@@ -162,7 +162,7 @@ class TokenSetVocabularyNldesignPathTest extends TestCase {
 	/**
 	 * Scenario "The accepted vocabulary is every name any non-token-set CSS layer declares or reads".
 	 *
-	 * @spec openspec/specs/token-sets/spec.md#the-accepted-vocabulary-is-every-name-any-non-token-set-css-layer-declares-or-reads
+	 * @spec openspec/specs/token-sets/spec.md#scenario-the-accepted-vocabulary-is-every-name-any-non-token-set-css-layer-declares-or-reads
 	 *
 	 * @return void
 	 */
@@ -193,7 +193,7 @@ class TokenSetVocabularyNldesignPathTest extends TestCase {
 	/**
 	 * Scenario "Token names are matched case-sensitively but not case-restrictively".
 	 *
-	 * @spec openspec/specs/token-sets/spec.md#token-names-are-matched-case-sensitively-but-not-case-restrictively
+	 * @spec openspec/specs/token-sets/spec.md#scenario-token-names-are-matched-case-sensitively-but-not-case-restrictively
 	 *
 	 * @return void
 	 */
@@ -216,7 +216,7 @@ class TokenSetVocabularyNldesignPathTest extends TestCase {
 	/**
 	 * Scenario "A primary colour that disagrees with the manifest is a mismatch".
 	 *
-	 * @spec openspec/specs/token-sets/spec.md#a-primary-colour-that-disagrees-with-the-manifest-is-a-mismatch
+	 * @spec openspec/specs/token-sets/spec.md#scenario-a-primary-colour-that-disagrees-with-the-manifest-is-a-mismatch
 	 *
 	 * @return void
 	 */
@@ -242,7 +242,7 @@ class TokenSetVocabularyNldesignPathTest extends TestCase {
 	 * Scenario "The vocabulary finding is distinguishable from a contrast finding":
 	 * the shape warningsFor() emits, next to a real contrast finding.
 	 *
-	 * @spec openspec/specs/token-sets/spec.md#the-vocabulary-finding-is-distinguishable-from-a-contrast-finding
+	 * @spec openspec/specs/token-sets/spec.md#scenario-the-vocabulary-finding-is-distinguishable-from-a-contrast-finding
 	 *
 	 * @return void
 	 */

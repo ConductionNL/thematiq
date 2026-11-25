@@ -51,7 +51,7 @@ final class CoreThemingState {
 	 *
 	 * @return array<string, mixed> The theming snapshot.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-24
+	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function snapshot(): array {
 		$imgManager = $this->theming->getImageManager();
@@ -102,7 +102,7 @@ final class CoreThemingState {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 * @spec openspec/specs/theming-sync/spec.md
 	 */
 	public function forgetSyncedImages(): void {
 		foreach (['logo', 'logoheader', 'favicon', 'background'] as $imageKey) {

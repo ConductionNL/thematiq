@@ -95,76 +95,108 @@ test.describe('lasuite shell geometry', () => {
 		await page.waitForLoadState('domcontentloaded')
 	}
 
-	test(// @e2e openspec/specs/lasuite-stack/spec.md#on-nextcloud-35-the-lasuite-header-row-is-64px-tall
-	'lasuite on Nextcloud 35 draws a 64px header row', async ({ page }) => {
-		await openWith(page, 'lasuite')
-		const header = await box(page, '#header')
-		if (SHELL_MAJORS.includes(await serverMajor(page))) {
-			expect(header.height).toBeCloseTo(LASUITE_HEADER_HEIGHT, 0)
-		} else {
+	test(
+		// @e2e openspec/specs/lasuite-stack/spec.md#on-nextcloud-35-the-lasuite-header-row-is-64px-tall
+		'lasuite on Nextcloud 35 draws a 64px header row',
+		async ({ page }) => {
+			await openWith(page, 'lasuite')
+			const header = await box(page, '#header')
+			if (SHELL_MAJORS.includes(await serverMajor(page))) {
+				expect(header.height).toBeCloseTo(LASUITE_HEADER_HEIGHT, 0)
+			} else {
+				expect(header.height).not.toBeCloseTo(LASUITE_HEADER_HEIGHT, 0)
+			}
+		},
+	)
+
+	test(
+		// @e2e openspec/specs/lasuite-stack/spec.md#the-content-starts-directly-under-the-taller-header
+		'the content starts directly under the header',
+		async ({ page }) => {
+			await openWith(page, 'lasuite')
+			const header = await box(page, '#header')
+			const content = await box(page, '#content-vue')
+			expect(
+				Math.abs(content.y - (header.y + header.height)),
+			).toBeLessThanOrEqual(1)
+		},
+	)
+
+	test(
+		// @e2e openspec/specs/lasuite-stack/spec.md#the-search-field-stays-centred-in-the-header
+		'the search field stays centred in the header',
+		async ({ page }) => {
+			await openWith(page, 'lasuite')
+			const header = await box(page, '#header')
+			// Nextcloud 34 and later show a search field in the header; 32 and 33
+			// show the unified search as a button, which has to be centred as well.
+			await page
+				.locator(
+					'#header .unified-search-input, #header button[aria-label="Unified search"]',
+				)
+				.first()
+				.waitFor()
+			const hasField = await page
+				.locator('#header .unified-search-input')
+				.first()
+				.isVisible()
+			const search = await box(
+				page,
+				hasField
+					? '#header .unified-search-input'
+					: '#header button[aria-label="Unified search"]',
+			)
+			if (hasField) {
+				expect(search.height).toBeCloseTo(SEARCH_FIELD_HEIGHT, 0)
+			}
+			const headerCentre = header.y + header.height / 2
+			const searchCentre = search.y + search.height / 2
+			expect(Math.abs(searchCentre - headerCentre)).toBeLessThanOrEqual(1)
+		},
+	)
+
+	test(
+		// @e2e openspec/specs/lasuite-stack/spec.md#the-app-navigation-keeps-la-suite-docs-300px-width
+		'the app navigation keeps the 300px La Suite Docs width',
+		async ({ page }) => {
+			await page.setViewportSize({ width: 1280, height: 800 })
+			await openWith(page, 'lasuite')
+			const navigation = await box(
+				page,
+				'#app-navigation-vue, .app-navigation',
+			)
+			expect(navigation.width).toBeCloseTo(LASUITE_NAVIGATION_WIDTH, 0)
+		},
+	)
+
+	test(
+		// @e2e openspec/specs/lasuite-stack/spec.md#the-shell-layer-loads-exactly-on-the-nextcloud-majors-it-lists
+		'the shell stylesheet is linked exactly on the majors it lists',
+		async ({ page }) => {
+			await openWith(page, 'lasuite')
+			const expected = SHELL_MAJORS.includes(await serverMajor(page))
+			expect(await shellLinked(page)).toBe(expected)
+			const headerHeight = await page.evaluate(() =>
+				getComputedStyle(document.body)
+					.getPropertyValue('--header-height')
+					.trim(),
+			)
+			if (expected) {
+				expect(headerHeight).toBe(`${LASUITE_HEADER_HEIGHT}px`)
+			} else {
+				expect(headerHeight).not.toBe(`${LASUITE_HEADER_HEIGHT}px`)
+			}
+		},
+	)
+
+	test(
+		// @e2e openspec/specs/lasuite-stack/spec.md#the-cunningham-sibling-keeps-the-stock-header-height
+		'the cunningham sibling keeps the stock header height',
+		async ({ page }) => {
+			await openWith(page, 'cunningham')
+			expect(await shellLinked(page)).toBe(false)
+			const header = await box(page, '#header')
 			expect(header.height).not.toBeCloseTo(LASUITE_HEADER_HEIGHT, 0)
-		}
-	})
-
-	test(// @e2e openspec/specs/lasuite-stack/spec.md#the-content-starts-directly-under-the-taller-header
-	'the content starts directly under the header', async ({ page }) => {
-		await openWith(page, 'lasuite')
-		const header = await box(page, '#header')
-		const content = await box(page, '#content-vue')
-		expect(Math.abs(content.y - (header.y + header.height))).toBeLessThanOrEqual(
-			1,
-		)
-	})
-
-	test(// @e2e openspec/specs/lasuite-stack/spec.md#the-search-field-stays-centred-in-the-header
-	'the search field stays centred in the header', async ({ page }) => {
-		await openWith(page, 'lasuite')
-		const header = await box(page, '#header')
-		// Nextcloud 34 and later show a search field in the header; 32 and 33
-		// show the unified search as a button, which has to be centred as well.
-		await page.locator('#header .unified-search-input, #header button[aria-label="Unified search"]').first().waitFor()
-		const hasField = await page.locator('#header .unified-search-input').first().isVisible()
-		const search = await box(page, hasField ? '#header .unified-search-input' : '#header button[aria-label="Unified search"]')
-		if (hasField) {
-			expect(search.height).toBeCloseTo(SEARCH_FIELD_HEIGHT, 0)
-		}
-		const headerCentre = header.y + header.height / 2
-		const searchCentre = search.y + search.height / 2
-		expect(Math.abs(searchCentre - headerCentre)).toBeLessThanOrEqual(1)
-	})
-
-	test(// @e2e openspec/specs/lasuite-stack/spec.md#the-app-navigation-keeps-la-suite-docs-300px-width
-	'the app navigation keeps the 300px La Suite Docs width', async ({ page }) => {
-		await page.setViewportSize({ width: 1280, height: 800 })
-		await openWith(page, 'lasuite')
-		const navigation = await box(page, '#app-navigation-vue, .app-navigation')
-		expect(navigation.width).toBeCloseTo(LASUITE_NAVIGATION_WIDTH, 0)
-	})
-
-	test(// @e2e openspec/specs/lasuite-stack/spec.md#the-shell-layer-loads-exactly-on-the-nextcloud-majors-it-lists
-	'the shell stylesheet is linked exactly on the majors it lists', async ({
-		page,
-	}) => {
-		await openWith(page, 'lasuite')
-		const expected = SHELL_MAJORS.includes(await serverMajor(page))
-		expect(await shellLinked(page)).toBe(expected)
-		const headerHeight = await page.evaluate(() =>
-			getComputedStyle(document.body)
-				.getPropertyValue('--header-height')
-				.trim(),
-		)
-		if (expected) {
-			expect(headerHeight).toBe(`${LASUITE_HEADER_HEIGHT}px`)
-		} else {
-			expect(headerHeight).not.toBe(`${LASUITE_HEADER_HEIGHT}px`)
-		}
-	})
-
-	test(// @e2e openspec/specs/lasuite-stack/spec.md#the-cunningham-sibling-keeps-the-stock-header-height
-	'the cunningham sibling keeps the stock header height', async ({ page }) => {
-		await openWith(page, 'cunningham')
-		expect(await shellLinked(page)).toBe(false)
-		const header = await box(page, '#header')
-		expect(header.height).not.toBeCloseTo(LASUITE_HEADER_HEIGHT, 0)
-	})
+		},
+	)
 })

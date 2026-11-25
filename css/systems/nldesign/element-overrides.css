@@ -403,7 +403,9 @@ a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 		.cn-look-board .cn-index-page__page-tab
 	):not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(
 		:where(.cn-banner-widget__action)
-	):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)) {
+	):not(:where(.cn-link-button-widget__button)):not(
+		:where(.cn-week-strip__item)
+	):not(:where(.cn-app-tile)) {
 	color: var(--nldesign-color-on-surface, var(--nldesign-color-link)) !important;
 }
 
@@ -573,6 +575,17 @@ a:not(#header a):not(:where(.tile-widget)):not(.tile-widget a):not(
 #app-dashboard {
 	--nldesign-color-on-surface: var(--color-background-plain-text, #ffffff);
 
+	color: var(--nldesign-color-on-surface, var(--nldesign-color-text)) !important;
+}
+
+/*
+ * The greeting is a heading ON THE PAGE BACKGROUND, not on a surface, so the
+ * set's heading colour (`h2:not(.cn-look-board *)` in theme.css, 0,1,1, a
+ * colour meant for headings on the set's own light surface) must not paint it.
+ * A set that declares --nldesign-component-heading-2-color (Rijkshuisstijl:
+ * #0f172a) otherwise drew it dark on Nextcloud's blue background, 2.92:1.
+ */
+#app-dashboard > h2 {
 	color: var(--nldesign-color-on-surface, var(--nldesign-color-text)) !important;
 }
 
@@ -816,10 +829,12 @@ select {
 	) !important;
 }
 
+/* A dialog's corner is half again the brand radius (12px on an 8px set, as
+ * the boards draw it; a square set stays square). */
 .modal-container {
 	border-radius: var(
 		--nldesign-component-dialog-border-radius,
-		var(--nldesign-border-radius)
+		calc(var(--nldesign-border-radius) * 1.5)
 	) !important;
 }
 

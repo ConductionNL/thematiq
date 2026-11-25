@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/archive/2026-07-23-render-event-injection/tasks.md#task-4.2
+ * @spec openspec/specs/css-architecture/spec.md
  */
 
 declare(strict_types=1);
@@ -369,6 +369,7 @@ class CssInjectionServiceTest extends TestCase {
 				'systems/nldesign/overrides',
 				'systems/nldesign/element-overrides',
 				'tokens/rijkshuisstijl',
+				'token-overrides/rijkshuisstijl',
 				'icon-contrast',
 				'error-contrast',
 				'theme-scopes',
@@ -516,8 +517,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * the saved overrides are a header, so the two toggles must be headers
 	 * too: as addStyle() entries they landed BEFORE custom-overrides (#944).
 	 *
-	 * @spec openspec/specs/css-architecture/spec.md#conditional-css-loading
-	 * @spec openspec/specs/menu-labels/spec.md#css-loading-order-relative-to-other-conditionals
+	 * @spec openspec/specs/css-architecture/spec.md#scenario-conditional-css-loading
+	 * @spec openspec/specs/menu-labels/spec.md#scenario-css-loading-order-relative-to-other-conditionals
 	 *
 	 * @return void
 	 */
@@ -582,8 +583,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * With hide_slogan and show_menu_labels never written to IConfig, both
 	 * stylesheets stay off: the injector's own default is '0'.
 	 *
-	 * @spec openspec/specs/hide-slogan/spec.md#default-value-when-not-configured
-	 * @spec openspec/specs/menu-labels/spec.md#default-value-when-not-configured
+	 * @spec openspec/specs/hide-slogan/spec.md#scenario-default-value-when-not-configured
+	 * @spec openspec/specs/menu-labels/spec.md#scenario-default-value-when-not-configured
 	 *
 	 * @return void
 	 */
@@ -623,7 +624,7 @@ class CssInjectionServiceTest extends TestCase {
 	 *
 	 * @dataProvider looseTruthyProvider
 	 *
-	 * @spec openspec/specs/hide-slogan/spec.md#boot-phase-reads-and-compares-correctly
+	 * @spec openspec/specs/hide-slogan/spec.md#scenario-boot-phase-reads-and-compares-correctly
 	 *
 	 * @return void
 	 */
@@ -1186,7 +1187,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * The isolation is general, not a special case for the overrides layer:
 	 * a failure in an EARLY layer must not cancel the later ones either.
 	 *
-	 * @spec openspec/specs/css-architecture/spec.md#standard-css-load-order-for-nldesign-design-system
+	 * @spec openspec/specs/css-architecture/spec.md#scenario-standard-css-load-order-for-nldesign-design-system
 	 *
 	 * @return void
 	 */
@@ -1256,7 +1257,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * resolved there is nothing for any layer to be a function of, so the
 	 * render is left unthemed — but it is logged, and it still does not throw.
 	 *
-	 * @spec openspec/specs/css-architecture/spec.md#standard-css-load-order-for-nldesign-design-system
+	 * @spec openspec/specs/css-architecture/spec.md#scenario-standard-css-load-order-for-nldesign-design-system
 	 *
 	 * @return void
 	 */
@@ -1417,10 +1418,11 @@ class CssInjectionServiceTest extends TestCase {
 	 * @spec openspec/specs/app-token-set-selection/spec.md
 	 */
 	public function testASetWithoutElementOverridesLoadsNothingExtra(): void {
-		$emitted = $this->emitFor(tokenSet: 'rijkshuisstijl');
+		// Amsterdam ships no css/token-overrides/ file (Rijkshuisstijl does since it carries the lint).
+		$emitted = $this->emitFor(tokenSet: 'amsterdam');
 
-		$this->assertContains(needle: 'tokens/rijkshuisstijl', haystack: $emitted);
-		$this->assertNotContains(needle: 'token-overrides/rijkshuisstijl', haystack: $emitted);
+		$this->assertContains(needle: 'tokens/amsterdam', haystack: $emitted);
+		$this->assertNotContains(needle: 'token-overrides/amsterdam', haystack: $emitted);
 	}//end testASetWithoutElementOverridesLoadsNothingExtra()
 	/**
 	 * The stylesheet manifest is the SAME list `inject()` emits for the
@@ -1431,10 +1433,11 @@ class CssInjectionServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 * @spec openspec/specs/css-architecture/spec.md
 	 */
 	public function testStylesheetManifestMatchesInjectedSetLayers(): void {
-		$this->configureAppValues(overrides: ['token_set' => 'rijkshuisstijl', 'installed_version' => '9.9.9']);
+		// The theming cachebuster joins the version, as it does on the app's scripts.
+		$this->configureAppValues(overrides: ['token_set' => 'rijkshuisstijl', 'installed_version' => '9.9.9', 'cachebuster' => '42']);
 		$this->designSystemService->method('getTokenSetMeta')->with('rijkshuisstijl')
 			->willReturn(['design_system' => 'nldesign']);
 		$this->designSystemService->method('getDesignSystem')->with('nldesign')->willReturn(
@@ -1471,9 +1474,9 @@ class CssInjectionServiceTest extends TestCase {
 		foreach ($manifest['layers'] as $layer) {
 			if ($layer['kind'] === 'file') {
 				$this->assertStringEndsWith(
-					suffix: '?v=9.9.9',
+					suffix: '?v=9.9.9-42',
 					string: $layer['href'],
-					message: 'a manifest href carries the installed version as cache-buster'
+					message: 'a manifest href carries the installed version and the theming cachebuster'
 				);
 				$manifestFiles[] = preg_replace('#^/custom_apps/thematiq/css/(.*)\.css\?v=.*$#', '$1', $layer['href']);
 			} else {
@@ -1506,7 +1509,7 @@ class CssInjectionServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/css-architecture/spec.md
+	 * @spec openspec/specs/css-architecture/spec.md
 	 */
 	public function testStylesheetManifestCarriesOnlyComponentScopesForStockNextcloud(): void {
 		$this->configureAppValues();
@@ -1571,7 +1574,7 @@ class CssInjectionServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
+	 * @spec openspec/specs/nextcloud-variable-mapping/spec.md
 	 */
 	public function testStylesheetManifestCarriesTheInstanceResolvedStockTokens(): void {
 		$block = ':root{--nldesign-color-primary:#00679e;}';
@@ -1603,7 +1606,7 @@ class CssInjectionServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
+	 * @spec openspec/specs/nextcloud-variable-mapping/spec.md
 	 */
 	public function testInjectEmitsTheInstanceResolvedStockTokensOnAStockPage(): void {
 		$block = ':root{--nldesign-color-primary:#00679e;}';
@@ -1677,8 +1680,8 @@ class CssInjectionServiceTest extends TestCase {
 	 * stylesheet is emitted: every set that existed before the options did
 	 * renders exactly as it did.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-is-one-conditional-stylesheet
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-is-one-conditional-stylesheet
+	 * @spec openspec/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
 	 *
 	 * @return void
 	 */
@@ -1698,7 +1701,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * A set that carries layout defaults wears them while the administrator
 	 * has stored no choice, and both stylesheets come after the other toggles.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 *
 	 * @return void
 	 */
@@ -1718,6 +1721,35 @@ class CssInjectionServiceTest extends TestCase {
 	}//end testASetsLayoutDefaultsEmitBothStylesheets()
 
 	/**
+	 * A Deck page with the light layout links the shared app sheet and then
+	 * Deck's own after the workplace layout; a Files page links none of them.
+	 *
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 *
+	 * @return void
+	 */
+	public function testTheRenderedAppLinksItsOwnWorkplaceStylesheet(): void {
+		$this->configureAppValues(overrides: ['token_set' => 'zuiddrecht']);
+		$this->configureLayoutSet(meta: ['layout' => ['workplace_layout' => 'light']]);
+
+		$styleLog = [];
+		$linkLog = [];
+		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject(context: 'user', appId: 'deck');
+
+		$layout = $this->indexStartingWith(log: $linkLog, prefix: '/custom_apps/thematiq/css/workplace-layout.css');
+		$common = $this->indexStartingWith(log: $linkLog, prefix: '/custom_apps/thematiq/css/workplace-apps/common.css');
+		$deck = $this->indexStartingWith(log: $linkLog, prefix: '/custom_apps/thematiq/css/workplace-apps/deck.css');
+		$this->assertGreaterThan(expected: $layout, actual: $common);
+		$this->assertGreaterThan(expected: $common, actual: $deck);
+
+		$styleLog = [];
+		$linkLog = [];
+		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject(context: 'user', appId: 'files');
+
+		$this->assertSame(expected: [], actual: preg_grep('#/css/workplace-apps/#', $linkLog));
+	}//end testTheRenderedAppLinksItsOwnWorkplaceStylesheet()
+
+	/**
 	 * A stored choice wins over the set, in both directions: an administrator
 	 * can switch a set's layout off, and can give a set without one the light
 	 * layout and the stripe.
@@ -1731,7 +1763,7 @@ class CssInjectionServiceTest extends TestCase {
 	 *
 	 * @dataProvider storedLayoutChoiceProvider
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 */
 	public function testAStoredLayoutChoiceWinsOverTheSet(array $stored, array $meta, bool $expectLayout, bool $expectStripe): void {
 		$this->configureAppValues(overrides: array_merge(['token_set' => 'rijkshuisstijl'], $stored));
@@ -1765,7 +1797,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * The stylesheet manifest carries what the set resolves to, so the admin
 	 * panel can add or drop the two stylesheets when it swaps sets in place.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 *
 	 * @return void
 	 */
@@ -1797,7 +1829,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * navigation width as one inline `:root` variable after the links. A set
 	 * that carries none gets none of them (the control).
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
 	 *
 	 * @return void
 	 */
@@ -1861,12 +1893,12 @@ class CssInjectionServiceTest extends TestCase {
 		);
 		$this->assertSame(
 			expected: [
-				'link:/custom_apps/thematiq/css/workplace-layout.css?v=0',
-				'link:/custom_apps/thematiq/css/login-watermark-off.css?v=0',
-				'link:/custom_apps/thematiq/css/brand-stripe.css?v=0',
-				'link:/custom_apps/thematiq/css/brand-stripe-login-only.css?v=0',
-				'link:/custom_apps/thematiq/css/navigation-width.css?v=0',
-				'link:/custom_apps/thematiq/css/navigation-active-soft.css?v=0',
+				'link:/custom_apps/thematiq/css/workplace-layout.css?v=0-0',
+				'link:/custom_apps/thematiq/css/login-watermark-off.css?v=0-0',
+				'link:/custom_apps/thematiq/css/brand-stripe.css?v=0-0',
+				'link:/custom_apps/thematiq/css/brand-stripe-login-only.css?v=0-0',
+				'link:/custom_apps/thematiq/css/navigation-width.css?v=0-0',
+				'link:/custom_apps/thematiq/css/navigation-active-soft.css?v=0-0',
 				'inline:thematiq-navigation-width::root { --thematiq-navigation-width: 264px; }',
 			],
 			actual: $conditional
@@ -1877,7 +1909,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * The control for the test above: a set without a layout block and no
 	 * stored choice loads none of the newer stylesheets and no inline width.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
 	 *
 	 * @return void
 	 */
@@ -1905,8 +1937,8 @@ class CssInjectionServiceTest extends TestCase {
 	 *
 	 * @dataProvider headerStyleProvider
 	 *
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
 	 *
 	 * @return void
 	 */
@@ -1966,7 +1998,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * The apps menu's layer is asked on every page with the page's set; it
 	 * decides from the same stylesheets as the person's layer.
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
 	 *
 	 * @return void
 	 */

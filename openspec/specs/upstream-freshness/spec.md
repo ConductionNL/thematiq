@@ -1,7 +1,7 @@
 # upstream-freshness Specification
 
 ## Purpose
-TBD - created by archiving change upstream-token-freshness. Update Purpose after archive.
+An opt-in daily check that tells an administrator when the shipped house style is behind its NL Design System source: a background job with bounded conditional requests, silent when it fails, and a notice that can be dismissed per version.
 ## Requirements
 ### Requirement: Daily Freshness Background Job
 

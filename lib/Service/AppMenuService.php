@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -46,7 +46,7 @@ use Throwable;
  *
  * @SuppressWarnings(PHPMD.StaticAccess) - CopyValues holds the pure value rules shared with the login and not-found copy.
  *
- * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 class AppMenuService {
 
@@ -63,6 +63,13 @@ class AppMenuService {
 	 * @var string
 	 */
 	public const SCRIPT = 'app-menu';
+
+	/**
+	 * The Menu settings dialog's script under `js/`, without the extension.
+	 *
+	 * @var string
+	 */
+	public const DIALOG = 'dialogs/menu-settings-dialog';
 
 	/**
 	 * The app config key an administrator overrides the set's block in.
@@ -100,7 +107,7 @@ class AppMenuService {
 	 * @param IInitialState $initialState The initial state channel.
 	 * @param IFactory $l10nFactory The language of this request.
 	 * @param LoggerInterface $logger Records a swallowed failure.
-	 * @param OpenProjectModules|null $openProjectModules OpenProject's modules, a section of their own.
+	 * @param AppMenuListState|null $listState The external apps, the user's order and the list's texts.
 	 */
 	public function __construct(
 		private readonly IConfig $config,
@@ -108,7 +115,7 @@ class AppMenuService {
 		private readonly IInitialState $initialState,
 		private readonly IFactory $l10nFactory,
 		private readonly LoggerInterface $logger,
-		private readonly ?OpenProjectModules $openProjectModules = null,
+		private readonly ?AppMenuListState $listState = null,
 	) {
 	}//end __construct()
 
@@ -122,7 +129,7 @@ class AppMenuService {
 	 * @return array<string, mixed> `othersTitle`, `hint`, `manageLabel` and `groups`
 	 *                              (each `{title, link?: {label, url}, apps: [{id, description?}]}`).
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
 	 */
 	public function resolveMenu(string $tokenSet, string $language): array {
 		$meta = $this->designSystemService->getTokenSetMeta(tokenSetId: $tokenSet);
@@ -153,7 +160,7 @@ class AppMenuService {
 	 *
 	 * @return array<int, array<string, mixed>> The sections.
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
 	 */
 	private static function groups(array $rows, string $language): array {
 		$groups = [];
@@ -189,7 +196,7 @@ class AppMenuService {
 	 *
 	 * @return array<int, array{id: string, description?: string}> The apps.
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
 	 */
 	private static function apps(array $rows, string $language): array {
 		$apps = [];
@@ -224,7 +231,7 @@ class AppMenuService {
 	 *
 	 * @return array{label: string, url: string}|null The link.
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
 	 */
 	private static function link(mixed $row, string $language): ?array {
 		if (is_array($row) === false) {
@@ -249,8 +256,8 @@ class AppMenuService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
-	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	public function inject(string $tokenSet, LayoutOptionsService $layoutOptions): void {
 		try {
@@ -261,14 +268,20 @@ class AppMenuService {
 
 			$l10n = $this->l10nFactory->get(Application::APP_ID);
 			$menu = $this->resolveMenu(tokenSet: $tokenSet, language: $l10n->getLanguageCode());
-			// OpenProject's modules, when an administrator gave its address (openproject-in-the-app-menu).
-			$openProject = $this->openProjectModules?->section(l: $l10n);
-			if ($openProject !== null) {
-				$menu['openproject'] = $openProject;
+			if ($this->listState !== null) {
+				$menu = array_merge($menu, $this->listState->state(l: $l10n));
+			}
+
+			$workplace = ($menu['settings']['style'] ?? AppMenuSettings::DEFAULTS['style']) !== 'classic';
+			if ($workplace === false && ($menu['admin'] ?? false) !== true) {
+				return;
 			}
 
 			$this->initialState->provideInitialState(self::STATE_KEY, $menu);
 			$this->emitScript();
+			if ($workplace === true) {
+				$this->emitMenuStyle();
+			}
 		} catch (Throwable $e) {
 			$this->logger->warning(
 				'thematiq: the apps menu sections failed for this render; the menu keeps one grid.',
@@ -278,13 +291,28 @@ class AppMenuService {
 	}//end inject()
 
 	/**
-	 * Load js/app-menu.js. A seam, so unit tests need no Nextcloud bootstrap.
+	 * Load js/app-menu.js and the Menu settings dialog with its stylesheet. A seam, so unit tests
+	 * need no Nextcloud bootstrap.
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
 	 */
 	protected function emitScript(): void {
+		\OCP\Util::addScript(application: Application::APP_ID, file: self::DIALOG);
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::SCRIPT);
+		\OCP\Util::addStyle(application: Application::APP_ID, file: 'menu-settings-dialog');
 	}//end emitScript()
+
+	/**
+	 * Load css/app-menu.css, the workplace menu's look. A seam, so unit tests need no Nextcloud
+	 * bootstrap.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-classic-style-leaves-nextclouds-apps-menu-alone
+	 */
+	protected function emitMenuStyle(): void {
+		\OCP\Util::addStyle(application: Application::APP_ID, file: self::SCRIPT);
+	}//end emitMenuStyle()
 }//end class

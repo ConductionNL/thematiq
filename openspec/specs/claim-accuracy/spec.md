@@ -1,7 +1,7 @@
 # claim-accuracy Specification
 
 ## Purpose
-TBD - created by archiving change fix-readiness-claims. Update Purpose after archive.
+What thematiq says about itself must be true: the licence in the manifest and in the government checklist, how fonts are delivered, the number of token sets, the scope of the token audit, Marianne's licensing and the Nextcloud versions CI really tests. Each claim is held to the file or test that proves it.
 ## Requirements
 ### Requirement: Manifest Licence Matches the Bundled Licence
 `appinfo/info.xml` `<licence>` MUST declare the same licence family as the root `LICENSE` file and the SPDX headers of the PHP sources. The bundled `LICENSE` is the European Union Public Licence v1.2 and every `lib/**/*.php` file carries `SPDX-License-Identifier: EUPL-1.2`, so `<licence>` MUST be `eupl` and MUST NOT be `agpl`. The `<description>` MUST also state the EUPL-1.2 licence in prose, consistent with the rest of the Conduction fleet.

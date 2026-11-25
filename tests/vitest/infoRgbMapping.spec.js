@@ -12,11 +12,22 @@
  * wash is measured the same way, on the set's page background (Nextcloud's own where the set sets none), in the light
  * theme and in both dark scopes.
  *
- * @spec openspec/changes/token-set-coverage-next-waves/tasks.md
+ * @spec openspec/specs/token-sets/spec.md
  */
 
 import { describe, expect, it } from 'vitest'
-import { ENVIRONMENTS, SETS, bundle, cascade, exists, reachesBody, read, ratio, resolve, rgb } from './support/setCascade.js'
+import {
+	ENVIRONMENTS,
+	SETS,
+	bundle,
+	cascade,
+	exists,
+	reachesBody,
+	read,
+	ratio,
+	resolve,
+	rgb,
+} from './support/setCascade.js'
 
 const WASH_ALPHA = 0.2
 

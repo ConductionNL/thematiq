@@ -1,7 +1,7 @@
 # theme-preview Specification
 
 ## Purpose
-TBD - created by archiving change theme-preview-workflow. Update Purpose after archive.
+Trying a house style in your own session before everyone gets it: the preview is stored per user and seen by nobody else, a banner says it is a preview, and the preview is published through the usual instance-wide dialogs or discarded.
 
 ## Requirements
 

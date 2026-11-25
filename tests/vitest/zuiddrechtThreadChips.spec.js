@@ -9,7 +9,7 @@
  * radius 18 (DqZaakContact), which nextcloud-vue's board look sets; the set's
  * id-level size rule leaves those chips to it.
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/zuiddrecht-token-set/spec.md
+ * @spec openspec/specs/zuiddrecht-token-set/spec.md
  */
 
 import fs from 'node:fs'

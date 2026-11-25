@@ -1,7 +1,7 @@
 # compliance-evidence Specification
 
 ## Purpose
-TBD - created by archiving change compliance-evidence-report. Update Purpose after archive.
+Evidence of colour contrast for an accessibility statement: the tokens the active configuration resolves to, every text and background pair checked against WCAG 2.2 AA, and a report an administrator downloads from the admin panel, the API or an occ command, with an honest statement of what it does not cover.
 ## Requirements
 ### Requirement: Effective Token Resolution for the Active Configuration
 

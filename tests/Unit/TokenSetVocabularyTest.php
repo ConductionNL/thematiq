@@ -135,7 +135,7 @@ class TokenSetVocabularyTest extends TestCase {
 	 * The allow-list is closed: every shipped set is complete, so adding a
 	 * new incomplete set to the list cannot silence the gate.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-sets/spec.md#requirement-the-known-incomplete-allow-list-is-empty
+	 * @spec openspec/specs/token-sets/spec.md#requirement-the-known-incomplete-allow-list-is-empty
 	 *
 	 * @return void
 	 */

@@ -112,6 +112,7 @@ async function loadAdmin() {
 	vi.resetModules()
 	await import('../../js/lib/appTheming.js')
 	await import('../../js/lib/themingPlan.js')
+	await import('../../js/dialogs/admin-dialog.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }
@@ -148,7 +149,7 @@ describe('admin.js surfaces an incomplete set (thematiq#1060)', () => {
 		vi.restoreAllMocks()
 	})
 
-	// @spec openspec/specs/token-sets/spec.md#selecting-an-incomplete-set-shows-the-incomplete-set-badge
+	// @spec openspec/specs/token-sets/spec.md#scenario-selecting-an-incomplete-set-shows-the-incomplete-set-badge
 	it('shows the badge with its findings for an incomplete set and hides it for a complete one', async () => {
 		await loadAdmin()
 		const badge = document.getElementById(
@@ -175,7 +176,7 @@ describe('admin.js surfaces an incomplete set (thematiq#1060)', () => {
 		expect(badge.hasAttribute('title')).toBe(false)
 	})
 
-	// @spec openspec/specs/token-sets/spec.md#the-apply-dialog-explains-the-fallback
+	// @spec openspec/specs/token-sets/spec.md#scenario-the-apply-dialog-explains-the-fallback
 	it('explains the fallback in its own banner, apart from the contrast banner, and still applies', async () => {
 		await loadAdmin()
 		select('broken')

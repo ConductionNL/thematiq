@@ -123,26 +123,8 @@
 	margin-top: 0;
 }
 
-/* Planned token set switches (openspec/specs/scheduled-switch/spec.md). */
-.nldesign-scheduled-switches {
-	padding: 16px;
-	border: 1px solid var(--color-border);
-	border-radius: var(--border-radius-large);
-	background: var(--color-main-background);
-	margin-bottom: 1em;
-}
-
-.nldesign-scheduled-switches h3 {
-	margin-top: 0;
-}
-
-.nldesign-scheduled-form {
-	margin-bottom: 12px;
-}
-
 /* ==========================================================================
- * Shared form layout for the blocks at the top of the page (planned switches,
- * the two ways to add a custom token set). Each field carries its label ABOVE
+ * Shared form layout for the blocks at the top of the page (the two ways to add a custom token set). Each field carries its label ABOVE
  * the control, so a row of fields reads as label/control pairs rather than as
  * one run of words and boxes that wraps at arbitrary points.
  * ========================================================================== */
@@ -193,13 +175,6 @@
 	margin-top: 12px;
 }
 
-.nldesign-scheduled-cron-warning {
-	padding: 8px 12px;
-	border-left: 4px solid var(--color-warning);
-	background: var(--color-background-hover);
-	color: var(--color-main-text);
-}
-
 /* House styles of other organisations (token-set-licences). */
 .nldesign-set-licences-awaiting,
 .nldesign-set-licence-warning {
@@ -228,19 +203,6 @@
 	display: flex;
 	gap: 8px;
 	align-items: flex-start;
-}
-
-.nldesign-scheduled-item {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	justify-content: space-between;
-	gap: 8px;
-	padding: 4px 0;
-}
-
-.nldesign-scheduled-item--failed span {
-	color: var(--color-error-text, var(--color-error));
 }
 
 /* Token reference links (openspec/specs/token-reference/spec.md). */
@@ -322,46 +284,6 @@
 	background: var(--color-background-dark);
 	font-family: var(--font-face-monospace, monospace);
 	font-size: 0.9em;
-}
-
-/* Theme gallery (openspec/specs/theme-gallery/spec.md). */
-.nldesign-gallery-list {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-.nldesign-gallery-entry {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 12px;
-	padding: 8px 0;
-	border-bottom: 1px solid var(--color-border);
-}
-
-.nldesign-gallery-swatches {
-	display: inline-flex;
-	gap: 2px;
-}
-
-.nldesign-gallery-swatch {
-	display: inline-block;
-	width: 20px;
-	height: 20px;
-	border: 1px solid var(--color-border-dark);
-	border-radius: var(--border-radius);
-}
-
-.nldesign-gallery-text {
-	display: flex;
-	flex: 1 1 16em;
-	flex-direction: column;
-	min-width: 0;
-}
-
-.nldesign-gallery-meta {
-	color: var(--color-text-maxcontrast);
 }
 
 .nldesign-custom-set-provenance {
@@ -791,51 +713,12 @@
 	margin-bottom: 0;
 }
 
-.nldesign-custom-set-heading {
-	margin-bottom: 0;
-	font-weight: 600;
-}
-
 .nldesign-import-result {
 	margin: 8px 0;
 	padding: 8px 12px;
 	border-radius: var(--border-radius);
 	background: var(--color-background-dark);
 	color: var(--color-main-text);
-}
-
-.nldesign-custom-set-list {
-	margin-top: 12px;
-}
-
-.nldesign-custom-set-row {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 8px 12px;
-	padding: 8px 0;
-	border-top: 1px solid var(--color-border);
-}
-
-.nldesign-custom-set-row .nldesign-badge {
-	margin-top: 0;
-}
-
-/* The per-set links read quieter than the buttons beside them. */
-.nldesign-custom-set-row .nldesign-token-reference-link {
-	color: var(--color-text-maxcontrast);
-	font-size: 0.9em;
-}
-
-.nldesign-custom-set-name {
-	font-weight: bold;
-	flex: 1 1 auto;
-}
-
-.nldesign-custom-set-version {
-	font-size: 0.85em;
-	color: var(--color-text-maxcontrast);
-	font-family: monospace;
 }
 
 /* The paste box for a theme file (nlds-theme-converter): full width, code font. */
@@ -2367,63 +2250,6 @@
 }
 
 /* ==========================================================================
- * Group theming — group -> token-set mapping rows (openspec/specs/per-group-theming/spec.md)
- * Row order IS priority order; up/down buttons are keyboard-operable
- * (no drag-and-drop), consistent with the admin-panel-keyboard-accessibility
- * work.
- * ========================================================================== */
-.nldesign-group-theming-list {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	margin-bottom: 1em;
-}
-
-.nldesign-group-theming-row {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 8px 12px;
-	border: 1px solid var(--color-border);
-	border-radius: var(--border-radius);
-	background: var(--color-main-background);
-}
-
-.nldesign-group-theming-row select {
-	flex: 1;
-	min-width: 0;
-}
-
-.nldesign-group-theming-move-up,
-.nldesign-group-theming-move-down,
-.nldesign-group-theming-remove {
-	flex: 0 0 auto;
-	min-width: 36px;
-	padding: 4px 8px;
-	border: 1px solid var(--color-border);
-	border-radius: var(--border-radius);
-	background: var(--color-main-background);
-	color: var(--color-main-text);
-	cursor: pointer;
-}
-
-.nldesign-group-theming-move-up:disabled,
-.nldesign-group-theming-move-down:disabled {
-	opacity: 0.4;
-	cursor: default;
-}
-
-.nldesign-group-theming-remove {
-	color: var(--color-error, #c0392b);
-}
-
-.nldesign-group-theming-feedback {
-	display: block;
-	margin-top: 0.5em;
-	color: var(--color-text-maxcontrast);
-}
-
-/* ==========================================================================
    Theming audit log
    ==========================================================================
 
@@ -2435,33 +2261,12 @@
 
    Colours come from Nextcloud's own variables, so the panel follows the active
    theme and this app's overrides of it rather than pinning greys of its own. */
-/* The panel scrolls SIDEWAYS in its own container at every width, not just on
-   a phone. Six columns of audit evidence do not fit the settings column on a
-   laptop either, and the previous answer — `table-layout: fixed` with declared
-   percentages — did not bound anything: a nowrap timestamp or a set name wider
-   than its 15% simply drew over the cell beside it, so Timestamp overlapped
-   User and From overlapped To on every row.
-
-   So the table sizes to its content (`auto`) and is given a floor wide enough
-   for all six columns to be read; whatever the settings column cannot show is
-   reached by scrolling the container. The container, not the <table>:
-   `display: block` on a table drops its implicit table role in Chrome and
-   Firefox, which unassociates every `th[scope=col]` from its cells, and this
-   is the panel shown to an accessibility auditor.
-
-   The container is focusable because an `overflow-x: auto` element that cannot
-   take focus cannot be scrolled without a pointer (SC 2.1.1). It carries a
-   role and a name so the focus stop announces itself rather than being a
-   silent one. */
+/* The log (TqLogboek): a scroller for the table, which is wider than a narrow
+   window. Focusable, with a role and a name, because an overflow that cannot take
+   focus cannot be scrolled without a pointer (SC 2.1.1). */
 .nldesign-audit-scroll {
 	max-width: 100%;
 	overflow-x: auto;
-	/* The gap to the download button below; the table itself no longer carries
-	   a bottom margin, which would fall inside the container border. */
-	margin-bottom: 1em;
-	border: 1px solid var(--color-border);
-	border-radius: var(--border-radius-large, 8px);
-	background-color: var(--color-main-background);
 }
 
 .nldesign-audit-scroll:focus-visible {
@@ -2471,85 +2276,145 @@
 
 .nldesign-audit-table {
 	width: 100%;
-	/* Wide enough that no column has to be squeezed below what it holds. Under
-	   the settings column this is exceeded, which is what the scroller is for. */
-	min-width: 72em;
-	table-layout: auto;
+	min-width: 920px;
 	margin-bottom: 0;
 	border-collapse: collapse;
-	font-size: 0.9em;
+	font-size: 14px;
 }
 
 .nldesign-audit-table th,
 .nldesign-audit-table td {
-	padding: 10px 16px;
+	padding: 10px 12px;
+	line-height: 1.2;
+	border-bottom: 1px solid var(--color-background-dark);
 	text-align: start;
-	vertical-align: top;
-	border-bottom: 1px solid var(--color-border);
+	vertical-align: middle;
 }
 
-/* The header is a label row over data, a stronger break than the one between
-   two data rows: it gets the darker rule and a tint of its own. */
+.nldesign-audit-table th:first-child,
+.nldesign-audit-table td:first-child {
+	padding-inline-start: 0;
+}
+
+.nldesign-audit-table th:last-child,
+.nldesign-audit-table td:last-child {
+	padding-inline-end: 0;
+}
+
 .nldesign-audit-table thead th {
-	background-color: var(--color-background-dark);
-	border-bottom: 2px solid var(--color-border-dark, var(--color-border));
-	color: var(--color-text-maxcontrast);
-	font-weight: 600;
-	white-space: nowrap;
-}
-
-/* Banding carries the eye across six columns on a row that is wider than the
-   viewport — the case this panel is always in. Hover wins over the band. */
-.nldesign-audit-table tbody tr:nth-child(even) {
-	background-color: var(--color-background-hover);
-}
-
-.nldesign-audit-table tbody tr:hover {
-	background-color: var(--color-background-dark);
-}
-
-/* The last row's rule would double the container's own border. */
-.nldesign-audit-table tbody tr:last-child td {
-	border-bottom: none;
-}
-
-/* A timestamp, an actor and an action are identifiers: they are compared down
-   the column, so they hold one line each and the table widens for them rather
-   than breaking them in half. */
-.nldesign-audit-ts,
-.nldesign-audit-actor,
-.nldesign-audit-action {
+	padding-block: 8px;
+	border-bottom-color: var(--color-border);
+	background: transparent !important;
+	color: var(--color-text-maxcontrast) !important;
+	font-weight: 600 !important;
 	white-space: nowrap;
 }
 
 .nldesign-audit-ts {
-	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.nldesign-audit-date,
+.nldesign-audit-time {
+	display: block;
+}
+
+.nldesign-audit-date {
+	font-weight: 600;
+}
+
+.nldesign-audit-time {
+	font-size: 13px;
 	color: var(--color-text-maxcontrast);
 }
 
-/* The action is the app's own vocabulary — a key, not prose — so it is set as
-   one. */
-.nldesign-audit-action {
-	font-family: var(--font-face-monospace, monospace);
-	font-size: 0.95em;
+.nldesign-audit-pill {
+	display: inline-flex;
+	padding: 3px 10px;
+	border-radius: 12px;
+	background: var(--color-background-hover);
+	color: var(--nl-color-grey-text, var(--color-main-text));
+	font-size: 13px;
+	font-weight: 600;
+	white-space: nowrap;
 }
 
-/* From and To hold the one thing a reader compares across, so they line up at
-   a common width and wrap inside it: a custom token set name an admin chose or
-   a sha256 digest has nowhere else to break. */
+.nldesign-audit-pill--switch {
+	background: var(--color-primary-element-light);
+	color: var(--color-primary-element-light-text);
+}
+
+.nldesign-audit-pill--tokens {
+	background: var(
+		--nldesign-color-accent-light,
+		var(--color-primary-element-light)
+	);
+	color: var(
+		--nldesign-color-accent-text,
+		var(--color-primary-element-light-text)
+	);
+}
+
+.nldesign-audit-pill--added {
+	background: color-mix(
+		in srgb,
+		var(--color-success) 12%,
+		var(--color-main-background)
+	);
+	color: var(--color-success-text, var(--color-success));
+}
+
+.nldesign-audit-pill--removed {
+	background: color-mix(
+		in srgb,
+		var(--color-error) 7%,
+		var(--color-main-background)
+	);
+	color: var(--color-error-text, var(--color-error));
+}
+
+.nldesign-audit-code {
+	display: block;
+	margin-top: 4px;
+	font:
+		400 12px ui-monospace,
+		Menlo,
+		monospace;
+	color: var(--nl-color-grey-text, var(--color-main-text));
+	overflow-wrap: anywhere;
+}
+
+/* From and To line up at a common width and wrap inside it: a custom set's
+   name or a digest has nowhere else to break. */
 .nldesign-audit-value {
-	width: 12em;
 	min-width: 9em;
 	overflow-wrap: anywhere;
 }
 
-/* Changed is the unbounded column — every token name a write touched, forty of
-   them on one overrides_written entry. It gets a preferred width and wraps
-   inside it instead of stretching the row past any useful scroll distance. */
 .nldesign-audit-changed {
-	width: 26em;
-	color: var(--color-text-maxcontrast);
+	max-width: 260px;
+	line-height: 1.6;
 	overflow-wrap: anywhere;
+}
+
+.nldesign-audit-restore-cell {
+	text-align: end !important;
+}
+
+.nldesign-audit-restore {
+	display: inline-flex;
+	width: 34px;
+	min-width: 34px;
+	height: 34px;
+	min-height: 34px;
+	margin: 0;
+	padding: 0;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: 8px;
+	background: var(--color-main-background)
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%233d4047' d='M13,3A9,9 0 0,0 4,12H1L4.89,15.89L4.96,16.03L9,12H6A7,7 0 0,1 13,5A7,7 0 0,1 20,12A7,7 0 0,1 13,19C11.07,19 9.32,18.21 8.06,16.94L6.64,18.36C8.27,20 10.5,21 13,21A9,9 0 0,0 22,12A9,9 0 0,0 13,3Z'/%3E%3C/svg%3E")
+		center / 18px no-repeat;
+	cursor: pointer;
 }
 
 /* ==========================================================================
@@ -2713,25 +2578,6 @@
 /* ==========================================================================
  * Your own tokens and deprecations (authoring-token-lifecycle)
  * ========================================================================== */
-.nldesign-own-token-list,
-.nldesign-deprecations {
-	margin: 8px 0 12px;
-	padding: 0;
-	list-style: none;
-}
-.nldesign-own-token-row,
-.nldesign-deprecation-row {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 8px;
-	padding: 6px 0;
-	border-bottom: 1px solid var(--color-border);
-}
-.nldesign-own-token-text {
-	flex: 1 1 auto;
-	min-width: 0;
-}
 .nldesign-own-token-text code,
 .nldesign-deprecation-row code {
 	font-family: var(--font-face-monospace, monospace);
@@ -2752,38 +2598,11 @@
 .nldesign-deprecation-badge--critical {
 	border-color: var(--color-error);
 }
-/* The same core reset zeroes margin and padding on `dialog`, which takes away
-   the `margin: auto` that centres a modal and its inner spacing. */
-.nldesign-own-dialog {
-	margin: auto;
-	padding: 16px;
-	max-width: 520px;
-	border: 1px solid var(--color-border);
-	border-radius: var(--border-radius-large);
-	background: var(--color-main-background);
-	color: var(--color-main-text);
-}
 /* Nextcloud core's reset sets `dialog { display: block }`, which beats the
    browser's own `dialog:not([open]) { display: none }`, so a closed dialog
    would render in the page and push the settings layout out of view. */
 .nldesign-own-dialog:not([open]) {
 	display: none;
-}
-.nldesign-own-dialog label {
-	display: block;
-	font-weight: 600;
-}
-.nldesign-own-token-prefix {
-	font-family: var(--font-face-monospace, monospace);
-	color: var(--color-text-maxcontrast);
-}
-.nldesign-own-dialog .nldesign-dialog-error {
-	color: var(--color-text-error, var(--color-error));
-}
-.nldesign-own-dialog .nldesign-dialog-buttons {
-	display: flex;
-	justify-content: flex-end;
-	gap: 8px;
 }
 
 /* --- Token editor at scale: search, count, component groups, row facts ---

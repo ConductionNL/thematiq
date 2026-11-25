@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  *
  * The shared role layer, filled into a CONVERTED set with only the colours
- * that set's upstream publishes (openspec/changes/token-set-coverage-next-waves,
+ * that set's upstream publishes (openspec/changes/archive/2026-11-22-token-set-coverage-next-waves,
  * task 3.2).
  *
  * The nightly sync converts each organisation's theme onto the nldesign

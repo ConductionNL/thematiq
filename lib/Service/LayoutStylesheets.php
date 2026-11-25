@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -24,9 +24,43 @@ namespace OCA\Thematiq\Service;
  * The conditional stylesheets the resolved layout options switch on, in the
  * order a page loads them. Built by LayoutOptionsService.
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 final class LayoutStylesheets {
+
+	/**
+	 * The apps the light layout draws with a stylesheet of their own, under `css/workplace-apps/`.
+	 *
+	 * @var string[]
+	 */
+	public const array APP_LAYERS = ['mail', 'calendar', 'deck'];
+
+	/**
+	 * The stylesheets the light layout adds for one app, only on that app's own pages: with the
+	 * workplace header first `workplace-apps/brand`, the organisation and the app name at the start
+	 * of the bar, then `workplace-apps/common`, what the three apps share, then the app's own sheet.
+	 *
+	 * @param array<string, mixed> $resolved The resolved options.
+	 * @param string|null $appId The rendered app.
+	 *
+	 * @return array<int, string> No stylesheet, or two or three.
+	 *
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 */
+	public function forApp(array $resolved, ?string $appId): array {
+		if ($resolved['workplaceLayout'] !== LayoutOptionsService::LAYOUT_LIGHT || in_array($appId, self::APP_LAYERS, true) === false) {
+			return [];
+		}
+
+		$files = [];
+		if ($resolved['headerStyle'] === LayoutOptionValues::HEADER_STYLE_WORKPLACE) {
+			$files[] = 'workplace-apps/brand';
+		}
+
+		$files[] = 'workplace-apps/common';
+		$files[] = 'workplace-apps/' . $appId;
+		return $files;
+	}//end forApp()
 
 	/**
 	 * The stylesheets of the workplace layout, the brand stripe and the navigation, in that order.
@@ -35,7 +69,7 @@ final class LayoutStylesheets {
 	 *
 	 * @return array<int, string> The stylesheets.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	public function forOptions(array $resolved): array {
 		return array_merge(

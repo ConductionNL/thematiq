@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
+ * @spec openspec/specs/token-import-export/spec.md
  */
 
 declare(strict_types=1);
@@ -23,7 +23,7 @@ namespace OCA\Thematiq\Service;
 /**
  * One refusal of an uploaded file.
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
+ * @spec openspec/specs/token-import-export/spec.md
  */
 final class UploadRefusal {
 

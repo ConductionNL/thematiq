@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/archive/2026-07-23-upstream-token-freshness/tasks.md#task-1.3
+ * @spec openspec/specs/upstream-freshness/spec.md
  */
 
 declare(strict_types=1);
@@ -205,4 +205,33 @@ class TokenSetServiceProvenanceTest extends TestCase {
 		$this->assertSame(expected: 'shaonly000', actual: $byId['rotterdam']['upstreamRef']);
 		$this->assertArrayNotHasKey(key: 'upstreamVersion', array: $byId['rotterdam']);
 	}//end testUpstreamRefWithoutVersionSurvivesAlone()
+
+	/**
+	 * The workplace layout a set brings is on its entry, for the token sets table,
+	 * and so is every layout default, for the Layout panel.
+	 *
+	 * @spec openspec/changes/admin-pages-as-the-tq-boards/specs/admin-settings/spec.md#requirement-the-admin-page-is-drawn-as-tqtheming-req-aset-101
+	 *
+	 * @return void
+	 */
+	public function testTheWorkplaceLayoutIsOnTheEntry(): void {
+		$this->writeTokenFile(id: 'zuiddrecht');
+		$this->writeTokenFile(id: 'utrecht');
+		file_put_contents(
+			$this->appDir . '/token-sets.json',
+			json_encode(
+				[
+					['id' => 'zuiddrecht', 'name' => 'Zuiddrecht', 'description' => '', 'design_system' => 'nldesign', 'layout' => ['workplace_layout' => 'light']],
+					['id' => 'utrecht', 'name' => 'Utrecht', 'description' => '', 'design_system' => 'nldesign'],
+				]
+			)
+		);
+
+		$byId = array_column($this->service->getAvailableTokenSets(), null, 'id');
+
+		$this->assertSame(expected: 'light', actual: $byId['zuiddrecht']['workplaceLayout']);
+		$this->assertSame(expected: ['workplace_layout' => 'light'], actual: $byId['zuiddrecht']['layout']);
+		$this->assertArrayNotHasKey(key: 'workplaceLayout', array: $byId['utrecht']);
+		$this->assertArrayNotHasKey(key: 'layout', array: $byId['utrecht']);
+	}//end testTheWorkplaceLayoutIsOnTheEntry()
 }//end class

@@ -1,7 +1,7 @@
 # marianne-font Specification
 
 ## Purpose
-TBD - created by archiving change marianne-font-restricted. Update Purpose after archive.
+The French State Marianne typeface, shipped self-hosted but off by default: it turns on only after an administrator acknowledges the licence, its licence and user agreement ship beside the files with REUSE attribution, and the restriction is shown where the font is chosen.
 ## Requirements
 ### Requirement: Self-Hosted Marianne Font Files
 

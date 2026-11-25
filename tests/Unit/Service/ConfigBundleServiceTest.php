@@ -656,7 +656,7 @@ class ConfigBundleServiceTest extends TestCase {
 	 * The six layout choices travel as the administrator stored them, the
 	 * empty string ("follow the theme") included, and come back the same.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
+	 * @spec openspec/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
 	 *
 	 * @return void
 	 */
@@ -709,7 +709,7 @@ class ConfigBundleServiceTest extends TestCase {
 	 * A bundle from before the options travelled has no `layoutOptions`: each
 	 * imports as "follow the theme", which is what such an instance stored.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
+	 * @spec openspec/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
 	 *
 	 * @return void
 	 */
@@ -728,7 +728,7 @@ class ConfigBundleServiceTest extends TestCase {
 	 * A layout value the option refuses is a hard error naming the key, and
 	 * nothing is written.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
+	 * @spec openspec/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
 	 *
 	 * @return void
 	 */

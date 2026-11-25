@@ -13,10 +13,10 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md
- * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md
- * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
+ * @spec openspec/specs/brand-stripe/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -44,9 +44,9 @@ use OCP\IConfig;
  * a per-request decision (per-group theming, per-app brands): the set a page
  * renders with decides the defaults, not the instance-wide one.
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md
- * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
+ * @spec openspec/specs/brand-stripe/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  *
  * @SuppressWarnings(PHPMD.StaticAccess) - LayoutOptionValues holds pure lookups (what each option accepts and
  *   defaults to) that the controller and the configuration bundle share with this service.
@@ -127,7 +127,7 @@ class LayoutOptionsService {
 	 *
 	 * @return string `default`, `light`, or the empty string for "follow the set".
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
 	 */
 	public function workplaceLayoutSetting(): string {
 		$stored = $this->config->getAppValue(Application::APP_ID, self::WORKPLACE_LAYOUT_KEY, self::FOLLOW_SET);
@@ -143,7 +143,7 @@ class LayoutOptionsService {
 	 *
 	 * @return string `1`, `0`, or the empty string for "follow the set".
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
+	 * @spec openspec/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
 	 */
 	public function brandStripeSetting(): string {
 		$stored = $this->config->getAppValue(Application::APP_ID, self::BRAND_STRIPE_KEY, self::FOLLOW_SET);
@@ -169,8 +169,8 @@ class LayoutOptionsService {
 	 *     headerStyle: string
 	 * } The set's defaults; the behaviour every set had when it names none.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
 	 */
 	public function setDefaults(string $tokenSet): array {
 		$layout = $this->layoutOf(tokenSet: $tokenSet);
@@ -256,7 +256,7 @@ class LayoutOptionsService {
 	 *
 	 * @return bool True when the option accepts it.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
 	 */
 	public function accepts(string $key, string $value): bool {
 		$known = ($key === LayoutOptionValues::NAVIGATION_WIDTH_KEY || array_key_exists($key, LayoutOptionValues::VALUES) === true);
@@ -273,7 +273,7 @@ class LayoutOptionsService {
 	 * @return string The stored value, or the empty string for "follow the set"
 	 *                (also for a value the option does not accept).
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
 	 */
 	public function setting(string $key): string {
 		$stored = $this->config->getAppValue(Application::APP_ID, $key, self::FOLLOW_SET);
@@ -292,7 +292,7 @@ class LayoutOptionsService {
 	 * @return string The resolved value in its string form; the empty string
 	 *                for a navigation width left to Nextcloud.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
 	 */
 	public function resolve(string $key, string $tokenSet): string {
 		$stored = $this->setting(key: $key);
@@ -313,7 +313,7 @@ class LayoutOptionsService {
 	 *
 	 * @throws InvalidArgumentException When the option does not accept the value.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
 	 */
 	public function setOption(string $key, string $value): string {
 		if ($this->accepts(key: $key, value: $value) === false) {
@@ -341,7 +341,7 @@ class LayoutOptionsService {
 	 *
 	 * @return string `default` or `light`.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
 	 */
 	public function workplaceLayout(string $tokenSet): string {
 		$stored = $this->workplaceLayoutSetting();
@@ -359,7 +359,7 @@ class LayoutOptionsService {
 	 *
 	 * @return bool True when the stripe is on.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
+	 * @spec openspec/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
 	 */
 	public function brandStripe(string $tokenSet): bool {
 		$stored = $this->brandStripeSetting();
@@ -385,8 +385,8 @@ class LayoutOptionsService {
 	 *     headerStyle: string
 	 * } The resolved options.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-layout-defaults
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-carry-the-newer-layout-defaults
 	 */
 	public function resolved(string $tokenSet): array {
 		$width = null;
@@ -419,10 +419,10 @@ class LayoutOptionsService {
 	 *                            `navigation-width` while a width is resolved; `navigation-active-soft`
 	 *                            for the soft style. Empty for a set that names none of it.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-light-layout-is-one-conditional-stylesheet
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-is-one-conditional-stylesheet
+	 * @spec openspec/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-header-style-is-a-layout-option
 	 */
 	public function stylesheets(string $tokenSet): array {
 		$resolved = $this->resolved(tokenSet: $tokenSet);
@@ -440,7 +440,7 @@ class LayoutOptionsService {
 	 *
 	 * @return array<int, array{id: string, css: string}> Zero or one style.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
 	 */
 	public function inlineStyles(string $tokenSet): array {
 		$width = $this->resolve(key: LayoutOptionValues::NAVIGATION_WIDTH_KEY, tokenSet: $tokenSet);
@@ -465,7 +465,7 @@ class LayoutOptionsService {
 	 *
 	 * @throws InvalidArgumentException When the value is not one of the three.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
 	 */
 	public function setWorkplaceLayout(string $layout): string {
 		if ($layout !== self::FOLLOW_SET && in_array($layout, self::LAYOUTS, true) === false) {
@@ -487,7 +487,7 @@ class LayoutOptionsService {
 	 *
 	 * @throws InvalidArgumentException When the value is not one of the three.
 	 *
-	 * @spec openspec/changes/zuiddrecht-workplace-theme/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
+	 * @spec openspec/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
 	 */
 	public function setBrandStripe(string $stripe): string {
 		if (in_array($stripe, [self::FOLLOW_SET, '0', '1'], true) === false) {

@@ -7,8 +7,17 @@
  * Dark-mode token variants: the generated dark stylesheet is injected next to
  * the light token layer, is scoped so an explicit light choice is never
  * darkened, and the admin toggle gates it instance-wide.
+ *
+ * GLOBAL STATE: the tests read the stylesheets of a set that has a dark
+ * variant, so the dark probe set is made the active set (activateTokenSet) for the
+ * file and the previous set and its overrides are put back afterwards. The
+ * instance's own default is the stock `nextcloud` set, which wears no design
+ * system and therefore links no token file and no dark variant at all.
  */
 import { test, expect, Page } from '@playwright/test'
+
+import { DARK_PROBE_SET } from './_dark-probe-set'
+import { activateTokenSet } from './_token-css'
 
 const THEMING_URL = '/settings/admin/theming'
 const PROBE_URL = '/settings/user'
@@ -37,6 +46,18 @@ async function nldesignStyles(page: Page): Promise<string[]> {
 			.filter((h) => h.includes('/thematiq/')),
 	)
 }
+
+let restore: (() => Promise<void>) | null = null
+
+test.beforeAll(async ({ browser }) => {
+	restore = await activateTokenSet(browser, DARK_PROBE_SET)
+})
+
+test.afterAll(async () => {
+	if (restore !== null) {
+		await restore()
+	}
+})
 
 test.describe('dark-mode token variants', () => {
 	test('the dark stylesheet is injected directly after the light token layer', async ({

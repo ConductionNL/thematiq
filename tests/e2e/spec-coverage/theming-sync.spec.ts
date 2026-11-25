@@ -510,7 +510,7 @@ test.describe('theming-sync', () => {
 			await inSyncDialog(page, setId, {}, async () => {
 				const dialog = page.locator('#nldesign-theming-dialog-overlay')
 				await expect(dialog).toBeVisible({ timeout: 15_000 })
-				const rows = dialog.locator('.nldesign-dialog-table tbody tr')
+				const rows = dialog.locator('.thematiq-admin-dialog__table tbody tr')
 				await expect(rows).toHaveCount(1)
 				await expect(rows.first()).toContainText('#004699')
 				await dialog.locator('.nldesign-dialog-cancel').click()
@@ -1164,11 +1164,11 @@ test.describe('theming-sync', () => {
 		await inSyncDialog(page, SET_WITHOUT_DARK_LOGO, {}, async () => {
 			const dialog = page.locator('#nldesign-theming-dialog-overlay')
 			await expect(dialog).toBeVisible({ timeout: 15_000 })
-			await expect(dialog.locator('h3')).toContainText(
-				manifestEntry(SET_WITHOUT_DARK_LOGO).name,
-			)
 			await expect(
-				dialog.locator('.nldesign-dialog-table tbody tr'),
+				dialog.locator('.thematiq-admin-dialog__title'),
+			).toContainText(manifestEntry(SET_WITHOUT_DARK_LOGO).name)
+			await expect(
+				dialog.locator('.thematiq-admin-dialog__table tbody tr'),
 			).not.toHaveCount(0)
 			await dialog.locator('.nldesign-dialog-cancel').click()
 		})
@@ -1182,12 +1182,15 @@ test.describe('theming-sync', () => {
 		await inSyncDialog(page, SET_WITHOUT_DARK_LOGO, {}, async () => {
 			const dialog = page.locator('#nldesign-theming-dialog-overlay')
 			await expect(dialog).toBeVisible({ timeout: 15_000 })
-			const primaryRow = dialog.locator('.nldesign-dialog-table tbody tr', {
-				hasText: STUB_CURRENT.primary_color,
-			})
+			const primaryRow = dialog.locator(
+				'.thematiq-admin-dialog__table tbody tr',
+				{
+					hasText: STUB_CURRENT.primary_color,
+				},
+			)
 			await expect(primaryRow).toHaveCount(1)
 			await expect(primaryRow).toContainText(proposed.primary_color as string)
-			const swatches = primaryRow.locator('.nldesign-dialog-swatch')
+			const swatches = primaryRow.locator('.thematiq-admin-dialog__swatch')
 			await expect(swatches).toHaveCount(2)
 			const colours = await swatches.evaluateAll((els) =>
 				els.map((el) => getComputedStyle(el).backgroundColor),
@@ -1205,16 +1208,13 @@ test.describe('theming-sync', () => {
 		await inSyncDialog(page, SET_WITH_DARK_LOGO, {}, async ({ posts }) => {
 			const dialog = page.locator('#nldesign-theming-dialog-overlay')
 			await expect(dialog).toBeVisible({ timeout: 15_000 })
-			const row = dialog.locator('.nldesign-dialog-dark-logo-row')
+			// The Tq dialog lists the dark logo as a row of its table, the
+			// file the set brings as the proposed value.
+			const row = dialog.locator('.thematiq-admin-dialog__table tbody tr', {
+				hasText: 'Dark logo',
+			})
 			await expect(row).toHaveCount(1)
-			await expect(
-				row.locator('.nldesign-dialog-preview-box--dark'),
-			).toHaveCount(1)
-			const src = await row.locator('img').getAttribute('src')
-			expect(src ?? '').toContain(dark)
-			await expect(row.locator('.nldesign-dialog-hint')).toContainText(
-				'no dark logo slot',
-			)
+			await expect(row).toContainText(dark.split('/').pop() as string)
 
 			// Confirm. The POST is recorded and answered without writing.
 			await dialog.locator('.nldesign-dialog-confirm').click()
@@ -1236,7 +1236,9 @@ test.describe('theming-sync', () => {
 			const dialog = page.locator('#nldesign-theming-dialog-overlay')
 			await expect(dialog).toBeVisible({ timeout: 15_000 })
 			await expect(
-				dialog.locator('.nldesign-dialog-dark-logo-row'),
+				dialog.locator('.thematiq-admin-dialog__table tbody tr', {
+					hasText: 'Dark logo',
+				}),
 			).toHaveCount(0)
 			await dialog.locator('.nldesign-dialog-cancel').click()
 		})
@@ -1310,6 +1312,7 @@ test.describe('theming-sync', () => {
 	})
 
 	// @e2e openspec/specs/theming-sync/spec.md#admin-cancels-theming-sync
+	// @e2e theming-sync-dialog::user-cancels-update
 	test('cancelling closes the dialog, applies no theming, keeps the set', async ({
 		page,
 	}) => {

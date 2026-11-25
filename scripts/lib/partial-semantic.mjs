@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  *
  * The --nldesign-* tokens a PARTIAL brand file does not name, completed
- * without inventing a colour (openspec/changes/token-set-coverage-next-waves,
+ * without inventing a colour (openspec/changes/archive/2026-11-22-token-set-coverage-next-waves,
  * task 1.2).
  *
  * The converter reads the generated set the way it reads any theme, and each

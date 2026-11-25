@@ -13,14 +13,14 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-28
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-30
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-31
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-34
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/token-import-export/spec.md
  */
 
 declare(strict_types=1);
@@ -62,14 +62,14 @@ use RuntimeException;
  * back to "Nextcloud", so the stock set was not stock, and every theme saved
  * off it wore the other themes' pinned values too.
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-28
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-30
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-31
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-34
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/custom-css-overrides/spec.md
+ * @spec openspec/specs/token-import-export/spec.md
  */
 class CustomOverridesService {
 
@@ -182,7 +182,7 @@ class CustomOverridesService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-28
+	 * @spec openspec/specs/custom-css-overrides/spec.md
 	 */
 	public function ensureExists(?string $tokenSet = null): void {
 		$name = $this->getFilePath(tokenSet: $tokenSet);
@@ -202,7 +202,7 @@ class CustomOverridesService {
 	 *
 	 * @return array<string, string> Map of token name => value for all overrides in the file.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
+	 * @spec openspec/specs/custom-css-overrides/spec.md
 	 */
 	public function read(?string $tokenSet = null): array {
 		$content = $this->storage->store->read(name: $this->getFilePath(tokenSet: $tokenSet));
@@ -324,7 +324,7 @@ class CustomOverridesService {
 	 *
 	 * @throws RuntimeException When the file cannot be written.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-30
+	 * @spec openspec/specs/custom-css-overrides/spec.md
 	 */
 	public function write(array $tokens, ?string $tokenSet = null, array $darkTokens = []): void {
 		$validated = $this->filterEditable(tokens: $tokens);
@@ -355,7 +355,7 @@ class CustomOverridesService {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-8
+	 * @spec openspec/specs/custom-css-overrides/spec.md
 	 */
 	private function filterEditable(array $tokens): array {
 		$result = [];
@@ -379,7 +379,7 @@ class CustomOverridesService {
 	 *
 	 * @throws RuntimeException When the store cannot write the file.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-31
+	 * @spec openspec/specs/custom-css-overrides/spec.md
 	 */
 	private function writeFile(array $tokens, string $name, array $darkTokens = []): void {
 		$this->storage->store->write(name: $name, content: $this->buildCss(tokens: $tokens, darkTokens: $darkTokens));
@@ -394,7 +394,7 @@ class CustomOverridesService {
 	 *
 	 * @return string The CSS file content.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
+	 * @spec openspec/specs/custom-css-overrides/spec.md
 	 */
 	private function buildCss(array $tokens, array $darkTokens = []): string {
 		return $this->css->build(tokens: $tokens, darkTokens: $darkTokens, own: $this->setContext->ownTokens?->css());
@@ -409,7 +409,7 @@ class CustomOverridesService {
 	 *
 	 * @return array<string, string> Map of token name => value.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-29
+	 * @spec openspec/specs/custom-css-overrides/spec.md
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 */
@@ -435,7 +435,7 @@ class CustomOverridesService {
 	 *
 	 * @return string The raw file content, or an empty :root {} if the file does not exist.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-34
+	 * @spec openspec/specs/token-import-export/spec.md
 	 */
 	public function getRawContent(?string $tokenSet = null): string {
 		$content = $this->storage->store->read(name: $this->getFilePath(tokenSet: $tokenSet));

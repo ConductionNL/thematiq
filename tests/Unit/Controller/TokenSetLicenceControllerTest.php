@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md
+ * @spec openspec/specs/token-set-licences/spec.md
  */
 
 declare(strict_types=1);
@@ -25,6 +25,7 @@ use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserSession;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
 
@@ -33,6 +34,8 @@ use ReflectionMethod;
  */
 #[CoversClass(TokenSetLicenceController::class)]
 #[CoversClass(RestrictedSetInUseException::class)]
+#[UsesClass(\OCA\Thematiq\Middleware\Support\ApiPathAliases::class)]
+#[UsesClass(\OCA\Thematiq\Middleware\Support\StandardProtocolPaths::class)]
 class TokenSetLicenceControllerTest extends TestCase {
 
 	/**

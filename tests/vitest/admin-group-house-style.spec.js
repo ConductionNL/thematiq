@@ -87,6 +87,9 @@ describe('house style of my groups', () => {
 		expect(radios[0].checked).toBe(true)
 		expect(document.body.textContent).toContain('Contrast: WCAG AA')
 		expect(document.body.textContent).toContain('Contrast: below WCAG AA')
+		expect(
+			document.querySelectorAll('.thematiq-my-group-contrast--below'),
+		).toHaveLength(1)
 
 		radios[1].checked = true
 		radios[1].dispatchEvent(new Event('change'))

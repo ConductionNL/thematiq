@@ -1,0 +1,1015 @@
+/**
+ * Workplace app layer: Deck, drawn as the task boards (TbBoard, TbCard).
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
+ *
+ * Loaded only on Deck's own pages, and only while the workplace layout is
+ * light (LayoutStylesheets::forApp()). Every rule starts at
+ * `:is(#content, #content-vue).app-deck`, so no other page pays for it, and every colour is a
+ * Nextcloud or NL Design variable, so the dark scheme follows by itself.
+ *
+ * The board: a white canvas, a 60px title row with a hairline under it, and
+ * one grey 224px column per stack on it. A column has a small uppercase
+ * heading and white cards with a hairline and the control radius. A card
+ * shows its labels above the title as coloured capitals, the title at 14px,
+ * then the person and the due date in 12px. An open card sits in a 480px
+ * panel with its tabs as a strip of folder tabs.
+ */
+
+:is(#content, #content-vue).app-deck #app-content-vue {
+	background-color: var(
+		--thematiq-global-color-main-background,
+		var(--color-main-background)
+	) !important;
+}
+
+/* The title row. */
+:is(#content, #content-vue).app-deck .board-wrapper > .controls {
+	min-height: 60px;
+	margin: 0 !important;
+	padding: 0 16px !important;
+	box-sizing: border-box;
+	align-items: center;
+	border-bottom: 1px solid var(--color-border);
+}
+
+:is(#content, #content-vue).app-deck .controls .board-title {
+	align-items: center;
+	gap: 8px;
+}
+
+:is(#content, #content-vue).app-deck .controls .board-title h2 {
+	margin: 0 !important;
+	font-size: 20px !important;
+	font-weight: 700 !important;
+	line-height: 24px !important;
+}
+
+:is(#content, #content-vue).app-deck .controls .board-bullet {
+	width: 10px !important;
+	height: 10px !important;
+	margin: 0 !important;
+	display: none !important;
+}
+
+/* The columns. */
+:is(#content, #content-vue).app-deck .board {
+	padding: 12px 12px 0 !important;
+	box-sizing: border-box;
+}
+
+:is(#content, #content-vue).app-deck .board > .smooth-dnd-container.horizontal {
+	gap: 10px;
+	padding: 0 !important;
+}
+
+:is(#content, #content-vue).app-deck .stack-draggable-wrapper {
+	align-self: flex-start;
+	height: auto !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	flex: none !important;
+	width: auto !important;
+	min-width: 0 !important;
+}
+
+:is(#content, #content-vue).app-deck .stack {
+	width: 224px !important;
+	height: auto !important;
+	max-height: calc(100vh - var(--header-height, 68px) - 88px);
+	overflow-y: auto;
+	padding: 0 6px 6px !important;
+	box-sizing: border-box;
+	border-radius: var(--border-radius-element, 8px);
+	background-color: color-mix(
+		in srgb,
+		var(--color-border) 60%,
+		var(--color-main-background)
+	) !important;
+	--thematiq-deck-dot: var(--thematiq-deck-status-closed);
+	--thematiq-deck-dot-ring: var(--thematiq-deck-status-closed-ring);
+
+	position: relative;
+	counter-reset: thematiq-deck-cards;
+}
+
+:is(#content, #content-vue).app-deck .stack__header {
+	min-height: 32px;
+	height: 32px;
+	background-color: transparent !important;
+	box-shadow: none !important;
+	margin: 6px 0 2px;
+	gap: 8px;
+	padding: 0 4px 0 6px !important;
+}
+
+:is(#content, #content-vue).app-deck .stack__header::before,
+:is(#content, #content-vue).app-deck .stack__header::after {
+	display: none !important;
+}
+
+:is(#content, #content-vue).app-deck .stack__title {
+	font-size: 12px !important;
+	font-weight: 600 !important;
+	line-height: 14px !important;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var(--color-main-text) !important;
+}
+
+:is(#content, #content-vue).app-deck .stack__header .button-vue--icon-only {
+	color: var(--color-text-maxcontrast) !important;
+	width: 28px !important;
+	min-width: 28px !important;
+	height: 28px !important;
+	min-height: 28px !important;
+}
+
+:is(#content, #content-vue).app-deck .stack .dnd-container {
+	width: auto !important;
+	min-height: 64px;
+	height: auto !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	overflow: visible !important;
+	gap: 8px !important;
+}
+
+/* The cards. */
+:is(#content, #content-vue).app-deck .stack .smooth-dnd-draggable-wrapper {
+	width: auto !important;
+	margin: 0 0 8px !important;
+	padding: 0 !important;
+	overflow: visible;
+}
+
+:is(#content, #content-vue).app-deck .card {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	width: auto !important;
+	margin: 0 !important;
+	padding: 10px 12px !important;
+	border: 1px solid var(--color-border) !important;
+	border-radius: var(--border-radius-element, 8px) !important;
+	background-color: var(--color-main-background) !important;
+	box-shadow: none !important;
+}
+
+:is(#content, #content-vue).app-deck .card:hover,
+:is(#content, #content-vue).app-deck .card:focus-within {
+	border-color: var(--color-border-maxcontrast) !important;
+}
+
+:is(#content, #content-vue).app-deck .card.current-card {
+	border-color: var(--color-primary-element) !important;
+	background-color: var(--color-primary-element-light) !important;
+	box-shadow: inset 0 0 0 1px var(--color-primary-element) !important;
+}
+
+:is(#content, #content-vue).app-deck .card .card-labels {
+	order: -1;
+	display: flex;
+	align-items: center;
+	min-height: 16px;
+}
+
+:is(#content, #content-vue).app-deck .card .card-upper {
+	min-height: 0 !important;
+	padding: 0 !important;
+}
+
+:is(#content, #content-vue).app-deck .card .card-upper h4 {
+	margin: 0 !important;
+	padding: 0 !important;
+	font-size: 14px !important;
+	font-weight: 500 !important;
+	line-height: 20px !important;
+}
+
+:is(#content, #content-vue).app-deck .card .labels {
+	margin: 0 !important;
+	gap: 4px;
+}
+
+:is(#content, #content-vue).app-deck .card .labels li {
+	height: 16px;
+	margin: 0 !important;
+	padding: 0 !important;
+	border-radius: 0 !important;
+	font-size: 12px !important;
+	font-weight: 700 !important;
+	line-height: 16px !important;
+	text-transform: uppercase;
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent !important;
+	letter-spacing: 0.04em;
+}
+
+:is(#content, #content-vue).app-deck .card .labels li span {
+	padding: 0 !important;
+	line-height: 16px !important;
+	color: transparent !important;
+}
+
+:is(#content, #content-vue).app-deck .card .card-controls {
+	min-height: 0 !important;
+	margin: 0 !important;
+	margin-top: 2px !important;
+}
+
+:is(#content, #content-vue).app-deck .card .badges {
+	align-items: center;
+	height: 22px;
+	gap: 6px;
+}
+
+:is(#content, #content-vue).app-deck .card .badges .due {
+	padding: 0 !important;
+	background-color: transparent !important;
+	gap: 4px;
+	color: var(--color-text-maxcontrast) !important;
+	font-size: 12px !important;
+	font-weight: 400;
+}
+
+:is(#content, #content-vue).app-deck .card .duedate[data-due-state='Overdue'] .due {
+	color: var(--color-error-text, var(--color-error)) !important;
+	font-weight: 600;
+}
+
+:is(#content, #content-vue).app-deck .card .duedate[data-due-state='Now'] .due {
+	color: var(--color-main-text) !important;
+	font-weight: 600;
+}
+
+:is(#content, #content-vue).app-deck .card .avatars {
+	height: 28px !important;
+	min-height: 0 !important;
+	align-items: center;
+}
+
+:is(#content, #content-vue).app-deck .card .badge-right .button-vue--icon-only {
+	width: 28px !important;
+	min-width: 28px !important;
+	height: 28px !important;
+	min-height: 28px !important;
+}
+
+/*
+ * Pass two, measured against TbBoard frame (a): a 60px title row with the
+ * title in 20px, 224px columns 10px apart on a 12px margin, a 32px column
+ * heading, 14px card titles, labels as coloured capitals with no chip, and
+ * the person first in the card's footer.
+ */
+
+/* The column scrolls as a whole; its card list does not get a scrollbar of
+   its own inside it. */
+
+:is(#content, #content-vue).app-deck
+	.stack
+	.dnd-container
+	> .smooth-dnd-draggable-wrapper {
+	margin: 0 !important;
+}
+
+/* A label is its own colour as text: the chip's background is clipped to
+   the letters, so every label keeps the colour Deck gives it. */
+
+:is(#content, #content-vue).app-deck .card .badges .icon-badge {
+	height: 22px;
+	align-items: center;
+}
+
+:is(#content, #content-vue).app-deck .card .badge-right {
+	display: contents;
+}
+
+:is(#content, #content-vue).app-deck .card .badges .avatars {
+	flex: none;
+	order: -1;
+	height: 22px !important;
+}
+
+:is(#content, #content-vue).app-deck .card .badges .badge-left {
+	flex: 1 1 auto;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
+}
+
+:is(#content, #content-vue).app-deck .card .avatars .avatar-list {
+	height: 22px !important;
+	min-height: 0 !important;
+	padding: 0 !important;
+}
+
+:is(#content, #content-vue).app-deck .card .avatars .avatardiv {
+	--avatar-size: 22px !important;
+	width: 22px !important;
+	margin: 0 !important;
+	height: 22px !important;
+	background-color: var(--color-primary-element-light) !important;
+	border-radius: 50%;
+}
+
+:is(#content, #content-vue).app-deck .card .avatars .avatardiv img {
+	width: 22px !important;
+	height: 22px !important;
+}
+
+/* The card menu shows when the card is pointed at or has the focus. */
+:is(#content, #content-vue).app-deck .card .card-menu {
+	opacity: 0;
+}
+
+:is(#content, #content-vue).app-deck .card:is(:hover, :focus-within) .card-menu {
+	opacity: 1;
+}
+
+/* The navigation: 34px rows in 14px. */
+:is(#content, #content-vue).app-deck #app-navigation-vue .app-navigation-entry {
+	min-height: 34px;
+	height: 34px;
+	border-radius: var(--border-radius-element, 8px);
+}
+
+:is(#content, #content-vue).app-deck #app-navigation-vue .app-navigation-entry-link {
+	min-height: 34px;
+	height: 34px;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 21px;
+}
+
+:is(#content, #content-vue).app-deck
+	#app-navigation-vue
+	.app-navigation-entry
+	.button-vue {
+	min-height: 34px !important;
+	height: 34px !important;
+}
+
+:is(#content, #content-vue).app-deck
+	#app-navigation-vue
+	.app-navigation-entry-wrapper
+	+ .app-navigation-entry-wrapper {
+	margin-top: 1px;
+}
+
+/* The card panel (TbCard): 480px, the title in 18px without the focus ring
+   its opening puts on it, and the tabs as a strip of folder tabs in text. */
+:is(#content, #content-vue).app-deck #app-sidebar-vue {
+	--app-sidebar-width: 480px;
+
+	width: 480px !important;
+	max-width: 100vw;
+	border-inline-start: 1px solid var(--color-border);
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-header__desc {
+	padding: 12px 76px 8px 16px !important;
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-header__mainname {
+	font-size: 18px !important;
+	line-height: 24px !important;
+}
+
+:is(#content, #content-vue).app-deck
+	#app-sidebar-vue
+	.app-sidebar-header__mainname:focus:not(:focus-visible),
+:root[data-thematiq-pointer]
+	:is(#content, #content-vue).app-deck
+	#app-sidebar-vue
+	.app-sidebar-header__mainname:focus {
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-header__subname {
+	font-size: 13px;
+	color: var(--color-text-maxcontrast);
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-tabs__nav {
+	gap: 4px;
+	margin: 0 !important;
+	padding: 0 16px !important;
+	border-bottom: 1px solid var(--color-border-maxcontrast);
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-tabs__tab {
+	flex: none !important;
+	height: 36px !important;
+	min-height: 36px !important;
+	margin: 0 0 -1px !important;
+	padding: 0 !important;
+	border: 1px solid var(--color-border-maxcontrast) !important;
+	border-bottom: 0 !important;
+	border-radius: var(--border-radius-element, 8px)
+		var(--border-radius-element, 8px) 0 0 !important;
+	background-color: color-mix(
+		in srgb,
+		var(--color-border) 60%,
+		var(--color-main-background)
+	) !important;
+}
+
+:is(#content, #content-vue).app-deck
+	#app-sidebar-vue
+	.app-sidebar-tabs__tab[aria-selected='true'],
+:is(#content, #content-vue).app-deck
+	#app-sidebar-vue
+	.app-sidebar-tabs__tab.checkbox-radio-switch--checked {
+	height: 37px !important;
+	background-color: var(--color-main-background) !important;
+}
+
+:is(#content, #content-vue).app-deck
+	#app-sidebar-vue
+	.app-sidebar-tabs__tab
+	.checkbox-content {
+	flex-direction: row !important;
+	height: 36px;
+	padding: 0 12px !important;
+	border: 0 !important;
+	background: none !important;
+	box-shadow: none !important;
+}
+
+:is(#content, #content-vue).app-deck
+	#app-sidebar-vue
+	.app-sidebar-tabs__tab
+	.checkbox-content__icon {
+	display: none !important;
+}
+
+:is(#content, #content-vue).app-deck
+	#app-sidebar-vue
+	.app-sidebar-tabs__tab-caption {
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--color-main-text);
+}
+
+:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar__tab {
+	padding: 12px 16px !important;
+}
+
+/*
+ * A card mid-move, as TbBoard draws it
+ * (openspec/changes/archive/2026-11-24-workplace-app-sheets-entry-states).
+ *
+ * Deck moves cards with vue3-smooth-dnd over smooth-dnd 0.12, without a
+ * `dragClass`, `dropClass` or `dropPlaceholder` (src/components/board/Stack.vue,
+ * nextcloud/deck main, 23 November 2026). smooth-dnd then draws the dragged
+ * copy as `.smooth-dnd-ghost`, a fixed wrapper it appends to the parent of the
+ * card's `.smooth-dnd-draggable-wrapper`: the stack's container, inside Deck's
+ * content element, so the lift starts there. It moves the ghost with an inline
+ * transform, so the tilt goes on the card inside it. Without `dropPlaceholder`
+ * smooth-dnd draws no element where the card will land, only a gap between
+ * the cards, so there is no slot to draw dashed (see the change's tasks).
+ */
+:is(#content, #content-vue).app-deck .smooth-dnd-ghost .card {
+	border-color: var(--color-border-dark, var(--color-border)) !important;
+	box-shadow: 0 8px 24px
+		var(--nldesign-component-content-card-shadow-color, var(--color-box-shadow)) !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	:is(#content, #content-vue).app-deck .smooth-dnd-ghost .card {
+		transform: rotate(2deg);
+	}
+}
+
+/*
+ * With a card open the navigation folds to a 64px rail of icons with a small
+ * label under each, as TbCard draws it; the board keeps the room. Keyboard
+ * focus or an open menu unfolds the full column over the board at once, the
+ * pointer after 200ms, as Mail's rail does (css/workplace-apps/mail.css).
+ * The boards under All boards and rows without an icon have nothing to show
+ * in the rail. Without style queries the column stays unfolded.
+ */
+@property --thematiq-deck-rail {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 0;
+}
+
+@keyframes thematiq-deck-rail-unfold {
+	from,
+	to {
+		--thematiq-deck-rail: 0;
+	}
+}
+
+@media (min-width: 1024px) {
+	:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) .app-navigation {
+		--thematiq-deck-rail: 1;
+
+		position: relative;
+		z-index: 2000;
+		flex: 0 0 64px !important;
+		width: 64px !important;
+		min-width: 64px !important;
+		max-width: 64px !important;
+	}
+
+	:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+		.app-navigation:is(
+			:focus-within,
+			:has(#app-navigation-vue [aria-haspopup][aria-expanded='true'])
+		) {
+		--thematiq-deck-rail: 0;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			.app-navigation:hover {
+			animation: thematiq-deck-rail-unfold 1ms 200ms forwards;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			.app-navigation:hover {
+			--thematiq-deck-rail: 0;
+		}
+	}
+
+	:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue {
+		position: absolute;
+		inset-block: 0;
+		inset-inline-start: 0;
+		width: 264px;
+		border-inline-end: 1px solid var(--color-border);
+		background-color: var(--color-main-background);
+		box-shadow: 0 4px 16px var(--color-box-shadow);
+	}
+
+	@container style(--thematiq-deck-rail: 1) {
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			#app-navigation-vue {
+			width: 64px;
+			box-shadow: none;
+			padding-inline: 4px !important;
+			overflow: hidden;
+		}
+
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			#app-navigation-vue
+			:is(
+				.app-navigation-entry__children,
+				.app-navigation-entry__actions,
+				.app-navigation-entry__utils,
+				.app-navigation-caption,
+				.icon-collapse
+			) {
+			display: none !important;
+		}
+
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			#app-navigation-vue
+			.app-navigation-entry-wrapper:has(.app-navigation-entry-icon:empty) {
+			display: none !important;
+		}
+
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			#app-navigation-vue
+			.app-navigation-list {
+			padding-inline: 0 !important;
+		}
+
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			#app-navigation-vue
+			:is(.app-navigation-entry, .app-navigation-entry-link) {
+			height: auto !important;
+			min-height: 48px !important;
+		}
+
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			#app-navigation-vue
+			.app-navigation-entry-link {
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			width: 100% !important;
+			padding: 4px 0 !important;
+		}
+
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			#app-navigation-vue
+			.app-navigation-entry-icon {
+			width: 20px !important;
+			height: 22px !important;
+			min-height: 22px !important;
+			margin: 0 !important;
+		}
+
+		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
+			#app-navigation-vue
+			.app-navigation-entry__name {
+			max-width: 56px;
+			height: auto !important;
+			min-height: 0 !important;
+			padding: 0 !important;
+			overflow: hidden;
+			font-size: 11px !important;
+			line-height: 14px !important;
+			text-align: center;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+	}
+}
+
+/*
+ * Pass three, measured against TbBoard frame (a) at 1440px.
+ *
+ * A column heading is a status dot, the name, the number of cards in a
+ * pill and a plus; the list menu shows in place of the pill while the column
+ * is pointed at or has the focus. A card reads the type and its number on
+ * one line, the title in 14px medium, then the person as initials in the
+ * primary's tint and the due date as a calendar and a short date ("16 Oct"),
+ * in the text colour and semibold within two days, in the error colour once
+ * overdue. The number and the short date come from js/workplace-apps.js.
+ */
+
+/* The status colours OpenProject gives its statuses, fill and ring. */
+:root {
+	--thematiq-deck-status-new: #c3fae8;
+	--thematiq-deck-status-new-ring: #7bf4cc;
+	--thematiq-deck-status-progress: #66d9e8;
+	--thematiq-deck-status-progress-ring: #21c8de;
+	--thematiq-deck-status-review: #d3f9d8;
+	--thematiq-deck-status-review-ring: #8ff09c;
+	--thematiq-deck-status-hold: #ffc078;
+	--thematiq-deck-status-hold-ring: #ff9d2e;
+	--thematiq-deck-status-closed: #dee2e6;
+	--thematiq-deck-status-closed-ring: #adb5bd;
+}
+
+:is(#content, #content-vue).app-deck
+	.stack:is(
+		[data-cy-stack='New' i],
+		[data-cy-stack='To do' i],
+		[data-cy-stack='Nieuw' i]
+	) {
+	--thematiq-deck-dot: var(--thematiq-deck-status-new);
+	--thematiq-deck-dot-ring: var(--thematiq-deck-status-new-ring);
+}
+
+:is(#content, #content-vue).app-deck
+	.stack:is(
+		[data-cy-stack='In progress' i],
+		[data-cy-stack='In development' i],
+		[data-cy-stack='Doing' i],
+		[data-cy-stack='In behandeling' i]
+	) {
+	--thematiq-deck-dot: var(--thematiq-deck-status-progress);
+	--thematiq-deck-dot-ring: var(--thematiq-deck-status-progress-ring);
+}
+
+:is(#content, #content-vue).app-deck
+	.stack:is(
+		[data-cy-stack='In review' i],
+		[data-cy-stack='Review' i],
+		[data-cy-stack='Ter controle' i]
+	) {
+	--thematiq-deck-dot: var(--thematiq-deck-status-review);
+	--thematiq-deck-dot-ring: var(--thematiq-deck-status-review-ring);
+}
+
+:is(#content, #content-vue).app-deck
+	.stack:is(
+		[data-cy-stack='On hold' i],
+		[data-cy-stack='Blocked' i],
+		[data-cy-stack='Geparkeerd' i]
+	) {
+	--thematiq-deck-dot: var(--thematiq-deck-status-hold);
+	--thematiq-deck-dot-ring: var(--thematiq-deck-status-hold-ring);
+}
+
+:is(#content, #content-vue).app-deck .stack__header > h3 {
+	display: flex;
+	flex: 1 1 auto;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+:is(#content, #content-vue).app-deck .stack__header > h3::before {
+	content: '';
+	flex: none;
+	width: 12px;
+	height: 12px;
+	box-sizing: border-box;
+	border: 1.5px solid var(--thematiq-deck-dot-ring);
+	border-radius: 6px;
+	background-color: var(--thematiq-deck-dot);
+}
+
+:is(#content, #content-vue).app-deck .stack__header > h3 > span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+:is(#content, #content-vue).app-deck .stack__done-icon {
+	display: none !important;
+}
+
+/* The count: a counter over the cards, drawn after the last of them and
+   placed in the heading, left of the plus. */
+:is(#content, #content-vue).app-deck
+	.stack
+	.dnd-container
+	> .smooth-dnd-draggable-wrapper:not(.smooth-dnd-ghost) {
+	counter-increment: thematiq-deck-cards;
+}
+
+:is(#content, #content-vue).app-deck .stack::after {
+	content: counter(thematiq-deck-cards);
+	position: absolute;
+	top: 12px;
+	inset-inline-end: 46px;
+	box-sizing: border-box;
+	min-width: 22px;
+	padding: 0 7px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-element, 8px);
+	background-color: var(--color-main-background);
+	color: var(--color-text-maxcontrast);
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 18px;
+	text-align: center;
+	white-space: nowrap;
+	pointer-events: none;
+}
+
+:is(#content, #content-vue).app-deck .stack:is(:hover, :focus-within)::after {
+	visibility: hidden;
+}
+
+/* The list menu sits where the count is, and shows in its place. */
+:is(#content, #content-vue).app-deck .stack__header > .action-item:not(:last-child) {
+	order: 1;
+	opacity: 0;
+}
+
+:is(#content, #content-vue).app-deck .stack__header > .action-item:last-child {
+	order: 2;
+}
+
+:is(#content, #content-vue).app-deck
+	.stack:is(:hover, :focus-within)
+	.stack__header
+	> .action-item:not(:last-child),
+:is(#content, #content-vue).app-deck
+	.stack__header
+	> .action-item--open:not(:last-child) {
+	opacity: 1;
+}
+
+/* The plus of TbBoard for Deck's "add card" icon, and a calendar for the
+   due date's clock: the path is redrawn, so the button and its name stay. */
+:is(#content, #content-vue).app-deck .card .due svg,
+:is(#content, #content-vue).app-deck .card .inline-badges svg {
+	width: 14px;
+	height: 14px;
+}
+
+:is(#content, #content-vue).app-deck .stack__header > .action-item:last-child svg {
+	width: 16px;
+	height: 16px;
+}
+
+:is(#content, #content-vue).app-deck
+	.stack__header
+	> .action-item:last-child
+	svg
+	path,
+:is(#content, #content-vue).app-deck
+	.card
+	.duedate:not([data-due-state='Done'])
+	.due
+	svg
+	path,
+:is(#content, #content-vue).app-deck .card .icon-badge .attachment-icon svg path {
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.75px;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+:is(#content, #content-vue).app-deck
+	.stack__header
+	> .action-item:last-child
+	svg
+	path {
+	d: path('M12 5v14M5 12h14');
+}
+
+:is(#content, #content-vue).app-deck
+	.card
+	.duedate:not([data-due-state='Done'])
+	.due
+	svg
+	path {
+	d: path(
+		'M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z'
+	);
+}
+
+:is(#content, #content-vue).app-deck .card .icon-badge .attachment-icon svg path {
+	d: path(
+		'm21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48'
+	);
+}
+
+/* The card face. */
+
+:is(#content, #content-vue).app-deck .card .labels[data-thematiq-number]::after {
+	content: attr(data-thematiq-number);
+	margin-inline-start: 6px;
+	color: var(--color-main-text);
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 16px;
+	letter-spacing: 0;
+	opacity: 0.85;
+}
+
+:is(#content, #content-vue).app-deck .card .cardid {
+	display: none !important;
+}
+
+:is(#content, #content-vue).app-deck .card .card-upper h4,
+:is(#content, #content-vue).app-deck .card .card-upper h4 span {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	color: var(--color-main-text);
+	font-size: 14px !important;
+	font-weight: 500 !important;
+	line-height: 20px !important;
+}
+
+/* The description mark is not on the board's card face. */
+:is(#content, #content-vue).app-deck
+	.card
+	.inline-badges
+	.icon-badge:has(.text-icon) {
+	display: none !important;
+}
+
+:is(#content, #content-vue).app-deck .card .inline-badges {
+	display: flex;
+	flex-wrap: nowrap !important;
+	gap: 6px;
+	margin-inline-start: auto;
+}
+
+:is(#content, #content-vue).app-deck .card .inline-badges .icon-badge {
+	gap: 2px;
+	color: var(--color-text-maxcontrast);
+	font-size: 12px;
+}
+
+:is(#content, #content-vue).app-deck .card .due[data-thematiq-due] .due--label {
+	display: none;
+}
+
+:is(#content, #content-vue).app-deck .card .due[data-thematiq-due]::after {
+	content: attr(data-thematiq-due);
+	font-size: 12px;
+	line-height: 16px;
+	white-space: nowrap;
+}
+
+:is(#content, #content-vue).app-deck
+	.card
+	.duedate:is([data-due-state='Now'], [data-due-state='Next'])
+	.due {
+	color: var(--color-main-text) !important;
+	font-weight: 600;
+}
+
+/* The person as initials in the primary's tint, from the names
+   js/workplace-apps.js reads off the card; without them Deck's picture stays. */
+
+/* The open card on the board: the primary's ring and tint. */
+
+/* The board title with the number of open cards under it. */
+:is(#content, #content-vue).app-deck .controls .board-title[data-thematiq-open] {
+	display: grid !important;
+	grid-template-columns: auto;
+	gap: 0;
+}
+
+:is(#content, #content-vue).app-deck .controls .board-title[data-thematiq-open] h2 {
+	font-size: 18px !important;
+	line-height: 22px !important;
+}
+
+:is(#content, #content-vue).app-deck
+	.controls
+	.board-title[data-thematiq-open]::after {
+	content: attr(data-thematiq-open);
+	color: var(--color-text-maxcontrast);
+	font-size: 11px;
+	line-height: 14px;
+}
+
+/*
+ * The card's own lines (TbBoard): the project under the title, "From mail:
+ * <sender>" with a mail mark, and the priority mark at the end of the type
+ * line, from the data attributes js/workplace-apps.js sets. A label that
+ * only says the priority is not shown as a label.
+ */
+:is(#content, #content-vue).app-deck .card .card-upper[data-thematiq-project] {
+	flex-wrap: wrap;
+}
+
+:is(#content, #content-vue).app-deck
+	.card
+	.card-upper[data-thematiq-project]::after {
+	content: attr(data-thematiq-project);
+	flex: 1 0 100%;
+	overflow: hidden;
+	margin-top: 4px;
+	color: var(--color-text-maxcontrast);
+	font-size: 12px;
+	line-height: 16px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+:is(#content, #content-vue).app-deck
+	.card
+	.card-controls[data-thematiq-mail]::before {
+	content: attr(data-thematiq-mail);
+	display: block;
+	overflow: hidden;
+	margin-bottom: 6px;
+	padding-inline-start: 19px;
+	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235e6168' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zM22 6l-10 7L2 6'/%3E%3C/svg%3E")
+		left center / 14px 14px no-repeat;
+	color: var(--color-text-maxcontrast);
+	font-size: 12px;
+	line-height: 16px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+:is(#content, #content-vue).app-deck .card .labels li[data-thematiq-priority] {
+	display: none !important;
+}
+
+:is(#content, #content-vue).app-deck
+	.card
+	.card-labels[data-thematiq-priority]::after {
+	content: '';
+	flex: none;
+	width: 16px;
+	height: 16px;
+	margin-inline-start: auto;
+	background-color: var(--thematiq-deck-status-hold-ring);
+	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 13 6-6 6 6M6 19l6-6 6 6'/%3E%3C/svg%3E")
+		center / 16px 16px no-repeat;
+}
+
+:is(#content, #content-vue).app-deck
+	.card
+	.avatars
+	.avatardiv[data-thematiq-initials]
+	img {
+	display: none !important;
+}
+
+:is(#content, #content-vue).app-deck
+	.card
+	.avatars
+	.avatardiv[data-thematiq-initials]::after {
+	content: attr(data-thematiq-initials);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	border-radius: 50%;
+	background-color: var(--color-primary-element-light);
+	color: var(--color-primary-element-light-text, var(--color-primary-element));
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 22px;
+}

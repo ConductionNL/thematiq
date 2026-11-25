@@ -1,7 +1,7 @@
 # own-component-preview Specification
 
 ## Purpose
-TBD - created by archiving change authoring-own-markup-preview. Update Purpose after archive.
+A safe preview of a builder's own HTML and CSS in the component playground: rendered in a sandboxed frame without scripts, cleaned against an allowlist on every render, wearing the live house style in light or dark, and saved by an administrator.
 
 ## Requirements
 

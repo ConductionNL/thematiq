@@ -49,4 +49,76 @@ class AdminEnvironmentLineTest extends TestCase {
 			message: 'The page must not offer a control that writes the value.'
 		);
 	}//end testTheEnvironmentLineIsReadOnly()
+
+	/**
+	 * The heading row holds the title, the environment chip and the board's line.
+	 *
+	 * @spec openspec/changes/admin-pages-as-the-tq-boards/specs/admin-settings/spec.md#requirement-settings-hint-text
+	 *
+	 * @return void
+	 */
+	public function testTheHeadingRowIsTheBoards(): void {
+		$template = (string)file_get_contents(dirname(__DIR__, 3) . '/templates/settings/admin.php');
+
+		$start = strpos($template, '<div class="nldesign-settings-header">');
+		$this->assertNotFalse(condition: $start);
+		$row = substr($template, $start, (strpos($template, '</span>', strpos($template, 'nldesign-settings-header__line')) - $start));
+		$this->assertStringContainsString(needle: '<h2>Thematiq</h2>', haystack: $row);
+		$this->assertStringContainsString(needle: 'class="nldesign-environment__chip"', haystack: $row);
+		$this->assertStringContainsString(
+			needle: "'Choose a token set from a Dutch government body as a base, or adjust single tokens.'",
+			haystack: $row
+		);
+	}//end testTheHeadingRowIsTheBoards()
+
+	/**
+	 * The picker and its actions sit in the Active token set card, with the board's words.
+	 *
+	 * @spec openspec/changes/admin-pages-as-the-tq-boards/specs/admin-settings/spec.md#requirement-the-admin-page-is-drawn-as-tqtheming-req-aset-101
+	 *
+	 * @return void
+	 */
+	public function testThePickerIsTheActiveTokenSetCard(): void {
+		$template = (string)file_get_contents(dirname(__DIR__, 3) . '/templates/settings/admin.php');
+
+		$start = strpos($template, '<section class="nldesign-token-set-selector thematiq-card"');
+		$this->assertNotFalse(condition: $start);
+		$card = substr($template, $start, (strpos($template, '</section>', $start) - $start));
+		foreach (['Active token set', 'Token set', 'Back to the Nextcloud theme', 'Open token set', 'Download token overview'] as $words) {
+			$this->assertStringContainsString(needle: "\$l->t('" . $words . "')", haystack: $card);
+		}
+
+		$ids = [
+			'nldesign-token-set-select',
+			'nldesign-reset-theme-btn',
+			'nldesign-figma-format',
+			'nldesign-dtcg-download',
+			'nldesign-token-reference-link',
+		];
+		foreach ($ids as $id) {
+			$this->assertStringContainsString(needle: 'id="' . $id . '"', haystack: $card);
+		}
+	}//end testThePickerIsTheActiveTokenSetCard()
+
+	/**
+	 * Layout, Website: lettering and Dark variant are cards in one grid, the options inside keep their ids.
+	 *
+	 * @spec openspec/changes/admin-pages-as-the-tq-boards/specs/admin-settings/spec.md#requirement-the-admin-page-is-drawn-as-tqtheming-req-aset-101
+	 *
+	 * @return void
+	 */
+	public function testLayoutLetteringAndDarkAreCardsInOneGrid(): void {
+		$template = (string)file_get_contents(dirname(__DIR__, 3) . '/templates/settings/admin.php');
+
+		$start = strpos($template, '<div class="thematiq-card-grid">');
+		$this->assertNotFalse(condition: $start);
+		$grid = substr($template, $start, (strpos($template, 'phpcs:enable', $start) - $start));
+		foreach (['thematiq-layout-title', 'thematiq-lettering-title', 'thematiq-dark-title'] as $title) {
+			$this->assertStringContainsString(needle: 'id="' . $title . '"', haystack: $grid);
+		}
+
+		foreach (['thematiq-workplace-layout', 'nldesign-hide-slogan', 'nldesign-show-menu-labels', 'nldesign-dark-variants'] as $id) {
+			$this->assertStringContainsString(needle: 'id="' . $id . '"', haystack: $grid);
+		}
+	}//end testLayoutLetteringAndDarkAreCardsInOneGrid()
 }//end class

@@ -93,11 +93,39 @@ describe('the DqKop bar', () => {
 	})
 
 	it("reads the brand block in the bar in the light bar's muted text and border colours", () => {
+		// Important: the nldesign theme forces the header colour on `#header *`.
 		expect(declsOf(`${BAR} .cn-brand-bar__caption`).color).toBe(
-			'var(--color-text-maxcontrast)',
+			'var(--color-text-maxcontrast) !important',
 		)
 		expect(declsOf(`${BAR} .cn-brand-bar__divider`).background).toBe(
 			'var(--color-border)',
 		)
+	})
+
+	it('keeps the bar inside a phone screen (LpMobiel)', () => {
+		expect(
+			declsOf(
+				'body:not(#body-login) #header a.thematiq-brand',
+				'(max-width: 512px)',
+			).width,
+		).toBe('auto')
+		expect(
+			declsOf(
+				'body:not(#body-login) #header .thematiq-brand__caption',
+				'(max-width: 512px)',
+			).display,
+		).toBe('none')
+		expect(
+			declsOf(
+				'body:not(#body-login) #header .header-end > #user-menu',
+				'(max-width: 512px)',
+			).flex,
+		).toBe('none')
+		expect(
+			declsOf(
+				'body:not(#body-login) #header .thematiq-brand__text',
+				'(max-width: 420px)',
+			).display,
+		).toBe('none')
 	})
 })

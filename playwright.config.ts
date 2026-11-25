@@ -17,6 +17,7 @@ import { retriesFor } from './tests/e2e/instance-load'
 export default defineConfig({
 	testDir: './tests/e2e',
 	globalSetup: path.resolve(__dirname, 'tests/e2e/global-setup.ts'),
+	globalTeardown: path.resolve(__dirname, 'tests/e2e/global-teardown.ts'),
 	// 60 s per test, not Playwright's 30. Most specs start by loading a
 	// Nextcloud page, and the admin theming page alone takes about 20 s to its
 	// load event on CI; a test that then switches a token set or uploads one
@@ -85,7 +86,14 @@ export default defineConfig({
 		{
 			name: 'chromium',
 			// Visual specs run only under the opt-in `visual` project (GAP-5).
-			testIgnore: ['**/visual/**'],
+			//
+			// tests/e2e/livepass/ holds one-off live-pass probes of a local lane
+			// (committed with d7173f2d4). They read
+			// $HOME/sig-lanes/livepass/thematiq-work/caseid.txt when the file is
+			// loaded, so on any other machine the whole suite stopped at listing
+			// ("Total: 0 tests in 0 files") whenever no file filter was given,
+			// which is how CI runs it. They are not part of the suite.
+			testIgnore: ['**/visual/**', '**/livepass/**'],
 			use: {
 				storageState: 'tests/e2e/.auth/admin.json',
 			},

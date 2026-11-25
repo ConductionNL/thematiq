@@ -1,0 +1,41 @@
+# Thematiq
+
+> Nextcloud app that applies an organisation's house style (NL Design System token sets, La Suite numerique and custom sets) to every Nextcloud screen, edited live from one admin settings page.
+
+PHP backend with a vanilla JavaScript admin panel. The app id is `thematiq`; the `--nldesign-*` CSS properties belong to the NL Design System and keep their names.
+
+## Start here
+
+- [README](README.md): features, installation and the token sets the app ships
+- [AGENTS.md](AGENTS.md): setup, build, test, lint and commit rules for coding agents
+- [CONTRIBUTING](CONTRIBUTING.md): branching, pull requests, quality checks and releases
+- [Project overview](project.md): architecture summary, CSS layers and configuration keys
+
+## Docs
+
+- [User guide](docs/intro.md): entry page of the documentation site
+- [Installation](docs/getting-started/installation.md): install the app from the App Store
+- [Features](docs/features/README.md): every feature and the standards it supports
+- [Token sets](docs/reference/token-sets/index.md): the shipped token sets
+- [Token architecture](docs/reference/tokens.md): how NL Design System tokens map onto Nextcloud styling
+- [Command line](docs/features/command-line.md): occ commands
+- [Developer guide](docs/reference/development.md): branching and development workflow
+
+## API
+
+- [OpenAPI document](openapi.json): public REST endpoints (token sets, shell tokens, health, metrics and more)
+- [Shell tokens API](docs/features/shell-tokens-api.md): read the house style from another product
+- [Metrics and health](docs/features/metrics-and-health.md): health and Prometheus metrics endpoints
+
+## Architecture and specs
+
+- [Architecture decisions](docs/adr/README.md): decision records with their sources
+- [OpenSpec config](openspec/config.yaml): project context and rules for changes
+- [Specs](openspec/specs/): current requirements per capability
+- [Changes](openspec/changes/): open changes; shipped ones are in openspec/changes/archive/
+
+## Optional
+
+- [Token set manifest](token-sets.json): metadata of the shipped token sets
+- [Design systems](design-systems.json): stylesheet bundles per design system
+- [Changelog](CHANGELOG.md): release history

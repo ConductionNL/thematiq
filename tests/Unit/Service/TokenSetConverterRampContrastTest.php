@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 
 declare(strict_types=1);
@@ -29,7 +29,7 @@ use Psr\Log\LoggerInterface;
  * still stands apart from the page background; otherwise the role takes the
  * default the mapping rule names, so the set keeps its full semantic layer.
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 class TokenSetConverterRampContrastTest extends TestCase {
 
@@ -83,7 +83,7 @@ class TokenSetConverterRampContrastTest extends TestCase {
 	 * The exact upload from the issue: the only grey is white, so no role may
 	 * take a value from the ramp. Each one takes its default from the rule instead.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -119,7 +119,7 @@ class TokenSetConverterRampContrastTest extends TestCase {
 	 * rendering is unchanged) instead of leaving the tokens out, because a
 	 * shipped set must declare the required vocabulary itself.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 * @spec openspec/specs/token-sets/spec.md#requirement-shipped-token-set-vocabulary-completeness
 	 *
 	 * @return void
@@ -136,7 +136,7 @@ class TokenSetConverterRampContrastTest extends TestCase {
 	 * A ramp with a real dark grey keeps supplying the roles: the floor
 	 * refuses a pick that blends into the background, nothing else.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */

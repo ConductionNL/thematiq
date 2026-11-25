@@ -74,16 +74,40 @@ function editorApp(textarea, props) {
 }
 
 /**
- * Name the editable region by the text area's own label.
+ * Name the editable region by the text area's own label. CnJsonViewer loads
+ * CodeMirror on demand, so the region may appear after the mount: it is
+ * labelled as soon as it is there.
  *
  * @param {HTMLElement} host The element the editor is mounted in.
  * @param {string} [labelledBy] The id of the field's visible label.
+ * @return {{stop: Function, ready: Promise<HTMLElement>}} Stops waiting, and resolves with the region once it is there and labelled.
  */
 function labelEditor(host, labelledBy) {
-	const content = host.querySelector('.cm-content')
-	if (content !== null && labelledBy) {
-		content.setAttribute('aria-labelledby', labelledBy)
+	let resolveReady
+	const ready = new Promise((resolve) => {
+		resolveReady = resolve
+	})
+	const label = () => {
+		const content = host.querySelector('.cm-content')
+		if (content === null) {
+			return false
+		}
+		if (labelledBy) {
+			content.setAttribute('aria-labelledby', labelledBy)
+		}
+		resolveReady(content)
+		return true
 	}
+	if (label() || typeof MutationObserver !== 'function') {
+		return { stop: () => {}, ready }
+	}
+	const observer = new MutationObserver(() => {
+		if (label()) {
+			observer.disconnect()
+		}
+	})
+	observer.observe(host, { childList: true, subtree: true })
+	return { stop: () => observer.disconnect(), ready }
 }
 
 /**
@@ -94,7 +118,7 @@ function labelEditor(host, labelledBy) {
  * @param {string} [options.language] The language of the code, such as `html` or `css`.
  * @param {string} [options.labelledBy] The id of the field's visible label.
  * @param {string} [options.height] The editor's height.
- * @return {{unmount: Function}} The way to take the editor away again.
+ * @return {{unmount: Function, ready: Promise<HTMLElement>}} The way to take the editor away again, and the editable region once CodeMirror has drawn it.
  */
 function mount(textarea, options = {}) {
 	const host = document.createElement('div')
@@ -107,10 +131,12 @@ function mount(textarea, options = {}) {
 		height: options.height || '180px',
 	})
 	app.mount(host)
-	labelEditor(host, options.labelledBy)
+	const labelling = labelEditor(host, options.labelledBy)
 
 	return {
+		ready: labelling.ready,
 		unmount() {
+			labelling.stop()
 			app.unmount()
 			host.remove()
 			textarea.hidden = false

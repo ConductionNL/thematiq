@@ -25,7 +25,8 @@
 })(typeof window !== 'undefined' ? window : this, function () {
 	'use strict'
 
-	var DROPPED_ELEMENTS = 'script, iframe, object, embed, frame, frameset, base, meta, link'
+	var DROPPED_ELEMENTS =
+		'script, iframe, object, embed, frame, frameset, base, meta, link'
 	var URL_ATTRIBUTES = ['href', 'src', 'xlink:href', 'action', 'formaction']
 
 	/**
@@ -63,11 +64,13 @@
 			node.remove()
 		})
 		body.querySelectorAll('*').forEach(function (node) {
-			Array.prototype.slice.call(node.attributes).forEach(function (attribute) {
-				if (isActive(attribute)) {
-					node.removeAttribute(attribute.name)
-				}
-			})
+			Array.prototype.slice
+				.call(node.attributes)
+				.forEach(function (attribute) {
+					if (isActive(attribute)) {
+						node.removeAttribute(attribute.name)
+					}
+				})
 		})
 		return Array.prototype.slice.call(body.childNodes)
 	}

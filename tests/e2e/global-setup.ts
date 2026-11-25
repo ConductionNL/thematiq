@@ -10,6 +10,7 @@ import * as fs from 'fs'
 
 import { resolveBaseUrl } from './base-url'
 import { waitForCalmInstance } from './instance-load'
+import { confirmRestrictedSets } from './restricted-sets'
 
 const AUTH_DIR = path.resolve(__dirname, '.auth')
 const STORAGE_STATE = path.join(AUTH_DIR, 'admin.json')
@@ -113,6 +114,35 @@ export default async function globalSetup(config: FullConfig): Promise<void> {
 		)
 	}
 
+	// A fresh account meets Nextcloud's first-run wizard on its first app page, and its modal takes
+	// every click (per-app-theming opens the apps panel). Dismiss it as the admin would: the
+	// wizard's own route records it as seen for this account. No wizard installed: a 404, ignored.
+	await page
+		.waitForFunction(
+			() =>
+				typeof (window as unknown as { OC?: { requestToken?: unknown } }).OC
+					?.requestToken === 'string',
+			null,
+			{ timeout: 30_000 },
+		)
+		.catch(() => undefined)
+	await page
+		.evaluate(async () => {
+			const OC = (
+				window as unknown as {
+					OC?: { generateUrl: (u: string) => string; requestToken: string }
+				}
+			).OC
+			if (OC === undefined) return
+			await fetch(OC.generateUrl('/apps/firstrunwizard/wizard'), {
+				method: 'DELETE',
+				headers: { requesttoken: OC.requestToken },
+			}).catch(() => undefined)
+		})
+		.catch(() => undefined)
+
 	await context.storageState({ path: STORAGE_STATE })
 	await browser.close()
+
+	await confirmRestrictedSets(baseURL, username, password)
 }

@@ -28,6 +28,10 @@
 		// `|| {}` fallback keeps admin.js working even if the helper script is absent.
 		var TT =
 			(typeof window !== 'undefined' && window.NldesignTokenTransforms) || {}
+		// The upload result model (js/lib/uploadResult.js, loaded before this one).
+		var UR = window.ThematiqUploadResult
+		// The id of the set the last upload stored, for its Incomplete set pill.
+		var lastUploadId = null
 
 		/**
 		 * Show a transient toast, never breaking the flow that raised it.
@@ -1487,7 +1491,7 @@
 				.then(function (data) {
 					if (data.error === 'restricted_set_not_confirmed') {
 						// Another organisation's house style, not confirmed
-						// (openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md).
+						// (openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md).
 						notify(
 							t(
 								'thematiq',
@@ -1587,37 +1591,6 @@
 				})
 		}
 
-		/** One table row per diff, swatches for colours — shared by both surfaces. */
-		function themingRowsHtml(diffs) {
-			return diffs
-				.map(function (diff) {
-					var cell = function (value) {
-						if (diff.kind === 'color' && value) {
-							return (
-								'<span class="nldesign-dialog-swatch" style="background:'
-								+ escapeHtml(value)
-								+ '"></span> '
-								+ escapeHtml(value)
-							)
-						}
-						return escapeHtml(value || '')
-					}
-					return (
-						'<tr><td>'
-						+ escapeHtml(diff.label)
-						+ '</td><td>'
-						+ cell(diff.current)
-						+ '</td><td>'
-						+ cell(diff.proposed)
-						+ (diff.proposedNote
-							? ' ' + escapeHtml(diff.proposedNote)
-							: '')
-						+ '</td></tr>'
-					)
-				})
-				.join('')
-		}
-
 		function fetchCurrentTheming() {
 			return fetch(OC.generateUrl('/apps/thematiq/settings/theming'), {
 				headers: { requesttoken: OC.requestToken },
@@ -1637,7 +1610,7 @@
 						t,
 					)
 					if (plan.mode === 'reset') {
-						showThemingResetDialog(tokenSetData, currentTheming)
+						showThemingResetDialog(plan.diffs)
 					} else if (plan.mode === 'match') {
 						showThemingDialog(
 							tokenSetData,
@@ -1659,178 +1632,23 @@
 		// background the way core's own undo arrows do. Same overlay id as the
 		// match dialog, so the accessibility helpers and the specs that look
 		// for it keep working.
-		function showThemingResetDialog(tokenSetData, currentTheming) {
+		function showThemingResetDialog(diffs) {
 			var existing = document.getElementById('nldesign-theming-dialog-overlay')
 			if (existing) existing.remove()
-
-			var defaultPrimary = currentTheming.default_primary_color || '#00679e'
-			var defaultBackground =
-				currentTheming.default_background_color || defaultPrimary
-			var defaultLogo = OC.imagePath('core', 'logo/logo.svg')
-			var currentBg = currentTheming.background_color || defaultBackground
-			var currentLogoUrl = currentTheming.logo_url || ''
-			var defaultLabel = escapeHtml(t('thematiq', 'Nextcloud default'))
-
-			var rows = ''
-			function swatchCell(hex) {
-				return (
-					'<span class="nldesign-dialog-swatch" style="background:'
-					+ escapeHtml(hex)
-					+ '"></span> '
-					+ escapeHtml(hex)
-				)
-			}
-			if (currentTheming.primary_color) {
-				rows +=
-					'<tr><td>'
-					+ escapeHtml(t('thematiq', 'Primary color'))
-					+ '</td><td>'
-					+ swatchCell(currentTheming.primary_color)
-					+ '</td><td>'
-					+ swatchCell(defaultPrimary)
-					+ ' '
-					+ defaultLabel
-					+ '</td></tr>'
-			}
-			if (currentTheming.background_color) {
-				rows +=
-					'<tr><td>'
-					+ escapeHtml(t('thematiq', 'Background color'))
-					+ '</td><td>'
-					+ swatchCell(currentTheming.background_color)
-					+ '</td><td>'
-					+ swatchCell(defaultBackground)
-					+ ' '
-					+ defaultLabel
-					+ '</td></tr>'
-			}
-			if (currentTheming.has_custom_logo === true) {
-				rows +=
-					'<tr><td>'
-					+ escapeHtml(t('thematiq', 'Logo'))
-					+ '</td><td>'
-					+ escapeHtml(t('thematiq', '(custom logo)'))
-					+ '</td><td>'
-					+ escapeHtml(t('thematiq', 'Nextcloud logo'))
-					+ '</td></tr>'
-			}
-			if (currentTheming.has_custom_background === true) {
-				rows +=
-					'<tr><td>'
-					+ escapeHtml(t('thematiq', 'Background image'))
-					+ '</td><td>'
-					+ escapeHtml(t('thematiq', '(custom)'))
-					+ '</td><td>'
-					+ defaultLabel
-					+ '</td></tr>'
+			if (window.ThematiqThemingUpdateDialog === undefined) {
+				return
 			}
 
-			var dialogHtml =
-				''
-				+ '<div id="nldesign-theming-dialog-overlay" class="nldesign-dialog-overlay">'
-				+ '  <div class="nldesign-dialog">'
-				+ '    <h3>'
-				+ escapeHtml(
-					t('thematiq', 'Reset Nextcloud theming to its defaults?'),
-				)
-				+ '</h3>'
-				+ '    <div class="nldesign-dialog-previews">'
-				+ '      <div class="nldesign-dialog-preview-col">'
-				+ '        <span class="nldesign-dialog-preview-label">'
-				+ escapeHtml(t('thematiq', 'Current'))
-				+ '</span>'
-				+ '        <div class="nldesign-dialog-preview-box" style="background-color:'
-				+ escapeHtml(currentBg)
-				+ ';'
-				+ (currentTheming.has_custom_background
-				&& currentTheming.background_url
-					? 'background-image:url('
-						+ escapeHtml(currentTheming.background_url)
-						+ ');background-size:cover;'
-					: '')
-				+ '">'
-				+ (currentLogoUrl
-					? '          <img class="nldesign-dialog-preview-logo" src="'
-						+ escapeHtml(currentLogoUrl)
-						+ '" alt="'
-						+ escapeHtml(t('thematiq', 'Current logo'))
-						+ '">'
-					: '')
-				+ '        </div>'
-				+ '      </div>'
-				+ '      <div class="nldesign-dialog-preview-col">'
-				+ '        <span class="nldesign-dialog-preview-label">'
-				+ escapeHtml(t('thematiq', 'Proposed'))
-				+ '</span>'
-				+ '        <div class="nldesign-dialog-preview-box" style="background-color:'
-				+ escapeHtml(defaultBackground)
-				+ ';">'
-				+ '          <img class="nldesign-dialog-preview-logo" src="'
-				+ escapeHtml(defaultLogo)
-				+ '" alt="'
-				+ escapeHtml(t('thematiq', 'Nextcloud logo'))
-				+ '">'
-				+ '        </div>'
-				+ '      </div>'
-				+ '    </div>'
-				+ '    <table class="nldesign-dialog-table">'
-				+ '      <thead><tr><th>'
-				+ escapeHtml(t('thematiq', 'Setting'))
-				+ '</th><th>'
-				+ escapeHtml(t('thematiq', 'Current'))
-				+ '</th><th>'
-				+ escapeHtml(t('thematiq', 'Proposed'))
-				+ '</th></tr></thead>'
-				+ '      <tbody>'
-				+ rows
-				+ '</tbody>'
-				+ '    </table>'
-				+ '    <p class="nldesign-dialog-hint">'
-				+ escapeHtml(
-					t(
-						'thematiq',
-						"Stock Nextcloud means Nextcloud's own colors and logo. Everything Thematiq synced into Nextcloud theming is undone; the token set itself is already applied.",
-					),
-				)
-				+ '</p>'
-				+ '    <div class="nldesign-dialog-actions">'
-				+ '      <button class="nldesign-dialog-cancel">'
-				+ escapeHtml(t('thematiq', 'Cancel'))
-				+ '</button>'
-				+ '      <button class="nldesign-dialog-confirm">'
-				+ escapeHtml(t('thematiq', 'Reset theming'))
-				+ '</button>'
-				+ '    </div>'
-				+ '  </div>'
-				+ '</div>'
-
-			document.body.insertAdjacentHTML('beforeend', dialogHtml)
-			var overlay = document.getElementById('nldesign-theming-dialog-overlay')
-
-			makeDialogAccessible(overlay, function () {
-				closeDialogOverlay(overlay)
-			})
-			overlay
-				.querySelector('.nldesign-dialog-cancel')
-				.addEventListener('click', function () {
-					closeDialogOverlay(overlay)
-				})
-			overlay.addEventListener('click', function (e) {
-				if (e.target === overlay) {
-					closeDialogOverlay(overlay)
-				}
-			})
-
-			overlay
-				.querySelector('.nldesign-dialog-confirm')
-				.addEventListener('click', function () {
-					var btn = this
+			window.ThematiqThemingUpdateDialog.open({
+				mode: 'reset',
+				diffs: diffs,
+				onConfirm: function (dialog, btn) {
 					btn.disabled = true
 					btn.textContent = t('thematiq', 'Resetting…')
 
 					applyThemingPlan({ mode: 'reset', diffs: [], payload: null })
 						.then(function () {
-							closeDialogOverlay(overlay)
+							dialog.close()
 							notify(
 								t(
 									'thematiq',
@@ -1839,210 +1657,42 @@
 							)
 						})
 						.catch(function (error) {
-							closeDialogOverlay(overlay)
+							dialog.close()
 							console.error('Error resetting theming:', error)
 							notify(
 								t('thematiq', 'Failed to reset Nextcloud theming.'),
 							)
 						})
-				})
+				},
+			})
 		}
 
 		function showThemingDialog(tokenSetData, currentTheming, proposed, diffs) {
-			// Remove any existing dialog
 			var existing = document.getElementById('nldesign-theming-dialog-overlay')
 			if (existing) existing.remove()
-
-			var tokenSetName = tokenSetData.name
-
-			// Build comparison rows
-			var rows = ''
-			diffs.forEach(function (diff) {
-				var currentDisplay = diff.current || ''
-				var proposedDisplay = diff.proposed || ''
-
-				if (
-					diff.key === 'primary_color'
-					|| diff.key === 'background_color'
-				) {
-					currentDisplay =
-						'<span class="nldesign-dialog-swatch" style="background:'
-						+ escapeHtml(diff.current)
-						+ '"></span> '
-						+ escapeHtml(diff.current)
-					proposedDisplay =
-						'<span class="nldesign-dialog-swatch" style="background:'
-						+ escapeHtml(diff.proposed)
-						+ '"></span> '
-						+ escapeHtml(diff.proposed)
-				} else {
-					currentDisplay = escapeHtml(currentDisplay)
-					proposedDisplay = escapeHtml(proposedDisplay)
-				}
-
-				rows +=
-					'<tr>'
-					+ '<td>'
-					+ escapeHtml(diff.label)
-					+ '</td>'
-					+ '<td>'
-					+ currentDisplay
-					+ '</td>'
-					+ '<td>'
-					+ proposedDisplay
-					+ (diff.proposedNote ? ' ' + escapeHtml(diff.proposedNote) : '')
-					+ '</td>'
-					+ '</tr>'
-			})
-
-			// Build preview boxes
-			var currentBg = currentTheming.background_color || '#0082c9'
-			var proposedBg = proposed.background_color || currentBg
-			var currentLogoUrl = currentTheming.logo_url || ''
-			var proposedLogoPath = proposed.logo
-				? OC.linkTo('thematiq', proposed.logo)
-				: ''
-
-			// Dark logo row — informational only. logo_dark is never sent to
-			// Nextcloud core theming (core has a single logo slot — the open
-			// upstream request is nextcloud/server#47357); nldesign's own
-			// generated dark stylesheet applies it via --nldesign-logo-url.
-			var darkLogoRow = ''
-			if (proposed.logo_dark) {
-				var darkLogoPath = OC.linkTo('thematiq', proposed.logo_dark)
-				darkLogoRow =
-					''
-					+ '    <div class="nldesign-dialog-dark-logo-row">'
-					+ '      <div class="nldesign-dialog-preview-box nldesign-dialog-preview-box--dark">'
-					+ '        <img class="nldesign-dialog-preview-logo" src="'
-					+ escapeHtml(darkLogoPath)
-					+ '" alt="'
-					+ escapeHtml(t('thematiq', 'Dark logo'))
-					+ '">'
-					+ '      </div>'
-					+ '      <p class="nldesign-dialog-hint">'
-					+ escapeHtml(
-						t(
-							'thematiq',
-							"This token set also ships a dark-surface logo. Nextcloud core has no dark logo slot, so it is applied by nldesign's own dark-mode stylesheet, not synced to Nextcloud theming.",
-						),
-					)
-					+ '</p>'
-					+ '    </div>'
+			if (window.ThematiqThemingUpdateDialog === undefined) {
+				return
 			}
 
-			var dialogHtml =
-				''
-				+ '<div id="nldesign-theming-dialog-overlay" class="nldesign-dialog-overlay">'
-				+ '  <div class="nldesign-dialog">'
-				+ '    <h3>'
-				+ escapeHtml(
-					t(
-						'thematiq',
-						'Update Nextcloud theming to match {name}?',
-					).replace('{name}', tokenSetName),
-				)
-				+ '</h3>'
-				+ '    <div class="nldesign-dialog-previews">'
-				+ '      <div class="nldesign-dialog-preview-col">'
-				+ '        <span class="nldesign-dialog-preview-label">'
-				+ escapeHtml(t('thematiq', 'Current'))
-				+ '</span>'
-				+ '        <div class="nldesign-dialog-preview-box" style="background-color:'
-				+ escapeHtml(currentBg)
-				+ ';'
-				+ (currentTheming.has_custom_background
-				&& currentTheming.background_url
-					? 'background-image:url('
-						+ escapeHtml(currentTheming.background_url)
-						+ ');background-size:cover;'
-					: '')
-				+ '">'
-				+ (currentLogoUrl
-					? '          <img class="nldesign-dialog-preview-logo" src="'
-						+ escapeHtml(currentLogoUrl)
-						+ '" alt="Current logo">'
-					: '')
-				+ '        </div>'
-				+ '      </div>'
-				+ '      <div class="nldesign-dialog-preview-col">'
-				+ '        <span class="nldesign-dialog-preview-label">'
-				+ escapeHtml(t('thematiq', 'Proposed'))
-				+ '</span>'
-				+ '        <div class="nldesign-dialog-preview-box" style="background-color:'
-				+ escapeHtml(proposedBg)
-				+ ';">'
-				+ (proposedLogoPath
-					? '          <img class="nldesign-dialog-preview-logo" src="'
-						+ escapeHtml(proposedLogoPath)
-						+ '" alt="Proposed logo">'
-					: currentLogoUrl
-						? '          <img class="nldesign-dialog-preview-logo" src="'
-							+ escapeHtml(currentLogoUrl)
-							+ '" alt="Current logo">'
-						: '')
-				+ '        </div>'
-				+ '      </div>'
-				+ '    </div>'
-				+ '    <table class="nldesign-dialog-table">'
-				+ '      <thead><tr><th>'
-				+ escapeHtml(t('thematiq', 'Setting'))
-				+ '</th><th>'
-				+ escapeHtml(t('thematiq', 'Current'))
-				+ '</th><th>'
-				+ escapeHtml(t('thematiq', 'Proposed'))
-				+ '</th></tr></thead>'
-				+ '      <tbody>'
-				+ rows
-				+ '</tbody>'
-				+ '    </table>'
-				+ '    <p class="nldesign-dialog-hint">'
-				+ escapeHtml(
-					t(
-						'thematiq',
-						'Only values that differ are shown. items without a proposed value are left unchanged.',
-					),
-				)
-				+ '</p>'
-				+ darkLogoRow
-				+ '    <div class="nldesign-dialog-actions">'
-				+ '      <button class="nldesign-dialog-cancel">'
-				+ escapeHtml(t('thematiq', 'Cancel'))
-				+ '</button>'
-				+ '      <button class="nldesign-dialog-confirm">'
-				+ escapeHtml(t('thematiq', 'Update theming'))
-				+ '</button>'
-				+ '    </div>'
-				+ '  </div>'
-				+ '</div>'
-
-			document.body.insertAdjacentHTML('beforeend', dialogHtml)
-
-			var overlay = document.getElementById('nldesign-theming-dialog-overlay')
-
-			makeDialogAccessible(overlay, function () {
-				closeDialogOverlay(overlay)
-			})
-
-			// Cancel button
-			overlay
-				.querySelector('.nldesign-dialog-cancel')
-				.addEventListener('click', function () {
-					closeDialogOverlay(overlay)
+			// logo_dark is never sent to Nextcloud core theming (core has a
+			// single logo slot, nextcloud/server#47357); thematiq's dark
+			// stylesheet applies it. The row says what the set brings.
+			var rows = diffs.slice()
+			if (proposed.logo_dark) {
+				rows.push({
+					key: 'logo_dark',
+					label: t('thematiq', 'Dark logo'),
+					kind: 'text',
+					current: t('thematiq', '(default)'),
+					proposed: String(proposed.logo_dark).split('/').pop(),
 				})
+			}
 
-			// Close on overlay click
-			overlay.addEventListener('click', function (e) {
-				if (e.target === overlay) {
-					closeDialogOverlay(overlay)
-				}
-			})
-
-			// Confirm button
-			overlay
-				.querySelector('.nldesign-dialog-confirm')
-				.addEventListener('click', function () {
-					var btn = this
+			window.ThematiqThemingUpdateDialog.open({
+				mode: 'match',
+				setName: tokenSetData.name,
+				diffs: rows,
+				onConfirm: function (dialog, btn) {
 					btn.disabled = true
 					btn.textContent = t('thematiq', 'Updating...')
 
@@ -2096,7 +1746,7 @@
 							return response.json()
 						})
 						.then(function (data) {
-							closeDialogOverlay(overlay)
+							dialog.close()
 							if (data.status === 'ok') {
 								// Core regenerates its theme stylesheets from the new
 								// values; re-request them and update core's own panel
@@ -2116,13 +1766,14 @@
 							}
 						})
 						.catch(function (error) {
-							closeDialogOverlay(overlay)
+							dialog.close()
 							console.error('Error updating theming:', error)
 							notify(
 								t('thematiq', 'Failed to update Nextcloud theming.'),
 							)
 						})
-				})
+				},
+			})
 		}
 
 		/**
@@ -2169,118 +1820,6 @@
 		 * focus was never moved into the dialog on open or restored to the
 		 * triggering control on close (WCAG 2.1.1 Keyboard / 2.4.3).
 		 * ========================================================================== */
-
-		/**
-		 * Return the currently visible, non-disabled focusable elements inside a
-		 * container, in DOM order.
-		 *
-		 * Visibility is checked via computed `display`/`visibility` rather than
-		 * `offsetParent` — `offsetParent` is also null for `position: fixed`
-		 * elements even when they are visible, which would wrongly exclude a
-		 * fixed-position dialog's own controls from the focus trap.
-		 */
-		function getFocusableElements(container) {
-			var candidates = container.querySelectorAll(
-				'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-			)
-			return Array.prototype.filter.call(candidates, function (el) {
-				if (el.disabled === true) {
-					return false
-				}
-				var style = window.getComputedStyle(el)
-				return style.display !== 'none' && style.visibility !== 'hidden'
-			})
-		}
-
-		/**
-		 * Wire a hand-rolled overlay dialog for keyboard use: WAI-ARIA `dialog`
-		 * role, focus moved to the first focusable control on open, Tab/Shift+Tab
-		 * trapped within the dialog, Escape invoking the caller's close handler,
-		 * and focus restored to the element that had focus before the dialog
-		 * opened once it closes.
-		 *
-		 * @param {HTMLElement} overlay The `.nldesign-dialog-overlay` element already inserted into the DOM.
-		 * @param {Function}    closeFn Called when Escape is pressed; must remove the overlay (e.g. via closeDialogOverlay()).
-		 */
-		function makeDialogAccessible(overlay, closeFn) {
-			var dialogEl = overlay.querySelector('.nldesign-dialog')
-			if (dialogEl === null) {
-				return
-			}
-
-			var titleEl = dialogEl.querySelector('h3')
-			if (titleEl !== null) {
-				if (!titleEl.id) {
-					titleEl.id =
-						'nldesign-dialog-title-'
-						+ Math.random().toString(36).slice(2)
-				}
-				dialogEl.setAttribute('aria-labelledby', titleEl.id)
-			}
-			dialogEl.setAttribute('role', 'dialog')
-			dialogEl.setAttribute('aria-modal', 'true')
-			if (!dialogEl.hasAttribute('tabindex')) {
-				dialogEl.setAttribute('tabindex', '-1')
-			}
-
-			var previouslyFocused = document.activeElement
-			var initialFocusable = getFocusableElements(dialogEl)
-			;(initialFocusable[0] || dialogEl).focus()
-
-			function keydownHandler(e) {
-				if (e.key === 'Escape' || e.keyCode === 27) {
-					e.preventDefault()
-					closeFn()
-					return
-				}
-				if (e.key === 'Tab' || e.keyCode === 9) {
-					var items = getFocusableElements(dialogEl)
-					if (items.length === 0) {
-						return
-					}
-					var first = items[0]
-					var last = items[items.length - 1]
-					if (e.shiftKey && document.activeElement === first) {
-						e.preventDefault()
-						last.focus()
-					} else if (!e.shiftKey && document.activeElement === last) {
-						e.preventDefault()
-						first.focus()
-					}
-				}
-			}
-
-			overlay.addEventListener('keydown', keydownHandler)
-
-			// Teardown hook consumed by closeDialogOverlay() so every dialog-close
-			// path (Cancel, Escape, click-outside, successful submit) restores
-			// focus consistently.
-			overlay.nldesignA11yCleanup = function () {
-				overlay.removeEventListener('keydown', keydownHandler)
-				if (
-					previouslyFocused !== null
-					&& typeof previouslyFocused.focus === 'function'
-				) {
-					previouslyFocused.focus()
-				}
-			}
-		}
-
-		/**
-		 * Remove a hand-rolled overlay dialog from the DOM, running its
-		 * accessibility cleanup (focus restore) first. Safe to call more than
-		 * once or with an already-detached overlay.
-		 */
-		function closeDialogOverlay(overlay) {
-			if (overlay === null || overlay === undefined) {
-				return
-			}
-			if (typeof overlay.nldesignA11yCleanup === 'function') {
-				overlay.nldesignA11yCleanup()
-				overlay.nldesignA11yCleanup = null
-			}
-			overlay.remove()
-		}
 
 		// Handle hide slogan checkbox
 		if (hideSloganCheckbox) {
@@ -2639,6 +2178,8 @@
 		 * server derives when there is none (the field's placeholder).
 		 */
 		var tokenEditorDark = {}
+		// How many overrides the edited set holds on the server, for the reset dialog.
+		var tokenEditorSavedCount = null
 		var tokenEditorDarkDerived = {}
 		// Registry from server: token name → { tab, type, label }
 		var tokenRegistry = {}
@@ -2859,6 +2400,7 @@
 								+ Object.keys(tokenInternal).length
 					tokenTabLabels = data.tabs || {}
 					var overrides = data.overrides || {}
+					tokenEditorSavedCount = Object.keys(overrides).length
 					tokenEditorDark = Object.assign({}, data.darkOverrides || {})
 					tokenEditorDarkDerived = data.darkDerived || {}
 					// Read resolved values from the live CSS stack.
@@ -2894,8 +2436,10 @@
 					renderMarkup(
 						container,
 						'<p class="settings-hint">'
-						+ escapeHtml(t('thematiq', 'Could not load token editor.'))
-						+ '</p>',
+							+ escapeHtml(
+								t('thematiq', 'Could not load token editor.'),
+							)
+							+ '</p>',
 					)
 				})
 		}
@@ -2957,96 +2501,96 @@
 			renderMarkup(
 				container,
 				''
-				+ '<div class="nldesign-token-editor">'
-				+ '<div class="nldesign-token-editor-header">'
-				+ '<h3>'
-				+ escapeHtml(t('thematiq', 'Custom token overrides'))
-				+ '</h3>'
-				+ '<div class="nldesign-token-editor-actions">'
-				+ '<button type="button" class="nldesign-btn nldesign-btn--small" id="nldesign-export-btn">'
-				+ escapeHtml(t('thematiq', 'Download'))
-				+ '</button>'
-				// A real button, so it is drawn like the ones beside it; the file
-				// input stays hidden and is only opened once the dialog is read.
-				+ '<button type="button" class="nldesign-btn nldesign-btn--small" id="nldesign-import-btn">'
-				+ escapeHtml(t('thematiq', 'Upload'))
-				+ '</button>'
-				+ '<input type="file" id="nldesign-import-input" accept=".css" style="display:none" aria-label="'
-				+ escapeHtml(t('thematiq', 'Overrides file to upload (CSS)'))
-				+ '">'
-				+ '</div>'
-				+ '</div>'
-				+ '<p class="settings-hint nldesign-token-count" id="nldesign-token-count">'
-				+ escapeHtml(
-					t('thematiq', '{count} editable tokens', {
-						count: tokenEditableCount,
-					}),
-				)
-				+ '</p>'
-				+ '<div class="nldesign-token-search">'
-				+ '<label for="nldesign-token-search">'
-				+ escapeHtml(t('thematiq', 'Search tokens'))
-				+ '</label>'
-				+ '<input type="search" id="nldesign-token-search" autocomplete="off" placeholder="'
-				+ escapeHtml(t('thematiq', 'Name, variable or component'))
-				+ '">'
-				+ '<p class="nldesign-token-search-empty" id="nldesign-token-search-empty" hidden>'
-				+ escapeHtml(t('thematiq', 'No token matches your search.'))
-				+ '</p>'
-				+ '</div>'
-				+ '<div class="nldesign-tabs">'
-				+ tabsHtml
-				+ '</div>'
-				+ panelsHtml
-				+ buildTokenGroups()
-				+ '<div class="nldesign-save-bar">'
-				+ '<span class="nldesign-save-status" id="nldesign-save-status"></span>'
-				+ '<button class="nldesign-btn nldesign-btn--primary" id="nldesign-save-btn">'
-				+ escapeHtml(t('thematiq', 'Save overrides'))
-				+ '</button>'
-				+ '</div>'
-				+ '</div>'
-				// The way back. "Do not ask again" lives inside a dialog the
-				// admin has just dismissed, so without these two the offer to
-				// keep a set of changes as its own theme would be gone for good
-				// after one careless click. Worded the same way round as that
-				// dialog: ticked means "stop asking".
-				+ '<div class="nldesign-confirm-controls">'
-				// Nextcloud's own base tokens stay locked until asked for; see
-				// baseTokensUnlocked and confirmBaseUnlock(). With the editor's
-				// other settings, as a checkbox like them.
-				+ '<div class="nldesign-base-unlock">'
-				+ '<input type="checkbox" class="checkbox" id="nldesign-base-unlock"'
-				+ (baseTokensUnlocked === true ? ' checked' : '')
-				+ '>'
-				+ '<label for="nldesign-base-unlock">'
-				+ escapeHtml(t('thematiq', "Also edit Nextcloud's base tokens"))
-				+ '</label>'
-				+ '</div>'
-				+ '<div>'
-				+ '<input type="checkbox" class="checkbox" id="nldesign-confirm-save-stock">'
-				+ '<label for="nldesign-confirm-save-stock">'
-				+ escapeHtml(
-					t(
-						'thematiq',
-						"Don't ask before saving while the stock Nextcloud theme is active",
-					),
-				)
-				+ '</label>'
-				+ '</div>'
-				+ '<div>'
-				+ '<input type="checkbox" class="checkbox" id="nldesign-confirm-save-theme">'
-				+ '<label for="nldesign-confirm-save-theme">'
-				+ escapeHtml(
-					t(
-						'thematiq',
-						"Don't ask before saving while a token set is active",
-					),
-				)
-				+ '</label>'
-				+ '</div>'
-				+ '</div>'
-				+ '<div id="nldesign-import-result" class="nldesign-import-result" style="display:none"></div>',
+					+ '<div class="nldesign-token-editor">'
+					+ '<div class="nldesign-token-editor-header">'
+					+ '<h3>'
+					+ escapeHtml(t('thematiq', 'Custom token overrides'))
+					+ '</h3>'
+					+ '<div class="nldesign-token-editor-actions">'
+					+ '<button type="button" class="nldesign-btn nldesign-btn--small" id="nldesign-export-btn">'
+					+ escapeHtml(t('thematiq', 'Download'))
+					+ '</button>'
+					// A real button, so it is drawn like the ones beside it; the file
+					// input stays hidden and is only opened once the dialog is read.
+					+ '<button type="button" class="nldesign-btn nldesign-btn--small" id="nldesign-import-btn">'
+					+ escapeHtml(t('thematiq', 'Upload'))
+					+ '</button>'
+					+ '<input type="file" id="nldesign-import-input" accept=".css" style="display:none" aria-label="'
+					+ escapeHtml(t('thematiq', 'Overrides file to upload (CSS)'))
+					+ '">'
+					+ '</div>'
+					+ '</div>'
+					+ '<p class="settings-hint nldesign-token-count" id="nldesign-token-count">'
+					+ escapeHtml(
+						t('thematiq', '{count} editable tokens', {
+							count: tokenEditableCount,
+						}),
+					)
+					+ '</p>'
+					+ '<div class="nldesign-token-search">'
+					+ '<label for="nldesign-token-search">'
+					+ escapeHtml(t('thematiq', 'Search tokens'))
+					+ '</label>'
+					+ '<input type="search" id="nldesign-token-search" autocomplete="off" placeholder="'
+					+ escapeHtml(t('thematiq', 'Name, variable or component'))
+					+ '">'
+					+ '<p class="nldesign-token-search-empty" id="nldesign-token-search-empty" hidden>'
+					+ escapeHtml(t('thematiq', 'No token matches your search.'))
+					+ '</p>'
+					+ '</div>'
+					+ '<div class="nldesign-tabs">'
+					+ tabsHtml
+					+ '</div>'
+					+ panelsHtml
+					+ buildTokenGroups()
+					+ '<div class="nldesign-save-bar">'
+					+ '<span class="nldesign-save-status" id="nldesign-save-status"></span>'
+					+ '<button class="nldesign-btn nldesign-btn--primary" id="nldesign-save-btn">'
+					+ escapeHtml(t('thematiq', 'Save overrides'))
+					+ '</button>'
+					+ '</div>'
+					+ '</div>'
+					// The way back. "Do not ask again" lives inside a dialog the
+					// admin has just dismissed, so without these two the offer to
+					// keep a set of changes as its own theme would be gone for good
+					// after one careless click. Worded the same way round as that
+					// dialog: ticked means "stop asking".
+					+ '<div class="nldesign-confirm-controls">'
+					// Nextcloud's own base tokens stay locked until asked for; see
+					// baseTokensUnlocked and confirmBaseUnlock(). With the editor's
+					// other settings, as a checkbox like them.
+					+ '<div class="nldesign-base-unlock">'
+					+ '<input type="checkbox" class="checkbox" id="nldesign-base-unlock"'
+					+ (baseTokensUnlocked === true ? ' checked' : '')
+					+ '>'
+					+ '<label for="nldesign-base-unlock">'
+					+ escapeHtml(t('thematiq', "Also edit Nextcloud's base tokens"))
+					+ '</label>'
+					+ '</div>'
+					+ '<div>'
+					+ '<input type="checkbox" class="checkbox" id="nldesign-confirm-save-stock">'
+					+ '<label for="nldesign-confirm-save-stock">'
+					+ escapeHtml(
+						t(
+							'thematiq',
+							"Don't ask before saving while the stock Nextcloud theme is active",
+						),
+					)
+					+ '</label>'
+					+ '</div>'
+					+ '<div>'
+					+ '<input type="checkbox" class="checkbox" id="nldesign-confirm-save-theme">'
+					+ '<label for="nldesign-confirm-save-theme">'
+					+ escapeHtml(
+						t(
+							'thematiq',
+							"Don't ask before saving while a token set is active",
+						),
+					)
+					+ '</label>'
+					+ '</div>'
+					+ '</div>'
+					+ '<div id="nldesign-import-result" class="nldesign-import-result" style="display:none"></div>',
 			)
 
 			container.querySelectorAll('.nldesign-tab-btn').forEach(function (btn) {
@@ -3141,49 +2685,12 @@
 		 * @return {void}
 		 */
 		function confirmBaseUnlock(proceed) {
-			var html =
-				'<div class="nldesign-dialog-overlay" id="nldesign-base-unlock-overlay">'
-				+ '<div class="nldesign-dialog nldesign-dialog--small">'
-				+ '<h3>'
-				+ escapeHtml(t('thematiq', "Edit Nextcloud's base tokens?"))
-				+ '</h3>'
-				+ '<p class="settings-hint">'
-				+ escapeHtml(
-					t(
-						'thematiq',
-						'These are the colors and sizes Nextcloud itself is built from, such as the main text color. Changing one changes every part of Nextcloud that reads it, which is far more than the component you are looking at, and not only what this panel shows. To change one component, use its own rows instead.',
-					),
-				)
-				+ '</p>'
-				+ '<div class="nldesign-dialog-actions">'
-				+ '<button class="nldesign-dialog-cancel">'
-				+ escapeHtml(t('thematiq', 'Cancel'))
-				+ '</button>'
-				+ '<button class="nldesign-dialog-confirm nldesign-btn--primary">'
-				+ escapeHtml(t('thematiq', 'Edit them anyway'))
-				+ '</button>'
-				+ '</div>'
-				+ '</div>'
-				+ '</div>'
-
-			document.body.insertAdjacentHTML('beforeend', html)
-			var overlay = document.getElementById('nldesign-base-unlock-overlay')
-
-			function close() {
-				overlay.remove()
-			}
-
-			makeDialogAccessible(overlay, close)
-
-			overlay
-				.querySelector('.nldesign-dialog-cancel')
-				.addEventListener('click', close)
-			overlay
-				.querySelector('.nldesign-dialog-confirm')
-				.addEventListener('click', function () {
-					close()
-					proceed()
+			if (window.ThematiqBaseTokensDialog !== undefined) {
+				window.ThematiqBaseTokensDialog.open({
+					opener: document.getElementById('nldesign-base-unlock'),
+					onConfirm: proceed,
 				})
+			}
 		}
 
 		/**
@@ -3685,9 +3192,7 @@
 		 */
 		function paintSwatches(name, value) {
 			document
-				.querySelectorAll(
-					tokenSelector('.nldesign-color-swatch', name),
-				)
+				.querySelectorAll(tokenSelector('.nldesign-color-swatch', name))
 				.forEach(function (swatch) {
 					var fill = swatch.querySelector('.nldesign-color-swatch-fill')
 					var picker = swatch.querySelector('.nldesign-color-picker')
@@ -3817,7 +3322,8 @@
 				return ''
 			}
 			var resolved =
-				typeof window !== 'undefined' && typeof window.getComputedStyle === 'function'
+				typeof window !== 'undefined'
+				&& typeof window.getComputedStyle === 'function'
 					? window
 							.getComputedStyle(document.documentElement)
 							.getPropertyValue(target)
@@ -4739,20 +4245,6 @@
 		}
 
 		/**
-		 * The markup both dialogs share for the "do not ask again" row.
-		 *
-		 * @return {string} The row's HTML.
-		 */
-		function dontAskAgainRow() {
-			return (
-				'<label class="nldesign-dialog-dontask-row">'
-				+ '<input type="checkbox" class="nldesign-dialog-dontask">'
-				+ escapeHtml(t('thematiq', 'Do not ask again'))
-				+ '</label>'
-			)
-		}
-
-		/**
 		 * Ask before saving, and run `proceed` with the chosen route.
 		 *
 		 * `proceed` is called with `'new-set'` to keep the edits as a token set
@@ -4792,147 +4284,8 @@
 		 * @return {void}
 		 */
 		function openStockSaveDialog(proceed) {
-			var html =
-				'<div class="nldesign-dialog-overlay" id="nldesign-save-dialog-overlay">'
-				+ '<div class="nldesign-dialog">'
-				+ '<h3>'
-				+ escapeHtml(t('thematiq', 'Keep these changes as a new theme?'))
-				+ '</h3>'
-				+ '<p class="settings-hint">'
-				+ escapeHtml(
-					t(
-						'thematiq',
-						'You are working on the stock Nextcloud theme. Save the changes as a token set of their own, or write them over the Nextcloud theme itself. Writing over it changes Nextcloud for everyone; "Reset theme to Nextcloud" brings the original back.',
-					),
-				)
-				+ '</p>'
-				+ '<label class="nldesign-dialog-field">'
-				+ escapeHtml(t('thematiq', 'Name for the new theme'))
-				+ '<input type="text" id="nldesign-save-newset-name" '
-				+ 'placeholder="'
-				+ escapeHtml(t('thematiq', 'My organisation'))
-				+ '">'
-				+ '</label>'
-				// Where the server's refusal lands. In the dialog, beside the
-				// field that caused it, because the one thing an admin needs
-				// after "that name is taken" is the name still being there to
-				// edit. A toast over a closed dialog loses the whole export.
-				+ '<p class="nldesign-dialog-error" id="nldesign-save-newset-error"'
-				+ ' role="alert" hidden></p>'
-				+ dontAskAgainRow()
-				+ '<div class="nldesign-dialog-actions">'
-				+ '<button class="nldesign-dialog-cancel">'
-				+ escapeHtml(t('thematiq', 'Cancel'))
-				+ '</button>'
-				+ '<button class="nldesign-dialog-overwrite">'
-				+ escapeHtml(t('thematiq', 'No, change the Nextcloud theme'))
-				+ '</button>'
-				+ '<button class="nldesign-dialog-confirm nldesign-btn--primary">'
-				+ escapeHtml(t('thematiq', 'Yes, save as a new theme'))
-				+ '</button>'
-				+ '</div>'
-				+ '</div>'
-				+ '</div>'
-
-			document.body.insertAdjacentHTML('beforeend', html)
-			var overlay = document.getElementById('nldesign-save-dialog-overlay')
-
-			function close() {
-				overlay.remove()
-			}
-
-			makeDialogAccessible(overlay, close)
-			wireDoNotAskAgain(overlay, 'stock')
-
-			overlay
-				.querySelector('.nldesign-dialog-cancel')
-				.addEventListener('click', close)
-			overlay
-				.querySelector('.nldesign-dialog-overwrite')
-				.addEventListener('click', function () {
-					close()
-					proceed('overrides')
-				})
-			overlay
-				.querySelector('.nldesign-dialog-confirm')
-				.addEventListener('click', function () {
-					var nameEl = document.getElementById('nldesign-save-newset-name')
-					if (nameEl === null) {
-						return
-					}
-
-					var name = nameEl.value.trim()
-					if (name === '') {
-						// Refused here rather than at the server, because the
-						// name is the one thing this dialog exists to collect,
-						// and a round trip to be told so loses what was typed.
-						showError(t('thematiq', 'Give the new theme a name.'))
-						return
-					}
-
-					// The dialog STAYS OPEN across the request and closes only
-					// once the set exists. A name collision is the expected
-					// failure here — the server answers 409 with the name it
-					// already has — and the admin's next move is to change one
-					// word and try again, which is only possible if the dialog
-					// and everything typed into it are still on screen.
-					busy(true)
-					showError('')
-					proceed('new-set', name, {
-						done: function () {
-							busy(false)
-							close()
-						},
-						fail: function (message) {
-							busy(false)
-							showError(message)
-						},
-					})
-				})
-
-			/**
-			 * Show, or clear, the server's refusal inside the dialog.
-			 *
-			 * @param {string} message The message, or '' to clear it.
-			 *
-			 * @return {void}
-			 */
-			function showError(message) {
-				var errorEl = document.getElementById('nldesign-save-newset-error')
-				var nameEl = document.getElementById('nldesign-save-newset-name')
-				if (errorEl === null) {
-					return
-				}
-
-				errorEl.textContent = message
-				errorEl.hidden = message === ''
-				if (nameEl === null) {
-					return
-				}
-
-				if (message === '') {
-					nameEl.removeAttribute('aria-invalid')
-					return
-				}
-
-				nameEl.setAttribute('aria-invalid', 'true')
-				nameEl.focus()
-				nameEl.select()
-			}
-
-			/**
-			 * Lock the dialog's controls while the set is being created.
-			 *
-			 * @param {boolean} on Whether a request is in flight.
-			 *
-			 * @return {void}
-			 */
-			function busy(on) {
-				overlay
-					.querySelectorAll('button, input')
-					.forEach(function (control) {
-						control.disabled = on
-					})
+			if (window.ThematiqNewThemeDialog !== undefined) {
+				window.ThematiqNewThemeDialog.open({ proceed: proceed })
 			}
 		}
 
@@ -4951,51 +4304,35 @@
 					: tokenSetSelect !== null
 						? tokenSetSelect.value
 						: ''
-
-			var html =
-				'<div class="nldesign-dialog-overlay" id="nldesign-save-dialog-overlay">'
-				+ '<div class="nldesign-dialog nldesign-dialog--small">'
-				+ '<h3>'
-				+ escapeHtml(t('thematiq', 'Save these overrides?'))
-				+ '</h3>'
-				+ '<p class="settings-hint">'
-				+ escapeHtml(
-					t('thematiq', 'They are applied on top of {set}.', {
-						set: setName,
-					}),
-				)
-				+ '</p>'
-				+ dontAskAgainRow()
-				+ '<div class="nldesign-dialog-actions">'
-				+ '<button class="nldesign-dialog-cancel">'
-				+ escapeHtml(t('thematiq', 'Cancel'))
-				+ '</button>'
-				+ '<button class="nldesign-dialog-confirm nldesign-btn--primary">'
-				+ escapeHtml(t('thematiq', 'Save overrides'))
-				+ '</button>'
-				+ '</div>'
-				+ '</div>'
-				+ '</div>'
-
-			document.body.insertAdjacentHTML('beforeend', html)
-			var overlay = document.getElementById('nldesign-save-dialog-overlay')
-
-			function close() {
-				overlay.remove()
+			if (window.ThematiqSaveOverridesDialog === undefined) {
+				return
 			}
 
-			makeDialogAccessible(overlay, close)
-			wireDoNotAskAgain(overlay, 'theme')
-
-			overlay
-				.querySelector('.nldesign-dialog-cancel')
-				.addEventListener('click', close)
-			overlay
-				.querySelector('.nldesign-dialog-confirm')
-				.addEventListener('click', function () {
-					close()
-					proceed('overrides')
+			var changes = Object.keys(tokenEditorState)
+				.filter(function (name) {
+					return tokenEditorState[name].isDirty === true
 				})
+				.map(function (name) {
+					var state = tokenEditorState[name]
+					var meta = tokenRegistry[name] || tokenInternal[name] || {}
+					return {
+						name: name,
+						label: meta.label || name,
+						was:
+							state.saved !== undefined ? state.saved : state.resolved,
+						becomes: state.current,
+					}
+				})
+			var dialog = window.ThematiqSaveOverridesDialog.open({
+				setName: setName,
+				changes: changes,
+				onConfirm: function () {
+					proceed('overrides')
+				},
+			})
+			if (dialog !== null) {
+				wireDoNotAskAgain(dialog.el, 'theme')
+			}
 		}
 
 		/**
@@ -5630,70 +4967,49 @@
 		}
 
 		/**
-		 * Say what an overrides action does before it is taken.
+		 * Say what an overrides action does before it is taken, in the admin
+		 * dialog frame under "Components and tokens".
 		 *
-		 * @param {string}        id           The overlay's element id.
+		 * @param {string}        id           The dialog's element id.
 		 * @param {string}        title        The dialog heading.
-		 * @param {Array<string>} paragraphs   What the action does, one paragraph each.
+		 * @param {Array<Node>}   body         What the action does.
 		 * @param {string}        confirmLabel The label of the button that goes ahead.
 		 * @param {Function}      proceed      Called when the admin confirms.
 		 *
 		 * @return {void}
 		 */
-		function confirmOverridesAction(
-			id,
-			title,
-			paragraphs,
-			confirmLabel,
-			proceed,
-		) {
-			var html =
-				'<div class="nldesign-dialog-overlay" id="'
-				+ id
-				+ '">'
-				+ '<div class="nldesign-dialog nldesign-dialog--small">'
-				+ '<h3>'
-				+ escapeHtml(title)
-				+ '</h3>'
-				+ paragraphs
-					.map(function (text) {
-						return (
-							'<p class="settings-hint">' + escapeHtml(text) + '</p>'
-						)
-					})
-					.join('')
-				+ '<div class="nldesign-dialog-actions">'
-				+ '<button type="button" class="nldesign-dialog-cancel">'
-				+ escapeHtml(t('thematiq', 'Cancel'))
-				+ '</button>'
-				+ '<button type="button" class="nldesign-dialog-confirm nldesign-btn--primary">'
-				+ escapeHtml(confirmLabel)
-				+ '</button>'
-				+ '</div>'
-				+ '</div>'
-				+ '</div>'
-
-			document.body.insertAdjacentHTML('beforeend', html)
-			var overlay = document.getElementById(id)
-
-			function close() {
-				overlay.remove()
+		function confirmOverridesAction(id, title, body, confirmLabel, proceed) {
+			var frame = window.ThematiqAdminDialog
+			if (frame === undefined) {
+				return
 			}
-
-			makeDialogAccessible(overlay, close)
-
-			overlay
-				.querySelector('.nldesign-dialog-cancel')
-				.addEventListener('click', close)
-			overlay
-				.querySelector('.nldesign-dialog-confirm')
-				.addEventListener('click', function () {
-					close()
-					proceed()
-				})
+			frame.open({
+				id: id,
+				width: 560,
+				eyebrow: t('thematiq', 'Components and tokens'),
+				title: title,
+				body: body,
+				actions: [
+					{
+						label: t('thematiq', 'Cancel'),
+						cancel: true,
+						className: 'nldesign-dialog-cancel',
+					},
+					{
+						label: confirmLabel,
+						variant: 'primary',
+						className: 'nldesign-dialog-confirm',
+						onClick: function (dialog) {
+							dialog.close()
+							proceed()
+						},
+					},
+				],
+			})
 		}
 
 		function confirmExportOverrides() {
+			var h = window.ThematiqAdminDialog.h
 			confirmOverridesAction(
 				'nldesign-export-overrides-overlay',
 				t(
@@ -5704,14 +5020,20 @@
 					{ escape: false },
 				),
 				[
-					t(
-						'thematiq',
-						'This downloads only the values saved for this theme on top of its token set, as custom-overrides.css. Unsaved changes are not in it.',
-					),
-					t(
-						'thematiq',
-						'It is not a complete theme. Use Export as token set to hand the whole theme on, or the configuration bundle to move the complete configuration.',
-					),
+					h('p', {
+						class: 'thematiq-admin-dialog__lead',
+						text: t(
+							'thematiq',
+							'This downloads only the values saved for this theme on top of its token set, as custom-overrides.css. Unsaved changes are not in it.',
+						),
+					}),
+					h('p', {
+						class: 'thematiq-admin-dialog__note',
+						text: t(
+							'thematiq',
+							'It is not a complete theme. Use Export as token set to hand the whole theme on, or the configuration bundle to move the complete configuration.',
+						),
+					}),
 				],
 				t('thematiq', 'Download'),
 				exportOverrides,
@@ -5719,6 +5041,11 @@
 		}
 
 		function confirmImportOverrides() {
+			var frame = window.ThematiqAdminDialog
+			var h = frame.h
+			var chooseFile = function () {
+				document.getElementById('nldesign-import-input').click()
+			}
 			confirmOverridesAction(
 				'nldesign-import-overrides-overlay',
 				t(
@@ -5729,20 +5056,74 @@
 					{ escape: false },
 				),
 				[
-					t(
-						'thematiq',
-						'The values in the file replace every value saved for this theme, straight away. Values the editor does not know are skipped, and unsaved changes are lost.',
+					h('p', {
+						class: 'thematiq-admin-dialog__lead',
+						text: t(
+							'thematiq',
+							'The values in the file immediately replace every saved value of this theme. Values the editor does not know are skipped, and changes not yet saved are lost.',
+						),
+					}),
+					h('div', { class: 'thematiq-admin-dialog__file' }, [
+						h('span', {
+							class: 'thematiq-admin-dialog__file-label',
+							text: t('thematiq', 'File'),
+						}),
+						h('div', { class: 'thematiq-admin-dialog__file-row' }, [
+							h('button', {
+								type: 'button',
+								class: 'thematiq-admin-dialog__button thematiq-admin-dialog__button--secondary',
+								text: t('thematiq', 'Choose file'),
+								on: { click: chooseFile },
+							}),
+							h('span', {
+								class: 'thematiq-admin-dialog__hint',
+								text: t(
+									'thematiq',
+									'custom-overrides.css, CSS only',
+								),
+							}),
+						]),
+					]),
+					frame.notice(
+						t(
+							'thematiq',
+							'After the upload you see how many tokens were imported and how many were skipped because they were not recognised.',
+						),
+						'neutral',
 					),
-					t(
-						'thematiq',
-						'To add a whole theme as a new token set, use Custom token sets further down instead.',
-					),
+					h('p', { class: 'thematiq-admin-dialog__aside' }, [
+						t(
+							'thematiq',
+							'Want to add a whole theme as a new token set? Then use',
+						) + ' ',
+						h('a', {
+							href: '#own-sets',
+							text: t('thematiq', 'Own token sets'),
+						}),
+						'.',
+					]),
 				],
-				t('thematiq', 'Choose file'),
-				function () {
-					document.getElementById('nldesign-import-input').click()
-				},
+				t('thematiq', 'Choose and upload file'),
+				chooseFile,
 			)
+		}
+
+		/**
+		 * Run a panel block's loader now when the block is on screen, else once its
+		 * panel opens: a closed panel asks the server for nothing (PERF-HANDOFF
+		 * thematiq Theming settings). Without js/lib/whenShown.js it runs at once.
+		 *
+		 * @spec openspec/specs/admin-settings/spec.md
+		 * @param {string} id The id of the element the loader fills.
+		 * @param {Function} run The loader.
+		 * @return {void}
+		 */
+		function whenPanelShown(id, run) {
+			if (typeof window.ThematiqWhenShown !== 'function') {
+				run()
+				return
+			}
+			window.ThematiqWhenShown(document.getElementById(id), run)
 		}
 
 		/**
@@ -5924,142 +5305,206 @@
 				existing.remove()
 			}
 
-			var rowsHtml = ''
-			changes.forEach(function (change) {
-				var meta = tokenRegistry[change.name] || {
-					label: change.name,
-					type: 'text',
-				}
-				var isColor = meta.type === 'color'
-				var currentDisp = isColor
-					? '<span class="nldesign-apply-swatch" style="background:'
-						+ escapeHtml(change.current)
-						+ '"></span>'
-						+ escapeHtml(change.current)
-					: escapeHtml(change.current)
-				var newDisp = isColor
-					? '<span class="nldesign-apply-swatch" style="background:'
-						+ escapeHtml(change.newVal)
-						+ '"></span>'
-						+ escapeHtml(change.newVal)
-					: escapeHtml(change.newVal)
-				rowsHtml +=
-					'<tr>'
-					+ '<td><input type="checkbox" class="nldesign-apply-check" data-token="'
-					+ escapeHtml(change.name)
-					+ '" checked></td>'
-					+ '<td><span title="'
-					+ escapeHtml(change.name)
-					+ '">'
-					+ escapeHtml(meta.label)
-					+ '</span></td>'
-					+ '<td>'
-					+ currentDisp
-					+ '</td>'
-					+ '<td>'
-					+ newDisp
-					+ '</td>'
-					+ '</tr>'
-			})
+			var frame = window.ThematiqAdminDialog
+			if (frame === undefined) {
+				saveTokenSet(newTokenSetId, publishMode)
+				return
+			}
+			var h = frame.h
+			var setName =
+				tokenSetsData[newTokenSetId] !== undefined
+					? tokenSetsData[newTokenSetId].name || newTokenSetId
+					: newTokenSetId
 
-			var html =
-				'<div id="nldesign-apply-dialog-overlay" class="nldesign-dialog-overlay">'
-				+ '<div class="nldesign-dialog">'
-				+ '<h3>'
-				+ escapeHtml(
-					t('thematiq', 'Apply token set: {name}').replace(
-						'{name}',
-						newTokenSetId,
-					),
-				)
-				+ '</h3>'
-				+ buildTokenSetWarningsHtml(newTokenSetId)
-				// A set other than the running switch's would be put back within
-				// five minutes; say so before it is applied.
-				+ (runningSwitch !== null && runningSwitch.tokenSet !== newTokenSetId
-					? '<p class="settings-hint nldesign-apply-switch-warning">'
-						+ escapeHtml(runningSwitchText())
-						+ '</p>'
-					: '')
-				+ '<p class="settings-hint">'
-				+ escapeHtml(
-					t(
+			var warnings = h('div', { class: 'thematiq-apply-warnings' })
+			window.NldesignMarkupRender.render(
+				warnings,
+				buildTokenSetWarningsHtml(newTokenSetId)
+					// A set other than the running switch's would be put back within
+					// five minutes; say so before it is applied.
+					+ (runningSwitch !== null
+					&& runningSwitch.tokenSet !== newTokenSetId
+						? '<p class="settings-hint nldesign-apply-switch-warning">'
+							+ escapeHtml(runningSwitchText())
+							+ '</p>'
+						: ''),
+			)
+
+			var chosen = h('span', { class: 'thematiq-admin-dialog__count' })
+			var tokensTable = null
+			var body = [
+				h('p', {
+					class: 'thematiq-admin-dialog__lead',
+					text: t(
 						'thematiq',
-						'These values would change. check which ones to apply to your custom overrides.',
+						'These values change. Tick which ones you take into your own overrides; what stays unticked keeps its current value. The page gets the new house style at once, without reloading.',
+					),
+				}),
+				warnings.childNodes.length > 0 ? warnings : null,
+				h('div', { class: 'thematiq-admin-dialog__toggles' }, [
+					h('button', {
+						type: 'button',
+						id: 'nldesign-apply-select-all',
+						class: 'thematiq-admin-dialog__toggle',
+						text: t('thematiq', 'Select all'),
+					}),
+					h('button', {
+						type: 'button',
+						id: 'nldesign-apply-deselect-all',
+						class: 'thematiq-admin-dialog__toggle',
+						text: t('thematiq', 'Select none'),
+					}),
+					chosen,
+				]),
+				(tokensTable = frame.table(
+					[
+						t('thematiq', 'Take over'),
+						t('thematiq', 'Token'),
+						t('thematiq', 'Current'),
+						t('thematiq', 'New'),
+					],
+					changes.map(function (change) {
+						var meta = tokenRegistry[change.name] || { type: 'text' }
+						var colour = meta.type === 'color'
+						return [
+							h('input', {
+								type: 'checkbox',
+								class: 'nldesign-apply-check',
+								'data-token': change.name,
+								checked: true,
+								'aria-label': t('thematiq', 'Take over {token}', {
+									token: change.name,
+								}),
+							}),
+							h('code', {
+								text: change.name,
+								title: meta.label || change.name,
+							}),
+							frame.value(change.current, {
+								colour: colour,
+								large: true,
+							}),
+							frame.value(change.newVal, {
+								colour: colour,
+								large: true,
+							}),
+						]
+					}),
+				)),
+			]
+			tokensTable.classList.add('thematiq-apply-tokens')
+			tokensTable.querySelector('th').classList.add('hidden-visually')
+			// Core theming as a section of this dialog, ticked by default, so
+			// there is one confirm and not a second dialog afterwards.
+			if (plan.mode !== 'none') {
+				body.push(
+					h('h3', {
+						class: 'thematiq-admin-dialog__subtitle',
+						text: t('thematiq', 'Nextcloud theme'),
+					}),
+					frame.table(
+						[
+							t('thematiq', 'Setting'),
+							t('thematiq', 'Current'),
+							t('thematiq', 'Proposed'),
+						],
+						plan.diffs.map(function (diff) {
+							var colour = diff.kind === 'color'
+							return [
+								diff.label,
+								frame.value(diff.current, {
+									colour: colour,
+									large: true,
+								}),
+								frame.value(diff.proposed, {
+									colour: colour,
+									large: true,
+									note: diff.proposedNote,
+								}),
+							]
+						}),
+					),
+					h(
+						'label',
+						{
+							class: 'thematiq-admin-dialog__check',
+							id: 'nldesign-apply-theming',
+						},
+						[
+							h('input', {
+								type: 'checkbox',
+								id: 'nldesign-apply-theming-check',
+								checked: true,
+							}),
+							h('span', {}, [
+								plan.mode === 'reset'
+									? t(
+											'thematiq',
+											'Also reset the Nextcloud theme to the default',
+										)
+									: t(
+											'thematiq',
+											'Also update the Nextcloud theme',
+										),
+								h('span', {
+									class: 'thematiq-admin-dialog__check-hint',
+									text: t(
+										'thematiq',
+										'Sign-in page, emails and the apps on phone and computer.',
+									),
+								}),
+							]),
+						],
 					),
 				)
-				+ '</p>'
-				+ '<div style="margin-bottom:8px">'
-				+ '<button class="nldesign-apply-dialog-toggle" id="nldesign-apply-select-all">'
-				+ escapeHtml(t('thematiq', 'Select all'))
-				+ '</button>'
-				+ ' / '
-				+ '<button class="nldesign-apply-dialog-toggle" id="nldesign-apply-deselect-all">'
-				+ escapeHtml(t('thematiq', 'Deselect all'))
-				+ '</button>'
-				+ '</div>'
-				+ '<table class="nldesign-apply-dialog-table"><thead><tr>'
-				+ '<th></th>'
-				+ '<th>'
-				+ escapeHtml(t('thematiq', 'Token'))
-				+ '</th>'
-				+ '<th>'
-				+ escapeHtml(t('thematiq', 'Current'))
-				+ '</th>'
-				+ '<th>'
-				+ escapeHtml(t('thematiq', 'New'))
-				+ '</th>'
-				+ '</tr></thead><tbody>'
-				+ rowsHtml
-				+ '</tbody></table>'
-				// Core theming as a SECTION of this dialog, checked by default,
-				// so there is one confirm — not a second modal afterwards.
-				+ (plan.mode !== 'none'
-					? '<div class="nldesign-apply-theming" id="nldesign-apply-theming">'
-						+ '<label class="nldesign-apply-theming__label">'
-						+ '<input type="checkbox" id="nldesign-apply-theming-check" checked> '
-						+ escapeHtml(
-							plan.mode === 'reset'
-								? t(
-										'thematiq',
-										'Also reset Nextcloud theming to its defaults (login page, e-mails, mobile apps)',
-									)
-								: t(
-										'thematiq',
-										'Also update Nextcloud theming (login page, e-mails, mobile apps)',
-									),
-						)
-						+ '</label>'
-						+ '<table class="nldesign-dialog-table"><thead><tr><th>'
-						+ escapeHtml(t('thematiq', 'Setting'))
-						+ '</th><th>'
-						+ escapeHtml(t('thematiq', 'Current'))
-						+ '</th><th>'
-						+ escapeHtml(t('thematiq', 'Proposed'))
-						+ '</th></tr></thead><tbody>'
-						+ themingRowsHtml(plan.diffs)
-						+ '</tbody></table>'
-						+ '</div>'
-					: '')
-				+ '<div class="nldesign-dialog-actions">'
-				+ '<button class="nldesign-dialog-cancel">'
-				+ escapeHtml(t('thematiq', 'Cancel'))
-				+ '</button>'
-				+ '<button class="nldesign-dialog-confirm">'
-				+ escapeHtml(t('thematiq', 'Apply selected'))
-				+ '</button>'
-				+ '</div>'
-				+ '</div>'
-				+ '</div>'
+			}
 
-			document.body.insertAdjacentHTML('beforeend', html)
-			var overlay = document.getElementById('nldesign-apply-dialog-overlay')
-
-			makeDialogAccessible(overlay, function () {
-				cancelDialog()
+			var dialog = frame.open({
+				id: 'nldesign-apply-dialog-overlay',
+				width: 720,
+				opener: tokenSetSelect,
+				eyebrow: t('thematiq', 'Active token set'),
+				title: t('thematiq', 'Apply token set: {name}', { name: setName }),
+				body: body,
+				onDismiss: function () {
+					cancelDialog()
+				},
+				actions: [
+					{
+						label: t('thematiq', 'Cancel'),
+						className: 'nldesign-dialog-cancel',
+						onClick: function () {
+							cancelDialog()
+						},
+					},
+					{
+						label: t('thematiq', 'Apply chosen values'),
+						variant: 'primary',
+						icon: 'check',
+						className: 'nldesign-dialog-confirm',
+					},
+				],
 			})
+			var overlay = dialog.el
+
+			/**
+			 * Say how many values are ticked.
+			 *
+			 * @return {void}
+			 */
+			function updateChosen() {
+				var boxes = overlay.querySelectorAll('.nldesign-apply-check')
+				var ticked = Array.prototype.filter.call(boxes, function (cb) {
+					return cb.checked === true
+				}).length
+				chosen.textContent = t('thematiq', '{chosen} of {total} chosen', {
+					chosen: ticked,
+					total: boxes.length,
+				})
+			}
 
 			function updateApplyPreview() {
+				updateChosen()
 				changes.forEach(function (change) {
 					var cb = overlay.querySelector(
 						tokenSelector('.nldesign-apply-check', change.name),
@@ -6122,12 +5567,9 @@
 					tokenSetSelect.dataset.previousValue = prevTokenSetId
 					updatePreview(prevTokenSetId)
 				}
-				closeDialogOverlay(overlay)
+				dialog.close()
 			}
 
-			overlay
-				.querySelector('.nldesign-dialog-cancel')
-				.addEventListener('click', cancelDialog)
 			overlay.addEventListener('click', function (e) {
 				if (e.target === overlay) {
 					cancelDialog()
@@ -6321,7 +5763,7 @@
 							// theming is in, and the page behind the dialog is the
 							// theme the admin picked.
 							applying = false
-							closeDialogOverlay(overlay)
+							dialog.close()
 							notify(message)
 						})
 						.catch(function (err) {
@@ -6334,7 +5776,10 @@
 								cancelBtn.disabled = false
 							}
 							console.error('Error applying token set:', err)
-							if (err && err.message === 'restricted_set_not_confirmed') {
+							if (
+								err
+								&& err.message === 'restricted_set_not_confirmed'
+							) {
 								notify(
 									t(
 										'thematiq',
@@ -6719,21 +6164,33 @@
 
 			listEl.replaceChildren()
 
+			document.dispatchEvent(
+				new CustomEvent('thematiq:group-theming', {
+					detail: { rows: groupThemingRows },
+				}),
+			)
+
 			if (groupThemingRows.length === 0) {
-				var empty = document.createElement('p')
-				empty.className = 'settings-hint'
-				empty.textContent = t('thematiq', 'No group mappings configured.')
+				var empty = document.createElement('tr')
+				var none = document.createElement('td')
+				none.colSpan = 4
+				none.className = 'settings-hint'
+				none.textContent = t('thematiq', 'No group mappings configured.')
+				empty.appendChild(none)
 				listEl.appendChild(empty)
 				return
 			}
 
 			groupThemingRows.forEach(function (row, index) {
-				var rowEl = document.createElement('div')
+				var rowEl = document.createElement('tr')
 				rowEl.className = 'nldesign-group-theming-row'
 
 				var groupSelect = document.createElement('select')
 				groupSelect.setAttribute('data-field', 'group')
-				groupSelect.setAttribute('aria-label', t('thematiq', 'Group'))
+				groupSelect.setAttribute(
+					'aria-label',
+					t('thematiq', 'Group of row {rank}', { rank: index + 1 }),
+				)
 				groupThemingGroups.forEach(function (g) {
 					var opt = document.createElement('option')
 					opt.value = g.id
@@ -6749,7 +6206,10 @@
 
 				var tokenSetSelect = document.createElement('select')
 				tokenSetSelect.setAttribute('data-field', 'tokenSet')
-				tokenSetSelect.setAttribute('aria-label', t('thematiq', 'Token set'))
+				tokenSetSelect.setAttribute(
+					'aria-label',
+					t('thematiq', 'Token set of row {rank}', { rank: index + 1 }),
+				)
 				groupThemingTokenSets.forEach(function (ts) {
 					var opt = document.createElement('option')
 					opt.value = ts.id
@@ -6803,12 +6263,20 @@
 					renderGroupThemingList()
 				})
 
-				rowEl.appendChild(groupSelect)
-				rowEl.appendChild(tokenSetSelect)
-				rowEl.appendChild(renderGroupDelegation(index))
-				rowEl.appendChild(moveUpBtn)
-				rowEl.appendChild(moveDownBtn)
-				rowEl.appendChild(removeBtn)
+				var groupCell = document.createElement('td')
+				groupCell.className = 'nldesign-group-theming-group'
+				var rank = document.createElement('span')
+				rank.className = 'nldesign-group-theming-rank'
+				rank.textContent = String(index + 1)
+				groupCell.append(rank, groupSelect)
+				var setCell = document.createElement('td')
+				setCell.appendChild(tokenSetSelect)
+				var delegationCell = document.createElement('td')
+				delegationCell.appendChild(renderGroupDelegation(index))
+				var orderCell = document.createElement('td')
+				orderCell.className = 'nldesign-group-theming-order'
+				orderCell.append(moveUpBtn, moveDownBtn, removeBtn)
+				rowEl.append(groupCell, setCell, delegationCell, orderCell)
 				listEl.appendChild(rowEl)
 			})
 
@@ -6897,7 +6365,7 @@
 			toggle.checked = row.delegated === true
 			var toggleLabel = document.createElement('label')
 			toggleLabel.setAttribute('for', toggleId)
-			toggleLabel.textContent = t('thematiq', 'Subadmins choose')
+			toggleLabel.textContent = t('thematiq', 'Sub-admins choose')
 			wrap.appendChild(toggle)
 			wrap.appendChild(toggleLabel)
 
@@ -7042,8 +6510,8 @@
 				})
 		}
 
-		// Initialise the group theming panel on page load.
-		initGroupTheming()
+		// Initialise the group theming panel once the groups panel opens.
+		whenPanelShown('nldesign-group-theming-list', initGroupTheming)
 
 		/* ==========================================================================
 		 * CUSTOM TOKEN SETS — upload / list / download / delete (eigen huisstijl)
@@ -7142,7 +6610,7 @@
 				})
 				.join('')
 			return (
-				'<div class="nldesign-contrast-warning" role="alert">'
+				'<div class="nldesign-contrast-warning nldesign-contrast-warning--incomplete" role="alert">'
 				+ '<strong>'
 				+ escapeHtml(t('thematiq', 'Incomplete set'))
 				+ '</strong>'
@@ -7274,71 +6742,6 @@
 			loadCustomTokenSets()
 		}
 
-		/**
-		 * The conversion report of an upload: everything the converter did not
-		 * take over as-is, grouped by reason under the table's own sentence, and
-		 * the counts (nlds-theme-converter 6.3). Empty when the response has no
-		 * report, so a plain token-set upload shows nothing extra.
-		 *
-		 * @param {object} data The upload response.
-		 * @return {DocumentFragment} The report.
-		 */
-		function buildConversionReportFragment(data) {
-			var fragment = document.createDocumentFragment()
-			var reasons = data.reasons || {}
-			var entries = (data.report || []).filter(function (entry) {
-				// Colours moved into sRGB are listed by the diagnostics block.
-				return (
-					entry.action !== 'applied'
-					&& entry.reason
-					&& !/^out-of-gamut-/.test(entry.reason)
-				)
-			})
-			var groups =
-				typeof TT.groupDiagnosticsByReason === 'function'
-					? TT.groupDiagnosticsByReason(entries)
-					: groupDiagnosticsByReasonFallback(entries)
-
-			if (data.counts) {
-				var counts = document.createElement('p')
-				counts.className = 'nldesign-conversion-counts'
-				counts.textContent = t(
-					'thematiq',
-					'{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.',
-					{
-						applied: data.counts.applied || 0,
-						adapted: data.counts.adapted || 0,
-						kept: data.counts.kept || 0,
-						skipped: data.counts.skipped || 0,
-					},
-				)
-				fragment.appendChild(counts)
-			}
-
-			if (groups.length > 0) {
-				var list = document.createElement('ul')
-				list.className = 'nldesign-conversion-report'
-				groups.forEach(function (group) {
-					var item = document.createElement('li')
-					var sources = group.items
-						.map(function (entry) {
-							return entry.source
-						})
-						.join(', ')
-					item.textContent =
-						(reasons[group.reason] || group.reason)
-						+ ' ('
-						+ group.items.length
-						+ '): '
-						+ sources
-					list.appendChild(item)
-				})
-				fragment.appendChild(list)
-			}
-
-			return fragment
-		}
-
 		// Localised label for a DTCG import diagnostic `reason` code. Falls back to
 		// the raw code for any future reason this script does not yet know about,
 		// so a new mapper diagnostic never renders as blank.
@@ -7376,95 +6779,362 @@
 			return labels[reason] || reason
 		}
 
-		// Inline copy of tokenTransforms' groupDiagnosticsByReason, used when the
-		// transforms module is not present on `window` (the app template loads it
-		// first, but admin.js must degrade rather than silently render nothing).
-		// Keep in sync with js/lib/tokenTransforms.js.
-		function groupDiagnosticsByReasonFallback(entries) {
-			if (!Array.isArray(entries) || entries.length === 0) {
-				return []
-			}
-
-			var byReason = {}
-			entries.forEach(function (entry) {
-				var reason = (entry && entry.reason) || 'unknown'
-				if (byReason[reason] === undefined) {
-					byReason[reason] = []
-				}
-				byReason[reason].push(entry)
-			})
-
-			return Object.keys(byReason)
-				.sort()
-				.map(function (reason) {
-					return { reason: reason, items: byReason[reason] }
-				})
+		/**
+		 * The text for a reason code of an upload: the converter's own label when the response
+		 * carries one, else the page's.
+		 *
+		 * @param {string} reason The reason code.
+		 * @param {object} reasons The converter's labels from the response.
+		 * @return {string} The text.
+		 */
+		function reasonText(reason, reasons) {
+			return (reasons && reasons[reason]) || reasonLabel(reason)
 		}
 
-		// Build the DTCG import-diagnostics fragment for an upload response:
-		// skipped/error paths grouped by reason, plus $deprecated import warnings.
-		// Returns an empty (childless) fragment when both arrays are absent/empty,
-		// so a CSS upload's plain-text summary is never followed by empty markup.
-		function buildDiagnosticsFragment(data) {
-			var fragment = document.createDocumentFragment()
+		/**
+		 * An element with a class and optional text.
+		 *
+		 * @param {string} tag The tag.
+		 * @param {string} className The class.
+		 * @param {string} [text] The text.
+		 * @return {HTMLElement} The element.
+		 */
+		function resultNode(tag, className, text) {
+			var node = document.createElement(tag)
+			node.className = className
+			if (text !== undefined) {
+				node.textContent = text
+			}
+			return node
+		}
 
-			// Colours moved into sRGB are listed too, so the change is visible.
-			var adapted = (data.report || [])
-				.filter(function (entry) {
-					return /^out-of-gamut-/.test(entry.reason || '')
-				})
-				.map(function (entry) {
-					return { path: entry.source, reason: entry.reason }
-				})
-			var diagnostics = [].concat(
-				data.skipped || [],
-				data.errors || [],
-				adapted,
+		/**
+		 * The table of the tokens an upload reports on (TqSetUploaden): the token as the file
+		 * names it and what thematiq reports.
+		 *
+		 * @param {Array<{token: string, reason: string}>} rows The rows.
+		 * @param {string} first The first column's heading.
+		 * @param {string} second The second column's heading.
+		 * @return {HTMLTableElement} The table.
+		 */
+		function buildNoticeTable(rows, first, second) {
+			var table = resultNode(
+				'table',
+				'nldesign-audit-table thematiq-upload-result__table',
 			)
-			var groups =
-				typeof TT.groupDiagnosticsByReason === 'function'
-					? TT.groupDiagnosticsByReason(diagnostics)
-					: groupDiagnosticsByReasonFallback(diagnostics)
+			var head = table.createTHead().insertRow()
+			;[first, second].forEach(function (label) {
+				var th = document.createElement('th')
+				th.scope = 'col'
+				th.textContent = label
+				head.appendChild(th)
+			})
+			var body = table.createTBody()
+			rows.forEach(function (row) {
+				var tr = body.insertRow()
+				tr.className = 'thematiq-upload-result__row'
+				tr.insertCell().appendChild(resultNode('code', '', row.token))
+				tr.insertCell().textContent = row.reason
+			})
+			return table
+		}
 
-			if (groups.length > 0) {
-				var list = document.createElement('ul')
-				list.className = 'nldesign-diagnostics-list'
-				groups.forEach(function (group) {
-					var item = document.createElement('li')
-					var paths = group.items
-						.map(function (entry) {
-							return entry.path
-						})
-						.join(', ')
-					item.textContent =
-						reasonLabel(group.reason)
-						+ ' ('
-						+ group.items.length
-						+ '): '
-						+ paths
-					list.appendChild(item)
+		/**
+		 * A stored upload as the TqSetUploaden board draws it: the Uploaded pill with the file and
+		 * its package version, what was saved, the notices while reading, the warning pills and
+		 * the deprecations the file names.
+		 *
+		 * @param {object} model The model from ThematiqUploadResult.stored().
+		 * @param {object} data The upload response, for the converter's counts.
+		 * @return {HTMLElement} The result.
+		 */
+		function buildStoredResult(model, data) {
+			var box = resultNode('div', 'thematiq-upload-result')
+			var head = resultNode('div', 'thematiq-upload-result__head')
+			head.appendChild(
+				resultNode(
+					'span',
+					'thematiq-upload-result__pill thematiq-upload-result__pill--pass',
+					t('thematiq', 'Uploaded'),
+				),
+			)
+			if (model.fileName !== '') {
+				head.appendChild(
+					resultNode(
+						'span',
+						'thematiq-upload-result__file',
+						model.fileName,
+					),
+				)
+			}
+			if (model.version !== '') {
+				head.appendChild(
+					resultNode(
+						'span',
+						'thematiq-upload-result__version',
+						t('thematiq', 'Package version: {version}', {
+							version: model.version,
+						}),
+					),
+				)
+			}
+			box.appendChild(head)
+
+			var summary =
+				t(
+					'thematiq',
+					'"{name}" is saved and is now in the list. Choose it there to apply it.',
+					{ name: model.name },
+				)
+				+ ' '
+				+ t('thematiq', '{imported} tokens imported, {skipped} skipped.', {
+					imported: model.imported,
+					skipped: model.skipped,
 				})
-				fragment.appendChild(list)
+			if (model.darkValues > 0) {
+				summary +=
+					' '
+					+ t(
+						'thematiq',
+						'{count} dark values from the file are kept for dark mode and win over the derived dark variant.',
+						{ count: model.darkValues },
+					)
+			}
+			var text = resultNode('p', 'thematiq-upload-result__summary', summary)
+			if (data && data.counts) {
+				text.appendChild(document.createTextNode(' '))
+				text.appendChild(
+					resultNode(
+						'span',
+						'nldesign-conversion-counts',
+						t(
+							'thematiq',
+							'{applied} applied, {adapted} adapted, {kept} kept, {skipped} skipped.',
+							{
+								applied: data.counts.applied || 0,
+								adapted: data.counts.adapted || 0,
+								kept: data.counts.kept || 0,
+								skipped: data.counts.skipped || 0,
+							},
+						),
+					),
+				)
+			}
+			box.appendChild(text)
+
+			if (model.notices.length > 0) {
+				box.appendChild(
+					resultNode(
+						'h3',
+						'thematiq-upload-result__title',
+						n(
+							'thematiq',
+							'{count} notice while reading',
+							'{count} notices while reading',
+							model.notices.length,
+							{ count: model.notices.length },
+						),
+					),
+				)
+				box.appendChild(
+					buildNoticeTable(
+						model.notices,
+						t('thematiq', 'Token in the file'),
+						t('thematiq', 'What thematiq reports'),
+					),
+				)
 			}
 
-			if (data.importWarnings && data.importWarnings.length > 0) {
-				var warnList = document.createElement('ul')
-				warnList.className = 'nldesign-deprecation-list'
-				data.importWarnings.forEach(function (w) {
-					var item = document.createElement('li')
-					item.textContent = w.path + (w.message ? ': ' + w.message : '')
-					warnList.appendChild(item)
+			var pills = resultNode('div', 'thematiq-upload-result__pills')
+			var incomplete = resultNode(
+				'span',
+				'thematiq-upload-result__pill thematiq-upload-result__pill--warn thematiq-upload-result__incomplete',
+				t('thematiq', 'Incomplete set'),
+			)
+			incomplete.hidden = true
+			pills.appendChild(incomplete)
+			if (model.contrast > 0) {
+				pills.appendChild(
+					resultNode(
+						'span',
+						'thematiq-upload-result__pill thematiq-upload-result__pill--warn',
+						n(
+							'thematiq',
+							'{count} contrast warning',
+							'{count} contrast warnings',
+							model.contrast,
+							{ count: model.contrast },
+						),
+					),
+				)
+			}
+			var explain = resultNode('p', 'thematiq-upload-result__hint')
+			explain.dataset.contrast = String(model.contrast)
+			pills.hidden = model.contrast === 0
+			explain.hidden = model.contrast === 0
+			if (model.contrast > 0) {
+				explain.textContent = t(
+					'thematiq',
+					'You see the contrast warning again in the dialog when applying.',
+				)
+			}
+			box.appendChild(pills)
+			box.appendChild(explain)
+
+			if (model.deprecations.length > 0) {
+				var notice = resultNode(
+					'div',
+					'thematiq-upload-result__deprecations',
+				)
+				notice.appendChild(
+					resultNode(
+						'span',
+						'thematiq-upload-result__deprecations-text',
+						n(
+							'thematiq',
+							'The file reports {count} deprecated token, with its replacement and date. If you record it, it is listed under Custom tokens and apps can read it.',
+							'The file reports {count} deprecated tokens, with their replacement and date. If you record them, they are listed under Custom tokens and apps can read them.',
+							model.deprecations.length,
+							{ count: model.deprecations.length },
+						),
+					),
+				)
+				var list = resultNode('ul', 'nldesign-deprecation-list')
+				model.deprecations.forEach(function (warning) {
+					list.appendChild(
+						resultNode(
+							'li',
+							'',
+							warning.path
+								+ (warning.message ? ': ' + warning.message : ''),
+						),
+					)
 				})
-				fragment.appendChild(warnList)
-				var adoptable = data.importWarnings.filter(function (w) {
-					return Boolean(w.token)
-				})
-				if (adoptable.length > 0) {
-					fragment.appendChild(buildAdoptNoticesButton(adoptable))
+				notice.appendChild(list)
+				if (model.adoptable.length > 0) {
+					notice.appendChild(buildAdoptNoticesButton(model.adoptable))
 				}
+				box.appendChild(notice)
 			}
+			return box
+		}
 
-			return fragment
+		/**
+		 * Show the Incomplete set pill of the last upload once the list of own sets says how many
+		 * tokens it leaves to the design system.
+		 *
+		 * @param {Array<object>} sets The own sets.
+		 * @return {void}
+		 */
+		function markIncompleteUpload(sets) {
+			var box = document.querySelector(
+				'#nldesign-upload-result .thematiq-upload-result',
+			)
+			if (box === null || lastUploadId === null) {
+				return
+			}
+			var count = UR.missing(
+				sets.find(function (set) {
+					return set.id === lastUploadId
+				}),
+			)
+			if (count === 0) {
+				return
+			}
+			var hint = box.querySelector('.thematiq-upload-result__hint')
+			box.querySelector('.thematiq-upload-result__incomplete').hidden = false
+			box.querySelector('.thematiq-upload-result__pills').hidden = false
+			hint.hidden = false
+			hint.textContent =
+				n(
+					'thematiq',
+					'This set does not define every token the design system reads: {count} token falls back to the design system.',
+					'This set does not define every token the design system reads: {count} tokens fall back to the design system.',
+					count,
+					{ count: count },
+				)
+				+ (hint.dataset.contrast !== '0'
+					? ' '
+						+ t(
+							'thematiq',
+							'You see the contrast warning again in the dialog when applying.',
+						)
+					: '')
+		}
+
+		/**
+		 * A refused upload as the TqSetUploaden board draws it: Refused file, the file and its
+		 * status with Nothing was saved, the reason, and the tokens the response names.
+		 *
+		 * @param {object} model The model from ThematiqUploadResult.refused().
+		 * @return {HTMLElement} The result.
+		 */
+		function buildRefusedResult(model) {
+			var box = resultNode(
+				'div',
+				'thematiq-upload-result thematiq-upload-result--refused',
+			)
+			box.appendChild(
+				resultNode(
+					'h3',
+					'thematiq-upload-result__title',
+					t('thematiq', 'Refused file'),
+				),
+			)
+			box.appendChild(
+				resultNode(
+					'p',
+					'thematiq-upload-result__hint',
+					t(
+						'thematiq',
+						'What an upload may never put in a token set: script, a reference to the outside or a rule that loads something. Such a file is refused as a whole.',
+					),
+				),
+			)
+			var notice = resultNode('div', 'thematiq-upload-result__refusal')
+			var lines = resultNode('div', 'thematiq-upload-result__refusal-text')
+			lines.appendChild(
+				resultNode(
+					'strong',
+					'',
+					model.fileName !== ''
+						? t(
+								'thematiq',
+								'{file} was refused ({status}). Nothing was saved.',
+								{ file: model.fileName, status: model.status },
+							)
+						: t(
+								'thematiq',
+								'The pasted contents were refused ({status}). Nothing was saved.',
+								{ status: model.status },
+							),
+				),
+			)
+			if (model.error !== '') {
+				lines.appendChild(resultNode('span', '', model.error))
+			}
+			notice.appendChild(lines)
+			box.appendChild(notice)
+			if (model.notices.length > 0) {
+				box.appendChild(
+					buildNoticeTable(
+						model.notices,
+						t('thematiq', 'Token in the file'),
+						t('thematiq', 'What thematiq reports'),
+					),
+				)
+			}
+			box.appendChild(
+				resultNode(
+					'p',
+					'thematiq-upload-result__hint',
+					t(
+						'thematiq',
+						'An @import, an @font-face or a comment does not survive the import: thematiq rewrites every token as one property. Such lines do not invalidate the upload; they simply do not get in.',
+					),
+				),
+			)
+			return box
 		}
 
 		/**
@@ -7558,18 +7228,31 @@
 			var inputs = null
 
 			function ratioLine(label, value, minimum) {
-				var line = t('thematiq', '{label}: {ratio}:1, needs {min}:1.')
+				var line = document.createElement('div')
+				line.className = 'nldesign-brand-ratio'
+				var pill = document.createElement('span')
+				pill.className =
+					'nldesign-brand-ratio__pill'
+					+ (value < minimum ? ' nldesign-brand-ratio__pill--below' : '')
+				pill.textContent =
+					value < minimum ? t('thematiq', 'Below') : t('thematiq', 'Meets')
+				var text = document.createElement('span')
+				text.textContent = t(
+					'thematiq',
+					'{label}: {ratio}:1, needs {min}:1.',
+				)
 					.replace('{label}', label)
 					.replace('{ratio}', value.toFixed(2))
 					.replace('{min}', String(minimum))
 				if (value < minimum) {
-					line +=
+					text.textContent +=
 						' '
 						+ t(
 							'thematiq',
 							'Warning: below the threshold. You can still save.',
 						)
 				}
+				line.append(pill, text)
 				return line
 			}
 
@@ -7604,26 +7287,26 @@
 					'--brand-form-background',
 					d['--nldesign-color-nav-background'],
 				)
-				readout.textContent =
+				readout.replaceChildren(
 					ratioLine(
 						t('thematiq', 'Text on primary'),
 						result.textRatio,
 						brandForm.TEXT_MIN,
-					)
-					+ ' '
-					+ ratioLine(
+					),
+					ratioLine(
 						t('thematiq', 'Primary on background'),
 						result.uiRatio,
 						brandForm.UI_MIN,
-					)
+					),
+				)
 				if (result.actionTextRatio !== null) {
-					readout.textContent +=
-						' '
-						+ ratioLine(
+					readout.appendChild(
+						ratioLine(
 							t('thematiq', 'Text on the main button'),
 							result.actionTextRatio,
 							brandForm.TEXT_MIN,
-						)
+						),
+					)
 				}
 			}
 
@@ -7763,6 +7446,7 @@
 
 		function uploadCustomTokenSet(name, file, brands) {
 			var resultEl = document.getElementById('nldesign-upload-result')
+			var fileName = file instanceof Blob && file.name ? file.name : ''
 			var formData = new FormData()
 			formData.append('name', name)
 			// `file` is a File from the picker, or `{content}` from the paste box.
@@ -7793,13 +7477,14 @@
 					if (res.status >= 400) {
 						if (resultEl !== null) {
 							resultEl.appendChild(
-								document.createTextNode(
-									t('thematiq', 'Upload failed:')
-										+ ' '
-										+ (res.data.error || ''),
+								buildRefusedResult(
+									UR.refused(res.data, {
+										status: res.status,
+										fileName: fileName,
+										label: reasonText,
+									}),
 								),
 							)
-							resultEl.appendChild(buildDiagnosticsFragment(res.data))
 						}
 						notify(
 							t('thematiq', 'Upload failed:')
@@ -7838,42 +7523,19 @@
 						refreshTokenSetCatalogue().catch(function () {})
 						return
 					}
-					var msg = t(
-						'thematiq',
-						'{imported} tokens imported, {skipped} skipped.',
-					)
-						.replace('{imported}', res.data.imported)
-						.replace('{skipped}', (res.data.skipped || []).length)
-					// Dark values the file brought (dark-colours-from-a-file).
-					if (res.data.darkValues > 0) {
-						msg +=
-							' '
-							+ t(
-								'thematiq',
-								'{count} dark values from the file are kept for dark mode.',
-							).replace('{count}', res.data.darkValues)
-					}
-					if (res.data.version) {
-						msg +=
-							' '
-							+ t('thematiq', 'Package version: {version}').replace(
-								'{version}',
-								res.data.version,
-							)
-					}
-					if (res.data.warnings && res.data.warnings.length > 0) {
-						msg +=
-							' '
-							+ t(
-								'thematiq',
-								'{count} WCAG AA contrast warning(s) — see the apply dialog.',
-							).replace('{count}', res.data.warnings.length)
-					}
 					if (resultEl !== null) {
-						resultEl.appendChild(document.createTextNode(msg))
-						resultEl.appendChild(buildDiagnosticsFragment(res.data))
-						resultEl.appendChild(buildConversionReportFragment(res.data))
+						resultEl.appendChild(
+							buildStoredResult(
+								UR.stored(res.data, {
+									name: name,
+									fileName: fileName,
+									label: reasonText,
+								}),
+								res.data,
+							),
+						)
 					}
+					lastUploadId = res.data.id || null
 					loadCustomTokenSets()
 					// The dropdown and tokenSetsData were built from initial state
 					// at page load; bring both in line with the catalogue so the
@@ -7908,10 +7570,11 @@
 		}
 
 		/**
-		 * The brand picker after a multi-brand upload
-		 * (openspec/specs/multi-brand-token-sources): one labelled checkbox per
-		 * brand, all ticked, with its token count and group; Import repeats the upload with
-		 * the chosen brands, Cancel stores nothing. Focus moves to the picker's heading.
+		 * The brand picker after a multi-brand upload, as the TqMerkenKiezen board
+		 * draws it (openspec/specs/multi-brand-token-sources): a dialog with one
+		 * labelled checkbox per brand, all ticked, with its token count and group.
+		 * Import repeats the upload with the chosen brands; Cancel, Escape and
+		 * the close button store nothing. Focus moves to the picker's legend.
 		 *
 		 * @param {HTMLElement} resultEl The upload result region.
 		 * @param {string} name The source name.
@@ -7920,73 +7583,122 @@
 		 * @return {void}
 		 */
 		function renderBrandPicker(resultEl, name, file, brands) {
-			var picker = document.createElement('fieldset')
-			picker.className = 'nldesign-brand-picker'
-			var legend = document.createElement('legend')
-			legend.tabIndex = -1
-			legend.textContent = t(
-				'thematiq',
-				'This file holds {count} brands. Choose the ones to import.',
-				{ count: brands.length },
-			)
-			picker.appendChild(legend)
-			brands.forEach(function (brand, index) {
-				var row = document.createElement('div')
-				var box = document.createElement('input')
-				box.type = 'checkbox'
-				box.checked = true
-				box.value = brand.key
-				box.id = 'nldesign-brand-pick-' + index
-				box.className = 'checkbox'
-				var label = document.createElement('label')
-				label.setAttribute('for', box.id)
-				label.textContent =
-					brand.name
-					+ ' '
-					+ n(
+			var frame = window.ThematiqAdminDialog
+			if (frame === undefined) {
+				return
+			}
+			var h = frame.h
+			var picker = h('fieldset', { class: 'nldesign-brand-picker' }, [
+				h('legend', {
+					tabindex: '-1',
+					class: 'thematiq-admin-dialog__lead',
+					text: t(
 						'thematiq',
-						'({count} token)',
-						'({count} tokens)',
-						brand.tokenCount,
-						{
-							count: brand.tokenCount,
-						},
-					)
-					+ (brand.group ? ' · ' + brand.group : '')
-				row.appendChild(box)
-				row.appendChild(label)
-				picker.appendChild(row)
-			})
-			var confirm = document.createElement('button')
-			confirm.type = 'button'
-			confirm.className = 'button primary nldesign-brand-import'
-			confirm.textContent = t('thematiq', 'Import the chosen brands')
-			confirm.addEventListener('click', function () {
-				var chosen = Array.prototype.slice
-					.call(picker.querySelectorAll('input[type="checkbox"]:checked'))
-					.map(function (box) {
-						return box.value
-					})
-				if (chosen.length === 0) {
-					notify(t('thematiq', 'Choose at least one brand.'))
-					return
-				}
-				uploadCustomTokenSet(name, file, chosen)
-			})
-			var cancel = document.createElement('button')
-			cancel.type = 'button'
-			cancel.className = 'button nldesign-brand-cancel'
-			cancel.textContent = t('thematiq', 'Cancel')
-			cancel.addEventListener('click', function () {
+						'This file holds {count} brands. Choose the ones to import.',
+						{ count: brands.length },
+					),
+				}),
+				file && file.name
+					? h('code', { class: 'thematiq-brand-file', text: file.name })
+					: null,
+				h(
+					'div',
+					{ class: 'thematiq-brand-list' },
+					brands.map(function (brand, index) {
+						var id = 'nldesign-brand-pick-' + index
+						return h('div', { class: 'thematiq-brand-row' }, [
+							h('input', {
+								type: 'checkbox',
+								id: id,
+								value: brand.key,
+								checked: true,
+							}),
+							h('label', { for: id }, [
+								h('span', {
+									class: 'thematiq-brand-row__name',
+									text: brand.name,
+								}),
+								' ',
+								h('span', {
+									class: 'thematiq-brand-row__meta',
+									text:
+										n(
+											'thematiq',
+											'({count} token)',
+											'({count} tokens)',
+											brand.tokenCount,
+											{ count: brand.tokenCount },
+										) + (brand.group ? ' · ' + brand.group : ''),
+								}),
+							]),
+						])
+					}),
+				),
+			])
+
+			/**
+			 * Close without importing, and say so in the result region.
+			 *
+			 * @param {object} dialog The open dialog.
+			 * @return {void}
+			 */
+			function nothing(dialog) {
+				dialog.close()
 				resultEl.replaceChildren()
 				resultEl.appendChild(
 					document.createTextNode(t('thematiq', 'Nothing was imported.')),
 				)
+			}
+
+			var dialog = frame.open({
+				id: 'nldesign-brand-picker-dialog',
+				width: 640,
+				focus: '.nldesign-brand-picker legend',
+				eyebrow: t('thematiq', 'Upload file'),
+				title: t('thematiq', 'Choose brands to import'),
+				body: [
+					picker,
+					frame.notice(
+						t(
+							'thematiq',
+							'Each brand becomes its own token set that stays linked to this file. When a new version comes, Update source updates all brands at once.',
+						),
+						'info',
+					),
+				],
+				onDismiss: function () {
+					nothing(dialog)
+				},
+				actions: [
+					{
+						label: t('thematiq', 'Cancel'),
+						className: 'nldesign-brand-cancel',
+						onClick: nothing,
+					},
+					{
+						label: t('thematiq', 'Import chosen brands'),
+						variant: 'primary',
+						className: 'nldesign-brand-import',
+						onClick: function (open) {
+							var chosen = Array.prototype.slice
+								.call(
+									picker.querySelectorAll(
+										'input[type="checkbox"]:checked',
+									),
+								)
+								.map(function (box) {
+									return box.value
+								})
+							if (chosen.length === 0) {
+								notify(t('thematiq', 'Choose at least one brand.'))
+								return
+							}
+							open.close()
+							uploadCustomTokenSet(name, file, chosen)
+						},
+					},
+				],
 			})
-			picker.appendChild(confirm)
-			picker.appendChild(cancel)
-			resultEl.appendChild(picker)
-			legend.focus()
 		}
 
 		/**
@@ -8288,7 +8000,14 @@
 					return r.json()
 				})
 				.then(function (data) {
-					renderCustomSetList(listEl, (data && data.sets) || [])
+					var sets = (data && data.sets) || []
+					renderCustomSetList(listEl, sets)
+					markIncompleteUpload(sets)
+					document.dispatchEvent(
+						new CustomEvent('thematiq:custom-sets', {
+							detail: { sets: sets },
+						}),
+					)
 				})
 				.catch(function (err) {
 					console.error('Error loading custom token sets:', err)
@@ -8307,11 +8026,13 @@
 		 * @return {HTMLElement} The header.
 		 */
 		function buildSourceHeader(set) {
-			var header = document.createElement('div')
+			var header = document.createElement('tr')
 			header.className = 'nldesign-custom-source'
+			var cell = document.createElement('td')
+			cell.colSpan = 4
 			var title = document.createElement('strong')
 			title.textContent = String(set.name || '').split(':')[0]
-			header.appendChild(title)
+			cell.appendChild(title)
 			var input = document.createElement('input')
 			input.type = 'file'
 			input.accept = '.css,.json,.tokens.json'
@@ -8333,20 +8054,92 @@
 			button.addEventListener('click', function () {
 				input.click()
 			})
-			header.appendChild(button)
-			header.appendChild(input)
+			cell.appendChild(button)
+			cell.appendChild(input)
+			header.appendChild(cell)
 			return header
+		}
+
+		/**
+		 * The "…" menu of a row: a button that opens the set's actions.
+		 *
+		 * @param {string} name The set's name.
+		 * @param {Array<HTMLElement>} items The actions.
+		 * @return {HTMLElement} The menu.
+		 */
+		function buildRowMenu(name, items) {
+			var wrap = document.createElement('div')
+			wrap.className = 'nldesign-custom-set-actions'
+			var toggle = document.createElement('button')
+			toggle.type = 'button'
+			toggle.className = 'nldesign-custom-set-menu-toggle'
+			toggle.textContent = '…'
+			toggle.setAttribute('aria-haspopup', 'true')
+			toggle.setAttribute('aria-expanded', 'false')
+			toggle.setAttribute(
+				'aria-label',
+				t('thematiq', 'Actions for {name}', { name: name }, undefined, {
+					escape: false,
+				}),
+			)
+			var menu = document.createElement('div')
+			menu.className = 'nldesign-custom-set-menu'
+			menu.hidden = true
+			items.forEach(function (item) {
+				menu.appendChild(item)
+				item.addEventListener('click', function () {
+					menu.hidden = true
+					toggle.setAttribute('aria-expanded', 'false')
+				})
+			})
+			toggle.addEventListener('click', function () {
+				var open = menu.hidden === true
+				document
+					.querySelectorAll('.nldesign-custom-set-menu')
+					.forEach(function (other) {
+						other.hidden = true
+					})
+				document
+					.querySelectorAll('.nldesign-custom-set-menu-toggle')
+					.forEach(function (other) {
+						other.setAttribute('aria-expanded', 'false')
+					})
+				menu.hidden = !open
+				toggle.setAttribute('aria-expanded', open ? 'true' : 'false')
+			})
+			wrap.addEventListener('keydown', function (event) {
+				if (event.key === 'Escape' && menu.hidden === false) {
+					menu.hidden = true
+					toggle.setAttribute('aria-expanded', 'false')
+					toggle.focus()
+				}
+			})
+			wrap.append(toggle, menu)
+			return wrap
+		}
+
+		/**
+		 * Where a set is used, as far as this page knows: active or not.
+		 *
+		 * @param {string} id The set id.
+		 * @return {string} The text.
+		 */
+		function customSetUse(id) {
+			return pageTokenSetId === id ? t('thematiq', 'Active') : ''
 		}
 
 		function renderCustomSetList(listEl, sets) {
 			listEl.replaceChildren()
 			if (sets.length === 0) {
-				var empty = document.createElement('p')
-				empty.className = 'settings-hint'
-				empty.textContent = t(
+				var empty = document.createElement('tr')
+				var none = document.createElement('td')
+				none.colSpan = 4
+				none.className = 'settings-hint'
+				none.textContent = t(
 					'thematiq',
 					'No custom token sets uploaded yet.',
 				)
+				empty.appendChild(none)
 				listEl.appendChild(empty)
 				return
 			}
@@ -8367,25 +8160,41 @@
 					if (!set.source) {
 						lastSource = null
 					}
-					var row = document.createElement('div')
+					var row = document.createElement('tr')
 					row.className = 'nldesign-custom-set-row'
+					row.setAttribute('data-set-id', set.id)
 					if (set.source) {
 						row.classList.add('nldesign-custom-set-row--brand')
 					}
 
+					var nameCell = document.createElement('td')
+					nameCell.className = 'nldesign-custom-set-cell'
+					var swatch = document.createElement('span')
+					swatch.className = 'nldesign-custom-set-swatch'
+					swatch.setAttribute('aria-hidden', 'true')
+					var primary = set.theming && set.theming.primary_color
+					if (primary) {
+						swatch.style.background = primary
+					}
+					var nameText = document.createElement('span')
+					nameText.className = 'nldesign-custom-set-text'
 					var nameSpan = document.createElement('span')
 					nameSpan.className = 'nldesign-custom-set-name'
 					nameSpan.textContent = set.name || set.id
-					row.appendChild(nameSpan)
-
+					nameText.appendChild(nameSpan)
+					var metaLine = document.createElement('span')
+					metaLine.className = 'nldesign-custom-set-meta'
 					if (set.version) {
 						var versionSpan = document.createElement('span')
 						versionSpan.className = 'nldesign-custom-set-version'
 						versionSpan.textContent = t('thematiq', 'v{version}', {
 							version: set.version,
 						})
-						row.appendChild(versionSpan)
+						metaLine.appendChild(versionSpan)
 					}
+					nameText.appendChild(metaLine)
+					nameCell.append(swatch, nameText)
+					row.appendChild(nameCell)
 
 					// Three states, in order of what the admin most needs to know:
 					// a set that never defines the vocabulary is broken in a way no
@@ -8413,9 +8222,15 @@
 						badge.textContent = t('thematiq', 'Contrast warning')
 					} else {
 						badge.classList.add('nldesign-badge--ok')
-						badge.textContent = t('thematiq', 'WCAG AA OK')
+						badge.textContent = t('thematiq', 'WCAG AA')
 					}
-					row.appendChild(badge)
+					var contrastCell = document.createElement('td')
+					contrastCell.appendChild(badge)
+					row.appendChild(contrastCell)
+					var usedCell = document.createElement('td')
+					usedCell.className = 'nldesign-custom-set-used'
+					usedCell.textContent = customSetUse(set.id)
+					row.appendChild(usedCell)
 
 					// A set installed from the theme gallery names its source and
 					// licence (openspec/specs/theme-gallery/spec.md).
@@ -8432,7 +8247,10 @@
 								licence: set.provenance.licence || '',
 							},
 						)
-						row.appendChild(provenance)
+						if (metaLine.childNodes.length > 0) {
+							metaLine.appendChild(document.createTextNode(', '))
+						}
+						metaLine.appendChild(provenance)
 					}
 
 					var downloadBtn = document.createElement('button')
@@ -8450,7 +8268,6 @@
 							t('thematiq', 'The token set could not be downloaded.'),
 						)
 					})
-					row.appendChild(downloadBtn)
 
 					var dtcgBtn = document.createElement('button')
 					dtcgBtn.type = 'button'
@@ -8460,7 +8277,6 @@
 					dtcgBtn.addEventListener('click', function () {
 						downloadDtcg(set.id)
 					})
-					row.appendChild(dtcgBtn)
 
 					// The token reference of this set (openspec/specs/token-reference/spec.md).
 					var referenceLink = document.createElement('a')
@@ -8475,7 +8291,6 @@
 							name: set.name || set.id,
 						}),
 					)
-					row.appendChild(referenceLink)
 
 					var referenceDownload = document.createElement('a')
 					referenceDownload.className = 'nldesign-token-reference-link'
@@ -8490,7 +8305,6 @@
 							name: set.name || set.id,
 						}),
 					)
-					row.appendChild(referenceDownload)
 
 					var deleteBtn = document.createElement('button')
 					deleteBtn.type = 'button'
@@ -8500,7 +8314,17 @@
 					deleteBtn.addEventListener('click', function () {
 						deleteCustomSet(set.id, set.name || set.id)
 					})
-					row.appendChild(deleteBtn)
+					var actionsCell = document.createElement('td')
+					actionsCell.appendChild(
+						buildRowMenu(set.name || set.id, [
+							downloadBtn,
+							dtcgBtn,
+							referenceLink,
+							referenceDownload,
+							deleteBtn,
+						]),
+					)
+					row.appendChild(actionsCell)
 
 					listEl.appendChild(row)
 				})
@@ -8658,17 +8482,20 @@
 		var resetThemeBtn = document.getElementById('nldesign-reset-theme-btn')
 		if (resetThemeBtn !== null) {
 			resetThemeBtn.addEventListener('click', function () {
-				OC.dialogs.confirm(
-					t(
-						'thematiq',
-						'This fully resets the theme to stock Nextcloud: the overrides of the current theme and every change written over the Nextcloud theme are deleted, and the Nextcloud theming colors and logo return to their defaults. Custom token sets, fonts and custom CSS are kept. This cannot be undone.',
-					),
-					t('thematiq', 'Reset theme to Nextcloud'),
-					function (confirmed) {
-						if (confirmed !== true) {
-							return
-						}
-
+				var setId = editedTokenSetId()
+				var resetDialog = window.ThematiqResetThemeDialog
+				if (resetDialog === undefined) {
+					return
+				}
+				resetDialog.open({
+					opener: resetThemeBtn,
+					themeName:
+						tokenSetsData[setId] !== undefined
+							? tokenSetsData[setId].name
+							: setId,
+					overrideCount: tokenEditorSavedCount,
+					onConfirm: function (dialog) {
+						dialog.busy(true)
 						resetThemeBtn.disabled = true
 						fetch(OC.generateUrl('/apps/thematiq/settings/overrides'), {
 							method: 'POST',
@@ -8688,6 +8515,7 @@
 								window.location.reload()
 							})
 							.catch(function (err) {
+								dialog.close()
 								resetThemeBtn.disabled = false
 								console.error('Error resetting the theme:', err)
 								notify(
@@ -8695,8 +8523,7 @@
 								)
 							})
 					},
-					true,
-				)
+				})
 			})
 		}
 
@@ -8812,12 +8639,29 @@
 				})
 				.catch(function (err) {
 					console.error('Error loading fonts:', err)
+					listRole(listEl, false)
 					listEl.textContent = t('thematiq', 'Failed to load fonts.')
 				})
 		}
 
+		/**
+		 * Give a font list the list role only while it holds rows: a hint in
+		 * an empty list is not a list item.
+		 *
+		 * @param {HTMLElement} el The font list.
+		 * @param {boolean} hasRows Whether it holds rows.
+		 */
+		function listRole(el, hasRows) {
+			if (hasRows) {
+				el.setAttribute('role', 'list')
+			} else {
+				el.removeAttribute('role')
+			}
+		}
+
 		function renderFontList(listEl, fonts) {
 			listEl.replaceChildren()
+			listRole(listEl, fonts.length > 0)
 			if (fonts.length === 0) {
 				var empty = document.createElement('p')
 				empty.className = 'settings-hint'
@@ -8827,40 +8671,80 @@
 			}
 
 			fonts.forEach(function (font) {
-				var row = document.createElement('div')
-				row.className = 'nldesign-custom-set-row'
-
-				var nameSpan = document.createElement('span')
-				nameSpan.className = 'nldesign-custom-set-name'
-				nameSpan.textContent = font.name || font.id
-				row.appendChild(nameSpan)
-
-				var roleBadge = document.createElement('span')
-				roleBadge.className = 'nldesign-badge'
-				roleBadge.textContent =
-					font.role === 'heading'
-						? t('thematiq', 'Heading')
-						: t('thematiq', 'Body text')
-				row.appendChild(roleBadge)
-
-				var sizeSpan = document.createElement('span')
-				sizeSpan.className = 'nldesign-badge'
-				sizeSpan.textContent =
-					Math.max(1, Math.round((font.size || 0) / 1024)) + ' KB'
-				row.appendChild(sizeSpan)
-
+				var actions = document.createElement('div')
 				var deleteBtn = document.createElement('button')
 				deleteBtn.type = 'button'
-				deleteBtn.className =
-					'nldesign-btn nldesign-btn--small nldesign-btn--danger'
+				deleteBtn.className = 'thematiq-font-row__button'
 				deleteBtn.textContent = t('thematiq', 'Delete')
 				deleteBtn.addEventListener('click', function () {
 					deleteFont(font.id, font.name || font.id)
 				})
-				row.appendChild(deleteBtn)
-
-				listEl.appendChild(row)
+				actions.appendChild(deleteBtn)
+				listEl.appendChild(
+					fontRow({
+						name: font.name || font.id,
+						meta: t('thematiq', 'uploaded, {size} kB', {
+							size: Math.max(1, Math.round((font.size || 0) / 1024)),
+						}),
+						licence: t('thematiq', 'Own licence'),
+						status: t('thematiq', 'In use for {role}', {
+							role: fontUseLabel(font.role),
+						}),
+						inUse: true,
+						uses: [font.role],
+						actions: actions,
+					}),
+				)
 			})
+		}
+
+		/**
+		 * A font as the TqLettertypen board draws it: its name and where it
+		 * comes from, a sample in the font, its licence, what it does now, and
+		 * what can be done with it. Text only, never markup.
+		 *
+		 * @param {object} font The row: name, meta, licence, status, inUse, uses (the roles) and actions.
+		 * @return {HTMLElement} The row.
+		 */
+		function fontRow(font) {
+			var row = document.createElement('div')
+			row.className = 'thematiq-font-row'
+			row.setAttribute('role', 'listitem')
+			;(font.uses || []).forEach(function (role) {
+				row.classList.add('thematiq-font-row--' + role)
+			})
+			var name = document.createElement('div')
+			name.className = 'thematiq-font-row__name'
+			var title = document.createElement('span')
+			title.className = 'thematiq-font-row__title'
+			title.textContent = font.name
+			var meta = document.createElement('span')
+			meta.className = 'thematiq-font-row__meta'
+			meta.textContent = font.meta
+			name.appendChild(title)
+			name.appendChild(meta)
+			var sample = document.createElement('span')
+			sample.className = 'thematiq-font-row__sample'
+			sample.style.fontFamily =
+				JSON.stringify(String(font.name)) + ', var(--font-face)'
+			sample.textContent = t('thematiq', 'Waste and recycling')
+			var licence = document.createElement('span')
+			licence.className = 'thematiq-font-row__licence'
+			licence.textContent = font.licence
+			var status = document.createElement('span')
+			var pill = document.createElement('span')
+			pill.className =
+				'thematiq-font-row__pill'
+				+ (font.inUse === true ? ' thematiq-font-row__pill--in-use' : '')
+			pill.textContent = font.status
+			status.appendChild(pill)
+			font.actions.className = 'thematiq-font-row__actions'
+			row.appendChild(name)
+			row.appendChild(sample)
+			row.appendChild(licence)
+			row.appendChild(status)
+			row.appendChild(font.actions)
+			return row
 		}
 
 		/*
@@ -8869,6 +8753,14 @@
 		 * body or heading role without an upload. Names come from the app's
 		 * own stylesheet; they are still written with textContent only.
 		 */
+		function fontUseLabel(role) {
+			return (
+				role === 'heading'
+					? t('thematiq', 'Headings')
+					: t('thematiq', 'Body text')
+			).toLowerCase()
+		}
+
 		function fontRoleLabel(role) {
 			return role === 'heading'
 				? t('thematiq', 'Heading')
@@ -8891,14 +8783,18 @@
 				})
 				.catch(function (err) {
 					console.error('Error loading the font library:', err)
-					libraryEl.textContent = t('thematiq', 'Failed to load the font library.')
+					listRole(libraryEl, false)
+					libraryEl.textContent = t(
+						'thematiq',
+						'Failed to load the font library.',
+					)
 				})
 		}
 
 		function libraryButton(label, onClick) {
 			var button = document.createElement('button')
 			button.type = 'button'
-			button.className = 'nldesign-btn nldesign-btn--small'
+			button.className = 'thematiq-font-row__button'
 			button.textContent = label
 			button.addEventListener('click', onClick)
 			return button
@@ -8906,6 +8802,7 @@
 
 		function renderFontLibrary(libraryEl, fonts) {
 			libraryEl.replaceChildren()
+			listRole(libraryEl, fonts.length > 0)
 			if (fonts.length === 0) {
 				var empty = document.createElement('p')
 				empty.className = 'settings-hint'
@@ -8916,45 +8813,50 @@
 
 			fonts.forEach(function (font) {
 				var roles = font.roles || []
-				var row = document.createElement('div')
-				row.className = 'nldesign-custom-set-row'
-
-				var nameSpan = document.createElement('span')
-				nameSpan.className = 'nldesign-custom-set-name'
-				nameSpan.textContent = font.name
-				row.appendChild(nameSpan)
-
-				var licenceBadge = document.createElement('span')
-				licenceBadge.className = 'nldesign-badge'
-				licenceBadge.textContent = font.licence
-				licenceBadge.title = t('thematiq', 'Licence')
-				row.appendChild(licenceBadge)
-
-				;['body', 'heading'].forEach(function (role) {
-					if (roles.indexOf(role) !== -1) {
-						var roleBadge = document.createElement('span')
-						roleBadge.className = 'nldesign-badge'
-						roleBadge.textContent = fontRoleLabel(role)
-						row.appendChild(roleBadge)
-						row.appendChild(libraryButton(
-							t('thematiq', 'Stop using for {role}').replace('{role}', fontRoleLabel(role).toLowerCase()),
-							function () {
-								unassignLibraryFont(role)
-							},
-						))
-						return
-					}
-					row.appendChild(libraryButton(
-						role === 'heading'
-							? t('thematiq', 'Use for headings')
-							: t('thematiq', 'Use for body text'),
-						function () {
-							assignLibraryFont(font.name, role)
-						},
-					))
+				var actions = document.createElement('div')
+				;['heading', 'body'].forEach(function (role) {
+					var button =
+						roles.indexOf(role) !== -1
+							? libraryButton(
+									t('thematiq', 'Stop using for {role}').replace(
+										'{role}',
+										fontRoleLabel(role).toLowerCase(),
+									),
+									function () {
+										unassignLibraryFont(role)
+									},
+								)
+							: libraryButton(
+									role === 'heading'
+										? t('thematiq', 'Use for headings')
+										: t('thematiq', 'Use for body text'),
+									function () {
+										assignLibraryFont(font.name, role)
+									},
+								)
+					actions.appendChild(button)
 				})
-
-				libraryEl.appendChild(row)
+				var status =
+					roles.length === 0
+						? t('thematiq', 'Available')
+						: roles
+								.map(function (role) {
+									return t('thematiq', 'In use for {role}', {
+										role: fontUseLabel(role),
+									})
+								})
+								.join(', ')
+				libraryEl.appendChild(
+					fontRow({
+						name: font.name,
+						meta: t('thematiq', 'bundled'),
+						licence: font.licence,
+						status: status,
+						inUse: roles.length > 0,
+						uses: roles,
+						actions: actions,
+					}),
+				)
 			})
 		}
 
@@ -9005,54 +8907,89 @@
 					method: 'DELETE',
 					headers: { requesttoken: OC.requestToken },
 				},
-				t('thematiq', 'Font removed from the role. Reload the page to apply it.'),
+				t(
+					'thematiq',
+					'Font removed from the role. Reload the page to apply it.',
+				),
 			)
 		}
 
 		function deleteFont(id, name) {
-			OC.dialogs.confirm(
-				t(
+			var frame = window.ThematiqAdminDialog
+			if (frame === undefined) {
+				return
+			}
+			frame.open({
+				id: 'thematiq-delete-font-dialog',
+				width: 560,
+				eyebrow: t('thematiq', 'Typefaces'),
+				title: t(
 					'thematiq',
-					'Delete the font "{name}"? Pages using it will fall back to Fira Sans.',
-				).replace('{name}', name),
-				t('thematiq', 'Delete font'),
-				function (confirmed) {
-					if (confirmed !== true) {
-						return
-					}
-					fetch(
-						OC.generateUrl(
-							'/apps/thematiq/settings/fonts/'
-								+ encodeURIComponent(id),
+					'Delete font {name}?',
+					{ name: name },
+					undefined,
+					{ escape: false },
+				),
+				body: [
+					frame.h('p', {
+						class: 'thematiq-admin-dialog__lead',
+						text: t(
+							'thematiq',
+							'Pages that use it fall back to the font of the token set. Then reload the page to refresh the style.',
 						),
-						{
-							method: 'DELETE',
-							headers: { requesttoken: OC.requestToken },
+					}),
+				],
+				actions: [
+					{
+						label: t('thematiq', 'Cancel'),
+						cancel: true,
+						className: 'nldesign-dialog-cancel',
+					},
+					{
+						label: t('thematiq', 'Delete font'),
+						variant: 'danger',
+						icon: 'M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z',
+						className: 'nldesign-dialog-confirm',
+						onClick: function (dialog) {
+							dialog.busy(true)
+							fetch(
+								OC.generateUrl(
+									'/apps/thematiq/settings/fonts/'
+										+ encodeURIComponent(id),
+								),
+								{
+									method: 'DELETE',
+									headers: { requesttoken: OC.requestToken },
+								},
+							)
+								.then(function (r) {
+									return r.json()
+								})
+								.then(function (data) {
+									dialog.close()
+									if (data && data.status === 'ok') {
+										notify(
+											t(
+												'thematiq',
+												'Font deleted. Reload the page to refresh the styling.',
+											),
+										)
+										loadFonts()
+									} else {
+										notify(
+											t('thematiq', 'Failed to delete font.'),
+										)
+									}
+								})
+								.catch(function (err) {
+									dialog.close()
+									console.error('Error deleting font:', err)
+									notify(t('thematiq', 'Failed to delete font.'))
+								})
 						},
-					)
-						.then(function (r) {
-							return r.json()
-						})
-						.then(function (data) {
-							if (data && data.status === 'ok') {
-								notify(
-									t(
-										'thematiq',
-										'Font deleted. Reload the page to refresh the styling.',
-									),
-								)
-								loadFonts()
-							} else {
-								notify(t('thematiq', 'Failed to delete font.'))
-							}
-						})
-						.catch(function (err) {
-							console.error('Error deleting font:', err)
-							notify(t('thematiq', 'Failed to delete font.'))
-						})
-				},
-				true,
-			)
+					},
+				],
+			})
 		}
 
 		// Initialise the custom fonts panel on page load.
@@ -9146,49 +9083,63 @@
 				return
 			}
 
+			var locale = document.documentElement.lang || undefined
 			entries.forEach(function (entry) {
 				var row = document.createElement('tr')
+				var moment = auditFormat.formatAuditMoment
+					? auditFormat.formatAuditMoment(entry.ts, locale)
+					: { date: auditFormat.formatAuditTimestamp(entry.ts), time: '' }
+				var action = auditFormat.formatAuditAction
+					? auditFormat.formatAuditAction(entry.action)
+					: { label: entry.action || '', kind: 'neutral' }
 
-				// One fact per cell. The old single Details column held
-				// "from X to Y" as one string, which meant the two values could
-				// not be lined up down the table — the thing an audit is read
-				// for is what changed, and that is a comparison between two
-				// columns, not a sentence.
+				// One fact per cell, set with textContent throughout: an entry
+				// can carry an admin-supplied custom token set name.
+				var when = auditCell('nldesign-audit-ts')
+				when.appendChild(
+					auditText('strong', 'nldesign-audit-date', moment.date),
+				)
+				when.appendChild(
+					auditText('span', 'nldesign-audit-time', moment.time),
+				)
+				row.appendChild(when)
+
+				var who = auditCell('nldesign-audit-actor')
+				who.textContent = entry.actor || ''
+				row.appendChild(who)
+
+				var what = auditCell('nldesign-audit-action')
+				what.appendChild(
+					auditText(
+						'span',
+						'nldesign-audit-pill nldesign-audit-pill--' + action.kind,
+						action.label,
+					),
+				)
+				what.appendChild(
+					auditText('code', 'nldesign-audit-code', entry.action || ''),
+				)
+				row.appendChild(what)
+
 				;[
-					[
-						'nldesign-audit-ts',
-						auditFormat.formatAuditTimestamp(entry.ts),
-					],
-					['nldesign-audit-actor', entry.actor || ''],
-					['nldesign-audit-action', entry.action || ''],
-					[
-						'nldesign-audit-value',
-						auditFormat.formatAuditValue(entry.old),
-					],
-					[
-						'nldesign-audit-value',
-						auditFormat.formatAuditValue(entry.new),
-					],
-					[
-						'nldesign-audit-changed',
-						auditFormat.formatAuditChanged(entry),
-					],
-				].forEach(function (cell) {
-					var td = document.createElement('td')
-					td.className = cell[0]
-					// textContent throughout: an entry can carry an
-					// admin-supplied custom token set name.
-					td.textContent = cell[1]
-					row.appendChild(td)
+					auditFormat.formatAuditValue(entry.old),
+					auditFormat.formatAuditValue(entry.new),
+				].forEach(function (value) {
+					var cell = auditCell('nldesign-audit-value')
+					cell.textContent = value
+					row.appendChild(cell)
 				})
 
-				var restoreCell = document.createElement('td')
-				restoreCell.className = 'nldesign-audit-restore-cell'
+				var changed = auditCell('nldesign-audit-changed')
+				changed.textContent = auditFormat.formatAuditChanged(entry)
+				row.appendChild(changed)
+
+				var restoreCell = auditCell('nldesign-audit-restore-cell')
 				if (typeof entry.versionId === 'string' && entry.versionId !== '') {
 					var restoreBtn = document.createElement('button')
 					restoreBtn.type = 'button'
-					restoreBtn.className = 'button nldesign-audit-restore'
-					restoreBtn.textContent = t('thematiq', 'Restore')
+					restoreBtn.className = 'nldesign-audit-restore'
+					restoreBtn.title = t('thematiq', 'Restore')
 					restoreBtn.setAttribute(
 						'aria-label',
 						t('thematiq', 'Restore the configuration from {time}', {
@@ -9196,7 +9147,11 @@
 						}),
 					)
 					restoreBtn.addEventListener('click', function () {
-						restoreVersion(entry.versionId, restoreBtn)
+						restoreVersion(
+							entry.versionId,
+							restoreBtn,
+							auditFormat.formatAuditTimestamp(entry.ts),
+						)
 					})
 					restoreCell.appendChild(restoreBtn)
 				}
@@ -9204,13 +9159,59 @@
 
 				tableBody.appendChild(row)
 			})
+
+			document.dispatchEvent(
+				new CustomEvent('thematiq:audit-rendered', {
+					detail: {
+						count: entries.length,
+						versions: entries.filter(function (entry) {
+							return (
+								typeof entry.versionId === 'string'
+								&& entry.versionId !== ''
+							)
+						}).length,
+						since:
+							entries.length > 0
+								? entries[entries.length - 1].ts
+								: null,
+					},
+				}),
+			)
 		}
 
 		/**
-		 * Describe a version preview as plain text lines for the dialog.
+		 * A cell of the audit table.
+		 *
+		 * @param {string} className The cell's class.
+		 * @return {HTMLTableCellElement} The cell.
+		 */
+		function auditCell(className) {
+			var td = document.createElement('td')
+			td.className = className
+			return td
+		}
+
+		/**
+		 * A piece of text in an audit cell.
+		 *
+		 * @param {string} tag The tag.
+		 * @param {string} className The class.
+		 * @param {string} text The text.
+		 * @return {HTMLElement} The element.
+		 */
+		function auditText(tag, className, text) {
+			var el = document.createElement(tag)
+			el.className = className
+			el.textContent = text
+			return el
+		}
+
+		/**
+		 * Describe a version preview for the dialog: the changes as lines, and
+		 * the fonts that are no longer uploaded.
 		 *
 		 * @param {object} preview The preview from POST /settings/versions/{id}/preview.
-		 * @return {string} The description.
+		 * @return {{changes: string[], fonts: string[]}} The description.
 		 * @spec openspec/specs/theme-versions/spec.md
 		 */
 		function describeVersionPreview(preview) {
@@ -9219,7 +9220,7 @@
 				lines.push(
 					t(
 						'thematiq',
-						'{field}: {from} to {to}',
+						'{field}: {from} becomes {to}',
 						{
 							field: change.field,
 							from: auditFormat.formatAuditValue(change.from),
@@ -9253,54 +9254,124 @@
 					),
 				)
 			})
-			;(preview.missingFonts || []).forEach(function (font) {
-				lines.push(
-					t(
-						'thematiq',
-						'The {role} font {name} is no longer uploaded and stays on the default font.',
-						{
-							role: font.role,
-							name: font.name,
-						},
-						undefined,
-						{ escape: false },
-					),
+			var fonts = (preview.missingFonts || []).map(function (font) {
+				return t(
+					'thematiq',
+					'The {role} font {name} is no longer uploaded and stays on the default font. Thematiq does not invent a font.',
+					{
+						role: font.role,
+						name: font.name,
+					},
+					undefined,
+					{ escape: false },
 				)
 			})
-			if (lines.length === 0) {
-				lines.push(
-					t('thematiq', 'This version matches the current configuration.'),
-				)
-			}
-			return lines.join('\n')
+			return { changes: lines, fonts: fonts }
 		}
 
 		/**
-		 * Return focus to an element once a Nextcloud dialog has closed.
+		 * Restore this version? (the TqVersieHerstellen board): what changes, the
+		 * fonts that stay on the default, and that restoring is itself a version.
+		 * Nothing is written until Restore version is pressed.
 		 *
-		 * Nextcloud 35 calls the dialog callback first and closes the dialog
-		 * after it, and the closing focus trap moves focus again, to the body
-		 * (#934). Focusing inside the callback is therefore undone. This
-		 * focuses now and again on the next ticks of the teardown, but only
-		 * while focus sits on the body, so it never takes focus back from
-		 * wherever the administrator has moved on to.
-		 *
-		 * @param {HTMLElement} element The element that opened the dialog.
+		 * @param {string} base The version's URL.
+		 * @param {object} post The request options for a POST.
+		 * @param {HTMLElement} button The row's restore button.
+		 * @param {string} time When the version was saved.
+		 * @param {object} preview The preview of the restore.
+		 * @return {void}
 		 * @spec openspec/specs/theme-versions/spec.md
 		 */
-		function focusAfterDialog(element) {
-			element.focus()
-			;[0, 100, 300, 600].forEach(function (delay) {
-				window.setTimeout(function () {
-					var active = document.activeElement
-					if (
-						(active === null || active === document.body)
-						&& element.isConnected
-						&& element.disabled !== true
-					) {
-						element.focus()
-					}
-				}, delay)
+		function openRestoreDialog(base, post, button, time, preview) {
+			var frame = window.ThematiqAdminDialog
+			if (frame === undefined) {
+				return
+			}
+			var h = frame.h
+			var described = describeVersionPreview(preview)
+			var same = described.changes.length === 0 && described.fonts.length === 0
+			var body = [
+				h('p', {
+					class: 'thematiq-admin-dialog__lead',
+					text: same
+						? t(
+								'thematiq',
+								'This version matches the current configuration.',
+							)
+						: t(
+								'thematiq',
+								'This changes when you restore. Nothing is written until you click Restore version.',
+							),
+				}),
+			]
+			if (described.changes.length > 0) {
+				body.push(frame.list(described.changes, 'changes'))
+			}
+			described.fonts.forEach(function (line) {
+				body.push(frame.notice(line, 'caution'))
+			})
+			body.push(
+				h('p', {
+					class: 'thematiq-admin-dialog__aside thematiq-admin-dialog__aside--muted',
+					text: t(
+						'thematiq',
+						'Restoring is itself a change with its own version in the log. So you can undo it again.',
+					),
+				}),
+			)
+
+			frame.open({
+				id: 'nldesign-restore-version-dialog',
+				width: 560,
+				opener: button,
+				eyebrow: t('thematiq', 'Log, version of {time}', {
+					time: time || '',
+				}),
+				title: t('thematiq', 'Restore this version?'),
+				body: body,
+				actions: [
+					{
+						label: t('thematiq', 'Cancel'),
+						cancel: true,
+						className: 'nldesign-dialog-cancel',
+					},
+					{
+						label: t('thematiq', 'Restore version'),
+						variant: 'primary',
+						icon: 'restore',
+						className: 'nldesign-dialog-confirm',
+						onClick: function (dialog) {
+							dialog.busy(true)
+							fetch(base + '/restore', post)
+								.then(function (r) {
+									return r.json()
+								})
+								.then(function (result) {
+									if (result && result.applied === true) {
+										window.location.reload()
+										return
+									}
+									dialog.close()
+									notify(
+										t(
+											'thematiq',
+											'The version was not restored. Nothing was changed.',
+										),
+									)
+								})
+								.catch(function (err) {
+									console.error('Error restoring a version:', err)
+									dialog.close()
+									notify(
+										t(
+											'thematiq',
+											'The version was not restored. Nothing was changed.',
+										),
+									)
+								})
+						},
+					},
+				],
 			})
 		}
 
@@ -9311,9 +9382,10 @@
 		 *
 		 * @param {string} versionId The version to restore.
 		 * @param {HTMLElement} button The row's restore button.
+		 * @param {string} time When the version was saved, as the log shows it.
 		 * @spec openspec/specs/theme-versions/spec.md
 		 */
-		function restoreVersion(versionId, button) {
+		function restoreVersion(versionId, button, time) {
 			var base = OC.generateUrl(
 				'/apps/thematiq/settings/versions/' + encodeURIComponent(versionId),
 			)
@@ -9335,47 +9407,7 @@
 						button.focus()
 						return
 					}
-					// The dialog's focus trap returns focus to whatever held it
-					// on open; the button lost it while it was disabled.
-					button.focus()
-					OC.dialogs.confirm(
-						describeVersionPreview(preview),
-						t('thematiq', 'Restore this version?'),
-						function (confirmed) {
-							if (confirmed !== true) {
-								focusAfterDialog(button)
-								return
-							}
-							fetch(base + '/restore', post)
-								.then(function (r) {
-									return r.json()
-								})
-								.then(function (result) {
-									if (result && result.applied === true) {
-										window.location.reload()
-										return
-									}
-									notify(
-										t(
-											'thematiq',
-											'The version was not restored. Nothing was changed.',
-										),
-									)
-									button.focus()
-								})
-								.catch(function (err) {
-									console.error('Error restoring a version:', err)
-									notify(
-										t(
-											'thematiq',
-											'The version was not restored. Nothing was changed.',
-										),
-									)
-									button.focus()
-								})
-						},
-						true,
-					)
+					openRestoreDialog(base, post, button, time, preview)
 				})
 				.catch(function (err) {
 					console.error('Error restoring a version:', err)
@@ -9390,7 +9422,7 @@
 				})
 		}
 
-		initAuditLog()
+		whenPanelShown('nldesign-audit-table-body', initAuditLog)
 
 		/**
 		 * Point the contrast evidence report links at the export endpoint, one
@@ -9467,7 +9499,7 @@
 			}
 			return t(
 				'thematiq',
-				'A planned switch to {set} is running until {time}. A token set picked here is put back within five minutes; cancel the switch under Planned switches to change the theme before then.',
+				'A planned switch to {set} is running until {time}. A token set picked here is put back within five minutes; cancel the switch under Scheduled switches to change the theme before then.',
 				{
 					set: tokenSetName(runningSwitch.tokenSet),
 					time: formatLocalTime(runningSwitch.until),
@@ -9492,7 +9524,7 @@
 		}
 
 		/**
-		 * The "Planned switches" block: status, cron warning, plan form and
+		 * The scheduled switches panel (TqWissels): status, cron warning, plan form and
 		 * the list with a cancel button per switch. Times are entered and
 		 * shown in the browser's time zone and sent as UTC.
 		 *
@@ -9547,83 +9579,109 @@
 						),
 					)
 				}
-				lines.push(
-					status.lastRun
+				if (lines.length === 0) {
+					lines.push(t('thematiq', 'No switch is running now.'))
+				}
+				statusEl.textContent = lines.join(' ')
+				var lastRun = document.getElementById('nldesign-scheduled-last-run')
+				if (lastRun !== null) {
+					lastRun.textContent = status.lastRun
 						? t(
 								'thematiq',
-								'The schedule last ran at {time}.',
+								'last run {time}',
 								{ time: formatLocalTime(status.lastRun) },
 								undefined,
 								{ escape: false },
 							)
-						: t('thematiq', 'The schedule has not run yet.'),
+						: t('thematiq', 'not run yet')
+				}
+				var active = document.querySelector(
+					'.thematiq-switches-panel__active',
 				)
-				statusEl.textContent = lines.join(' ')
+				if (active !== null) {
+					active.textContent = status.activeTokenSet
+						? tokenSetName(status.activeTokenSet)
+						: ''
+				}
 				if (warning !== null) {
 					warning.hidden = status.cronWarning !== true
 				}
 			}
 
-			function describe(entry) {
-				var text = entry.endAt
-					? t(
-							'thematiq',
-							'{set} from {start} to {end}',
-							{
-								set: tokenSetName(entry.tokenSet),
-								start: formatLocalTime(entry.startAt),
-								end: formatLocalTime(entry.endAt),
-							},
-							undefined,
-							{ escape: false },
-						)
-					: t(
-							'thematiq',
-							'{set} from {start}, no end',
-							{
-								set: tokenSetName(entry.tokenSet),
-								start: formatLocalTime(entry.startAt),
-							},
-							undefined,
-							{ escape: false },
-						)
-				if (entry.status === 'running') {
-					return text + ' (' + t('thematiq', 'running') + ')'
+			var statusNames = {
+				planned: t('thematiq', 'Scheduled'),
+				running: t('thematiq', 'Running'),
+				failed: t('thematiq', 'Failed'),
+			}
+
+			/**
+			 * A table cell with a date and, under it, the time.
+			 *
+			 * @param {string|null} iso The UTC time, or null for no end.
+			 * @return {HTMLTableCellElement} The cell.
+			 */
+			function timeCell(iso) {
+				var cell = document.createElement('td')
+				if (!iso) {
+					cell.textContent = t('thematiq', 'no end')
+					return cell
 				}
-				if (entry.status === 'failed') {
-					return (
-						text
-						+ '. '
-						+ t(
-							'thematiq',
-							'Failed: {reason}',
-							{ reason: entry.failureReason || '' },
-							undefined,
-							{ escape: false },
-						)
-					)
-				}
-				return text
+				var when = new Date(iso)
+				var day = document.createElement('span')
+				day.className = 'thematiq-switches-panel__day'
+				day.textContent = when.toLocaleDateString([], {
+					weekday: 'short',
+					day: 'numeric',
+					month: 'short',
+					year: 'numeric',
+				})
+				var time = document.createElement('span')
+				time.className = 'thematiq-switches-panel__time'
+				time.textContent = when.toLocaleTimeString([], {
+					hour: '2-digit',
+					minute: '2-digit',
+				})
+				cell.append(day, time)
+				return cell
 			}
 
 			function renderList(switches) {
 				list.replaceChildren()
 				if (!switches || switches.length === 0) {
-					var empty = document.createElement('li')
-					empty.className = 'settings-hint'
-					empty.textContent = t('thematiq', 'No switches are planned.')
+					var empty = document.createElement('tr')
+					var none = document.createElement('td')
+					none.colSpan = 5
+					none.className = 'settings-hint'
+					none.textContent = t('thematiq', 'No switches are planned.')
+					empty.appendChild(none)
 					list.appendChild(empty)
 					return
 				}
 				switches.forEach(function (entry) {
-					var item = document.createElement('li')
-					item.className = 'nldesign-scheduled-item'
-					if (entry.status === 'failed') {
-						item.classList.add('nldesign-scheduled-item--failed')
+					var row = document.createElement('tr')
+					row.className = 'nldesign-scheduled-item'
+					var status = entry.status || 'planned'
+					if (status === 'failed') {
+						row.classList.add('nldesign-scheduled-item--failed')
 					}
-					var label = document.createElement('span')
-					label.textContent = describe(entry)
-					item.appendChild(label)
+					var name = document.createElement('td')
+					var strong = document.createElement('strong')
+					strong.textContent = tokenSetName(entry.tokenSet)
+					name.appendChild(strong)
+					var state = document.createElement('td')
+					var pill = document.createElement('span')
+					pill.className =
+						'thematiq-contrast-panel__pill thematiq-switches-panel__status thematiq-switches-panel__status--'
+						+ status
+					pill.textContent = statusNames[status] || status
+					state.appendChild(pill)
+					if (status === 'failed' && entry.failureReason) {
+						var reason = document.createElement('span')
+						reason.className = 'thematiq-switches-panel__reason'
+						reason.textContent = entry.failureReason
+						state.appendChild(reason)
+					}
+					var actions = document.createElement('td')
 					var cancel = document.createElement('button')
 					cancel.type = 'button'
 					cancel.className = 'button nldesign-scheduled-cancel'
@@ -9641,8 +9699,15 @@
 					cancel.addEventListener('click', function () {
 						cancelSwitch(entry.id, cancel)
 					})
-					item.appendChild(cancel)
-					list.appendChild(item)
+					actions.appendChild(cancel)
+					row.append(
+						name,
+						timeCell(entry.startAt),
+						timeCell(entry.endAt),
+						state,
+						actions,
+					)
+					list.appendChild(row)
 				})
 			}
 
@@ -9654,6 +9719,11 @@
 					.then(function (data) {
 						renderStatus(data.status)
 						renderList(data.switches)
+						document.dispatchEvent(
+							new CustomEvent('thematiq:scheduled-switches', {
+								detail: data,
+							}),
+						)
 					})
 					.catch(function (err) {
 						console.error('Error loading planned switches:', err)
@@ -9893,6 +9963,8 @@
 			if (occHint !== null) {
 				occHint.style.display = 'none'
 			}
+			// The email panel's examples and header line read these fields: tell it they changed.
+			document.dispatchEvent(new CustomEvent('thematiq:email-theming', { detail: { state: state || null, footer: footer || null } }))
 		}
 
 		function initEmailTheming() {
@@ -10034,8 +10106,8 @@
 				})
 		}
 
-		// Initialise the email theming panel on page load.
-		initEmailTheming()
+		// Initialise the email theming block once the email panel opens.
+		whenPanelShown('nldesign-email-theming', initEmailTheming)
 
 		/* ==========================================================================
 		 * UPSTREAM TOKEN FRESHNESS — opt-in daily check against upstream
@@ -10063,26 +10135,37 @@
 			}
 		}
 
-		// Build the human-facing label for one notice: the specific-set message
-		// when a setId was attributed, or a generic fallback when attribution
-		// failed and only a head SHA is known.
+		/**
+		 * What a notice is about: the set's name, or the upstream themes as a
+		 * whole when the update could not be tied to one set.
+		 *
+		 * @param {object} notice The notice.
+		 * @return {string} The name.
+		 */
+		function upstreamNoticeName(notice) {
+			if (notice.setId && notice.setId !== '__generic__') {
+				var ts = tokenSetsData[notice.setId]
+				return ts ? ts.name : notice.setId
+			}
+			return t('thematiq', 'NL Design System themes')
+		}
+
+		/**
+		 * The line under a notice's name: which update the source has.
+		 *
+		 * @param {object} notice The notice.
+		 * @return {string} The line.
+		 */
 		function upstreamNoticeLabel(notice) {
 			var version =
 				notice.upstreamVersion
 				|| (notice.headSha ? notice.headSha.slice(0, 7) : '')
-			if (notice.setId && notice.setId !== '__generic__') {
-				var ts = tokenSetsData[notice.setId]
-				var name = ts ? ts.name : notice.setId
-				return t(
-					'thematiq',
-					'Token set {name} has upstream update {version} — review & apply',
-					{ name: name, version: version },
-				)
-			}
 			return t(
 				'thematiq',
-				'Upstream token sets have updates ({version}) — review & apply',
+				'Source has update {version}. Review the tokens and apply them yourself.',
 				{ version: version },
+				undefined,
+				{ escape: false },
 			)
 		}
 
@@ -10115,14 +10198,43 @@
 				var row = document.createElement('div')
 				row.className = 'nldesign-upstream-notice'
 
+				var text = document.createElement('div')
+				text.className = 'nldesign-upstream-notice__text'
+				var name = document.createElement('strong')
+				name.textContent = upstreamNoticeName(notice)
 				var label = document.createElement('span')
 				label.textContent = upstreamNoticeLabel(notice)
-				row.appendChild(label)
+				text.append(name, label)
+				if (notice.detectedAt) {
+					var found = document.createElement('span')
+					found.className = 'nldesign-upstream-notice__found'
+					found.textContent = t('thematiq', 'found on {date}', {
+						date: new Date(
+							Number(notice.detectedAt) * 1000,
+						).toLocaleDateString([], {
+							day: 'numeric',
+							month: 'short',
+							year: 'numeric',
+						}),
+					})
+					text.appendChild(found)
+				}
+				row.appendChild(text)
 
 				var dismissBtn = document.createElement('button')
 				dismissBtn.type = 'button'
 				dismissBtn.className = 'nldesign-btn nldesign-btn--small'
-				dismissBtn.textContent = t('thematiq', 'Dismiss')
+				dismissBtn.textContent = t('thematiq', 'Ignore')
+				dismissBtn.setAttribute(
+					'aria-label',
+					t(
+						'thematiq',
+						'Ignore notice about {name}',
+						{ name: upstreamNoticeName(notice) },
+						undefined,
+						{ escape: false },
+					),
+				)
 				dismissBtn.addEventListener('click', function () {
 					dismissUpstreamNotice(
 						notice.setId,
@@ -10133,6 +10245,9 @@
 
 				noticesEl.appendChild(row)
 			})
+			document.dispatchEvent(
+				new CustomEvent('thematiq:upstream-freshness', { detail: data }),
+			)
 		}
 
 		function loadUpstreamFreshness() {
@@ -10218,8 +10333,8 @@
 			loadUpstreamFreshness()
 		}
 
-		// Initialise the upstream freshness panel on page load.
-		initUpstreamFreshness()
+		// Initialise the upstream freshness block once the gallery panel opens.
+		whenPanelShown('nldesign-upstream-freshness-toggle', initUpstreamFreshness)
 
 		/**
 		 * Theme gallery (openspec/specs/theme-gallery/spec.md): an opt-in
@@ -10231,7 +10346,7 @@
 		 */
 		function initGallery() {
 			var toggle = document.getElementById('nldesign-gallery-toggle')
-			var label = document.getElementById('nldesign-gallery-toggle-label')
+			var label = document.getElementById('nldesign-gallery-toggle-hint')
 			var statusEl = document.getElementById('nldesign-gallery-status')
 			var list = document.getElementById('nldesign-gallery-list')
 			if (toggle === null || list === null) {
@@ -10279,26 +10394,52 @@
 				})
 				item.appendChild(swatches)
 
-				var text = document.createElement('span')
+				var text = document.createElement('div')
 				text.className = 'nldesign-gallery-text'
-				var name = document.createElement('strong')
+				var name = document.createElement('h3')
+				name.className = 'nldesign-gallery-name'
 				name.textContent = entry.name
 				text.appendChild(name)
 				var meta = document.createElement('span')
 				meta.className = 'nldesign-gallery-meta'
-				meta.textContent = t(
-					'thematiq',
-					'{organisation}, licence {licence}. {contrast}.',
-					{
-						organisation: entry.organisation,
-						licence: entry.licence,
-						contrast: contrastText(entry.contrast),
-					},
-					undefined,
-					{ escape: false },
-				)
+				meta.textContent = entry.addedOn
+					? t(
+							'thematiq',
+							'{organisation}, added {date}',
+							{
+								organisation: entry.organisation,
+								date: new Date(entry.addedOn).toLocaleDateString(
+									[],
+									{
+										day: 'numeric',
+										month: 'short',
+										year: 'numeric',
+									},
+								),
+							},
+							undefined,
+							{ escape: false },
+						)
+					: entry.organisation
 				text.appendChild(meta)
+				if (entry.description) {
+					var description = document.createElement('p')
+					description.className = 'nldesign-gallery-description'
+					description.textContent = entry.description
+					text.appendChild(description)
+				}
+				var licence = document.createElement('span')
+				licence.className = 'nldesign-gallery-licence'
+				var code = document.createElement('code')
+				code.textContent = entry.licence
+				licence.append(t('thematiq', 'Licence') + ' ', code)
+				text.appendChild(licence)
+				var contrast = document.createElement('span')
+				contrast.className = 'nldesign-gallery-contrast'
+				contrast.textContent = contrastText(entry.contrast)
+				text.appendChild(contrast)
 				var source = document.createElement('a')
+				source.className = 'nldesign-gallery-source'
 				source.href = entry.sourceUrl
 				source.target = '_blank'
 				source.rel = 'noopener noreferrer'
@@ -10312,38 +10453,54 @@
 				text.appendChild(source)
 				item.appendChild(text)
 
+				var foot = document.createElement('div')
+				foot.className = 'nldesign-gallery-foot'
+				item.appendChild(foot)
 				if (entry.installed && !entry.updateAvailable) {
 					var done = document.createElement('span')
-					done.className = 'nldesign-badge'
+					done.className = 'nldesign-badge nldesign-badge--success'
 					done.textContent = t('thematiq', 'Installed')
-					item.appendChild(done)
+					foot.appendChild(done)
 					return item
 				}
 
 				var button = document.createElement('button')
 				button.type = 'button'
-				button.className = 'nldesign-btn nldesign-btn--small'
 				if (entry.updateAvailable) {
 					var badge = document.createElement('span')
 					badge.className = 'nldesign-badge nldesign-badge--warning'
 					badge.textContent = t('thematiq', 'Update available')
-					item.appendChild(badge)
+					foot.appendChild(badge)
+					button.className = 'nldesign-gallery-update'
 					button.textContent = t('thematiq', 'Update')
 					button.setAttribute(
 						'aria-label',
-						t('thematiq', 'Update {name}', { name: entry.name }),
+						t(
+							'thematiq',
+							'Update {name}',
+							{ name: entry.name },
+							undefined,
+							{ escape: false },
+						),
 					)
 				} else {
+					button.className = 'nldesign-gallery-install'
 					button.textContent = t('thematiq', 'Install')
 					button.setAttribute(
 						'aria-label',
-						t('thematiq', 'Install {name}', { name: entry.name }),
+						t(
+							'thematiq',
+							'Install {name}',
+							{ name: entry.name },
+							undefined,
+							{ escape: false },
+						),
 					)
 				}
 				button.addEventListener('click', function () {
 					install(entry, button)
 				})
-				item.appendChild(button)
+				foot.appendChild(button)
 				return item
 			}
 
@@ -10352,10 +10509,13 @@
 				if (label !== null && data.host) {
 					label.textContent = t(
 						'thematiq',
-						'Show the theme gallery (contacts {host})',
+						'Reads {host} while you have this page open. Off by default.',
 						{ host: data.host },
 					)
 				}
+				document.dispatchEvent(
+					new CustomEvent('thematiq:gallery', { detail: data }),
+				)
 				list.replaceChildren()
 				if (data.enabled !== true) {
 					setStatus('')
@@ -10464,7 +10624,7 @@
 			load()
 		}
 
-		initGallery()
+		whenPanelShown('nldesign-gallery-list', initGallery)
 
 		/**
 		 * Freeform custom CSS panel.

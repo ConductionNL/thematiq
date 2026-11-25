@@ -1,0 +1,14 @@
+{
+	"app": "thematiq",
+	"pages": [
+		{
+			"name": "Theming settings",
+			"path": "/index.php/settings/admin/theming",
+			"ready": "#nldesign-settings"
+		},
+		{
+			"name": "Files with the house style",
+			"path": "/index.php/apps/files/"
+		}
+	]
+}

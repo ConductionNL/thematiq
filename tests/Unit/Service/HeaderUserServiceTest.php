@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -137,7 +137,7 @@ class HeaderUserServiceTest extends TestCase {
 	/**
 	 * The board's person: the name and the role, handed over once with the script.
 	 *
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
 	 *
 	 * @return void
 	 */
@@ -155,7 +155,7 @@ class HeaderUserServiceTest extends TestCase {
 	 * A profile without a role hands over the name and an empty role, so the
 	 * bar shows the name only.
 	 *
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
 	 *
 	 * @return void
 	 */
@@ -169,7 +169,7 @@ class HeaderUserServiceTest extends TestCase {
 	 * With nobody signed in (the login page, a public share) nothing is
 	 * handed over and no script loads.
 	 *
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
 	 *
 	 * @return void
 	 */
@@ -186,7 +186,7 @@ class HeaderUserServiceTest extends TestCase {
 	 * A page without the workplace bar (another header style, or the default
 	 * layout) gets no state and no script, even with somebody signed in.
 	 *
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
 	 *
 	 * @return void
 	 */
@@ -203,7 +203,7 @@ class HeaderUserServiceTest extends TestCase {
 	 * A failure is logged and leaves the page with Nextcloud's own avatar:
 	 * no state, no script, no exception.
 	 *
-	 * @spec openspec/changes/header-style-workplace/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
 	 *
 	 * @return void
 	 */

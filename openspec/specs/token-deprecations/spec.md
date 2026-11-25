@@ -1,7 +1,7 @@
 # token-deprecations Specification
 
 ## Purpose
-TBD - created by archiving change authoring-token-lifecycle. Update Purpose after archive.
+Retiring a token without breaking the apps that read it: an administrator marks a token deprecated with a severity, a replacement and a removal date, consuming apps can read every deprecation, the served stylesheet names them, and a passed date is flagged but never acted on.
 
 ## Requirements
 

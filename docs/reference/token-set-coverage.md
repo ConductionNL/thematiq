@@ -71,6 +71,7 @@ that lowers the allow-list count with nothing fixed, so it has to be written dow
 | noordwijk | 52/87 | self-hosted | yes | pass |
 | nora | 50/87 | self-hosted | no (known) | pass |
 | opencatalogi | 79/87 | declared | yes | pass |
+| openwoo | 0/87 | system | no (known) | pass |
 | provincie-zuid-holland | 56/87 | declared | yes | pass |
 | purmerend | 55/87 | self-hosted | no (known) | pass |
 | riddeliemers | 40/87 | self-hosted | no (known) | pass |
@@ -97,9 +98,9 @@ that lowers the allow-list count with nothing fixed, so it has to be written dow
 | zuiddrecht | 0/87 | self-hosted | yes | pass |
 | zwolle | 65/87 | declared | no (known) | pass |
 
-- 64 sets measured; 27 pass every gated dimension (font, logo, contrast).
-- bridge (measured, NOT gated): 5 of 60 bridged sets declare none of the 87 --utrecht-* names; median 55.
-- font: 22 declared, 38 self-hosted, 4 system.
-- logo: 37 of 64 point Nextcloud at no logo.
-- contrast: 0 of 64 do not pass.
+- 65 sets measured; 27 pass every gated dimension (font, logo, contrast).
+- bridge (measured, NOT gated): 6 of 61 bridged sets declare none of the 87 --utrecht-* names; median 55.
+- font: 22 declared, 38 self-hosted, 5 system.
+- logo: 38 of 65 point Nextcloud at no logo.
+- contrast: 0 of 65 do not pass.
 

@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
+ * @spec openspec/specs/token-import-export/spec.md
  */
 
 declare(strict_types=1);
@@ -23,7 +23,7 @@ namespace OCA\Thematiq\Service;
 /**
  * Checks the overrides import's upload: present, at most 256 KB, named .css and detected as text.
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
+ * @spec openspec/specs/token-import-export/spec.md
  */
 final class CssUploadCheck {
 
@@ -34,7 +34,7 @@ final class CssUploadCheck {
 	 *
 	 * @return UploadRefusal|null The refusal, or null.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-11
+	 * @spec openspec/specs/token-import-export/spec.md
 	 */
 	public function refusal(mixed $file): UploadRefusal|null {
 		if (empty($file) === true || isset($file['tmp_name']) === false) {

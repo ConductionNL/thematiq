@@ -9,7 +9,7 @@
  * whether they are right: which chips a tab offers, what a shared link
  * reopens, and what leaves the panel as a file.
  *
- * @spec openspec/changes/component-playground/specs/component-playground/spec.md
+ * @spec openspec/specs/component-playground/spec.md
  */
 
 import { describe, it, expect } from 'vitest'
@@ -165,6 +165,22 @@ describe('component instrument: the rows under a component', () => {
 })
 
 describe('component instrument: the URL hash', () => {
+	it("keeps the components panel's own hash while that panel is open", () => {
+		expect(playground.hashIn('components', 'status', 'primary-button')).toBe(
+			'#components',
+		)
+		expect(playground.hashIn('components', 'own', 'own')).toBe('#components/own')
+		expect(playground.hashIn('motion', 'content', playground.FULL_VIEW)).toBe(
+			'#motion',
+		)
+		expect(playground.hashIn(null, 'status', 'primary-button')).toBe(
+			'#preview=status/primary-button',
+		)
+		expect(playground.hashIn('layout', 'content', playground.FULL_VIEW)).toBe(
+			playground.hashFor('content', playground.FULL_VIEW),
+		)
+	})
+
 	it('round-trips a selection', () => {
 		const hash = playground.hashFor('status', 'primary-button')
 

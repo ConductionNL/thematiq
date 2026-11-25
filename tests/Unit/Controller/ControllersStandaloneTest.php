@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/archive/2026-06-16-adopt-apphost/tasks.md#task-3
+ * @spec openspec/specs/prometheus-metrics/spec.md
  */
 
 declare(strict_types=1);

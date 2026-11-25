@@ -11,6 +11,8 @@
  */
 import { test, expect, Page } from '@playwright/test'
 
+import { activateTokenSet } from './_token-css'
+
 async function nldesignStyles(page: Page): Promise<string[]> {
 	return page.evaluate(() =>
 		[...document.querySelectorAll('link[rel=stylesheet]')]
@@ -20,17 +22,28 @@ async function nldesignStyles(page: Page): Promise<string[]> {
 }
 
 test.describe('render-context CSS injection', () => {
-	test('a logged-in page receives the themed cascade', async ({ page }) => {
-		await page.goto('/settings/user')
-		const styles = await nldesignStyles(page)
-		expect(styles.length).toBeGreaterThan(0)
-		// Design-system layer precedes the token layer, which precedes overrides.
-		const sys = styles.findIndex((h) => h.includes('/css/systems/'))
-		const tok = styles.findIndex((h) => /\/css\/tokens\/[^/]+\.css/.test(h))
-		const ovr = styles.findIndex((h) => h.includes('custom-overrides'))
-		expect(sys).toBeGreaterThanOrEqual(0)
-		expect(tok).toBeGreaterThan(sys)
-		expect(ovr).toBeGreaterThan(tok)
+	test('a logged-in page receives the themed cascade', async ({
+		page,
+		browser,
+	}) => {
+		// The instance default is the stock `nextcloud` set, which wears no
+		// design system and links no system or token layer; a set that does
+		// is made active for the measurement: Zuiddrecht, unrestricted.
+		const restore = await activateTokenSet(browser, 'zuiddrecht')
+		try {
+			await page.goto('/settings/user')
+			const styles = await nldesignStyles(page)
+			expect(styles.length).toBeGreaterThan(0)
+			// Design-system layer precedes the token layer, which precedes overrides.
+			const sys = styles.findIndex((h) => h.includes('/css/systems/'))
+			const tok = styles.findIndex((h) => /\/css\/tokens\/[^/]+\.css/.test(h))
+			const ovr = styles.findIndex((h) => h.includes('custom-overrides'))
+			expect(sys).toBeGreaterThanOrEqual(0)
+			expect(tok).toBeGreaterThan(sys)
+			expect(ovr).toBeGreaterThan(tok)
+		} finally {
+			await restore()
+		}
 	})
 
 	test('the login page (guest render) is themed too', async ({ browser }) => {

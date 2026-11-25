@@ -4,7 +4,8 @@
  * Loaded only on the login page while the workplace layout resolves to
  * `light` (LoginCopyService), with the copy of the page's token set as
  * initial state (`thematiq/login-copy`): title, subtitle, ssoLabel,
- * usernameLabel, divider, footer, footerHint, footerLinkLabel, footerLinkUrl.
+ * usernameLabel, submitLabel, resetLabel, divider, footer, footerHint,
+ * footerLinkLabel, footerLinkUrl.
  * Every key is optional.
  *
  * - An intro block (title and subtitle) becomes the first child of the
@@ -17,8 +18,9 @@
  *   follows them. With exactly one alternative login the SSO label replaces
  *   its name. The card is marked `data-thematiq-sso`, and the stylesheet then
  *   draws the password button as the secondary action.
- * - The username label, the footer line and an optional footer hint with a
- *   link are written as text. Nextcloud's legal links in the footer stay.
+ * - The username label, the words of the submit button and of the lost
+ *   password link, the footer line and an optional footer hint with a link
+ *   are written as text. Nextcloud's legal links in the footer stay.
  *
  * Text only, never markup. Nextcloud re-renders parts of the card (the reset
  * password form and back); every step is idempotent and runs again then.
@@ -26,7 +28,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 ;(function thematiqLoginCopyInit() {
 	var INTRO = 'thematiq-login-intro'
@@ -43,7 +45,7 @@
 	 * Read the copy from the initial state.
 	 *
 	 * @return {object|null} The copy, or null when there is none to read.
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function readCopy() {
 		if (
@@ -67,7 +69,7 @@
 	 * @param {object} copy The copy.
 	 * @param {string} key The key.
 	 * @return {string} The text.
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function text(copy, key) {
 		return typeof copy[key] === 'string' ? copy[key].trim() : ''
@@ -79,7 +81,7 @@
 	 *
 	 * @param {Element} el The element.
 	 * @param {string} value The text.
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function setText(el, value) {
 		if (el.textContent !== value) {
@@ -93,7 +95,7 @@
 	 * @param {Element} box The login card.
 	 * @param {object} copy The copy.
 	 * @return {Element|null} The intro, or null while the card shows no login form.
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function placeIntro(box, copy) {
 		var intro = box.querySelector(':scope > .' + INTRO)
@@ -135,7 +137,7 @@
 	 * @param {Element} box The login card.
 	 * @param {Element|null} intro The intro, after which they go.
 	 * @param {object} copy The copy.
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function placeAlternatives(box, intro, copy) {
 		var alt = box.querySelector(':scope > #alternative-logins')
@@ -174,7 +176,7 @@
 	 *
 	 * @param {Element} box The login card.
 	 * @param {object} copy The copy.
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function labelUsername(box, copy) {
 		var label = text(copy, 'usernameLabel')
@@ -185,10 +187,31 @@
 	}
 
 	/**
+	 * The words of the submit button and of the lost password link.
+	 *
+	 * @param {Element} box The login card.
+	 * @param {object} copy The copy.
+	 * @spec openspec/specs/workplace-layout/spec.md
+	 */
+	function labelActions(box, copy) {
+		var targets = [
+			['submitLabel', '[data-login-form-submit]'],
+			['resetLabel', '#lost-password'],
+		]
+		targets.forEach(function (target) {
+			var label = text(copy, target[0])
+			var button = label ? box.querySelector(target[1]) : null
+			if (button !== null) {
+				setText(button.querySelector('.button-vue__text') || button, label)
+			}
+		})
+	}
+
+	/**
 	 * The footer line, keeping Nextcloud's legal links, and the hint.
 	 *
 	 * @param {object} copy The copy.
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function writeFooter(copy) {
 		var footer = document.querySelector('body > footer.guest-box')
@@ -241,7 +264,7 @@
 	/**
 	 * Apply the copy now and whenever the card re-renders.
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/workplace-layout/spec.md
 	 */
 	function thematiqLoginCopyMain() {
 		var copy = readCopy()
@@ -258,6 +281,7 @@
 			var intro = placeIntro(box, copy)
 			placeAlternatives(box, intro, copy)
 			labelUsername(box, copy)
+			labelActions(box, copy)
 		}
 
 		apply()

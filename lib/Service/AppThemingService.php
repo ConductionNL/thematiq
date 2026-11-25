@@ -13,8 +13,8 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/2026-06-14-per-app-theming-toggle/tasks.md#task-1.1
- * @spec openspec/changes/archive/2026-06-14-per-app-theming-toggle/tasks.md#task-1.2
+ * @spec openspec/specs/per-app-theming/spec.md
+ * @spec openspec/specs/per-app-theming/spec.md
  */
 
 declare(strict_types=1);
@@ -33,8 +33,8 @@ use OCP\IConfig;
  * The ids `nldesign`, `settings`, and `theming` are protected: they can never
  * be excluded (the settings panel lives there and theming itself is the point).
  *
- * @spec openspec/changes/archive/2026-06-14-per-app-theming-toggle/tasks.md#task-1.1
- * @spec openspec/changes/archive/2026-06-14-per-app-theming-toggle/tasks.md#task-1.2
+ * @spec openspec/specs/per-app-theming/spec.md
+ * @spec openspec/specs/per-app-theming/spec.md
  */
 class AppThemingService {
 
@@ -85,7 +85,7 @@ class AppThemingService {
 	 *
 	 * @return string[] The excluded app ids.
 	 *
-	 * @spec openspec/changes/archive/2026-06-14-per-app-theming-toggle/tasks.md#task-1.1
+	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
 	public function getDisabledApps(): array {
 		$raw = $this->config->getAppValue(Application::APP_ID, self::CONFIG_KEY, '[]');
@@ -117,7 +117,7 @@ class AppThemingService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/archive/2026-06-14-per-app-theming-toggle/tasks.md#task-1.1
+	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
 	public function setDisabledApps(array $appIds): void {
 		$clean = [];
@@ -159,7 +159,7 @@ class AppThemingService {
 	 *
 	 * @return bool True when theming must be skipped.
 	 *
-	 * @spec openspec/changes/archive/2026-06-14-per-app-theming-toggle/tasks.md#task-1.1
+	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
 	public function isThemingDisabledFor(?string $appId): bool {
 		if ($appId === null || $appId === '') {
@@ -180,7 +180,7 @@ class AppThemingService {
 	 *
 	 * @return string|null The app id, or null when the path is not an app page.
 	 *
-	 * @spec openspec/changes/archive/2026-06-14-per-app-theming-toggle/tasks.md#task-1.2
+	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
 	public function resolveAppIdFromPath(?string $pathInfo): ?string {
 		if ($pathInfo === null || $pathInfo === '') {
@@ -202,7 +202,7 @@ class AppThemingService {
 	 *
 	 * @return array<array{id: string, name: string, themed: bool}> The app list.
 	 *
-	 * @spec openspec/changes/archive/2026-06-14-per-app-theming-toggle/tasks.md#task-3.1
+	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
 	public function getThemableApps(): array {
 		$disabled = $this->getDisabledApps();
@@ -258,7 +258,7 @@ class AppThemingService {
 	 *
 	 * @return string The display name.
 	 *
-	 * @spec openspec/changes/archive/2026-06-14-per-app-theming-toggle/tasks.md#task-3.1
+	 * @spec openspec/specs/per-app-theming/spec.md
 	 */
 	private function resolveDisplayName(string $appId): string {
 		$name = $this->infoName(info: $this->appManager->getAppInfo($appId));

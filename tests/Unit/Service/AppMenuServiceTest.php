@@ -6,20 +6,30 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
 
 namespace OCA\Thematiq\Tests\Unit\Service;
 
+use OCA\Thematiq\Service\AppMenuExternalApp;
+use OCA\Thematiq\Service\AppMenuLegacyExternalApps;
+use OCA\Thematiq\Service\AppMenuListState;
+use OCA\Thematiq\Service\AppMenuOrder;
+use OCA\Thematiq\Service\AppMenuPins;
 use OCA\Thematiq\Service\AppMenuService;
+use OCA\Thematiq\Service\AppMenuSettings;
 use OCA\Thematiq\Service\DesignSystemService;
+use OCA\Thematiq\Service\ExternalApps;
 use OCA\Thematiq\Service\LayoutOptionsService;
 use OCA\Thematiq\Service\OpenProjectModules;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\IL10N;
+use OCP\IUser;
+use OCP\IUserSession;
 use OCP\L10N\IFactory;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -66,6 +76,13 @@ class AppMenuServiceTest extends TestCase {
 	 * @var int
 	 */
 	private int $scripts = 0;
+
+	/**
+	 * The app values of the in-memory config.
+	 *
+	 * @var array<string, string>
+	 */
+	private array $appValues = [];
 
 	/**
 	 * Set up the mocks.
@@ -116,7 +133,7 @@ class AppMenuServiceTest extends TestCase {
 
 		$service = $this->getMockBuilder(className: AppMenuService::class)
 			->setConstructorArgs([$this->config, $this->designSystemService, $this->initialState, $factory, $this->logger])
-			->onlyMethods(['emitScript'])
+			->onlyMethods(['emitScript', 'emitMenuStyle'])
 			->getMock();
 		$service->method('emitScript')->willReturnCallback(
 			function (): void {
@@ -144,9 +161,159 @@ class AppMenuServiceTest extends TestCase {
 	}//end layout()
 
 	/**
+	 * The state the ordered list adds without a user or an external app: an empty order and the
+	 * labels, in the English source text.
+	 *
+	 * @return array<string, mixed> `order` and `labels`.
+	 */
+	private function ordered(): array {
+		return [
+			'order' => [],
+			'pins' => [],
+			'settings' => array_diff_key(AppMenuSettings::DEFAULTS, ['order' => 0, 'pinned' => 0, 'externalApps' => 0]),
+			'admin' => false,
+			'labels' => [
+				'title' => 'Apps',
+				'allApps' => 'More',
+				'hideApps' => 'Fewer',
+				'dragHint' => 'Drag an app to reorder it or pin it to the top bar.',
+				'moveHint' => 'Alt with an arrow key moves, Alt+P pins or unpins.',
+				'moved' => '{app} moved to place {place} of {total}.',
+				'saveFailed' => 'The order could not be saved.',
+				'create' => 'Create',
+				'newDocument' => 'New document',
+				'newSpreadsheet' => 'New spreadsheet',
+				'newPresentation' => 'New presentation',
+				'newWhiteboard' => 'New whiteboard',
+				'more' => 'More',
+				'createFailed' => 'The file could not be created.',
+				'pinned' => 'Pinned apps',
+				'dropToPin' => 'Drop to pin',
+				'releaseToRemove' => 'Release to remove',
+				'pinnedApp' => '{app} pinned to the top bar.',
+				'unpinnedApp' => '{app} removed from the top bar.',
+				'pinFull' => 'You can pin up to {max} apps.',
+				'pinSaveFailed' => 'The pinned apps could not be saved.',
+				'menuSettings' => 'Menu settings',
+			],
+		];
+	}//end ordered()
+
+	/**
+	 * The list state over a config, with a signed-in user or none.
+	 *
+	 * @param IConfig $config The config.
+	 * @param string|null $uid The signed-in user's id.
+	 *
+	 * @return AppMenuListState
+	 */
+	private function listState(IConfig $config, ?string $uid): AppMenuListState {
+		$settings = new AppMenuSettings(config: $config);
+		$session = $this->createMock(originalClassName: IUserSession::class);
+		$user = null;
+		if ($uid !== null) {
+			$user = $this->createMock(originalClassName: IUser::class);
+			$user->method('getUID')->willReturn($uid);
+		}
+
+		$session->method('getUser')->willReturn($user);
+
+		return new AppMenuListState(
+			order: new AppMenuOrder(config: $config),
+			userSession: $session,
+			pins: new AppMenuPins(config: $config),
+			settings: $settings,
+			legacy: new AppMenuLegacyExternalApps(
+				config: $config,
+				externalApps: new ExternalApps(config: $config, openProject: new OpenProjectModules(config: $config)),
+				settings: $settings
+			)
+		);
+	}//end listState()
+
+	/**
+	 * A config that keeps app values and user values in memory.
+	 *
+	 * @param array<string, string> $app The app values to start with.
+	 * @param array<string, string> $user The user values to start with, by user id and key joined.
+	 *
+	 * @return IConfig
+	 */
+	private function memory(array $app, array $user = []): IConfig {
+		$this->appValues = $app;
+		$config = $this->createMock(originalClassName: IConfig::class);
+		$config->method('getAppValue')->willReturnCallback(fn (string $a, string $key, $default = '') => ($this->appValues[$key] ?? $default));
+		$config->method('setAppValue')->willReturnCallback(function (string $a, string $key, $value): void {
+			$this->appValues[$key] = (string)$value;
+		});
+		$config->method('deleteAppValue')->willReturnCallback(function (string $a, string $key): void {
+			unset($this->appValues[$key]);
+		});
+		$config->method('getUserValue')->willReturnCallback(
+			static fn (string $uid, string $a, string $key, $default = '') => ($user[$uid . $key] ?? $default)
+		);
+
+		return $config;
+	}//end memory()
+
+	/**
+	 * The signed-in user's order and the external apps join the menu's state.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
+	 */
+	public function testTheOrderAndTheExternalAppsJoinTheMenu(): void {
+		$this->configure(block: ['hint' => 'Hint']);
+		$config = $this->memory(
+			app: [ExternalApps::CONFIG_KEY => '{"code":"https://code.example.org"}'],
+			user: ['anna' . AppMenuOrder::KEY => '["files","external-code"]', 'anna' . AppMenuPins::KEY => '["deck"]']
+		);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
+		$l10n->method('getLanguageCode')->willReturn('en');
+		$l10n->method('t')->willReturnArgument(0);
+		$factory = $this->createMock(originalClassName: IFactory::class);
+		$factory->method('get')->willReturn($l10n);
+		$state = null;
+		$this->initialState->method('provideInitialState')->willReturnCallback(
+			function (string $key, $value) use (&$state): void {
+				$state = $value;
+			}
+		);
+		$service = $this->getMockBuilder(className: AppMenuService::class)
+			->setConstructorArgs(
+				[$this->config, $this->designSystemService, $this->initialState, $factory, $this->logger, $this->listState(config: $config, uid: 'anna')]
+			)
+			->onlyMethods(['emitScript', 'emitMenuStyle'])
+			->getMock();
+		$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
+
+		$this->assertSame(expected: ['files', 'external-code'], actual: $state['order']);
+		$this->assertSame(expected: ['deck'], actual: $state['pins']);
+		$this->assertSame(expected: 'External apps', actual: $state['external']['title']);
+		$this->assertSame(
+			expected: [
+				[
+					'key' => 'external-code',
+					'label' => 'Forgejo',
+					'line' => 'Code',
+					'url' => 'https://code.example.org',
+					'icon' => ExternalApps::APPS['code']['icon'],
+					'stroke' => true,
+				],
+			],
+			actual: $state['external']['apps']
+		);
+		$this->assertArrayNotHasKey(key: ExternalApps::CONFIG_KEY, array: $this->appValues, message: 'the admin page value is gone');
+		$this->assertSame(expected: '1', actual: $this->appValues[AppMenuLegacyExternalApps::MARKER]);
+		$this->assertSame(expected: 'More', actual: $state['labels']['allApps']);
+	}//end testTheOrderAndTheExternalAppsJoinTheMenu()
+
+	/**
 	 * The shipped Zuiddrecht menu, in Dutch, as the AppMenu board draws it.
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
 	 *
 	 * @return void
 	 */
@@ -160,7 +327,7 @@ class AppMenuServiceTest extends TestCase {
 		$this->assertSame(expected: 'Werk', actual: $menu['groups'][0]['title']);
 		$this->assertSame(expected: ['label' => 'Mijn werkdag in launchpad', 'url' => '/apps/launchpad/'], actual: $menu['groups'][0]['link']);
 		$this->assertSame(expected: ['id' => 'dossiq', 'description' => 'Zaken en Woo'], actual: $menu['groups'][0]['apps'][1]);
-		$this->assertCount(expectedCount: 8, haystack: $menu['groups'][0]['apps']);
+		$this->assertCount(expectedCount: 10, haystack: $menu['groups'][0]['apps']);
 		$this->assertSame(expected: 'Nextcloud', actual: $menu['othersTitle']);
 		$this->assertSame(expected: 'Apps beheren', actual: $menu['manageLabel']);
 	}//end testZuiddrechtShipsTheBoardsSections()
@@ -169,7 +336,7 @@ class AppMenuServiceTest extends TestCase {
 	 * Invalid app ids, untitled or empty sections and unsafe links are
 	 * dropped; the override's sections replace the set's.
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-a-token-set-may-group-the-apps-menu
 	 *
 	 * @return void
 	 */
@@ -202,7 +369,7 @@ class AppMenuServiceTest extends TestCase {
 	 * With the workplace header the menu is provided and the script loaded;
 	 * without it nothing; a failure is logged.
 	 *
-	 * @spec openspec/changes/apps-menu-board/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
 	 *
 	 * @return void
 	 */
@@ -222,42 +389,62 @@ class AppMenuServiceTest extends TestCase {
 	}//end testTheWorkplaceHeaderLoadsTheScriptAndNothingElseDoes()
 
 	/**
-	 * With OpenProject's address, the menu carries its modules as a section of their own.
+	 * With OpenProject's address, its modules are external apps.
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	public function testOpenProjectsModulesJoinTheMenu(): void {
 		$this->configure(block: ['hint' => 'Hint']);
-		$config = $this->createMock(originalClassName: IConfig::class);
-		$config->method('getAppValue')->willReturnCallback(static fn (string $app, string $key, $default = '') => ['openproject_url' => 'https://op.example.org/', 'openproject_modules' => 'boards, nope, meetings'][$key] ?? $default);
+		$config = $this->memory(app: ['openproject_url' => 'https://op.example.org/', 'openproject_modules' => 'boards, nope, meetings']);
 		$l10n = $this->createMock(originalClassName: IL10N::class);
 		$l10n->method('getLanguageCode')->willReturn('nl');
 		$l10n->method('t')->willReturnArgument(0);
 		$factory = $this->createMock(originalClassName: IFactory::class);
 		$factory->method('get')->willReturn($l10n);
-
-		$this->initialState->expects($this->once())->method('provideInitialState')->with(
-			AppMenuService::STATE_KEY,
-			[
-				'hint' => 'Hint',
-				'openproject' => [
-					'title' => 'OpenProject',
-					'url' => 'https://op.example.org',
-					'modules' => [
-						['key' => 'boards', 'label' => 'Boards', 'url' => 'https://op.example.org/boards', 'icon' => OpenProjectModules::MODULES['boards']['icon']],
-						['key' => 'meetings', 'label' => 'Meetings', 'url' => 'https://op.example.org/meetings', 'icon' => OpenProjectModules::MODULES['meetings']['icon']],
-					],
-				],
-			]
+		$state = null;
+		$this->initialState->method('provideInitialState')->willReturnCallback(
+			function (string $key, $value) use (&$state): void {
+				$state = $value;
+			}
 		);
 
 		$service = $this->getMockBuilder(className: AppMenuService::class)
-			->setConstructorArgs([$this->config, $this->designSystemService, $this->initialState, $factory, $this->logger, new OpenProjectModules(config: $config)])
-			->onlyMethods(['emitScript'])
+			->setConstructorArgs(
+				[$this->config, $this->designSystemService, $this->initialState, $factory, $this->logger, $this->listState(config: $config, uid: null)]
+			)
+			->onlyMethods(['emitScript', 'emitMenuStyle'])
 			->getMock();
 		$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
+
+		$this->assertSame(
+			expected: [
+				[
+					'key' => 'external-openproject-boards',
+					'label' => 'Boards',
+					'line' => 'OpenProject',
+					'url' => 'https://op.example.org/boards',
+					'icon' => AppMenuExternalApp::BOARD_ICONS['openproject-boards'],
+					'stroke' => false,
+				],
+				[
+					'key' => 'external-openproject-meetings',
+					'label' => 'Meetings',
+					'line' => 'OpenProject',
+					'url' => 'https://op.example.org/meetings',
+					'icon' => AppMenuExternalApp::BOARD_ICONS['openproject-meetings'],
+					'stroke' => false,
+				],
+			],
+			actual: $state['external']['apps']
+		);
+		$moved = json_decode($this->appValues['menu.externalApps'], true);
+		$this->assertSame(expected: ['openproject-boards', 'openproject-meetings'], actual: array_column($moved, 'id'));
+
+		$this->appValues['openproject_url'] = 'https://other.example.org/';
+		$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
+		$this->assertCount(expectedCount: 2, haystack: $state['external']['apps'], message: 'the move runs once');
 	}//end testOpenProjectsModulesJoinTheMenu()
 
 	/**
@@ -265,7 +452,7 @@ class AppMenuServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/specs/openproject-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-openprojects-modules
+	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 */
 	public function testTheAddressAndTheModulesAreChecked(): void {
 		$this->assertSame(
@@ -306,4 +493,61 @@ class AppMenuServiceTest extends TestCase {
 			message: 'no address, no section'
 		);
 	}//end testTheAddressAndTheModulesAreChecked()
+
+	/**
+	 * With the classic style a person gets Nextcloud's apps menu as it ships: no state and no
+	 * script. An administrator keeps the gear, so only the dialog's script and stylesheet load.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-classic-style-leaves-nextclouds-apps-menu-alone
+	 */
+	public function testTheClassicStyleLeavesTheMenuAlone(): void {
+		$this->configure(block: ['hint' => 'Hint']);
+		$config = $this->createMock(originalClassName: IConfig::class);
+		$config->method('getAppValue')->willReturnCallback(
+			static fn (string $app, string $key, $default = '') => (['menu.style' => '"classic"'][$key] ?? $default)
+		);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
+		$l10n->method('getLanguageCode')->willReturn('en');
+		$l10n->method('t')->willReturnArgument(0);
+		$factory = $this->createMock(originalClassName: IFactory::class);
+		$factory->method('get')->willReturn($l10n);
+
+		foreach ([false, true] as $admin) {
+			$initialState = $this->createMock(originalClassName: IInitialState::class);
+			$calls = $this->never();
+			if ($admin === true) {
+				$calls = $this->once();
+			}
+
+			$initialState->expects($calls)->method('provideInitialState');
+			$groups = $this->createMock(originalClassName: IGroupManager::class);
+			$groups->method('isAdmin')->willReturn($admin);
+			$session = $this->createMock(originalClassName: IUserSession::class);
+			$user = $this->createMock(originalClassName: IUser::class);
+			$user->method('getUID')->willReturn('anna');
+			$session->method('getUser')->willReturn($user);
+			$listState = new AppMenuListState(
+				order: new AppMenuOrder(config: $config),
+				userSession: $session,
+				pins: new AppMenuPins(config: $config),
+				settings: new AppMenuSettings(config: $config),
+				groups: $groups
+			);
+			$service = $this->getMockBuilder(className: AppMenuService::class)
+				->setConstructorArgs([$this->config, $this->designSystemService, $initialState, $factory, $this->logger, $listState])
+				->onlyMethods(['emitScript', 'emitMenuStyle'])
+				->getMock();
+			$emits = $this->never();
+			if ($admin === true) {
+				$emits = $this->once();
+			}
+
+			$service->expects($emits)->method('emitScript');
+			$service->expects($this->never())->method('emitMenuStyle');
+
+			$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
+		}
+	}//end testTheClassicStyleLeavesTheMenuAlone()
 }//end class

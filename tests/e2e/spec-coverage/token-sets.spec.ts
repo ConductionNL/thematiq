@@ -35,6 +35,7 @@ import {
 import {
 	activeTokenSet,
 	adminContext,
+	coreLogoUploaded,
 	ensureNonAdminUser,
 	loginAs,
 	NONADMIN_PASS,
@@ -528,10 +529,12 @@ test.describe('token-sets', () => {
 					'logo',
 					'background',
 					'logo_dark',
+					'favicon',
 				]).toContain(key)
 				if (key.endsWith('_color'))
 					expect(value, `${entry.id} ${key}`).toMatch(/^#[0-9a-fA-F]{6}$/)
-				if (key === 'logo_dark') expect(value).toMatch(/^img\/logos\//)
+				if (key === 'logo_dark' || key === 'favicon')
+					expect(value).toMatch(/^img\/logos\//)
 			}
 		}
 		// What the server makes of an entry without design_system: it is an
@@ -832,6 +835,10 @@ test.describe('token-sets', () => {
 			nldesignDeclarations(tokenCss('amsterdam'))['--nldesign-logo-url'],
 		).toContain('amsterdam.svg')
 		await openSettings(page)
+		// An uploaded core logo wins over the set's (REQ-TPLAT-001).
+		const logo = (await coreLogoUploaded(page))
+			? '/apps/theming/image/logo'
+			: 'amsterdam.svg'
 		await withActiveSet(page, 'amsterdam', async () => {
 			await openSettings(page)
 			const header = await page.evaluate(() => {
@@ -849,7 +856,7 @@ test.describe('token-sets', () => {
 				}
 			})
 			expect(header, 'the header logo element exists').not.toBeNull()
-			expect(header?.image).toContain('amsterdam.svg')
+			expect(header?.image).toContain(logo)
 			expect(header?.width).toBe(header?.widthToken || '62px')
 
 			const anonymous = await browser.newContext({
@@ -870,7 +877,7 @@ test.describe('token-sets', () => {
 					) as HTMLElement
 					return getComputedStyle(box, '::after').backgroundImage
 				})
-				expect(image).toContain('amsterdam.svg')
+				expect(image).toContain(logo)
 			} finally {
 				await anonymous.close()
 			}
@@ -881,39 +888,46 @@ test.describe('token-sets', () => {
 	test('a set with lint tokens paints a ribbon of those dimensions behind the logo', async ({
 		page,
 	}) => {
-		const declared = nldesignDeclarations(tokenCss('rijkshuisstijl'))
-		const width = declared['--nldesign-size-lint']
-		const height = declared['--nldesign-size-lint-height']
-		const colour = declared['--nldesign-color-logo-background']
-		expect(
-			width && height && colour,
-			'rijkshuisstijl declares the lint tokens',
-		).toBeTruthy()
+		// The set brings its own lint tokens: no shipped set declares them since the
+		// rijkshuisstijl conversion from the community tokens 18.0.1, which carry none.
+		const width = '48px'
+		const height = '96px'
+		const colour = '#154273'
+		const css = `:root {
+	--nldesign-color-primary: ${colour};
+	--nldesign-color-logo-background: ${colour};
+	--nldesign-size-lint: ${width};
+	--nldesign-size-lint-height: ${height};
+}`
 		await openSettings(page)
-		await withActiveSet(page, 'rijkshuisstijl', async () => {
-			await openSettings(page)
-			const ribbon = await page.evaluate(() => {
-				const el = document.querySelector('#nextcloud') as HTMLElement | null
-				if (el === null) return null
-				const s = getComputedStyle(el, '::before')
-				return {
-					width: s.width,
-					height: s.height,
-					background: s.backgroundColor,
-				}
+		await withCustomSet(page, 'E2E lint ' + Date.now(), css, async (id) => {
+			await withActiveSet(page, id, async () => {
+				await openSettings(page)
+				const ribbon = await page.evaluate(() => {
+					const el = document.querySelector(
+						'#nextcloud',
+					) as HTMLElement | null
+					if (el === null) return null
+					const s = getComputedStyle(el, '::before')
+					return {
+						width: s.width,
+						height: s.height,
+						background: s.backgroundColor,
+					}
+				})
+				expect(ribbon).not.toBeNull()
+				expect(ribbon?.width).toBe(width)
+				expect(ribbon?.height).toBe(height)
+				const probe = await page.evaluate((c) => {
+					const el = document.createElement('div')
+					el.style.backgroundColor = c
+					document.body.appendChild(el)
+					const v = getComputedStyle(el).backgroundColor
+					el.remove()
+					return v
+				}, colour)
+				expect(ribbon?.background).toBe(probe)
 			})
-			expect(ribbon).not.toBeNull()
-			expect(ribbon?.width).toBe(width)
-			expect(ribbon?.height).toBe(height)
-			const probe = await page.evaluate((c) => {
-				const el = document.createElement('div')
-				el.style.backgroundColor = c
-				document.body.appendChild(el)
-				const v = getComputedStyle(el).backgroundColor
-				el.remove()
-				return v
-			}, colour)
-			expect(ribbon?.background).toBe(probe)
 		})
 	})
 
@@ -1757,7 +1771,8 @@ test.describe('token-sets', () => {
 				'--nldesign-color-text',
 			)
 			await expect(row('E2E contrast')).toHaveText('Contrast warning')
-			await expect(row('E2E clean')).toHaveText('WCAG AA OK')
+			// The TqEigenSets board labels a clean set "WCAG AA".
+			await expect(row('E2E clean')).toHaveText('WCAG AA')
 		} finally {
 			await page.unrouteAll({ behavior: 'ignoreErrors' })
 		}

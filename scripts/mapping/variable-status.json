@@ -1241,7 +1241,7 @@
 		"--color-text-error": {
 			"status": "mapped",
 			"via": "stylesheet",
-			"token": "--nldesign-color-error",
+			"token": "--nldesign-color-error-text",
 			"category": "Text Colors",
 			"note": "Error message text; a set's --nldesign-color-error-text ink when it has one"
 		},
@@ -2995,6 +2995,11 @@
 			"reason": "Nextcloud derives it from the primary and background colour thematiq writes into its theming settings.",
 			"category": "Images & Resources",
 			"note": "Background image; admin/user configured"
+		},
+		"--image-favicon": {
+			"status": "excluded",
+			"note": "Favicon URL; admin setting",
+			"reason": "an image URL, not a design token."
 		},
 		"--image-logo": {
 			"status": "excluded",

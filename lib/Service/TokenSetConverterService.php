@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 
 declare(strict_types=1);
@@ -62,7 +62,7 @@ use RuntimeException;
  * @psalm-type   RuleInput array{declarations: array<string, string>, byRole: array<string, string>, slug: string}
  * @psalm-type   SetSource array{slug: string, displayName: string, sourceName: string|null, sourceVersion: string|null}
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassLength) - one interpreter for the mapping table, kept whole on purpose: the JS mirror
  *   (js/lib/tokenConverter.js) has to agree with it byte for byte, and a boundary drawn here has to be drawn identically there or the two
@@ -290,7 +290,7 @@ class TokenSetConverterService {
 	 *
 	 * @throws RuntimeException When the content matches none of the four accepted shapes (code 422).
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 * @spec openspec/specs/multi-brand-token-sources/spec.md#requirement-each-brand-is-converted-by-the-existing-pipeline
 	 */
 	public function convert(
@@ -336,7 +336,7 @@ class TokenSetConverterService {
 	 *
 	 * @return array<string, string> The declarations, empty when nothing could be read.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 */
 	private function readDeclarations(string $content, ConversionRun $run): array {
 		$leftOut = [];
@@ -431,7 +431,7 @@ class TokenSetConverterService {
 	 *
 	 * @return array<string, string>
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 */
 	private function prepareDeclarations(array $declarations, ConversionRun $run): array {
 		// A value pointing at a remote host never reaches the emitted file: a
@@ -477,7 +477,7 @@ class TokenSetConverterService {
 	 *
 	 * @return array{palette: array<string, string>, component: array<string, string>, semantic: array<string, string>}
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 */
 	private function emittedLayers(array $declarations, ConversionRun $run): array {
 		$sections = $this->classify(declarations: $declarations, run: $run);
@@ -537,7 +537,7 @@ class TokenSetConverterService {
 	 *
 	 * @return array<string, mixed> The shape convert() returns.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 */
 	private function conversionResult(array $layers, ConversionRun $run): array {
 		$counts = $this->countActions(report: $run->report);
@@ -764,7 +764,7 @@ class TokenSetConverterService {
 	 *
 	 * @return array<string, string> Reason code => one-sentence explanation.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 */
 	public function getReasons(): array {
 		$table = $this->table();
@@ -1126,7 +1126,7 @@ class TokenSetConverterService {
 	 *
 	 * @return string|null The property name, or null for an empty path.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-accepted-conversion-inputs
+	 * @spec openspec/specs/token-set-converter/spec.md#requirement-accepted-conversion-inputs
 	 */
 	private function styleDictionaryName(array $path, string $slug): ?string {
 		$segments = array_map(
@@ -1158,7 +1158,7 @@ class TokenSetConverterService {
 	 *
 	 * @return array<string, string> The leaves with aliases rewritten.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-accepted-conversion-inputs
+	 * @spec openspec/specs/token-set-converter/spec.md#requirement-accepted-conversion-inputs
 	 */
 	private function resolveStyleDictionaryAliases(array $declarations, string $slug): array {
 		$resolved = [];
@@ -1491,7 +1491,7 @@ class TokenSetConverterService {
 	 * @return array{source: string, aliases: array<int, string>, path: string, css: string, contents: string|null}|null
 	 *
 	 * @spec openspec/specs/theming-sync/spec.md
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 */
 	private function extractLogo(array $declarations, ConversionRun $run): ?array {
 		$spec = ($this->table()['logo'] ?? null);
@@ -2075,7 +2075,7 @@ class TokenSetConverterService {
 	 *
 	 * @return array<string, bool> Name => true.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-re-conversion-never-overwrites-a-chosen-value
+	 * @spec openspec/specs/token-set-converter/spec.md#requirement-re-conversion-never-overwrites-a-chosen-value
 	 */
 	private function vocabulary(): array {
 		if ($this->knownVocabulary !== null) {
@@ -2552,7 +2552,7 @@ class TokenSetConverterService {
 	 *
 	 * @return array{value: string, source: string}|null The value and where it came from, or null.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-semantic-mapping-is-table-driven-and-shared
+	 * @spec openspec/specs/token-set-converter/spec.md#requirement-semantic-mapping-is-table-driven-and-shared
 	 */
 	private function firstDeclaredSource(array $rule, array $input): ?array {
 		foreach (($rule['sources'] ?? []) as $candidate) {
@@ -2603,7 +2603,7 @@ class TokenSetConverterService {
 	 *
 	 * @return array<string, string> The semantic layer, with the partner filled in when the theme declares it.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-semantic-mapping-is-table-driven-and-shared
+	 * @spec openspec/specs/token-set-converter/spec.md#requirement-semantic-mapping-is-table-driven-and-shared
 	 */
 	private function guardSemantic(array $guard, array $semantic, array $input): array {
 		$against = (string)($guard['against'] ?? '');
@@ -3458,7 +3458,7 @@ class TokenSetConverterService {
 	 *
 	 * @return string The value, safe to interpolate into a CSS comment.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 */
 	private function commentSafe(string $value): string {
 		// CHARACTER-WISE, NEVER SEQUENCE-WISE.

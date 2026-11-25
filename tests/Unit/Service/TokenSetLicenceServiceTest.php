@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md
+ * @spec openspec/specs/token-set-licences/spec.md
  */
 
 declare(strict_types=1);
@@ -56,6 +56,7 @@ use Psr\Log\LoggerInterface;
 #[UsesClass(\OCA\Thematiq\Service\IndexedJsonManifest::class)]
 #[UsesClass(\OCA\Thematiq\Service\ListedTokenSet::class)]
 #[UsesClass(\OCA\Thematiq\Service\RuntimeFile\LocalFile::class)]
+#[UsesClass(\OCA\Thematiq\Service\RuntimeFile\AppFilePath::class)]
 class TokenSetLicenceServiceTest extends TestCase {
 
 	use RestrictedSetFixture;

@@ -54,6 +54,7 @@ use Random\Randomizer;
  * @uses   \OCA\Thematiq\Service\IndexedJsonManifest
  * @uses   \OCA\Thematiq\Service\ListedTokenSet
  * @uses   \OCA\Thematiq\Service\RuntimeFile\LocalFile
+ * @uses   \OCA\Thematiq\Service\RuntimeFile\AppFilePath
  */
 class TokenSetCatalogueGoldenTest extends TestCase {
 

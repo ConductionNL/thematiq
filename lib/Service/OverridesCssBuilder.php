@@ -5,7 +5,8 @@
  *
  * Builds the content of a custom overrides file: the editor's values in `:root`
  * with `!important`, the thematiq twin of each motion token, the motion tokens again
- * on body for a user who chose a theme, the dark value of each
+ * on body for a user who chose a theme, the brand-layer values again on body for
+ * every light user, the dark value of each
  * brand-layer colour in the two dark scopes, and the administrator's own tokens
  * after them without `!important`. Split out of {@see CustomOverridesService},
  * which keeps the file reading and writing.
@@ -20,7 +21,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
+ * @spec openspec/specs/custom-css-overrides/spec.md
  * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-are-served-in-both-themes
  */
 
@@ -31,7 +32,7 @@ namespace OCA\Thematiq\Service;
 /**
  * The CSS of one overrides file.
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
+ * @spec openspec/specs/custom-css-overrides/spec.md
  */
 class OverridesCssBuilder {
 
@@ -59,6 +60,16 @@ class OverridesCssBuilder {
 	 * @var string
 	 */
 	private const MOTION_SELECTOR = 'body:not([data-theme-reduced-motion])';
+
+	/**
+	 * The scope of the light brand-layer block: the selector the design-system
+	 * theme.css declares Nextcloud's own variables on (`body[data-themes], body`),
+	 * so the same specificity, and this file comes later. The dark scopes follow
+	 * it in the same file, so a dark user still gets the dark value.
+	 *
+	 * @var string
+	 */
+	private const LIGHT_BODY_SELECTOR = 'body[data-themes],' . PHP_EOL . 'body';
 
 	/**
 	 * The CSS file header comment.
@@ -139,7 +150,7 @@ class OverridesCssBuilder {
 	 *
 	 * @return string The CSS file content.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-32
+	 * @spec openspec/specs/custom-css-overrides/spec.md
 	 * @spec openspec/specs/own-tokens/spec.md#requirement-own-tokens-are-served-in-both-themes
 	 */
 	public function build(array $tokens, array $darkTokens = [], ?OwnTokenCss $own = null): string {
@@ -151,7 +162,8 @@ class OverridesCssBuilder {
 		}
 
 		$css = self::CSS_HEADER . PHP_EOL . ':root {' . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . '}' . PHP_EOL
-			. $this->motionBlock(tokens: $tokens);
+			. $this->motionBlock(tokens: $tokens)
+			. $this->lightBodyBlock(tokens: $tokens);
 
 		$darkLines = array_merge($this->darkLines(tokens: $tokens, darkTokens: $darkTokens), $own->darkLines());
 		if ($darkLines === []) {
@@ -204,6 +216,43 @@ class OverridesCssBuilder {
 
 		return self::MOTION_SELECTOR . ' {' . PHP_EOL . implode(PHP_EOL, $motionLines) . PHP_EOL . '}' . PHP_EOL;
 	}//end motionBlock()
+
+	/**
+	 * The brand-layer overrides again on body, for every light user.
+	 *
+	 * The design-system theme.css declares Nextcloud's own variables on body
+	 * (`--color-primary: var(--nldesign-color-primary) !important`), and a
+	 * body-level declaration beats the value body would inherit from :root, so
+	 * a light override in the :root block alone never reached the page: a user
+	 * who chose the light theme saw the set's primary, not the administrator's.
+	 * Only Nextcloud's own variables go here: thematiq tokens (`--nldesign-*`,
+	 * settable ones included) are read through var() from :root, and a body copy
+	 * of a component token would outrank the primary-lock layer. The motion
+	 * tokens keep their own block, which leaves the reduced-motion theme alone.
+	 *
+	 * @param array<string, string> $tokens The editor's tokens, page text repaired.
+	 *
+	 * @return string The block, or '' when no brand-layer token is set.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
+	 *
+	 * @spec openspec/specs/dark-mode/spec.md#requirement-editor-overrides-apply-the-same-way-for-every-dark-user
+	 */
+	private function lightBodyBlock(array $tokens): string {
+		$brand = array_filter(
+			$tokens,
+			static fn (string $name): bool => str_starts_with($name, '--nldesign-') === false
+				&& isset(self::MOTION_TWINS[$name]) === false
+				&& TokenRegistry::settableToken(tokenName: $name) === null,
+			ARRAY_FILTER_USE_KEY
+		);
+		$lines = $this->declarationLines(tokens: $brand, important: true);
+		if ($lines === []) {
+			return '';
+		}
+
+		return self::LIGHT_BODY_SELECTOR . ' {' . PHP_EOL . implode(PHP_EOL, $lines) . PHP_EOL . '}' . PHP_EOL;
+	}//end lightBodyBlock()
 
 	/**
 	 * The administrator's own dark values that apply: the administrator's own
@@ -329,7 +378,7 @@ class OverridesCssBuilder {
 	 *
 	 * @return array<string> List of CSS declaration lines.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
+	 * @spec openspec/specs/custom-css-overrides/spec.md
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
 	 */
@@ -374,7 +423,7 @@ class OverridesCssBuilder {
 	 *
 	 * @return bool True when the writer drops the value.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-33
+	 * @spec openspec/specs/custom-css-overrides/spec.md
 	 */
 	public static function isUnsafeValue(string $value): bool {
 		return preg_match('/[{};]|\/\*|\*\//', $value) === 1;

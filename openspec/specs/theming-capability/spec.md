@@ -1,7 +1,7 @@
 # theming-capability Specification
 
 ## Purpose
-TBD - created by archiving change theming-capability-api. Update Purpose after archive.
+The active house style published on Nextcloud's public capabilities API, so clients and other apps can read the active token set, its design system, its icon packs and its WCAG audit level, and the capability stays valid when something is missing.
 ## Requirements
 ### Requirement: Public Theming Capability Registration
 

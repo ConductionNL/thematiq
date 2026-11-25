@@ -10,9 +10,9 @@
  */
 ;(function thematiqDocumentsInit() {
 	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', thematiqDocumentsMain)
+		document.addEventListener('DOMContentLoaded', thematiqWhenVisible)
 	} else {
-		thematiqDocumentsMain()
+		thematiqWhenVisible()
 	}
 
 	/**
@@ -29,6 +29,19 @@
 		dd.textContent = value
 		list.appendChild(dt)
 		list.appendChild(dd)
+	}
+
+	/**
+	 * The first family of a font stack, without its quotes.
+	 *
+	 * @param {string} stack The CSS font-family value.
+	 * @return {string} The family.
+	 */
+	function firstFamily(stack) {
+		return String(stack || '')
+			.split(',')[0]
+			.trim()
+			.replace(/^['"]|['"]$/g, '')
 	}
 
 	/**
@@ -52,10 +65,14 @@
 		var list = document.createElement('dl')
 		list.className = 'nldesign-documents-profile'
 		row(list, t('thematiq', 'House style'), profile.tokenSet.name)
-		row(list, t('thematiq', 'Primary color'), profile.colours.primary || '')
-		row(list, t('thematiq', 'Text color'), profile.colours.text || '')
-		row(list, t('thematiq', 'Heading font'), profile.fonts.heading.family || '')
-		row(list, t('thematiq', 'Body font'), profile.fonts.body.family || '')
+		row(list, t('thematiq', 'Primary colour'), profile.colours.primary || '')
+		row(list, t('thematiq', 'Text colour'), profile.colours.text || '')
+		row(
+			list,
+			t('thematiq', 'Font headings'),
+			firstFamily(profile.fonts.heading.family),
+		)
+		row(list, t('thematiq', 'Font text'), firstFamily(profile.fonts.body.family))
 		row(list, t('thematiq', 'Footer'), profile.footer.lines.join(' · '))
 		preview.appendChild(list)
 		if (profile.warnings && profile.warnings.length > 0) {
@@ -67,6 +84,21 @@
 			)
 			preview.appendChild(warning)
 		}
+	}
+
+	/**
+	 * Load the block now when it is on screen, else once its panel opens: a closed
+	 * panel asks the server for nothing (PERF-HANDOFF thematiq Theming settings).
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md
+	 * @return {Promise|undefined} The request when it started at once.
+	 */
+	function thematiqWhenVisible() {
+		var block = document.getElementById('nldesign-documents-preview')
+		if (typeof window.ThematiqWhenShown !== 'function') {
+			return thematiqDocumentsMain()
+		}
+		return window.ThematiqWhenShown(block, thematiqDocumentsMain)
 	}
 
 	/**

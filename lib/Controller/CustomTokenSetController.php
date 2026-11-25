@@ -13,9 +13,9 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.1
- * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.2
- * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.3
+ * @spec openspec/specs/custom-token-sets/spec.md
+ * @spec openspec/specs/custom-token-sets/spec.md
+ * @spec openspec/specs/custom-token-sets/spec.md
  * @spec openspec/specs/custom-token-sets/spec.md
  * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
  */
@@ -49,7 +49,7 @@ use RuntimeException;
  * output is CSS served to every user, so the validation pipeline is strict and
  * the served file is always re-serialised from parsed declarations.
  *
- * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.1
+ * @spec openspec/specs/custom-token-sets/spec.md
  * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) - one endpoint family (import, list, export, delete) for one resource; the branches
@@ -112,7 +112,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return JSONResponse `{ id, imported, skipped, warnings, report, counts, inputKind }` or an error.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function upload(): JSONResponse {
@@ -227,7 +227,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return JSONResponse The persisted set, or the validator's error.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	private function storeRaw(string $name, string $slug, string $content, ?string $designSystem = null): JSONResponse {
 		$parsed = $this->mapFromCss(content: $content, slug: $slug);
@@ -281,7 +281,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return JSONResponse `{ id, imported, skipped, warnings, report, counts, inputKind }` or an error.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	private function storeConverted(string $name, string $slug, array $read): JSONResponse {
 		$converted = $this->convertUpload(upload: $read + ['name' => $name, 'slug' => $slug]);
@@ -305,7 +305,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return array<string, mixed>|JSONResponse The validated upload, or the refusal.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	private function parsedUpload(array $converted, string $slug): array|JSONResponse {
 		// The validator sees the EMITTED file, which is the thing being stored.
@@ -327,7 +327,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return array<string, mixed>|JSONResponse The converter result, or the error response.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	private function convertUpload(array $upload): array|JSONResponse {
 		try {
@@ -357,7 +357,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @throws RuntimeException When the document cannot be converted.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	private function callConverter(array $upload): array {
 		return $this->pipeline->converter->convert(
@@ -381,7 +381,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return JSONResponse
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	private function nothingImported(array $converted): JSONResponse {
 		return new JSONResponse(
@@ -409,7 +409,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return array<string, mixed>
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	private function withConversion(array $parsed, array $converted): array {
 		$parsed['imported'] = (int)($converted['imported'] ?? 0);
@@ -436,7 +436,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return array<string, mixed>
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	private function withDiagnostics(array $parsed, array $converted): array {
 		if (isset($converted['manifestEntry']['upstreamVersion']) === true) {
@@ -464,7 +464,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return array<string, mixed>|JSONResponse The upload with its dark pins, or the refusal.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	private function withDarkPins(array $parsed, array $dark): array|JSONResponse {
 		if (empty($dark['declarations']) === true) {
@@ -493,7 +493,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return array{content: string, sourceName: string|null}|JSONResponse The payload, or the error response.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	private function readInput() {
 		$file = $this->request->getUploadedFile(key: 'file');
@@ -509,7 +509,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return array{content: string, sourceName: string|null}|JSONResponse The payload, or the error response.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	private function pastedInput(): array|JSONResponse {
 		$pasted = (string)($this->request->getParam('content', ''));
@@ -604,7 +604,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return array{accepted: array<string, string>, skipped: string[]}|JSONResponse
 	 *
-	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.3
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	private function mapFromCss(string $content, string $slug) {
 		if ($this->pipeline->validator->hasDisallowedSelector(css: $content) === true) {
@@ -645,7 +645,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return JSONResponse The upload result or a collision/storage error.
 	 *
-	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.3
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 * @spec openspec/specs/custom-token-sets/spec.md
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
@@ -779,7 +779,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return JSONResponse The list of custom sets.
 	 *
-	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.1
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function list(): JSONResponse {
@@ -793,7 +793,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return DataDownloadResponse|JSONResponse The CSS download or a 404.
 	 *
-	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.1
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function export(string $id) {
@@ -816,7 +816,7 @@ class CustomTokenSetController extends Controller {
 	 *
 	 * @return JSONResponse The deletion result.
 	 *
-	 * @spec openspec/changes/archive/2026-06-14-custom-token-set-upload/tasks.md#task-3.1
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]

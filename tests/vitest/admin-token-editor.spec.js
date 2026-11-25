@@ -229,6 +229,11 @@ async function mount({
 	vi.resetModules()
 	await import('../../js/lib/tokenTransforms.js?t=' + Math.random())
 	await import('../../js/lib/themingPlan.js')
+	await import('../../js/dialogs/admin-dialog.js?t=' + Math.random())
+	await import('../../js/dialogs/new-theme-dialog.js?t=' + Math.random())
+	await import('../../js/dialogs/save-overrides-dialog.js?t=' + Math.random())
+	await import('../../js/dialogs/base-tokens-dialog.js?t=' + Math.random())
+	await import('../../js/dialogs/theming-update-dialog.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }
@@ -672,9 +677,7 @@ describe('admin.js token editor', () => {
 			click(document.getElementById('nldesign-save-btn'))
 
 			const dialog = saveDialog()
-			expect(dialog.textContent).toContain(
-				'They are applied on top of Rijkshuisstijl.',
-			)
+			expect(dialog.textContent).toContain('They go on top of Rijkshuisstijl.')
 			click(dialog.querySelector('.nldesign-dialog-cancel'))
 			expect(saveDialog()).toBeNull()
 			expect(sent('/settings/overrides', 'POST')).toHaveLength(0)
@@ -841,20 +844,6 @@ describe('admin.js token editor', () => {
 
 			expect(saveDialog()).toBeNull()
 			expect(sent('/settings/overrides', 'POST')).toHaveLength(1)
-		})
-
-		it('"do not ask again" on stock stores the stock flag', async () => {
-			const dialog = await openStockDialog()
-
-			tick(dialog.querySelector('.nldesign-dialog-dontask'), true)
-			await flush()
-
-			expect(lastBody('/settings/save-confirmations').confirmSaveStock).toBe(
-				false,
-			)
-			expect(
-				document.getElementById('nldesign-confirm-save-stock').checked,
-			).toBe(true)
 		})
 
 		it('refuses a new theme without a name, in the dialog', async () => {
@@ -1382,7 +1371,7 @@ describe('admin.js token editor', () => {
 			const overlay = document.getElementById(
 				'nldesign-export-overrides-overlay',
 			)
-			expect(overlay.querySelector('h3').textContent).toBe(
+			expect(overlay.querySelector('h2').textContent).toBe(
 				'Download the overrides of Nextcloud (Base)?',
 			)
 			expect(overlay.textContent).toContain('It is not a complete theme.')
@@ -1445,10 +1434,20 @@ describe('admin.js token editor', () => {
 			const overlay = document.getElementById(
 				'nldesign-import-overrides-overlay',
 			)
-			expect(overlay.querySelector('h3').textContent).toBe(
+			expect(overlay.querySelector('h2').textContent).toBe(
 				'Upload overrides into Nextcloud (Base)?',
 			)
+			expect(
+				overlay.querySelector('.thematiq-admin-dialog__file-label')
+					.textContent,
+			).toBe('File')
+			expect(overlay.querySelector('a[href="#own-sets"]').textContent).toBe(
+				'Own token sets',
+			)
 			expect(picker).not.toHaveBeenCalled()
+			click(overlay.querySelector('.thematiq-admin-dialog__file-row button'))
+			expect(picker).toHaveBeenCalledTimes(1)
+			picker.mockClear()
 
 			click(overlay.querySelector('.nldesign-dialog-cancel'))
 			expect(picker).not.toHaveBeenCalled()
@@ -1479,14 +1478,41 @@ describe('admin.js token editor', () => {
 	})
 
 	describe('reset theme to Nextcloud', () => {
-		/** Press the button and answer the confirmation. */
+		/** The dialog admin.js opened, and how it was closed. */
+		let opened = null
+		const dialog = { busy: vi.fn(), close: vi.fn() }
+
+		/** Press the button and answer the dialog. */
 		async function pressReset(confirmed) {
-			OC.dialogs.confirm.mockImplementation((text, title, callback) =>
-				callback(confirmed),
-			)
+			window.ThematiqResetThemeDialog = {
+				open: (options) => {
+					opened = options
+					if (confirmed) {
+						options.onConfirm(dialog)
+					}
+					return dialog
+				},
+			}
 			click(document.getElementById('nldesign-reset-theme-btn'))
 			await flush()
 		}
+
+		afterEach(() => {
+			delete window.ThematiqResetThemeDialog
+			opened = null
+		})
+
+		it('names the edited theme and its saved overrides in the dialog', async () => {
+			await mount()
+
+			await pressReset(false)
+
+			expect(opened.opener).toBe(
+				document.getElementById('nldesign-reset-theme-btn'),
+			)
+			expect(typeof opened.themeName).toBe('string')
+			expect(typeof opened.overrideCount).toBe('number')
+		})
 
 		it('does nothing when the admin backs out', async () => {
 			await mount()
@@ -1519,6 +1545,7 @@ describe('admin.js token editor', () => {
 				document.getElementById('nldesign-reset-theme-btn').disabled,
 			).toBe(false)
 			expect(toasts()).toContain('The theme could not be reset.')
+			expect(dialog.close).toHaveBeenCalled()
 		})
 	})
 })

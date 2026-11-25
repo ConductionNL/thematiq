@@ -538,11 +538,11 @@ class NLDesignEMailTemplateTest extends TestCase {
 
 		$this->assertSame(
 			expected: [
-				'branded with footer' => '05e4e2563407 41c0c7bf51c7',
-				'branded without a logo' => '84c3a10e6ec8 4b430318f965',
-				'footer only' => '0428bc85a8b5 41c0c7bf51c7',
-				'stock' => 'a427846da8bc 4b430318f965',
-				'unbranded through the service' => 'a427846da8bc 4b430318f965',
+				'branded with footer' => 'ecac28996d8d 41c0c7bf51c7',
+				'branded without a logo' => 'b5bedad2a5d8 4b430318f965',
+				'footer only' => 'f99c73aa65d6 41c0c7bf51c7',
+				'stock' => '24e09df429e2 4b430318f965',
+				'unbranded through the service' => '24e09df429e2 4b430318f965',
 			],
 			actual: $actual
 		);

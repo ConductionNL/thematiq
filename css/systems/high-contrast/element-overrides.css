@@ -31,7 +31,8 @@ button:focus,
 .button-vue:focus,
 a:focus,
 *:focus-visible,
-body .button-vue.button-vue:focus-visible {
+body .button-vue.button-vue:focus-visible,
+body .button.primary.skip-navigation:focus-visible {
 	outline: 3px solid var(--nldesign-color-focus) !important;
 	outline-offset: 2px !important;
 }
@@ -48,7 +49,8 @@ body .button-vue.button-vue:focus-visible {
 	.button-vue:focus,
 	a:focus,
 	*:focus-visible,
-	body .button-vue.button-vue:focus-visible {
+	body .button-vue.button-vue:focus-visible,
+	body .button.primary.skip-navigation:focus-visible {
 		outline-width: 4px !important;
 	}
 }
@@ -114,7 +116,8 @@ input[type='radio']:checked {
 	button:focus,
 	.button-vue:focus,
 	*:focus-visible,
-	body .button-vue.button-vue:focus-visible {
+	body .button-vue.button-vue:focus-visible,
+	body .button.primary.skip-navigation:focus-visible {
 		outline: 3px solid CanvasText !important;
 		outline-offset: 2px !important;
 	}

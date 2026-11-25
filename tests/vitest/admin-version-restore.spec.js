@@ -58,12 +58,6 @@ function install() {
 		linkTo: (app, path) => path,
 		requestToken: 'test-token',
 		Notification: { showTemporary: vi.fn() },
-		dialogs: {
-			confirm: vi.fn((text, title, callback) => {
-				calls.push({ dialog: text })
-				callback(confirmAnswer)
-			}),
-		},
 	}
 	global.OCP = { InitialState: { loadState: (app, key, fallback) => fallback } }
 	global.fetch = vi.fn((url, options) => {
@@ -98,8 +92,25 @@ async function load() {
 		</div>
 	`
 	vi.resetModules()
+	await import('../../js/lib/auditFormat.js?t=' + Math.random())
+	await import('../../js/dialogs/admin-dialog.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
+}
+
+/** Press a row's restore button and answer the dialog that opens. */
+async function pressRestore(button) {
+	button.click()
+	await flush()
+	const dialog = document.getElementById('nldesign-restore-version-dialog')
+	calls.push({ dialog: dialog.textContent, el: dialog })
+	dialog
+		.querySelector(
+			confirmAnswer ? '.nldesign-dialog-confirm' : '.nldesign-dialog-cancel',
+		)
+		.click()
+	await flush()
+	return dialog
 }
 
 describe('admin.js version restore', () => {
@@ -110,6 +121,22 @@ describe('admin.js version restore', () => {
 	afterEach(() => {
 		document.body.innerHTML = ''
 		vi.restoreAllMocks()
+	})
+
+	it('draws each entry as the log board: date and time, the action as a pill, and announces the count', async () => {
+		const rendered = vi.fn()
+		document.addEventListener('thematiq:audit-rendered', rendered)
+		await load()
+		document.removeEventListener('thematiq:audit-rendered', rendered)
+
+		const row = document.querySelector('#nldesign-audit-table-body tr')
+		expect(row.querySelector('.nldesign-audit-date').textContent).not.toBe('')
+		expect(row.querySelector('.nldesign-audit-pill')).not.toBeNull()
+		expect(row.querySelector('.nldesign-audit-code').textContent).toBe(
+			ENTRIES[0].action,
+		)
+		expect(rendered).toHaveBeenCalledTimes(1)
+		expect(rendered.mock.calls[0][0].detail.count).toBe(ENTRIES.length)
 	})
 
 	it('offers restore only on rows that have a version', async () => {
@@ -126,8 +153,9 @@ describe('admin.js version restore', () => {
 		confirmAnswer = true
 		await load()
 
-		document.querySelectorAll('button.nldesign-audit-restore')[1].click()
-		await flush()
+		await pressRestore(
+			document.querySelectorAll('button.nldesign-audit-restore')[1],
+		)
 
 		const preview = calls.find(
 			(c) =>
@@ -137,7 +165,8 @@ describe('admin.js version restore', () => {
 		)
 		expect(preview.method).toBe('POST')
 		const dialog = calls.find((c) => c.dialog).dialog
-		expect(dialog).toContain('tokenSet: custom-bad to rijkshuisstijl')
+		expect(dialog).toContain('Restore this version?')
+		expect(dialog).toContain('tokenSet: custom-bad becomes rijkshuisstijl')
 		expect(dialog).toContain('custom-bad')
 		expect(dialog).toContain('Gone Sans')
 		const restore = calls.find(
@@ -154,9 +183,9 @@ describe('admin.js version restore', () => {
 		await load()
 
 		const button = document.querySelectorAll('button.nldesign-audit-restore')[1]
-		button.click()
-		await flush()
+		await pressRestore(button)
 
+		expect(document.getElementById('nldesign-restore-version-dialog')).toBeNull()
 		expect(calls.some((c) => c.url && c.url.indexOf('/restore') !== -1)).toBe(
 			false,
 		)
@@ -180,8 +209,7 @@ describe('admin.js version restore', () => {
 		vi.spyOn(console, 'error').mockImplementation(() => {})
 
 		const button = document.querySelectorAll('button.nldesign-audit-restore')[1]
-		button.click()
-		await flush()
+		await pressRestore(button)
 
 		expect(OC.Notification.showTemporary).toHaveBeenCalledWith(
 			'The version was not restored. Nothing was changed.',
@@ -189,29 +217,29 @@ describe('admin.js version restore', () => {
 		expect(document.activeElement).toBe(button)
 	})
 
-	it('returns focus to the button after Nextcloud tears the dialog down (#934)', async () => {
+	it('names the version, warns about a missing font and closes on Escape with focus back', async () => {
 		confirmAnswer = false
 		await load()
-		// Nextcloud 35 runs the callback first and only then closes the dialog;
-		// its focus trap hands focus back to whatever held it when the dialog
-		// opened. Model that order: answer, then drop focus on the body a
-		// moment later, the way the teardown does.
-		OC.dialogs.confirm.mockImplementation((text, title, callback) => {
-			calls.push({ dialog: text })
-			callback(confirmAnswer)
-			setTimeout(() => {
-				if (document.activeElement && document.activeElement.blur) {
-					document.activeElement.blur()
-				}
-			}, 50)
-		})
-
 		const button = document.querySelectorAll('button.nldesign-audit-restore')[1]
-		button.focus()
 		button.click()
 		await flush()
-		await new Promise((resolve) => setTimeout(resolve, 800))
 
-		expect(document.activeElement === button).toBe(true)
+		const dialog = document.getElementById('nldesign-restore-version-dialog')
+		expect(
+			dialog.querySelector('.thematiq-admin-dialog__eyebrow').textContent,
+		).toMatch(/^Log, version of /)
+		expect(
+			dialog.querySelector('.thematiq-admin-dialog__notice--caution')
+				.textContent,
+		).toContain('Gone Sans')
+		dialog.dispatchEvent(
+			new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+		)
+
+		expect(document.getElementById('nldesign-restore-version-dialog')).toBeNull()
+		expect(document.activeElement).toBe(button)
+		expect(calls.some((c) => c.url && c.url.indexOf('/restore') !== -1)).toBe(
+			false,
+		)
 	})
 })

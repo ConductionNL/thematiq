@@ -21,7 +21,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/apply-without-reload/specs/theming-sync-dialog/spec.md
+ * @spec openspec/specs/theming-sync-dialog/spec.md
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -100,6 +100,8 @@ async function loadAdminScript() {
 	vi.resetModules()
 	// The page loads js/lib/themingPlan.js before admin.js; so does the fixture.
 	await import('../../js/lib/themingPlan.js')
+	await import('../../js/dialogs/admin-dialog.js?t=' + Math.random())
+	await import('../../js/dialogs/theming-update-dialog.js?t=' + Math.random())
 	await import('../../js/admin.js?t=' + Math.random())
 	await flush()
 }

@@ -14,7 +14,7 @@
  * @link      https://github.com/ConductionNL/thematiq
  *
  * @spec openspec/specs/per-group-theming/spec.md
- * @spec openspec/changes/group-house-style-admin/specs/per-group-theming/spec.md
+ * @spec openspec/specs/per-group-theming/spec.md
  */
 
 declare(strict_types=1);
@@ -43,7 +43,7 @@ use OCP\IUserSession;
  * that the set is on its allowed list, answering 403 otherwise.
  *
  * @spec openspec/specs/per-group-theming/spec.md
- * @spec openspec/changes/group-house-style-admin/specs/per-group-theming/spec.md
+ * @spec openspec/specs/per-group-theming/spec.md
  */
 class MyGroupsController extends Controller {
 
@@ -72,7 +72,7 @@ class MyGroupsController extends Controller {
 	 * @return JSONResponse `{groups: [...]}`.
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
-	 * @spec openspec/changes/group-house-style-admin/specs/per-group-theming/spec.md
+	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
 	#[AuthorizedAdminSetting(settings: GroupHouseStyle::class)]
 	public function index(): JSONResponse {
@@ -90,7 +90,7 @@ class MyGroupsController extends Controller {
 	 * @return JSONResponse The updated entry, 403 when not allowed, 422 when the mapping refuses it.
 	 *
 	 * @spec openspec/specs/per-group-theming/spec.md
-	 * @spec openspec/changes/group-house-style-admin/specs/per-group-theming/spec.md
+	 * @spec openspec/specs/per-group-theming/spec.md
 	 */
 	#[AuthorizedAdminSetting(settings: GroupHouseStyle::class)]
 	public function update(string $group, string $tokenSet = ''): JSONResponse {

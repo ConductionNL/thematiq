@@ -158,7 +158,7 @@ class TokenSetConverterContrastRepairTest extends TestCase {
 	/**
 	 * A primary that reaches 4.5:1 on the light primary and its hover writes no light-text step.
 	 *
-	 * @spec openspec/specs/primary-light-text-step/spec.md#requirement-text-on-the-light-primary-reaches-4-5-1
+	 * @spec openspec/specs/primary-light-text-step/spec.md#requirement-text-on-the-light-primary-reaches-451
 	 *
 	 * @return void
 	 */

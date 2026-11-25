@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 
 declare(strict_types=1);
@@ -48,7 +48,7 @@ use ReflectionMethod;
  * minutes rather than milliseconds, and the end-to-end consequence is already
  * covered by `CustomTokenSetUploadWritesTest` on both reachable sources.
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+ * @spec openspec/specs/token-set-converter/spec.md
  */
 class TokenSetConverterProvenanceTest extends TestCase {
 
@@ -106,7 +106,7 @@ class TokenSetConverterProvenanceTest extends TestCase {
 	 * an asterisk or a slash in the output — so none can spell `*​/`, however
 	 * the deletions rearrange it.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -154,7 +154,7 @@ class TokenSetConverterProvenanceTest extends TestCase {
 	 *
 	 * @dataProvider reconstructionProvider
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -182,7 +182,7 @@ class TokenSetConverterProvenanceTest extends TestCase {
 	 * The guard is lossy, not blanking: an ordinary filename still reaches the
 	 * provenance line intact, which is the whole point of recording it.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -197,7 +197,7 @@ class TokenSetConverterProvenanceTest extends TestCase {
 	 * A value that is nothing BUT stripped characters still has to render as
 	 * something, or the provenance line loses its shape.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */

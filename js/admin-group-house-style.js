@@ -133,18 +133,17 @@
 				swatch.className = 'thematiq-my-group-swatch'
 				swatch.setAttribute('aria-hidden', 'true')
 				swatch.style.backgroundColor = set.primaryColor
-				swatch.style.display = 'inline-block'
-				swatch.style.width = '1em'
-				swatch.style.height = '1em'
-				swatch.style.marginInlineEnd = '0.5em'
-				swatch.style.verticalAlign = 'middle'
-				swatch.style.border = '1px solid var(--color-border-dark)'
 				label.appendChild(swatch)
 			}
-			label.appendChild(document.createTextNode(set.name + ' '))
+			var name = document.createElement('span')
+			name.className = 'thematiq-my-group-name'
+			name.textContent = set.name
+			label.appendChild(name)
 			var contrast = document.createElement('span')
-			contrast.className = 'settings-hint'
-			contrast.textContent = '(' + contrastText(set.wcagLevel) + ')'
+			contrast.className =
+				'thematiq-my-group-contrast'
+				+ (set.wcagLevel ? '' : ' thematiq-my-group-contrast--below')
+			contrast.textContent = contrastText(set.wcagLevel)
 			label.appendChild(contrast)
 			row.appendChild(input)
 			row.appendChild(label)

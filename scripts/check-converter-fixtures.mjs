@@ -13,7 +13,7 @@
  *
  * Exit codes: 0 every expectation current (or written), 1 at least one stale.
  *
- * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md#requirement-semantic-mapping-is-table-driven-and-shared
+ * @spec openspec/specs/token-set-converter/spec.md#requirement-semantic-mapping-is-table-driven-and-shared
  */
 
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'

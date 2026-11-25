@@ -51,11 +51,11 @@ use PHPUnit\Framework\TestCase;
  * the suite says so rather than failing on a mock of a class that is absent
  * for an understood reason.
  *
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
- * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
- * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
+ * @spec openspec/specs/theming-sync/spec.md
  */
 class ThemingServiceTest extends TestCase {
 
@@ -168,7 +168,7 @@ class ThemingServiceTest extends TestCase {
 	 *
 	 * @dataProvider hexColorProvider
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
 	 */
@@ -199,7 +199,7 @@ class ThemingServiceTest extends TestCase {
 	 * An absent or empty colour parameter is not a validation failure: the
 	 * sync sends only what the set actually declares.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
 	 */
@@ -215,7 +215,7 @@ class ThemingServiceTest extends TestCase {
 	 * A malformed colour is named in the message, so the admin panel can say
 	 * WHICH field it rejected rather than "invalid input".
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-41
+	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
 	 */
@@ -237,7 +237,7 @@ class ThemingServiceTest extends TestCase {
 	 *
 	 * @dataProvider traversalPathProvider
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 * @spec openspec/specs/theming-sync/spec.md
 	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
@@ -267,7 +267,7 @@ class ThemingServiceTest extends TestCase {
 	 * A path that stays inside the app but outside the two permitted
 	 * directories is refused on the prefix rule, before the existence check.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
 	 */
@@ -283,7 +283,7 @@ class ThemingServiceTest extends TestCase {
 	 * A well-formed path to a file that is not there is refused too — the
 	 * prefix rule says where a file may live, not that it does.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
 	 */
@@ -298,7 +298,7 @@ class ThemingServiceTest extends TestCase {
 	 * A path inside `img/logos/` that exists passes, and so does a request
 	 * that carries no image at all.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-42
+	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
 	 */
@@ -312,7 +312,7 @@ class ThemingServiceTest extends TestCase {
 	 * Applying a primary colour writes exactly that setting and reports it.
 	 * No background colour means no `backgroundMime` write.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
 	 */
@@ -335,7 +335,7 @@ class ThemingServiceTest extends TestCase {
 	 * background IMAGE over it, which is the `backgroundMime` app value. So a
 	 * background colour with no accompanying image must also write that.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
 	 */
@@ -359,7 +359,7 @@ class ThemingServiceTest extends TestCase {
 	 * after, and writing `backgroundColor` here would be overwritten anyway —
 	 * or, on a failed image write, would leave the two disagreeing.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-43
+	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
 	 */
@@ -486,7 +486,7 @@ class ThemingServiceTest extends TestCase {
 	 * all. Storing the file without writing the mime is the failure that
 	 * reported success while every page kept the stock logo.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
+	 * @spec openspec/specs/theming-sync/spec.md
 	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
@@ -530,8 +530,8 @@ class ThemingServiceTest extends TestCase {
 	 * The sync hands core's ImageManager only the four slots core owns, never
 	 * the dark logo (REQ-TPLAT-002, REQ-TPLAT-003).
 	 *
-	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-002
-	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-003
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-the-login-background-is-a-core-image-slot-req-tplat-002
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-the-favicon-is-a-core-image-slot-the-theming-sync-may-fill-req-tplat-003
 	 *
 	 * @return void
 	 */
@@ -557,7 +557,7 @@ class ThemingServiceTest extends TestCase {
 	 * Name, slogan and web address stay core's fields: the sync never writes
 	 * them, whatever the request carries (REQ-TPLAT-006).
 	 *
-	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-006
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-name-slogan-and-web-address-are-core-theming-fields-req-tplat-006
 	 *
 	 * @return void
 	 */
@@ -584,7 +584,7 @@ class ThemingServiceTest extends TestCase {
 	 * stock set's manifest values, which is what left the previous set's logo
 	 * in place after switching back to stock.
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
 	 */
@@ -611,7 +611,7 @@ class ThemingServiceTest extends TestCase {
 	 * core's own fallbacks — not from `getDefaultColorPrimary()`, which
 	 * returns the admin-configured primary that a reset is removing.
 	 *
-	 * @spec openspec/changes/apply-without-reload/specs/theming-sync/spec.md
+	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
 	 */
@@ -626,7 +626,7 @@ class ThemingServiceTest extends TestCase {
 	 * The image manager is handed out so callers can ask core what is in each
 	 * slot; it must be the same instance the service writes through.
 	 *
-	 * @spec openspec/changes/archive/retrofit-2026-05-24-annotate-nldesign/tasks.md#task-44
+	 * @spec openspec/specs/theming-sync/spec.md
 	 *
 	 * @return void
 	 */

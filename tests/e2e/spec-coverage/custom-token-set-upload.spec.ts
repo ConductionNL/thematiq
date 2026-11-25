@@ -11,11 +11,38 @@
  * warning banner). Pure server-side validation/auth branches are covered by
  * PHPUnit and Newman and are marked @e2e exclude on their scenarios in the spec.
  */
-import { test, expect } from '@playwright/test'
+import { test, expect, type Locator, type Page } from '@playwright/test'
 
 import { removeE2eCustomSets } from './_fixtures'
 
-const THEMING_URL = '/settings/admin/theming'
+/** The admin page's own-sets panel; its forms are hidden until it is open. */
+const THEMING_URL = '/settings/admin/theming#own-sets'
+
+/** Open a custom-set row's "…" actions menu; a second call leaves it open. */
+async function openRowMenu(row: Locator): Promise<void> {
+	const menu = row.locator('.nldesign-custom-set-menu')
+	if (!(await menu.isVisible())) {
+		await row.getByRole('button', { name: /^Actions for / }).click()
+	}
+	await expect(menu).toBeVisible()
+}
+
+/**
+ * Delete a custom set from its row menu and confirm. Delete opens an
+ * OC.dialogs.confirm, an @nextcloud/dialogs Vue dialog whose confirm button
+ * is "Yes", found by accessible name: its primary-variant class differs
+ * between @nextcloud/vue 8 and 9 (run 30889958278).
+ */
+async function deleteRow(page: Page, row: Locator): Promise<void> {
+	await openRowMenu(row)
+	await row.getByRole('button', { name: 'Delete', exact: true }).click()
+	const dialog = page.locator('.dialog__modal[role="dialog"]')
+	await expect(dialog).toBeVisible({ timeout: 10000 })
+	const confirmBtn = dialog.getByRole('button', { name: 'Yes', exact: true })
+	await expect(confirmBtn).toBeVisible({ timeout: 10000 })
+	await confirmBtn.click()
+	await expect(row).toBeHidden({ timeout: 10000 })
+}
 
 test.describe('custom-token-set-upload', () => {
 	// Each upload test deletes its own set as its last step. A test that dies
@@ -33,55 +60,71 @@ test.describe('custom-token-set-upload', () => {
 	// Requirement: Upload Custom Token Set (CSS format)
 	// -----------------------------------------------------------------------
 
-	test(// @e2e openspec/specs/custom-token-sets/spec.md#admin-uploads-a-valid-css-token-set
-	'Custom token set upload form is present with name field and upload button', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	test(
+		// @e2e openspec/specs/custom-token-sets/spec.md#admin-uploads-a-valid-css-token-set
+		'Custom token set upload form is present with name field and upload button',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
 
-		const section = page.locator('#nldesign-custom-token-sets')
-		await expect(section).toBeVisible()
-		await expect(page.locator('#nldesign-upload-name')).toBeVisible()
-		await expect(page.locator('#nldesign-upload-btn')).toBeVisible()
-	})
+			const section = page.locator('#nldesign-custom-token-sets')
+			await expect(section).toBeVisible()
+			await expect(page.locator('#nldesign-upload-name')).toBeVisible()
+			await expect(page.locator('#nldesign-upload-btn')).toBeVisible()
+		},
+	)
 
-	test(// @e2e openspec/specs/custom-token-sets/spec.md#admin-uploads-a-valid-css-token-set
-	'Uploading a valid CSS set adds it to the custom-set list and the dropdown', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	test(
+		// @e2e openspec/specs/custom-token-sets/spec.md#admin-uploads-a-valid-css-token-set
+		'Uploading a valid CSS set adds it to the custom-set list and the dropdown',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
 
-		const setName = 'E2E Voorbeeld ' + Date.now()
-		await page.fill('#nldesign-upload-name', setName)
+			const setName = 'E2E Voorbeeld ' + Date.now()
+			await page.fill('#nldesign-upload-name', setName)
 
-		// The hidden file input is triggered by the button; set the file
-		// directly so the change handler runs without the native picker.
-		await page.locator('#nldesign-upload-input').setInputFiles({
-			name: 'huisstijl.css',
-			mimeType: 'text/css',
-			buffer: Buffer.from(
-				':root { --nldesign-color-primary: #007bc7; --nldesign-color-primary-text: #ffffff; }',
-			),
-		})
+			// The hidden file input is triggered by the button; set the file
+			// directly so the change handler runs without the native picker.
+			await page.locator('#nldesign-upload-input').setInputFiles({
+				name: 'huisstijl.css',
+				mimeType: 'text/css',
+				buffer: Buffer.from(
+					':root { --nldesign-color-primary: #007bc7; --nldesign-color-primary-text: #ffffff; }',
+				),
+			})
 
-		// The upload result area becomes visible with an import count.
-		const result = page.locator('#nldesign-upload-result')
-		await expect(result).toBeVisible({ timeout: 10000 })
-		await expect(result).toContainText('imported')
+			// The result draws the TqSetUploaden board: Uploaded, the file, what was saved.
+			const result = page.locator(
+				'#nldesign-upload-result .thematiq-upload-result',
+			)
+			await expect(result).toBeVisible({ timeout: 10000 })
+			await expect(
+				result.locator('.thematiq-upload-result__pill--pass'),
+			).toHaveText('Uploaded')
+			await expect(result.locator('.thematiq-upload-result__file')).toHaveText(
+				'huisstijl.css',
+			)
+			await expect(
+				result.locator('.thematiq-upload-result__summary'),
+			).toContainText(`"${setName}" is saved and is now in the list.`)
+			await expect(
+				result.locator('.thematiq-upload-result__summary'),
+			).toContainText('imported')
 
-		// The new set appears in the custom-set list.
-		await expect(page.locator('#nldesign-custom-set-list')).toContainText(
-			setName,
-			{ timeout: 10000 },
-		)
+			// The new set appears in the custom-set list.
+			await expect(page.locator('#nldesign-custom-set-list')).toContainText(
+				setName,
+				{ timeout: 10000 },
+			)
 
-		// Clean up: delete the set we just created (also covers delete UI).
-		page.once('dialog', (d) => d.accept())
-		const row = page.locator('.nldesign-custom-set-row', { hasText: setName })
-		await row.locator('button:has-text("Delete")').click()
-	})
+			// Clean up: delete the set we just created (also covers delete UI).
+			const row = page.locator('.nldesign-custom-set-row', {
+				hasText: setName,
+			})
+			await deleteRow(page, row)
+		},
+	)
 
 	// Scenario: Upload endpoint is admin-only and CSRF-protected
 	// @e2e exclude openspec/specs/custom-token-sets/spec.md#upload-endpoint-is-admin-only-and-csrf-protected
@@ -101,8 +144,38 @@ test.describe('custom-token-set-upload', () => {
 
 	// @e2e exclude openspec/specs/custom-token-sets/spec.md#disallowed-css-payload-is-rejected-with-a-structured-error
 	// Security validation branch — PHPUnit on the validator payload corpus.
-	// @e2e exclude openspec/specs/custom-token-sets/spec.md#external-url-in-a-token-value-is-rejected
-	// Security validation branch — PHPUnit on the validator.
+	test(
+		// @e2e openspec/specs/custom-token-sets/spec.md#external-url-in-a-token-value-is-rejected
+		'A refused file is drawn as Refused file: nothing saved, and why',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
+
+			const setName = 'E2E Refused ' + Date.now()
+			await page.fill('#nldesign-upload-name', setName)
+			await page.locator('#nldesign-upload-input').setInputFiles({
+				name: 'promo.css',
+				mimeType: 'text/css',
+				buffer: Buffer.from(
+					':root { --nldesign-color-primary: #154273; --nldesign-color-link: javascript:alert(1); }',
+				),
+			})
+
+			const refused = page.locator(
+				'#nldesign-upload-result .thematiq-upload-result--refused',
+			)
+			await expect(refused).toBeVisible({ timeout: 10000 })
+			await expect(
+				refused.locator('.thematiq-upload-result__title'),
+			).toHaveText('Refused file')
+			await expect(refused.locator('strong')).toHaveText(
+				'promo.css was refused (422). Nothing was saved.',
+			)
+			await expect(
+				page.locator('#nldesign-custom-set-list'),
+			).not.toContainText(setName)
+		},
+	)
 	// @e2e exclude openspec/specs/custom-token-sets/spec.md#unknown-properties-are-skipped-and-counted
 	// Parser behaviour — PHPUnit on the validator.
 	// @e2e exclude openspec/specs/custom-token-sets/spec.md#oversized-upload-is-rejected
@@ -123,52 +196,36 @@ test.describe('custom-token-set-upload', () => {
 	// Requirement: WCAG AA Contrast Warnings on Upload
 	// -----------------------------------------------------------------------
 
-	test(// @e2e openspec/specs/custom-token-sets/spec.md#low-contrast-upload-succeeds-with-a-warning
-	'Low-contrast upload succeeds and surfaces a WCAG AA warning', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	test(
+		// @e2e openspec/specs/custom-token-sets/spec.md#low-contrast-upload-succeeds-with-a-warning
+		'Low-contrast upload succeeds and surfaces a WCAG AA warning',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
 
-		const setName = 'E2E Lowcontrast ' + Date.now()
-		await page.fill('#nldesign-upload-name', setName)
-		await page.locator('#nldesign-upload-input').setInputFiles({
-			name: 'low.css',
-			mimeType: 'text/css',
-			buffer: Buffer.from(
-				':root { --nldesign-color-primary: #ffffff; --nldesign-color-primary-text: #cccccc; }',
-			),
-		})
+			const setName = 'E2E Lowcontrast ' + Date.now()
+			await page.fill('#nldesign-upload-name', setName)
+			await page.locator('#nldesign-upload-input').setInputFiles({
+				name: 'low.css',
+				mimeType: 'text/css',
+				buffer: Buffer.from(
+					':root { --nldesign-color-primary: #ffffff; --nldesign-color-primary-text: #cccccc; }',
+				),
+			})
 
-		const result = page.locator('#nldesign-upload-result')
-		await expect(result).toBeVisible({ timeout: 10000 })
-		// Either the result message references a contrast warning, or the
-		// list row shows the "Contrast warning" badge.
-		const row = page.locator('.nldesign-custom-set-row', { hasText: setName })
-		await expect(row).toBeVisible({ timeout: 10000 })
-		await expect(row.locator('.nldesign-badge--warning')).toBeVisible()
+			const result = page.locator('#nldesign-upload-result')
+			await expect(result).toBeVisible({ timeout: 10000 })
+			// Either the result message references a contrast warning, or the
+			// list row shows the "Contrast warning" badge.
+			const row = page.locator('.nldesign-custom-set-row', {
+				hasText: setName,
+			})
+			await expect(row).toBeVisible({ timeout: 10000 })
+			await expect(row.locator('.nldesign-badge--warning')).toBeVisible()
 
-		// Clean up. Delete opens an OC.dialogs.confirm in-DOM modal; confirm via
-		// its primary button (not a native dialog event).
-		await row.locator('button:has-text("Delete")').click()
-		// OC.dialogs.confirm renders an @nextcloud/dialogs Vue dialog whose
-		// confirm action is the button labelled "Yes".
-		//
-		// Target it by ACCESSIBLE NAME, not by the primary-variant CSS class.
-		// `button.button-vue--primary` is @nextcloud/vue 9 markup; the
-		// @nextcloud/vue 8 that Nextcloud 31 ships emits
-		// `button-vue--vue-primary` for the same button, so the class
-		// selector matched nothing on stable31 and both delete assertions
-		// timed out on a button that was on screen the whole time
-		// (run 30889958278). The role+name query is what the dialog's own
-		// accessibility contract guarantees across both.
-		const dialog = page.locator('.dialog__modal[role="dialog"]')
-		await expect(dialog).toBeVisible({ timeout: 10000 })
-		const confirmBtn = dialog.getByRole('button', { name: 'Yes', exact: true })
-		await expect(confirmBtn).toBeVisible({ timeout: 10000 })
-		await confirmBtn.click()
-		await expect(row).toBeHidden({ timeout: 10000 })
-	})
+			await deleteRow(page, row)
+		},
+	)
 
 	// Scenario: Contrast warning resurfaces when applying the set
 	// Covered in token-set-contrast-audit.spec.ts, next to the shipped-set
@@ -196,57 +253,42 @@ test.describe('custom-token-set-upload', () => {
 	// Requirement: Manage Custom Token Sets
 	// -----------------------------------------------------------------------
 
-	test(// @e2e openspec/specs/custom-token-sets/spec.md#admin-downloads-an-uploaded-set
-	// @e2e openspec/specs/custom-token-sets/spec.md#admin-deletes-an-inactive-custom-set
-	'Uploaded set exposes Download and Delete actions; delete removes the row', async ({
-		page,
-	}) => {
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
+	test(
+		// @e2e openspec/specs/custom-token-sets/spec.md#admin-downloads-an-uploaded-set
+		// @e2e openspec/specs/custom-token-sets/spec.md#admin-deletes-an-inactive-custom-set
+		'Uploaded set exposes Download and Delete actions; delete removes the row',
+		async ({ page }) => {
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
 
-		const setName = 'E2E Manage ' + Date.now()
-		await page.fill('#nldesign-upload-name', setName)
-		await page.locator('#nldesign-upload-input').setInputFiles({
-			name: 'manage.css',
-			mimeType: 'text/css',
-			buffer: Buffer.from(
-				':root { --nldesign-color-primary: #154273; --nldesign-color-primary-text: #ffffff; }',
-			),
-		})
+			const setName = 'E2E Manage ' + Date.now()
+			await page.fill('#nldesign-upload-name', setName)
+			await page.locator('#nldesign-upload-input').setInputFiles({
+				name: 'manage.css',
+				mimeType: 'text/css',
+				buffer: Buffer.from(
+					':root { --nldesign-color-primary: #154273; --nldesign-color-primary-text: #ffffff; }',
+				),
+			})
 
-		const row = page.locator('.nldesign-custom-set-row', { hasText: setName })
-		await expect(row).toBeVisible({ timeout: 10000 })
-		// By exact accessible name: the row also carries "Download as design
-		// tokens" (#870), which a text match on "Download" finds as well.
-		await expect(
-			row.getByRole('button', { name: 'Download', exact: true }),
-		).toBeVisible()
-		await expect(
-			row.getByRole('button', { name: 'Delete', exact: true }),
-		).toBeVisible()
+			const row = page.locator('.nldesign-custom-set-row', {
+				hasText: setName,
+			})
+			await expect(row).toBeVisible({ timeout: 10000 })
+			// The row's actions sit behind its "…" menu (TqEigenSets board). By
+			// exact accessible name: the menu also carries "Download as design
+			// tokens" (#870), which a text match on "Download" finds as well.
+			await openRowMenu(row)
+			await expect(
+				row.getByRole('button', { name: 'Download', exact: true }),
+			).toBeVisible()
+			await expect(
+				row.getByRole('button', { name: 'Delete', exact: true }),
+			).toBeVisible()
 
-		// Delete removes the row. The delete button opens an OC.dialogs.confirm
-		// in-DOM modal (NOT a native browser confirm), so confirm by clicking
-		// the dialog's primary button rather than handling a `dialog` event.
-		await row.locator('button:has-text("Delete")').click()
-		// OC.dialogs.confirm renders an @nextcloud/dialogs Vue dialog whose
-		// confirm action is the button labelled "Yes".
-		//
-		// Target it by ACCESSIBLE NAME, not by the primary-variant CSS class.
-		// `button.button-vue--primary` is @nextcloud/vue 9 markup; the
-		// @nextcloud/vue 8 that Nextcloud 31 ships emits
-		// `button-vue--vue-primary` for the same button, so the class
-		// selector matched nothing on stable31 and both delete assertions
-		// timed out on a button that was on screen the whole time
-		// (run 30889958278). The role+name query is what the dialog's own
-		// accessibility contract guarantees across both.
-		const dialog = page.locator('.dialog__modal[role="dialog"]')
-		await expect(dialog).toBeVisible({ timeout: 10000 })
-		const confirmBtn = dialog.getByRole('button', { name: 'Yes', exact: true })
-		await expect(confirmBtn).toBeVisible({ timeout: 10000 })
-		await confirmBtn.click()
-		await expect(row).toBeHidden({ timeout: 10000 })
-	})
+			await deleteRow(page, row)
+		},
+	)
 
 	// Scenario: Deleting the active set falls back to nextcloud
 	// @e2e exclude openspec/specs/custom-token-sets/spec.md#deleting-the-active-set-falls-back-to-nextcloud

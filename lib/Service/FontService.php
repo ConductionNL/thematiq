@@ -44,6 +44,10 @@ use RuntimeException;
  * {@see CustomTokenSetService}, hardened for binary input).
  *
  * @spec openspec/specs/custom-fonts/spec.md
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity) - uploaded fonts and the bundled library share one
+ * revision counter and one generated stylesheet: buildCss() lets a library font and an upload compete for
+ * the same role, so splitting the two sources would move that rule across classes, not remove it.
  */
 class FontService {
 

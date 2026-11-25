@@ -14,7 +14,7 @@
  * They also hold the three mapping fields the tokens need (`selfOnly`,
  * `fallback`, `alsoGlobals`) to what they are documented to emit.
  *
- * @spec openspec/changes/zuiddrecht-workplace-theme/specs/component-tokens/spec.md
+ * @spec openspec/specs/component-tokens/spec.md
  */
 
 import fs from 'node:fs'

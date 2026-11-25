@@ -99,7 +99,7 @@ final class LogoLayerServiceTest extends TestCase {
 	 * A logo uploaded on core's Theming page wins over the set's own logo; the
 	 * set's watermark and emblem still apply (REQ-TPLAT-001).
 	 *
-	 * @spec openspec/specs/platform-properties/spec.md#REQ-TPLAT-001
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-an-uploaded-core-logo-wins-over-the-sets-logo-req-tplat-001
 	 *
 	 * @return void
 	 */

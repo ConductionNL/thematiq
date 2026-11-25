@@ -497,6 +497,14 @@ button:not(.action-button),
 		--nldesign-component-button-border-radius,
 		var(--nldesign-border-radius)
 	);
+}
+
+/* The border width is the one part that needs specificity: NcButton's own
+ * scoped rule (`.button-vue[data-v-…]`, 0,2,0) draws a 2px bottom border on
+ * Nextcloud 34, so a zero-specificity width never reached it and a set's
+ * 1px button came out 1px taller than the canon (49 for 48, shell-canon-check).
+ * This rule (0,3,0) outranks it and nothing more specific. */
+.button-vue:not(.action-button):not(.cn-look-board *) {
 	border-width: var(--nldesign-component-button-border-width);
 }
 
@@ -601,13 +609,15 @@ a {
 
 a:not(:where(.button-vue)):not(:where(.button)):not(:where([role='button'])):not(
 		:where(.cn-banner-widget__action)
-	):not(:where(.cn-link-button-widget__button)):not(:where(.cn-week-strip__item)) {
+	):not(:where(.cn-link-button-widget__button)):not(
+		:where(.cn-week-strip__item)
+	):not(:where(.cn-app-tile)) {
 	text-decoration: var(--nldesign-component-link-text-decoration) !important;
 }
 
 /* A link drawn as a button (NcButton with href or to, a core `a.button`,
- * `a[role="button"]`, a CnBannerWidget action, a CnLinkButtonWidget button)
- * is a button: the link rules here and in element-overrides.css leave it out,
+ * `a[role="button"]`, a CnBannerWidget action, a CnLinkButtonWidget button,
+ * a CnWeekStripWidget item, a CnAppTile) is a button: the link rules here and in element-overrides.css leave it out,
  * so it keeps its button's own text colour, and its text is never underlined,
  * in any state. */
 a.button-vue,
@@ -616,24 +626,28 @@ a[role='button'],
 a.cn-banner-widget__action,
 a.cn-link-button-widget__button,
 a.cn-week-strip__item,
+a.cn-app-tile,
 a.button-vue:hover,
 a.button:hover,
 a[role='button']:hover,
 a.cn-banner-widget__action:hover,
 a.cn-link-button-widget__button:hover,
 a.cn-week-strip__item:hover,
+a.cn-app-tile:hover,
 a.button-vue:visited,
 a.button:visited,
 a[role='button']:visited,
 a.cn-banner-widget__action:visited,
 a.cn-link-button-widget__button:visited,
 a.cn-week-strip__item:visited,
+a.cn-app-tile:visited,
 a.button-vue:focus,
 a.button:focus,
 a[role='button']:focus,
 a.cn-banner-widget__action:focus,
 a.cn-link-button-widget__button:focus,
-a.cn-week-strip__item:focus {
+a.cn-week-strip__item:focus,
+a.cn-app-tile:focus {
 	text-decoration: none !important;
 }
 
@@ -644,7 +658,7 @@ a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue))
 		:where(.button)
 	):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(
 		:where(.cn-link-button-widget__button)
-	):not(:where(.cn-week-strip__item)) {
+	):not(:where(.cn-week-strip__item)):not(:where(.cn-app-tile)) {
 	color: var(--nldesign-component-link-color) !important;
 }
 
@@ -652,7 +666,7 @@ a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue))
 		:where(.button)
 	):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(
 		:where(.cn-link-button-widget__button)
-	):not(:where(.cn-week-strip__item)):hover {
+	):not(:where(.cn-week-strip__item)):not(:where(.cn-app-tile)):hover {
 	color: var(--nldesign-component-link-hover-color) !important;
 }
 
@@ -660,7 +674,7 @@ a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue))
 		:where(.button)
 	):not(:where([role='button'])):not(:where(.cn-banner-widget__action)):not(
 		:where(.cn-link-button-widget__button)
-	):not(:where(.cn-week-strip__item)):visited {
+	):not(:where(.cn-week-strip__item)):not(:where(.cn-app-tile)):visited {
 	color: var(--nldesign-component-link-visited-color) !important;
 }
 
@@ -694,9 +708,14 @@ a:not(:where(.tile-widget)):not(:where(.tile-widget a)):not(:where(.button-vue))
  * The second selector is for NcButton: its scoped `.button-vue[data-v-…]:focus-visible`
  * ring is `!important` at 0,3,0 and beat `*:focus-visible`, so buttons kept
  * Nextcloud's 2px ring in the main text colour (#1050). The doubled class and
- * `body` reach 0,3,1. tests/vitest/buttonFocusRing.spec.js holds every system. */
+ * `body` reach 0,3,1. The third is core's skip link, whose
+ * `.button.primary.skip-navigation:focus-visible` ring (0,4,0) reads
+ * --color-main-text, which the primary-button focus scope sets to the
+ * translucent focus colour. tests/vitest/buttonFocusRing.spec.js holds every
+ * system. */
 *:focus-visible,
-body .button-vue.button-vue:focus-visible {
+body .button-vue.button-vue:focus-visible,
+body .button.primary.skip-navigation:focus-visible {
 	--nldesign-focus-ring-color: rgb(var(--nldesign-color-focus-rgb));
 
 	outline: 2px solid var(--nldesign-focus-ring-color) !important;
@@ -939,7 +958,13 @@ th:not(.cn-look-board *) {
 	font-weight: var(--nldesign-component-table-header-font-weight) !important;
 }
 
-tr:hover td {
+/* Only a data table's rows: a table with a head row, no nested tables and
+   no presentation role. A layout grid drawn as a table (Calendar's week,
+   where one row holds the whole week) keeps its own colours. */
+:where(table:has(> thead):not([role='presentation']):not(:has(table)))
+	> tbody
+	> tr:hover
+	> td {
 	background-color: var(
 		--nldesign-component-table-row-hover-background-color
 	) !important;
@@ -1123,10 +1148,19 @@ button:not(.action-button):not(.cn-look-board *),
 	border-radius: var(--nldesign-border-radius) !important;
 }
 
+/* A dialog's corner is half again the brand radius (12px on an 8px set, as
+ * the boards draw it; a square set stays square). It keeps its shadow, so it
+ * lifts off the page; the shadow rule further down leaves it out. */
 .modal-container {
+	--thematiq-dialog-shadow: 0 16px 48px rgba(27, 28, 29, 0.28);
+
 	border-radius: var(
 		--nldesign-component-dialog-border-radius,
-		var(--nldesign-border-radius)
+		calc(var(--nldesign-border-radius) * 1.5)
+	) !important;
+	box-shadow: var(
+		--nldesign-component-dialog-box-shadow,
+		var(--thematiq-dialog-shadow)
 	) !important;
 }
 
@@ -1212,7 +1246,6 @@ body,
 
 .panel,
 .widget,
-.modal-container,
 .popover,
 .dropdown,
 button,

@@ -117,6 +117,14 @@ const NAV_READY = '#app-navigation-vue .app-navigation-entry.active'
 const BELL_READY = '#header .notifications-button__icon'
 
 /**
+ * The README editor above the Files list — the Text app's bundle, mounted a few
+ * seconds AFTER the list rows (measured on Nextcloud 34 with Text 8: absent when
+ * the rows are, present 4 s later). Without waiting for it the survey read the
+ * page before the editor existed and called the `#rich-workspace` rules dead.
+ */
+const RICH_WORKSPACE_READY = '#app-content-vue #rich-workspace .text-editor__main'
+
+/**
  * An EXPLICITLY EMPTY session, for the surfaces that must be anonymous.
  *
  * `storageState: undefined` is not this. Playwright merges context options
@@ -192,6 +200,7 @@ const SURFACES: Array<Surface> = [
 		awaitAlso: [
 			{ selector: NAV_READY },
 			{ selector: BELL_READY, requiresApp: 'notifications' },
+			{ selector: RICH_WORKSPACE_READY, requiresApp: 'text' },
 		],
 	},
 	{ name: 'contacts', path: '/apps/contacts/' },
@@ -215,6 +224,13 @@ const SURFACES: Array<Surface> = [
  * Each entry is a substring or /regex/ plus the reason it cannot match.
  */
 const ALLOWED: Array<{ pattern: RegExp; reason: string }> = [
+	{
+		pattern: /^\.cn-dashboard-page /,
+		reason:
+			'A nextcloud-vue dashboard (CnDashboardPage) is drawn only by the Conduction apps built on it '
+			+ '(dossiq, launchpad and the like); none of the surveyed surfaces is one, and the CI fixture '
+			+ "installs none of them. The rule is live on those apps' dashboards.",
+	},
 	{
 		pattern: /^#app-navigation(?![-\w])/,
 		reason: 'Deliberate pre-NC34 fallback; NC34 renders #app-navigation-vue. Kept so the theme still applies on older servers.',

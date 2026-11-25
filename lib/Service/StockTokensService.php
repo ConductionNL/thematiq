@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
+ * @spec openspec/specs/nextcloud-variable-mapping/spec.md
  */
 
 declare(strict_types=1);
@@ -60,7 +60,7 @@ use Throwable;
  * file. A wrong stock theme is a cosmetic defect; no stock theme at all is a
  * blank page.
  *
- * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
+ * @spec openspec/specs/nextcloud-variable-mapping/spec.md
  */
 class StockTokensService {
 
@@ -138,7 +138,7 @@ class StockTokensService {
 	 * @param ICacheFactory $cacheFactory Creates the cross-request block cache.
 	 * @param IConfig $config Reads the version and theming cachebuster.
 	 *
-	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
+	 * @spec openspec/specs/nextcloud-variable-mapping/spec.md
 	 */
 	public function __construct(
 		TokenSetPreviewService $sources,
@@ -158,7 +158,7 @@ class StockTokensService {
 	 * @return string|null The stylesheet body, or null when the instance could
 	 *                     not be read and the shipped file should be used.
 	 *
-	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
+	 * @spec openspec/specs/nextcloud-variable-mapping/spec.md
 	 */
 	public function getCss(): ?string {
 		// The memo is false once a resolve has failed, a string once one has
@@ -374,7 +374,7 @@ class StockTokensService {
 	 *                                         type-hint would make this file
 	 *                                         unloadable without the theming app.
 	 *
-	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
+	 * @spec openspec/specs/nextcloud-variable-mapping/spec.md
 	 */
 	protected function resolveTheme(): object {
 		// phpcs:ignore CustomSniffs.Nextcloud.NoServiceLocator.GlobalContainerLookup -- Optional cross-app dependency: the theming app may be absent, and DEFAULT_THEME is held as a string for that reason, so a constructor type-hint would make this file unloadable instead of falling back to the shipped snapshot.
@@ -506,7 +506,7 @@ class StockTokensService {
 	 *
 	 * @return array<string, string> Variable name => declared value.
 	 *
-	 * @spec openspec/changes/component-playground/specs/nextcloud-variable-mapping/spec.md
+	 * @spec openspec/specs/nextcloud-variable-mapping/spec.md
 	 */
 	protected function stockVariables(): array {
 		try {

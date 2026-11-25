@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
  */
 
 declare(strict_types=1);
@@ -26,8 +26,8 @@ namespace OCA\Thematiq\Service;
  * that resolves the options, the controller that stores them and the
  * configuration bundle that carries them all validate the same way.
  *
- * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md
- * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/config-portability/spec.md
+ * @spec openspec/specs/workplace-layout/spec.md
+ * @spec openspec/specs/config-portability/spec.md
  */
 final class LayoutOptionValues {
 
@@ -194,7 +194,7 @@ final class LayoutOptionValues {
 	 *
 	 * @return string|null The accepted string form, or null.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
 	 */
 	public static function accepted(string $key, mixed $value): ?string {
 		if ($value === LayoutOptionsService::FOLLOW_SET) {
@@ -286,7 +286,7 @@ final class LayoutOptionValues {
 	 *
 	 * @return array<string, string> App config key to the value to store.
 	 *
-	 * @spec openspec/changes/layout-options-navigation-stripe-watermark/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
+	 * @spec openspec/specs/config-portability/spec.md#requirement-the-layout-options-travel-in-the-bundle
 	 */
 	public static function fromBundle(mixed $options, array &$errors): array {
 		$options = self::bundleOptions(options: $options, errors: $errors);

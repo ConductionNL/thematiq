@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/archive/2026-07-23-render-event-injection/tasks.md#task-4.1
+ * @spec openspec/specs/css-architecture/spec.md
  */
 
 declare(strict_types=1);
@@ -366,7 +366,7 @@ class ThemeInjectionListenerTest extends TestCase {
 	 *
 	 * @dataProvider loginCopyProvider
 	 *
-	 * @spec openspec/changes/login-page-board-parity/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-login-card-of-the-board
 	 *
 	 * @return void
 	 */
@@ -427,7 +427,7 @@ class ThemeInjectionListenerTest extends TestCase {
 	 *
 	 * @dataProvider notFoundProvider
 	 *
-	 * @spec openspec/changes/not-found-page-board/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-not-found-page-of-the-board
+	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-workplace-draws-the-not-found-page-of-the-board
 	 *
 	 * @return void
 	 */

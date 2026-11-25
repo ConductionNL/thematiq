@@ -40,7 +40,7 @@ class AdminFontNoticeTest extends TestCase {
 
 		$template = (string)file_get_contents($path);
 
-		$noticeKey = 'Only upload fonts your organization holds a license to self-host. Licensing responsibility rests with the uploader.';
+		$noticeKey = 'Upload only fonts your organisation is licensed to host itself. Whoever uploads is responsible for the licence.';
 		$noticePos = strpos($template, $noticeKey);
 		$this->assertNotFalse(condition: $noticePos, message: 'The license-responsibility notice must ship in the admin template.');
 

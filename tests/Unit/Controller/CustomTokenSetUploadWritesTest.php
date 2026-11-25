@@ -60,7 +60,7 @@ use Psr\Log\LoggerInterface;
  * is the only pre-existing production path through it, so it is pinned here.
  *
  * @spec openspec/specs/custom-token-sets/spec.md
- * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+ * @spec openspec/specs/custom-token-sets/spec.md
  */
 class CustomTokenSetUploadWritesTest extends TestCase {
 
@@ -279,7 +279,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 *
 	 * @dataProvider smuggledValueProvider
 	 *
-	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-1
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 *
 	 * @return void
 	 */
@@ -319,7 +319,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * second, independent defence, and a test that lumped it in with them
 	 * would claim the value gate catches something it never sees.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -340,7 +340,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * The same constructs under an ACCEPTED name are refused too — the gate
 	 * did not move from one set to the other, it widened to cover both.
 	 *
-	 * @spec openspec/changes/archive/2026-07-23-harden-custom-token-set-value-validation/tasks.md#task-1
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 *
 	 * @return void
 	 */
@@ -386,7 +386,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 *
 	 * @dataProvider provenancePayloadProvider
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -416,7 +416,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 *
 	 * @dataProvider provenancePayloadProvider
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -510,7 +510,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * A legitimate filename still reaches the provenance block — the guard
 	 * strips comment terminators, it does not blank the field.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/token-set-converter/spec.md
+	 * @spec openspec/specs/token-set-converter/spec.md
 	 *
 	 * @return void
 	 */
@@ -536,7 +536,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	 * The admin's own values are what must survive that: a backfill that
 	 * overwrote a declared value would silently re-theme their brand.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md
+	 * @spec openspec/specs/custom-token-sets/spec.md
 	 *
 	 * @return void
 	 */
@@ -593,7 +593,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	/**
 	 * Pasting a theme stores exactly what uploading the same bytes as a file stores.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md#requirement-pasted-content-is-a-first-class-input
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-pasted-content-is-a-first-class-input
 	 *
 	 * @return void
 	 */
@@ -618,7 +618,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	/**
 	 * No file and an empty paste is a 400 that stores nothing.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md#requirement-pasted-content-is-a-first-class-input
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-pasted-content-is-a-first-class-input
 	 *
 	 * @return void
 	 */
@@ -633,7 +633,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	/**
 	 * A paste over the validator's size limit is refused like an oversized file.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md#requirement-pasted-content-is-a-first-class-input
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-pasted-content-is-a-first-class-input
 	 *
 	 * @return void
 	 */
@@ -647,7 +647,7 @@ class CustomTokenSetUploadWritesTest extends TestCase {
 	/**
 	 * A file named tokens.json whose content is CSS is converted as CSS.
 	 *
-	 * @spec openspec/changes/nlds-theme-converter/specs/custom-token-sets/spec.md#requirement-theme-sources-are-accepted-not-only-token-sets
+	 * @spec openspec/specs/custom-token-sets/spec.md#requirement-theme-sources-are-accepted-not-only-token-sets
 	 *
 	 * @return void
 	 */

@@ -6,7 +6,7 @@ sidebar_position: 30
 
 Audit of 14 October 2026. For each set: where it came from, which version, what the licence in that source says, and how Thematiq treats it. A restricted set can be applied only after an administrator confirms that the organisation may use it. See [House styles of other organisations](../features/token-set-licences.md).
 
-**44 of 63 shipped sets are restricted.** 4 declare an open licence. 15 declare none, because they are Thematiq's own, fictional, or stock Nextcloud.
+**45 of 64 shipped sets are restricted.** 4 declare an open licence. 15 declare none, because they are Thematiq's own, fictional, or stock Nextcloud.
 
 The source `nl-design-system/themes@9cfc4c5a` is commit 9cfc4c5a292b3750e44a674e6240fb8e4924dc09 of github.com/nl-design-system/themes, directory `proprietary/`. Every licence there reads, in Dutch, that the logo and house style may only be used by the organisation itself, and that you ask the organisation for permission otherwise.
 
@@ -42,6 +42,7 @@ The source `nl-design-system/themes@9cfc4c5a` is commit 9cfc4c5a292b3750e44a674e
 | `noordoostpolder` | `@nl-design-system-unstable/noordoostpolder-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Noordoostpolder; permission from Gemeente Noordoostpolder | restricted |
 | `noordwijk` | `@nl-design-system-unstable/noordwijk-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Noordwijk; permission from Gemeente Noordwijk | restricted |
 | `nora` | `@nl-design-system-community/nora-design-tokens` | 1.7.2 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by NORA; permission from NORA | restricted |
+| `openwoo` | `@conduction/theme` (other/openwoo-design-tokens) | 2.1.0 | @conduction/theme@2.1.0 on the npm registry, read 22 November | Logo and house style designed by Conduction; use only within OpenWOO; permission from Conduction | restricted |
 | `provincie-zuid-holland` | `@nl-design-system-unstable/provincie-zuid-holland-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Provincie Zuid-Holland; permission from Provincie Zuid-Holland | restricted |
 | `purmerend` | `@nl-design-system-community/purmerend-design-tokens` | 1.2.3 | nl-design-system/themes@9cfc4c5a | No licence file in the package; sits in proprietary/; treated as restricted | restricted |
 | `riddeliemers` | `proprietary/riddeliemers-design-tokens (no package.json)` | not recorded | nl-design-system/themes@9cfc4c5a | No licence file in the package; sits in proprietary/; treated as restricted | restricted |

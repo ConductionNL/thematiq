@@ -37,6 +37,7 @@ use OCP\IConfig;
  *     description: string,
  *     design_system: string,
  *     theming?: array<string, mixed>,
+ *     workplaceLayout?: string,
  *     custom?: bool,
  *     warnings?: array<int, array<string, mixed>>,
  *     upstreamVersion?: string,
@@ -49,6 +50,7 @@ use OCP\IConfig;
  *     description: string,
  *     design_system: string,
  *     theming?: array<string, mixed>,
+ *     workplaceLayout?: string,
  *     custom?: bool,
  *     warnings?: array<int, array<string, mixed>>,
  *     upstreamVersion?: string,
@@ -127,7 +129,7 @@ class TokenSetService {
 	 *
 	 * @return IConfig The config.
 	 *
-	 * @spec openspec/changes/token-set-licence-gate/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
+	 * @spec openspec/specs/token-set-licences/spec.md#requirement-every-path-that-applies-a-set-asks-the-same-gate
 	 */
 	protected function licenceConfig(): IConfig {
 		return $this->runtime->config;
@@ -293,6 +295,17 @@ class TokenSetService {
 		$theming = $this->entryTheming(candidates: [($sources['captured'][$id] ?? null), ($meta['theming'] ?? null)]);
 		if ($theming !== null) {
 			$tokenSet['theming'] = $theming;
+		}
+
+		// The workplace layout the set brings, for the Layout column of the token sets table.
+		$workplaceLayout = ($meta['layout']['workplace_layout'] ?? null);
+		if (is_string($workplaceLayout) === true) {
+			$tokenSet['workplaceLayout'] = $workplaceLayout;
+		}
+
+		// Every layout default the set brings, for the "the theme says" lines of the Layout panel.
+		if (is_array($meta['layout'] ?? null) === true) {
+			$tokenSet['layout'] = $meta['layout'];
 		}
 
 		$listed = new ListedTokenSet(

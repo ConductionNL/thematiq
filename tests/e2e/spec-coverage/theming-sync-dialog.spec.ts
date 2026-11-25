@@ -89,8 +89,9 @@ test.describe('theming-sync-dialog', () => {
 	// -----------------------------------------------------------------------
 
 	// @e2e exclude openspec/specs/theming-sync-dialog/spec.md#user-confirms-update
-	// @e2e exclude openspec/specs/theming-sync-dialog/spec.md#user-cancels-update
-	// Require dialog to be open — dialog trigger mutates env.
+	// Requires the dialog to be open — dialog trigger mutates env.
+	// user-cancels-update is proved in theming-sync.spec.ts ("cancelling closes
+	// the dialog, applies no theming, keeps the set"), which stubs the trigger.
 
 	// -----------------------------------------------------------------------
 	// Requirement: Bundled Organization Images
@@ -101,20 +102,21 @@ test.describe('theming-sync-dialog', () => {
 	// Filesystem assertions — not UI.
 
 	// Smoke: theming page loads without errors (dialog infrastructure present)
-	test(// @e2e openspec/specs/theming-sync-dialog/spec.md#dialog-shown-for-token-set-with-theming-metadata
-	'Admin theming page loads and theming-sync JS is initialized (no dialog errors)', async ({
-		page,
-	}) => {
-		const errors: string[] = []
-		page.on('console', (msg) => {
-			if (msg.type() === 'error') errors.push(msg.text())
-		})
-		await page.goto(THEMING_URL)
-		await page.waitForLoadState('domcontentloaded')
-		// nldesign-theming-dialog-overlay must NOT exist on page load (no spurious dialog)
-		const dialog = page.locator('#nldesign-theming-dialog-overlay')
-		await expect(dialog).not.toBeVisible()
-		// The settings section must render (JS initialized correctly)
-		await expect(page.locator('#nldesign-settings')).toBeAttached()
-	})
+	test(
+		// @e2e openspec/specs/theming-sync-dialog/spec.md#dialog-shown-for-token-set-with-theming-metadata
+		'Admin theming page loads and theming-sync JS is initialized (no dialog errors)',
+		async ({ page }) => {
+			const errors: string[] = []
+			page.on('console', (msg) => {
+				if (msg.type() === 'error') errors.push(msg.text())
+			})
+			await page.goto(THEMING_URL)
+			await page.waitForLoadState('domcontentloaded')
+			// nldesign-theming-dialog-overlay must NOT exist on page load (no spurious dialog)
+			const dialog = page.locator('#nldesign-theming-dialog-overlay')
+			await expect(dialog).not.toBeVisible()
+			// The settings section must render (JS initialized correctly)
+			await expect(page.locator('#nldesign-settings')).toBeAttached()
+		},
+	)
 })

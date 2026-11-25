@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/group-house-style-admin/specs/per-group-theming/spec.md
+ * @spec openspec/specs/per-group-theming/spec.md
  */
 
 declare(strict_types=1);
@@ -42,7 +42,7 @@ use OCP\Settings\IDelegatedSettings;
  * It replaces the block that lived in the personal Appearance settings
  * (Ruben, 11 October 2026): a person's own appearance is Nextcloud's.
  *
- * @spec openspec/changes/group-house-style-admin/specs/per-group-theming/spec.md
+ * @spec openspec/specs/per-group-theming/spec.md
  */
 class GroupHouseStyle implements IDelegatedSettings {
 
@@ -72,7 +72,7 @@ class GroupHouseStyle implements IDelegatedSettings {
 	 *
 	 * @return TemplateResponse The template.
 	 *
-	 * @spec openspec/changes/group-house-style-admin/specs/per-group-theming/spec.md#requirement-a-group-subadmin-chooses-the-house-style-of-a-delegated-group
+	 * @spec openspec/specs/per-group-theming/spec.md#requirement-a-group-subadmin-chooses-the-house-style-of-a-delegated-group
 	 */
 	public function getForm(): TemplateResponse {
 		return new TemplateResponse(Application::APP_ID, 'settings/group-house-style', []);
@@ -83,7 +83,7 @@ class GroupHouseStyle implements IDelegatedSettings {
 	 *
 	 * @return string|null The section id.
 	 *
-	 * @spec openspec/changes/group-house-style-admin/specs/per-group-theming/spec.md#requirement-a-group-subadmin-chooses-the-house-style-of-a-delegated-group
+	 * @spec openspec/specs/per-group-theming/spec.md#requirement-a-group-subadmin-chooses-the-house-style-of-a-delegated-group
 	 */
 	public function getSection(): ?string {
 		$user = $this->userSession->getUser();
@@ -99,7 +99,7 @@ class GroupHouseStyle implements IDelegatedSettings {
 	 *
 	 * @return int The priority.
 	 *
-	 * @spec openspec/changes/group-house-style-admin/specs/per-group-theming/spec.md#requirement-a-group-subadmin-chooses-the-house-style-of-a-delegated-group
+	 * @spec openspec/specs/per-group-theming/spec.md#requirement-a-group-subadmin-chooses-the-house-style-of-a-delegated-group
 	 */
 	public function getPriority(): int {
 		return 60;
@@ -110,7 +110,7 @@ class GroupHouseStyle implements IDelegatedSettings {
 	 *
 	 * @return string|null The name.
 	 *
-	 * @spec openspec/changes/group-house-style-admin/specs/per-group-theming/spec.md#requirement-a-group-subadmin-chooses-the-house-style-of-a-delegated-group
+	 * @spec openspec/specs/per-group-theming/spec.md#requirement-a-group-subadmin-chooses-the-house-style-of-a-delegated-group
 	 */
 	public function getName(): ?string {
 		return $this->l10n->t('House style of my groups');
@@ -122,7 +122,7 @@ class GroupHouseStyle implements IDelegatedSettings {
 	 *
 	 * @return array<string, array<int, string>> Nothing.
 	 *
-	 * @spec openspec/changes/group-house-style-admin/specs/per-group-theming/spec.md#requirement-a-group-subadmin-chooses-the-house-style-of-a-delegated-group
+	 * @spec openspec/specs/per-group-theming/spec.md#requirement-a-group-subadmin-chooses-the-house-style-of-a-delegated-group
 	 */
 	public function getAuthorizedAppConfig(): array {
 		return [];
