@@ -23,6 +23,7 @@ namespace OCA\Thematiq\Tests\Unit\Settings;
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Service\DelegatedGroupThemingService;
 use OCA\Thematiq\Settings\PersonalGroupHouseStyle;
+use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserSession;
 use PHPUnit\Framework\TestCase;
@@ -54,7 +55,11 @@ class PersonalGroupHouseStyleTest extends TestCase {
 		$delegation = $this->createMock(originalClassName: DelegatedGroupThemingService::class);
 		$delegation->method('hasDelegatedGroups')->with('anna')->willReturn($delegated);
 
-		return new PersonalGroupHouseStyle(delegation: $delegation, userSession: $session);
+		return new PersonalGroupHouseStyle(
+			delegation: $delegation,
+			userSession: $session,
+			l10n: $this->createMock(originalClassName: IL10N::class)
+		);
 	}//end settings()
 
 	/**
@@ -67,8 +72,8 @@ class PersonalGroupHouseStyleTest extends TestCase {
 	public function testASubadminOfADelegatedGroupSeesItInAppearance(): void {
 		$settings = $this->settings(loggedIn: true, delegated: true);
 
-		$this->assertSame('theming', $settings->getSection());
-		$this->assertGreaterThan(40, $settings->getPriority());
+		$this->assertSame(expected: 'theming', actual: $settings->getSection());
+		$this->assertGreaterThan(expected: 40, actual: $settings->getPriority());
 	}//end testASubadminOfADelegatedGroupSeesItInAppearance()
 
 	/**
@@ -79,8 +84,8 @@ class PersonalGroupHouseStyleTest extends TestCase {
 	 * @return void
 	 */
 	public function testEveryoneElseDoesNotSeeIt(): void {
-		$this->assertNull($this->settings(loggedIn: true, delegated: false)->getSection());
-		$this->assertNull($this->settings(loggedIn: false, delegated: false)->getSection());
+		$this->assertNull(actual: $this->settings(loggedIn: true, delegated: false)->getSection());
+		$this->assertNull(actual: $this->settings(loggedIn: false, delegated: false)->getSection());
 	}//end testEveryoneElseDoesNotSeeIt()
 
 	/**
@@ -93,8 +98,8 @@ class PersonalGroupHouseStyleTest extends TestCase {
 	public function testTheFormIsTheBlockInItsPersonalShape(): void {
 		$form = $this->settings(loggedIn: true, delegated: true)->getForm();
 
-		$this->assertSame(Application::APP_ID, $form->getApp());
-		$this->assertSame('settings/group-house-style', $form->getTemplateName());
-		$this->assertSame(['personal' => true], $form->getParams());
+		$this->assertSame(expected: Application::APP_ID, actual: $form->getApp());
+		$this->assertSame(expected: 'settings/group-house-style', actual: $form->getTemplateName());
+		$this->assertSame(expected: ['personal' => true], actual: $form->getParams());
 	}//end testTheFormIsTheBlockInItsPersonalShape()
 }//end class
