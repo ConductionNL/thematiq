@@ -181,6 +181,18 @@ export async function activeTokenSet(page: Page): Promise<{ tokenSet: string }> 
 	return { tokenSet: res.json?.ocs?.data?.capabilities?.nldesign?.tokenSet?.id }
 }
 
+/**
+ * Whether an administrator uploaded a logo on core's Theming page. Such a logo
+ * wins over a set's own (REQ-TPLAT-001), so a test of the set's logo in the
+ * header cannot hold on an instance that carries one. Core then serves its
+ * logo from the theming app's image route instead of core/img/logo.
+ */
+export async function coreLogoUploaded(page: Page): Promise<boolean> {
+	const res = await api(page, 'GET', '/ocs/v2.php/cloud/capabilities?format=json')
+	const logo = String(res.json?.ocs?.data?.capabilities?.theming?.logo ?? '')
+	return logo.includes('/apps/theming/image/logo')
+}
+
 /** Assert a fixture precondition loudly rather than letting it fail obscurely later. */
 export function requireFixture(value: unknown, what: string): void {
 	expect(value, `fixture precondition: ${what}`).toBeTruthy()
