@@ -477,10 +477,11 @@ test.describe('menu-labels', () => {
 			const family = (await styleOf(page, LABEL, ['font-family']))[
 				'font-family'
 			]
-			expect(first(family)).toBe(
-				first(await rootVar(page, '--nldesign-font-family')),
-			)
-			expect(first(family)).toBe('Fira Sans')
+			// The family comes from the active set (Fira Sans by default,
+			// RijksSansVF under Rijkshuisstijl), so it is read, not named.
+			const token = first(await rootVar(page, '--nldesign-font-family'))
+			expect(token).not.toBe('')
+			expect(first(family)).toBe(token)
 		})
 	})
 

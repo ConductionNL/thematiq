@@ -47,6 +47,14 @@ const THEMING_URL = '/settings/admin/theming'
 const DEFAULTS = 'systems/nldesign/defaults.css'
 const TOKENS_DIR = path.resolve(__dirname, '../../../css/tokens')
 
+/** The description token-sets.json gives a set. */
+function manifestDescription(id: string): string {
+	const manifest = JSON.parse(
+		fs.readFileSync(path.resolve(__dirname, '../../../token-sets.json'), 'utf8'),
+	) as { id: string; description?: string }[]
+	return manifest.find((s) => s.id === id)?.description ?? ''
+}
+
 type ListedSet = { id: string; name: string; description?: string }
 
 /** GET a JSON endpoint of this app from inside the authenticated page. */
@@ -207,7 +215,7 @@ test.describe('extended-token-sets', () => {
 			expect(withoutDescription.map((s) => s.id)).toEqual([])
 			expect(
 				admin.body.tokenSets.find((s) => s.id === 'amsterdam')?.description,
-			).toBe('Design tokens for Gemeente Amsterdam')
+			).toBe(manifestDescription('amsterdam'))
 		} finally {
 			await withdrawTokenSetOffer(page, token, offer)
 		}
@@ -283,7 +291,10 @@ test.describe('extended-token-sets', () => {
 			expect(normaliseCss(root['--nldesign-font-family'])).toBe(
 				normaliseCss(file.get('--nldesign-font-family') ?? ''),
 			)
-			expect(root['--nldesign-font-family']).toMatch(/^['"]Fira Sans['"]/)
+			// @utrecht/design-tokens 8 sets body text in Noto Sans Variable.
+			expect(root['--nldesign-font-family']).toMatch(
+				/^['"]Noto Sans Variable['"]/,
+			)
 			expect(root['--nldesign-border-radius']).toBe('4px')
 			// Nextcloud's own variables carry them to every app.
 			expect(normaliseCss(root['--font-face'])).toBe(
