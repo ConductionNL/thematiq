@@ -2053,7 +2053,8 @@
         "A duration is a number with ms or s, up to 5 seconds. An easing is one of the five words or a custom curve with both x values between 0 and 1. Anything outside those rules the server does not save, and you see why.": "Een duur is een getal met ms of s, tot 5 seconden. Een easing is een van de vijf woorden of een eigen curve met beide x-waarden tussen 0 en 1. Wat buiten die regels valt, slaat de server niet op en u ziet waarom.",
         "Where motion lives": "Waar beweging zit",
         "Every transition of Nextcloud and the Conduction apps reads these three tokens: menus, dialogs, the sidebar, notifications and tabs.": "Elke overgang van Nextcloud en de Conduction-apps leest deze drie tokens: menu's, dialogen, de zijbalk, meldingen en tabbladen.",
-        "Motion tokens have a fixed type: the server checks every value before it saves anything.": "Motion-tokens hebben een vast type: de server toetst elke waarde voordat hij iets opslaat."
+        "Motion tokens have a fixed type: the server checks every value before it saves anything.": "Motion-tokens hebben een vast type: de server toetst elke waarde voordat hij iets opslaat.",
+        "Preview: {name}, visible to you only": "Voorbeeld: {name}, alleen zichtbaar voor u"
     },
     "plurals": {}
 }
