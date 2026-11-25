@@ -6,7 +6,8 @@
  * 0.8-1.8 s for answers the server gives in 40-70 ms each. The render now
  * carries those answers as the initial state `bootReads` (path => body, see
  * lib/Settings/AdminBootReads.php), and this script answers a GET for one of
- * those paths from it, so no block needs to change how it loads.
+ * those paths from it, once per path, so no block needs to change how it
+ * loads; a second read of the same path goes to the server.
  *
  * It answers only while nothing on the page can have changed: until the
  * admin first presses a key or a pointer, or anything sends a request other
@@ -74,6 +75,7 @@
 	 */
 	function create(realFetch, reads, base) {
 		var answering = reads !== null && typeof reads === 'object' && Object.keys(reads).length > 0
+		reads = answering === true ? Object.assign({}, reads) : {}
 
 		function stop() {
 			answering = false
@@ -86,8 +88,10 @@
 				} else {
 					var key = keyOf(input, base)
 					if (key !== null && Object.prototype.hasOwnProperty.call(reads, key) === true) {
+						var body = reads[key]
+						delete reads[key]
 						return Promise.resolve(
-							new Response(JSON.stringify(reads[key]), {
+							new Response(JSON.stringify(body), {
 								status: 200,
 								headers: { 'Content-Type': 'application/json' },
 							}),
