@@ -322,7 +322,7 @@ test.describe('theme preview', () => {
 			await expect(
 				banner,
 				`banner must say the preview is private on ${url}`,
-			).toContainText(/only visible to you/i)
+			).toContainText(/visible to you only/i)
 			// role="status" so a screen reader announces it (WCAG 4.1.3).
 			await expect(banner).toHaveAttribute('role', 'status')
 

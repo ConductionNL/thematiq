@@ -18,11 +18,11 @@
 	justify-content: center;
 	gap: 12px;
 	padding: 10px 16px;
-	background-color: var(--color-warning, #c79a00);
-	color: var(--color-warning-text, #000);
-	border-top: 1px solid var(--color-border-dark, rgba(0, 0, 0, 0.2));
+	background-color: color-mix(in srgb, var(--color-warning-hover, #c79a00) 25%, var(--color-main-background, #fff));
+	color: var(--color-warning-text, #7a4f00);
+	border-top: 1px solid color-mix(in srgb, var(--color-warning, #c79a00) 55%, var(--color-main-background, #fff));
 	box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
-	font-size: 0.95em;
+	font-size: 15px;
 }
 
 .nldesign-preview-banner-text {
@@ -36,6 +36,20 @@
 
 .nldesign-preview-banner-publish,
 .nldesign-preview-banner-discard {
+	display: inline-flex;
+	align-items: center;
+	box-sizing: border-box;
+	height: 36px;
+	min-height: 36px;
+	margin: 0;
+	padding: 0 16px;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: 8px;
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	font-size: 14px;
+	font-weight: 600;
+	text-decoration: none;
 	white-space: nowrap;
 }
 
