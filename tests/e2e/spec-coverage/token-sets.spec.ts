@@ -35,6 +35,7 @@ import {
 import {
 	activeTokenSet,
 	adminContext,
+	coreLogoUploaded,
 	ensureNonAdminUser,
 	loginAs,
 	NONADMIN_PASS,
@@ -528,10 +529,12 @@ test.describe('token-sets', () => {
 					'logo',
 					'background',
 					'logo_dark',
+					'favicon',
 				]).toContain(key)
 				if (key.endsWith('_color'))
 					expect(value, `${entry.id} ${key}`).toMatch(/^#[0-9a-fA-F]{6}$/)
-				if (key === 'logo_dark') expect(value).toMatch(/^img\/logos\//)
+				if (key === 'logo_dark' || key === 'favicon')
+					expect(value).toMatch(/^img\/logos\//)
 			}
 		}
 		// What the server makes of an entry without design_system: it is an
@@ -832,6 +835,10 @@ test.describe('token-sets', () => {
 			nldesignDeclarations(tokenCss('amsterdam'))['--nldesign-logo-url'],
 		).toContain('amsterdam.svg')
 		await openSettings(page)
+		// An uploaded core logo wins over the set's (REQ-TPLAT-001).
+		const logo = (await coreLogoUploaded(page))
+			? '/apps/theming/image/logo'
+			: 'amsterdam.svg'
 		await withActiveSet(page, 'amsterdam', async () => {
 			await openSettings(page)
 			const header = await page.evaluate(() => {
@@ -849,7 +856,7 @@ test.describe('token-sets', () => {
 				}
 			})
 			expect(header, 'the header logo element exists').not.toBeNull()
-			expect(header?.image).toContain('amsterdam.svg')
+			expect(header?.image).toContain(logo)
 			expect(header?.width).toBe(header?.widthToken || '62px')
 
 			const anonymous = await browser.newContext({
@@ -870,7 +877,7 @@ test.describe('token-sets', () => {
 					) as HTMLElement
 					return getComputedStyle(box, '::after').backgroundImage
 				})
-				expect(image).toContain('amsterdam.svg')
+				expect(image).toContain(logo)
 			} finally {
 				await anonymous.close()
 			}
@@ -1757,7 +1764,8 @@ test.describe('token-sets', () => {
 				'--nldesign-color-text',
 			)
 			await expect(row('E2E contrast')).toHaveText('Contrast warning')
-			await expect(row('E2E clean')).toHaveText('WCAG AA OK')
+			// The TqEigenSets board labels a clean set "WCAG AA".
+			await expect(row('E2E clean')).toHaveText('WCAG AA')
 		} finally {
 			await page.unrouteAll({ behavior: 'ignoreErrors' })
 		}
