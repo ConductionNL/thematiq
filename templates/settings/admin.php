@@ -33,6 +33,8 @@ script('thematiq', 'lib/auditFormat');
 // derives the set from two colours exactly as BrandFormService stores it.
 script('thematiq', 'lib/tokenConverter');
 script('thematiq', 'lib/brandForm');
+// The upload result of the own sets panel (window.ThematiqUploadResult), read by admin.js.
+script('thematiq', 'lib/uploadResult');
 // The per-app theming list's search, count and exclusion list
 // (window.NldesignAppTheming); admin.js builds the dropdown from it.
 script('thematiq', 'lib/appTheming');
@@ -1218,7 +1220,7 @@ if ($_['mockUi'] === true) {
 						<div class="nldesign-create-panel" id="nldesign-create-panel-upload" role="tabpanel"
 							 aria-labelledby="nldesign-create-tab-upload">
 							<p class="settings-hint">
-								<?php p($l->t('An NL Design CSS file (--nldesign-* variables) or a W3C Design Tokens JSON file.')); ?>
+								<?php p($l->t('An NL Design CSS file with --nldesign-* variables, a JSON file in the W3C Design Tokens format, a file from Figma, or the OpenProject plugin set file.')); ?>
 							</p>
 							<div class="nldesign-fields">
 								<div class="nldesign-field">
@@ -1242,7 +1244,7 @@ if ($_['mockUi'] === true) {
 								   aria-label="<?php p($l->t('Token set file to upload (NL Design CSS or W3C Design Tokens JSON)')); ?>"
 								   style="display:none">
 							<p class="nldesign-hint" id="nldesign-upload-figma-hint">
-								<?php p($l->t('Upload from Figma: choose a Tokens Studio file or a design tokens file. The result lists what was imported and what was left out.')); ?>
+								<?php p($l->t('From Figma: a Tokens Studio file with $themes or $metadata becomes a custom token set. Thematiq merges the sets in the theme order and reads both value and $value. What it leaves out is named in the message after the upload: a disabled set, a reference cycle or a sum. A file with a light and a dark theme is one house style, not two brands.')); ?>
 							</p>
 							<div class="nldesign-form-actions">
 								<button type="button" id="nldesign-upload-btn" class="button primary">
@@ -1357,7 +1359,7 @@ if ($_['mockUi'] === true) {
 			<aside class="thematiq-panel__aside" aria-label="<?php p($l->t('Explanation')); ?>">
 				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-own-sets-upload-title">
 					<h2 id="thematiq-own-sets-upload-title" class="thematiq-panel__card-title"><?php p($l->t('Upload file')); ?></h2>
-					<p class="thematiq-panel__fact-hint"><?php p($l->t('An NL Design CSS file with --nldesign-* variables, or a JSON file in the W3C Design Tokens format. Thematiq checks colour spaces, references and missing tokens and reports what it could not read.')); ?></p>
+					<p class="thematiq-panel__fact-hint"><?php p($l->t('An NL Design CSS file with --nldesign-* variables, a JSON file in the W3C Design Tokens format, or a Tokens Studio file from Figma. Thematiq checks colour spaces, references and missing tokens and reports what it could not read.')); ?></p>
 				</section>
 				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card thematiq-own-sets-panel__warnings" aria-labelledby="thematiq-own-sets-warning-title" hidden>
 					<h2 id="thematiq-own-sets-warning-title" class="thematiq-panel__card-title"><?php p($l->t('Contrast warning')); ?></h2>
