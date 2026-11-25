@@ -3339,3 +3339,44 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]):
 	font-size: 14px;
 	font-weight: 600;
 }
+
+/* Motion tokens (TqBeweging): the lent token editor shows only its motion rows and the base token switch. */
+#nldesign-settings .thematiq-motion-panel .nldesign-token-editor > :not(.nldesign-tab-panel.active):not(.nldesign-confirm-controls),
+#nldesign-settings .thematiq-motion-panel .nldesign-confirm-controls > :not(.nldesign-base-unlock),
+#nldesign-settings .thematiq-motion-panel #nldesign-token-editor > :not(.nldesign-token-editor),
+#nldesign-settings .thematiq-motion-panel .nldesign-tab-panel.active > :not([data-token-row='--animation-quick']):not([data-token-row='--animation-slow']):not([data-token-row='--nldesign-animation-easing']) {
+	display: none !important;
+}
+
+#nldesign-settings .thematiq-motion-panel .nldesign-token-row .nldesign-motion-preview {
+	display: none;
+}
+
+#nldesign-settings .thematiq-motion-panel .thematiq-motion-panel__stage {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	align-items: flex-end;
+	padding: 24px;
+	border-radius: 10px;
+	background: var(--color-background-dark);
+}
+
+#nldesign-settings .thematiq-motion-panel .thematiq-motion-panel__sample {
+	padding: 16px 20px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius-large, 10px);
+	background: var(--color-main-background);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	font-size: 14px;
+}
+
+#nldesign-settings .thematiq-motion-panel .thematiq-motion-panel__dialog {
+	flex: 1 1 240px;
+	min-height: 96px;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-motion-panel .thematiq-motion-panel__toast {
+	flex: 0 1 220px;
+}

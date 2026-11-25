@@ -148,9 +148,10 @@ describe('components panel', () => {
 		const menu = document.querySelector('.thematiq-page-header__menu')
 		expect(menu.hidden).toBe(false)
 		const items = [...menu.querySelectorAll('[role="menuitem"]')]
-		expect(items.map((item) => item.querySelector('strong').textContent)).toEqual(['Upload', 'Export as token set', 'Own component', 'Download token overview'])
+		expect(items.map((item) => item.querySelector('strong').textContent)).toEqual(['Upload', 'Export as token set', 'Own component', 'Motion tokens', 'Download token overview'])
 		expect(items[2].getAttribute('href')).toBe('#components/own')
-		expect(items[3].getAttribute('href')).toBe('/reference?format=md&download=1')
+		expect(items[3].getAttribute('href')).toBe('#motion')
+		expect(items[4].getAttribute('href')).toBe('/reference?format=md&download=1')
 		menu.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
 		expect(document.activeElement).toBe(items[1])
 		items[0].click()
