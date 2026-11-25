@@ -1,0 +1,111 @@
+/**
+ * House style of my groups (js/admin-group-house-style.js): the group's sets as rows with a
+ * swatch, the name and a contrast pill. In the personal Appearance section the block is drawn
+ * as the TqPersoonlijk board's: a title with the thematiq chip and each group as a card.
+ *
+ * SPDX-License-Identifier: EUPL-1.2
+ * SPDX-FileCopyrightText: 2026 Conduction B.V.
+ */
+
+#thematiq-my-groups .thematiq-my-groups__head {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+	justify-content: space-between;
+}
+
+#thematiq-my-groups .thematiq-my-groups__chip {
+	padding: 3px 10px;
+	border-radius: 12px;
+	background: var(--color-primary-element-light);
+	color: var(--color-primary-element-light-text);
+	font-size: 13px;
+	font-weight: 600;
+}
+
+#thematiq-my-groups .thematiq-my-group-option {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+#thematiq-my-groups .thematiq-my-group-option label {
+	display: flex;
+	flex: 1;
+	flex-wrap: wrap;
+	gap: 6px 10px;
+	align-items: center;
+}
+
+#thematiq-my-groups .thematiq-my-group-swatch {
+	flex: none;
+	width: 16px;
+	height: 16px;
+	border: 1px solid var(--color-border-dark);
+	border-radius: 4px;
+}
+
+#thematiq-my-groups .thematiq-my-group-name {
+	flex: 1;
+}
+
+#thematiq-my-groups .thematiq-my-group-contrast {
+	padding: 3px 8px;
+	border-radius: 10px;
+	background: color-mix(in srgb, var(--color-success) 12%, var(--color-main-background));
+	color: var(--color-success-text, var(--color-success));
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+#thematiq-my-groups .thematiq-my-group-contrast--below {
+	background: color-mix(in srgb, var(--color-warning-hover) 35%, var(--color-main-background));
+	color: var(--color-warning-text, var(--color-warning));
+}
+
+#thematiq-my-groups.thematiq-my-groups--personal {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+#thematiq-my-groups.thematiq-my-groups--personal h2 {
+	margin: 0;
+	font-size: 17px;
+	font-weight: 700;
+}
+
+#thematiq-my-groups.thematiq-my-groups--personal #thematiq-my-groups-list {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+#thematiq-my-groups.thematiq-my-groups--personal .thematiq-my-group {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+	padding: 12px 14px;
+	border: 1px solid var(--color-border);
+	border-radius: 10px;
+}
+
+#thematiq-my-groups.thematiq-my-groups--personal .thematiq-my-group legend {
+	padding: 0 6px;
+	font-size: 15px;
+	font-weight: 700;
+}
+
+#thematiq-my-groups.thematiq-my-groups--personal .thematiq-my-group-option {
+	min-height: 40px;
+	padding: 4px 10px;
+	border-radius: 8px;
+	background: var(--color-background-hover);
+}
+
+#thematiq-my-groups.thematiq-my-groups--personal p {
+	margin: 0;
+}
