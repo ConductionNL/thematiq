@@ -180,13 +180,17 @@ test.describe('the apps menu as one ordered list', () => {
 		await page.keyboard.press('ArrowRight')
 		await expect(entry(page, shown[1])).toBeFocused()
 		await page.keyboard.press('End')
-		const last =
-			(await toggle(page).count()) > 0
-				? toggle(page)
-				: entry(page, shown[shown.length - 1])
+		// With a fold, End lands on the "All apps" toggle and one step back is
+		// the last app on screen. Without one (an instance with no more apps
+		// than the fold holds), End lands on that last app and one step back is
+		// the app before it.
+		const folded = (await toggle(page).count()) > 0
+		const last = folded ? toggle(page) : entry(page, shown[shown.length - 1])
 		await expect(last).toBeFocused()
 		await page.keyboard.press('ArrowLeft')
-		await expect(entry(page, shown[shown.length - 1])).toBeFocused()
+		await expect(
+			entry(page, shown[shown.length - (folded ? 1 : 2)]),
+		).toBeFocused()
 	})
 
 	// @e2e apps-menu-order::move-an-app-with-the-keyboard
