@@ -335,12 +335,25 @@ test.describe('the apps menu as one ordered list', () => {
 
 			await page.reload({ waitUntil: 'domcontentloaded' })
 			await openByClick(page)
-			if ((await toggle(page).count()) > 0) {
+			const folded = (await toggle(page).count()) > 0
+			if (folded) {
 				await toggle(page).click()
 			}
-			await expect(
-				grid(page).locator('[data-thematiq-row="external"] h2'),
-			).toBeVisible()
+			// Listed after the Nextcloud apps (the spec). The section heading is
+			// drawn only over the external apps below the fold, so it is there
+			// only on an instance with more apps than the fold holds.
+			const listed = await onScreen(page)
+			const at = listed.indexOf('external-code')
+			expect(at, 'Forgejo is listed').toBeGreaterThanOrEqual(0)
+			expect(
+				listed.slice(at).every((key) => key.startsWith('external-')),
+				`Forgejo comes after the Nextcloud apps: ${listed.join(', ')}`,
+			).toBe(true)
+			if (folded) {
+				await expect(
+					grid(page).locator('[data-thematiq-row="external"] h2'),
+				).toBeVisible()
+			}
 			const forgejo = entry(page, 'external-code')
 			await expect(forgejo).toHaveAttribute('href', 'https://code.example.org')
 			await expect(forgejo).toHaveAttribute('target', '_blank')
