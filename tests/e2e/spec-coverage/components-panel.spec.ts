@@ -4,8 +4,9 @@
  *
  * Components and tokens (TqComponenten), the panel of the Theming page at
  * #components, and #components/own on Your components (TqEigenComponent): it
- * shows the overview's component selector, preview and token editor, its header carries Download, More and Save, and closing it gives the
- * instrument back to the overview. Read-only: nothing here saves.
+ * shows the overview's component selector, preview and token editor, its
+ * header carries Download, More and Save, and closing it gives the instrument
+ * back to the overview. Read-only: nothing here saves.
  */
 import { test, expect } from '@playwright/test'
 
