@@ -282,6 +282,28 @@ test.describe('token-set-apply-dialog', () => {
 		).not.toBeVisible()
 	})
 
+	// Escape closes the dialog the way Cancel does, with focus back on the picker.
+	test('Escape closes the apply dialog, keeps the set and gives focus back', async ({
+		page,
+	}) => {
+		await page.goto(THEMING_URL)
+		await page.waitForSelector('#nldesign-token-set-select', { timeout: 15_000 })
+		await dismissThemingSyncDialog(page)
+
+		const select = page.locator('#nldesign-token-set-select')
+		const originalValue = await select.inputValue()
+		const targetValue = await findOptionWithChanges(page, select, originalValue)
+		expect(targetValue).toBeTruthy()
+
+		await select.selectOption(targetValue)
+		const dialog = page.locator('#nldesign-apply-dialog-overlay')
+		await expect(dialog).toBeVisible({ timeout: 10_000 })
+		await page.keyboard.press('Escape')
+		await expect(dialog).not.toBeVisible()
+		await expect(select).toHaveValue(originalValue)
+		await expect(select).toBeFocused()
+	})
+
 	// -----------------------------------------------------------------------
 	// Requirement: Apply Action
 	// -----------------------------------------------------------------------

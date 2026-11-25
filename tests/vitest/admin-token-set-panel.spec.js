@@ -169,6 +169,9 @@ describe('token set panel', () => {
 		await openAt('#set/zuiddrecht')
 		const titles = [...document.querySelectorAll('.thematiq-set-panel__group-title')].map((el) => el.textContent)
 		expect(titles).toEqual(['Surface', 'Ink', 'Action', 'Accent', 'Other colours'])
+		document.querySelectorAll('[role="list"]').forEach((list) => {
+			expect([...list.children].every((child) => child.getAttribute('role') === 'listitem')).toBe(true)
+		})
 		const rows = [...document.querySelectorAll('.thematiq-set-panel__row')]
 		const text = rows.find((row) => row.textContent.includes('--nldesign-color-text'))
 		expect(text.querySelector('.thematiq-set-panel__pill--pass').textContent).toBe('17.1 : 1')
@@ -194,7 +197,7 @@ describe('token set panel', () => {
 		await openAt('#set/zuiddrecht')
 		const tabs = [...document.querySelectorAll('.thematiq-set-panel__tab')]
 		expect(tabs.map((tab) => tab.getAttribute('aria-label'))).toEqual([
-			'Colours, 9 tokens', 'Typography, 1 token', 'Shape, 4 tokens', 'Components, 1 token', 'Website, 1 token',
+			'Colours 9 tokens', 'Typography 1 token', 'Shape 4 tokens', 'Components 1 token', 'Website 1 token',
 		])
 		document.getElementById('thematiq-set-tab-website').click()
 		expect(document.getElementById('thematiq-set-tab-website').getAttribute('aria-selected')).toBe('true')

@@ -131,11 +131,11 @@ dialog.thematiq-admin-dialog::backdrop {
 }
 
 .thematiq-admin-dialog__list--goes svg {
-	color: var(--color-error-hover, var(--color-error));
+	color: var(--color-error-text, var(--color-error));
 }
 
 .thematiq-admin-dialog__list--stays svg {
-	color: var(--color-success);
+	color: var(--color-success-text, var(--color-success));
 }
 
 .thematiq-admin-dialog__notice {
@@ -155,7 +155,7 @@ dialog.thematiq-admin-dialog::backdrop {
 
 .thematiq-admin-dialog__notice--warning {
 	background: color-mix(in srgb, var(--color-error) 7%, var(--color-main-background));
-	color: var(--color-error-hover, var(--color-error-text));
+	color: var(--color-error-text, var(--color-error));
 }
 
 .thematiq-admin-dialog__notice--info {
@@ -204,8 +204,8 @@ dialog.thematiq-admin-dialog::backdrop {
 
 .thematiq-admin-dialog .thematiq-admin-dialog__button--danger {
 	border: 0;
-	background: var(--color-error-hover, var(--color-error));
-	color: var(--color-primary-element-text);
+	background: var(--color-error-text, var(--color-error));
+	color: var(--color-main-background);
 }
 
 .thematiq-admin-dialog .thematiq-admin-dialog__button--link {
@@ -397,7 +397,7 @@ dialog.thematiq-admin-dialog::backdrop {
 	border: 0;
 	border-radius: 8px;
 	background: color-mix(in srgb, var(--color-warning-hover) 35%, var(--color-main-background));
-	color: var(--color-warning);
+	color: var(--color-warning-text, var(--color-warning));
 	font-size: 14px;
 	line-height: 1.5;
 }
@@ -602,7 +602,7 @@ dialog.thematiq-admin-dialog::backdrop {
 
 .thematiq-admin-dialog__notice--caution {
 	background: color-mix(in srgb, var(--color-warning-hover) 35%, var(--color-main-background));
-	color: var(--color-warning);
+	color: var(--color-warning-text, var(--color-warning));
 }
 
 .thematiq-admin-dialog__list--changes svg {
