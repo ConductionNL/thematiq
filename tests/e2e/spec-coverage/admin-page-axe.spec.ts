@@ -97,7 +97,8 @@ async function expectNoViolations(page: Page, what: string): Promise<void> {
 				.getAnimations()
 				.filter(
 					(animation) =>
-						animation.effect?.getComputedTiming().iterations !== Infinity,
+						animation.effect?.getComputedTiming().iterations
+						!== Infinity,
 				)
 				.map((animation) => animation.finished.catch(() => undefined)),
 		),
