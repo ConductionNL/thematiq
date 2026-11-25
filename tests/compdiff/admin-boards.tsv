@@ -25,3 +25,4 @@ TqComponenten	/settings/admin/theming#components	--lang	en	--ds	zuiddrecht
 TqEigenComponent	/settings/admin/theming#components/own	--lang	en	--ds	zuiddrecht
 TqBeweging	/settings/admin/theming#motion	--lang	en	--ds	zuiddrecht
 TqVoorbeeldSessie	/apps/dossiq/	--lang	en	--ds	zuiddrecht
+TqPersoonlijk	/settings/user/theming	--lang	en	--ds	zuiddrecht
