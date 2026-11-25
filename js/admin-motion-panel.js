@@ -200,6 +200,26 @@
 	}
 
 	/**
+	 * Refresh once more when the editor renders its rows after the panel opened, as it does
+	 * on a deep link.
+	 *
+	 * @param {HTMLElement} panel The panel.
+	 * @return {void}
+	 */
+	function whenRendered(panel) {
+		if (panel.querySelector('.nldesign-easing-select') !== null || typeof MutationObserver === 'undefined') {
+			return
+		}
+		var observer = new MutationObserver(function () {
+			if (panel.querySelector('.nldesign-easing-select') !== null) {
+				observer.disconnect()
+				refresh(panel)
+			}
+		})
+		observer.observe(panel, { childList: true, subtree: true })
+	}
+
+	/**
 	 * A header button that presses one of the editor's own controls.
 	 *
 	 * @param {string} label The text.
@@ -266,6 +286,7 @@
 			onOpen: function (panel) {
 				lend(panel)
 				refresh(panel)
+				whenRendered(panel)
 			},
 			onClose: giveBack,
 		})
