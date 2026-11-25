@@ -952,8 +952,15 @@ test.describe('menu-labels', () => {
 			const current = page.locator('#header .app-menu__current-app')
 			const name = page.locator('#header .app-menu__current-app-name')
 
+			// On the stock header. A set that declares the workplace header
+			// (Zuiddrecht, the DqKop board) draws no current-app name at any
+			// width (css/header-workplace.css), so the scenario is about the
+			// header every other set keeps; whatever set an earlier test left
+			// active must not decide it.
+			const tokenSet = 'nextcloud'
+
 			// Control: without labels, core hides the button below 1024px.
-			await withThemeState(browser, { showMenuLabels: false }, async () => {
+			await withThemeState(browser, { tokenSet, showMenuLabels: false }, async () => {
 				await page.goto(appPage, { waitUntil: 'domcontentloaded' })
 				await page
 					.locator('#header .app-menu')
@@ -966,7 +973,7 @@ test.describe('menu-labels', () => {
 				await expect(current).toBeHidden()
 			})
 
-			await withThemeState(browser, { showMenuLabels: true }, async () => {
+			await withThemeState(browser, { tokenSet, showMenuLabels: true }, async () => {
 				await page.goto(appPage, { waitUntil: 'domcontentloaded' })
 				expect(await thematiqLayers(page)).toContain('show-menu-labels')
 				await expect(current).toBeVisible()
@@ -980,7 +987,10 @@ test.describe('menu-labels', () => {
 		// @e2e openspec/specs/menu-labels/spec.md#grid-tiles-keep-their-labels
 		'the waffle grid shows a visible label on every tile, the active one in 600',
 		async ({ browser, page }) => {
-			await withThemeState(browser, { showMenuLabels: true }, async () => {
+			// On the stock header: under the workplace header (Zuiddrecht) the
+			// waffle opens the board's own app panel, which folds tiles away
+			// on purpose (apps-menu-ordered-list covers that panel).
+			await withThemeState(browser, { tokenSet: 'nextcloud', showMenuLabels: true }, async () => {
 				await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
 				await page
 					.locator('#header .app-menu')
