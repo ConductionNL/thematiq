@@ -59,6 +59,7 @@ script('thematiq', 'admin-panels');
 script('thematiq', 'admin-layout-panel');
 script('thematiq', 'admin-dark-panel');
 script('thematiq', 'admin-token-set-panel');
+script('thematiq', 'admin-components-panel');
 script('thematiq', 'admin-custom-css-panel');
 script('thematiq', 'admin-log-panel');
 script('thematiq', 'admin-fonts-panel');
@@ -676,7 +677,7 @@ if ($_['mockUi'] === true) {
 					<h2 id="thematiq-set-about-title" class="thematiq-panel__card-title thematiq-set-panel__aside-title"><?php p($l->t('About this set')); ?></h2>
 					<dl class="thematiq-set-panel__facts"></dl>
 					<div class="thematiq-set-panel__links">
-						<a href="#" class="thematiq-set-panel__components-link"><?php p($l->t('View components and tokens')); ?></a>
+						<a href="#components" class="thematiq-set-panel__components-link"><?php p($l->t('View components and tokens')); ?></a>
 						<a href="#dark" class="thematiq-set-panel__dark-link"><?php p($l->t('View dark variant')); ?></a>
 						<a href="#" class="thematiq-set-panel__download"><?php p($l->t('Download token overview')); ?></a>
 					</div>
@@ -684,6 +685,13 @@ if ($_['mockUi'] === true) {
 			</aside>
 		</div>
 		<div class="thematiq-set-panel__licences" data-thematiq-slot="nldesign-set-licences"></div>
+	</section>
+
+	<!-- Components and tokens (TqComponenten), a panel of this page at #components (design.md);
+	     #components/own opens it on Your components (TqEigenComponent). js/admin-components-panel.js
+	     lends it the component selector, the preview and the token editor of the overview. -->
+	<section class="thematiq-panel thematiq-components-panel" data-thematiq-panel="components" aria-labelledby="thematiq-page-title" hidden>
+		<div class="thematiq-components-panel__instrument"></div>
 	</section>
 
 	<!-- Custom CSS (TqEigenCss), a panel of this page at #css (design.md): admin-authored

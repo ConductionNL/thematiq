@@ -3099,12 +3099,12 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]):
 	background: var(--color-main-background);
 }
 
-/* The More menu of the token set's page header. */
-#thematiq-page-header .thematiq-set-panel__more-wrap {
+/* A header button's menu (ThematiqPanels.menu). */
+#thematiq-page-header .thematiq-page-header__menu-wrap {
 	position: relative;
 }
 
-#thematiq-page-header .thematiq-set-panel__menu {
+#thematiq-page-header .thematiq-page-header__menu {
 	position: absolute;
 	z-index: 20;
 	top: calc(100% + 4px);
@@ -3120,26 +3120,101 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]):
 	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
-#thematiq-page-header .thematiq-set-panel__menu[hidden] {
+#thematiq-page-header .thematiq-page-header__menu[hidden] {
 	display: none;
 }
 
-#thematiq-page-header .thematiq-set-panel__menu-item {
+#thematiq-page-header .thematiq-page-header__menu-item {
 	display: flex;
 	flex-direction: column;
+	align-items: flex-start;
+	box-sizing: border-box;
+	width: 100%;
+	height: auto;
+	min-height: 0;
+	margin: 0;
 	padding: 8px 10px;
+	border: 0;
 	border-radius: 6px;
+	background: transparent;
 	color: var(--color-main-text) !important;
 	font-size: 14px;
+	font-weight: 400;
+	text-align: start;
 	text-decoration: none !important;
+	cursor: pointer;
 }
 
-#thematiq-page-header .thematiq-set-panel__menu-item span {
+#thematiq-page-header .thematiq-page-header__menu-item span {
 	color: var(--color-text-maxcontrast);
 	font-size: 12px;
 }
 
-#thematiq-page-header .thematiq-set-panel__menu-item:hover,
-#thematiq-page-header .thematiq-set-panel__menu-item:focus-visible {
+#thematiq-page-header .thematiq-page-header__menu-item:hover,
+#thematiq-page-header .thematiq-page-header__menu-item:focus-visible {
 	background: var(--color-background-hover);
+}
+
+/* Components and tokens (TqComponenten), the panel at #components: the overview's
+   component selector, preview and token editor, lent to it, drawn as the board's cards. */
+#nldesign-settings .thematiq-components-panel__instrument {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	max-width: 800px;
+}
+
+#nldesign-settings .thematiq-components-panel__instrument > .nldesign-pg-selector,
+#nldesign-settings .thematiq-components-panel__instrument > #nldesign-preview,
+#nldesign-settings .thematiq-components-panel__instrument > #nldesign-token-editor {
+	box-sizing: border-box;
+	margin: 0 !important;
+	padding: 20px 22px;
+	border: 1px solid var(--color-border);
+	border-radius: 12px;
+	background: var(--color-main-background) !important;
+}
+
+#nldesign-settings .thematiq-components-panel .nldesign-pg-selector {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+#nldesign-settings .thematiq-components-panel .nldesign-pg-selector h3 {
+	margin: 0 !important;
+	font-size: 17px !important;
+	font-weight: 700 !important;
+}
+
+#nldesign-settings .thematiq-components-panel .nldesign-pg-chips {
+	gap: 8px;
+	padding: 0;
+}
+
+#nldesign-settings .thematiq-components-panel .nldesign-pg-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 34px;
+	height: 34px;
+	padding: 0 14px;
+	border-color: var(--color-border-maxcontrast);
+	border-radius: 17px;
+	font-weight: 600;
+}
+
+#nldesign-settings .thematiq-components-panel .nldesign-pg-chip.on {
+	background: var(--color-main-text);
+	color: var(--color-main-background);
+}
+
+#nldesign-settings .thematiq-components-panel .nldesign-preview-head h3 {
+	font-size: 18px !important;
+	font-weight: 700 !important;
+}
+
+#nldesign-settings .thematiq-components-panel #nldesign-token-editor .nldesign-token-search label {
+	font-size: 14px;
+	font-weight: 600;
 }

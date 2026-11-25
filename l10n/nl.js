@@ -2014,7 +2014,11 @@ OC.L10N.register(
         "Brand stripe": "Merkstreep",
         "About this set": "Over deze set",
         "View components and tokens": "Componenten en tokens bekijken",
-        "View dark variant": "Donkere variant bekijken"
+        "View dark variant": "Donkere variant bekijken",
+        "Read an overrides file into this theme": "Een overrides-bestand inlezen in dit thema",
+        "All values together as a new, complete set": "Alle waarden samen als nieuwe, complete set",
+        "Own component": "Eigen component",
+        "Preview HTML and CSS safely": "HTML en CSS veilig voorvertonen"
     },
     "nplurals=2; plural=(n != 1);"
 )

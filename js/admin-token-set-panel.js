@@ -651,6 +651,7 @@
 		})
 		facts.replaceChildren.apply(facts, nodes)
 		root.querySelector('.thematiq-set-panel__dark-link').hidden = set.id !== activeId() || Object.keys(state.dark).length === 0
+		root.querySelector('.thematiq-set-panel__components-link').hidden = set.id !== activeId()
 		root.querySelector('.thematiq-set-panel__download').href = referenceUrl(set.id, true)
 	}
 
@@ -708,25 +709,6 @@
 	}
 
 	/**
-	 * Close the More menu.
-	 *
-	 * @param {boolean} focus Whether focus goes back to its button.
-	 * @return {void}
-	 */
-	function closeMenu(focus) {
-		var menu = document.querySelector('#thematiq-page-header .thematiq-set-panel__menu')
-		if (menu === null || menu.hidden === true) {
-			return
-		}
-		menu.hidden = true
-		var toggle = document.querySelector('#thematiq-page-header .thematiq-set-panel__more')
-		toggle.setAttribute('aria-expanded', 'false')
-		if (focus === true) {
-			toggle.focus()
-		}
-	}
-
-	/**
 	 * The header's buttons: More (the token reference and its download) and, for a set that
 	 * is not active, Use this token set.
 	 *
@@ -734,54 +716,10 @@
 	 * @return {Array<HTMLElement>} The buttons.
 	 */
 	function actions(id) {
-		var wrap = el('div', 'thematiq-set-panel__more-wrap')
-		var toggle = el('button', 'thematiq-page-header__action thematiq-set-panel__more', tr('More'))
-		toggle.type = 'button'
-		toggle.setAttribute('aria-haspopup', 'true')
-		toggle.setAttribute('aria-expanded', 'false')
-		toggle.setAttribute('aria-controls', 'thematiq-set-panel-menu')
-		var menu = el('div', 'thematiq-set-panel__menu')
-		menu.id = 'thematiq-set-panel-menu'
-		menu.setAttribute('role', 'menu')
-		menu.hidden = true
-		;[
-			[tr('Open the token reference'), tr('All tokens of this set on one page'), referenceUrl(id, false)],
-			[tr('Download token overview'), tr('All tokens of this set as Markdown'), referenceUrl(id, true)],
-		].forEach(function (item) {
-			var link = el('a', 'thematiq-set-panel__menu-item')
-			link.href = item[2]
-			link.setAttribute('role', 'menuitem')
-			if (item[2].indexOf('download=1') === -1) {
-				link.target = '_blank'
-				link.rel = 'noopener noreferrer'
-			}
-			link.appendChild(el('strong', '', item[0]))
-			link.appendChild(el('span', '', item[1]))
-			menu.appendChild(link)
-		})
-		toggle.addEventListener('click', function (event) {
-			event.stopPropagation()
-			if (menu.hidden === false) {
-				closeMenu(false)
-				return
-			}
-			menu.hidden = false
-			toggle.setAttribute('aria-expanded', 'true')
-			menu.firstChild.focus()
-		})
-		menu.addEventListener('keydown', function (event) {
-			var items = Array.prototype.slice.call(menu.querySelectorAll('[role="menuitem"]'))
-			var at = items.indexOf(document.activeElement)
-			if (event.key === 'Escape') {
-				event.preventDefault()
-				closeMenu(true)
-			} else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-				event.preventDefault()
-				items[(at + (event.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length].focus()
-			}
-		})
-		wrap.appendChild(toggle)
-		wrap.appendChild(menu)
+		var wrap = window.ThematiqPanels.menu(tr('More'), [
+			{ text: tr('Open the token reference'), hint: tr('All tokens of this set on one page'), href: referenceUrl(id, false) },
+			{ text: tr('Download token overview'), hint: tr('All tokens of this set as Markdown'), href: referenceUrl(id, true) },
+		])
 		var buttons = [wrap]
 		if (id !== activeId()) {
 			var use = el('button', 'thematiq-page-header__action thematiq-page-header__action--primary thematiq-set-panel__use', tr('Use this token set'))
@@ -875,12 +813,6 @@
 				drawPreview(root)
 			})
 		})
-		root.querySelector('.thematiq-set-panel__components-link').addEventListener('click', function (event) {
-			event.preventDefault()
-			state.tab = 'components'
-			draw()
-			root.querySelector('#thematiq-set-tab-components').focus()
-		})
 	}
 
 	if (typeof module !== 'undefined' && module.exports) {
@@ -891,9 +823,6 @@
 	if (root !== null) {
 		wire(root)
 	}
-	document.addEventListener('click', function () {
-		closeMenu(false)
-	})
 	document.addEventListener('thematiq:theme-applied', function (event) {
 		state.active = event.detail && event.detail.tokenSet ? event.detail.tokenSet : state.active
 	})

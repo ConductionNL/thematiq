@@ -149,9 +149,9 @@ describe('token set panel', () => {
 
 	it('opens the More menu with the reference and its download, and Escape closes it', async () => {
 		await openAt('#set/zuiddrecht')
-		const more = document.querySelector('.thematiq-set-panel__more')
+		const more = document.querySelector('.thematiq-page-header__more')
 		more.click()
-		const menu = document.getElementById('thematiq-set-panel-menu')
+		const menu = document.querySelector('.thematiq-page-header__menu')
 		expect(menu.hidden).toBe(false)
 		expect(more.getAttribute('aria-expanded')).toBe('true')
 		const links = [...menu.querySelectorAll('a')].map((a) => a.getAttribute('href'))
@@ -224,8 +224,9 @@ describe('token set panel', () => {
 		expect(document.querySelector('.thematiq-set-panel__stripe-where').textContent).toBe('Drawn on the sign-in card')
 		expect(document.querySelector('.thematiq-set-panel__dark-link').hidden).toBe(false)
 		expect(document.querySelector('.thematiq-set-panel__download').getAttribute('href')).toContain('format=md&download=1')
-		document.querySelector('.thematiq-set-panel__components-link').click()
-		expect(document.getElementById('thematiq-set-tab-components').getAttribute('aria-selected')).toBe('true')
+		const components = document.querySelector('.thematiq-set-panel__components-link')
+		expect(components.getAttribute('href')).toBe('#components')
+		expect(components.hidden).toBe(false)
 	})
 
 	it('draws the sample in light and, on request, in dark', async () => {
@@ -254,6 +255,7 @@ describe('token set panel', () => {
 		await openAt('#set/utrecht')
 		expect(document.querySelector('.thematiq-set-panel__dark-link').hidden).toBe(true)
 		expect(document.querySelector('.thematiq-set-panel__mode[data-mode="dark"]').disabled).toBe(true)
+		expect(document.querySelector('.thematiq-set-panel__components-link').hidden).toBe(true)
 		const facts = [...document.querySelectorAll('.thematiq-set-panel__facts dd')].map((el) => el.textContent)
 		expect(facts).toEqual(['NL Design System', 'Follows Nextcloud', 'None, Nextcloud\'s own', 'Not generated'])
 		expect(document.querySelector('.thematiq-set-panel__stripe').hidden).toBe(false)
