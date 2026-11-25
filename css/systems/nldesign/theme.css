@@ -497,6 +497,14 @@ button:not(.action-button),
 		--nldesign-component-button-border-radius,
 		var(--nldesign-border-radius)
 	);
+}
+
+/* The border width is the one part that needs specificity: NcButton's own
+ * scoped rule (`.button-vue[data-v-…]`, 0,2,0) draws a 2px bottom border on
+ * Nextcloud 34, so a zero-specificity width never reached it and a set's
+ * 1px button came out 1px taller than the canon (49 for 48, shell-canon-check).
+ * This rule (0,3,0) outranks it and nothing more specific. */
+.button-vue:not(.action-button):not(.cn-look-board *) {
 	border-width: var(--nldesign-component-button-border-width);
 }
 

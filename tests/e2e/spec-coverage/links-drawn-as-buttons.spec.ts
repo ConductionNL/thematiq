@@ -20,12 +20,18 @@
 import { test, expect, type Page } from '@playwright/test'
 import { activateTokenSet, openThemedPage } from './_token-css'
 
-/** The library's own colour rules, at class specificity, as nextcloud-vue ships them. */
+/**
+ * The library's own colour rules, at the specificity nextcloud-vue ships them. The
+ * action rows are scoped components (`.action-button[data-v-…]`, a class and an
+ * attribute), so they are written with `[data-v-lib]` and the probes carry it: at
+ * bare class specificity core's `button:not(.button-vue)` colour would outrank a
+ * rule the real NcActionButton wins against.
+ */
 const LIBRARY_CSS = `
 .button-vue--vue-primary { background-color: var(--color-primary-element); color: var(--color-primary-element-text); }
 .button-vue--vue-secondary { background-color: var(--color-primary-element-light); color: var(--color-main-text); }
 .cn-week-strip__item { color: var(--color-main-text); }
-.action-link, .action-button { color: var(--nldesign-color-on-surface, var(--color-main-text)); }
+.action-link[data-v-lib], .action-button[data-v-lib] { color: var(--nldesign-color-on-surface, var(--color-main-text)); }
 `
 
 /** Add `html` to the page with the library rules, and read each matching element's style. */
@@ -141,9 +147,9 @@ test.describe('links drawn as buttons under Zuiddrecht', () => {
 			const seen = await render(
 				page,
 				'<ul class="action-item__popper" role="menu">'
-					+ '<li class="action"><button type="button" data-probe="edit" class="action-button">Bewerken</button></li>'
-					+ '<li class="action"><a href="#bug" data-probe="bug" class="action-link">Een bug melden</a></li>'
-					+ '<li class="action"><a href="#docs" data-probe="docs" class="action-link">Documentatie</a></li>'
+					+ '<li class="action"><button type="button" data-probe="edit" data-v-lib class="action-button">Bewerken</button></li>'
+					+ '<li class="action"><a href="#bug" data-probe="bug" data-v-lib class="action-link">Een bug melden</a></li>'
+					+ '<li class="action"><a href="#docs" data-probe="docs" data-v-lib class="action-link">Documentatie</a></li>'
 					+ '</ul>',
 			)
 			const main = await ink(page, '--color-main-text')

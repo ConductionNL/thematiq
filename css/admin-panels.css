@@ -1082,12 +1082,21 @@ html[data-thematiq-open-panel] #nldesign-settings > :not([data-thematiq-panel]):
 
 #nldesign-settings .thematiq-panel .thematiq-font-row {
 	display: grid;
-	grid-template-columns: minmax(140px, 1.2fr) minmax(140px, 1.4fr) minmax(120px, 1.2fr) minmax(120px, 1fr) auto;
+	/* No fixed minimums: they added up to 700px, wider than the panel's main
+	 * column at a 1280px window, so the row ran under the aside and the aside
+	 * took the clicks on its buttons. The columns keep their proportions and
+	 * a cell's text wraps instead. */
+	grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr) minmax(0, 1.2fr) minmax(0, 1fr) fit-content(140px);
 	gap: 12px;
 	align-items: center;
 	padding: 12px 0;
 	border-top: 1px solid var(--color-background-dark);
 	font-size: 14px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-font-row > * {
+	min-width: 0;
+	overflow-wrap: anywhere;
 }
 
 #nldesign-settings .thematiq-panel .thematiq-font-row__name {

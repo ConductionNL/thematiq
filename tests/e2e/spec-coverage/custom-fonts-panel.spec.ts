@@ -11,7 +11,7 @@
  * and puts back whatever held the role before.
  */
 import { test, expect, type Page } from '@playwright/test'
-import { openThemedPage } from './_token-css'
+import { activateTokenSet, openThemedPage } from './_token-css'
 import { requestToken } from '../workflows/_helpers'
 
 /** The admin page's fonts panel (TqLettertypen); its list is hidden until the panel is open. */
@@ -124,8 +124,13 @@ test.describe('custom fonts on the Theming page', () => {
 	test(
 		// @e2e custom-fonts::an-administrator-assigns-a-bundled-font
 		'Barlow is listed with its licence and, assigned to headings, becomes the heading font',
-		async ({ page }) => {
+		async ({ browser, page }) => {
 			test.setTimeout(120_000)
+			// The font stylesheet is injected only for a set that wears a design
+			// system (a stock Nextcloud set reads no token variables), so the
+			// heading token is read under an NL Design set, whatever set the
+			// instance had.
+			const restoreSet = await activateTokenSet(browser, 'zuiddrecht')
 			await page.goto(THEMING_URL)
 			await page.waitForLoadState('domcontentloaded')
 			const before = await library(page, 'GET')
@@ -189,6 +194,7 @@ test.describe('custom fonts on the Theming page', () => {
 				} else {
 					await library(page, 'DELETE', '/heading')
 				}
+				await restoreSet()
 			}
 		},
 	)
