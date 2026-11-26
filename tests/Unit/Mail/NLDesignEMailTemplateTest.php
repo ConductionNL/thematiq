@@ -225,6 +225,18 @@ class NLDesignEMailTemplateTest extends TestCase {
 	}//end testHeaderAndButtonUseActiveTokenSetTheme()
 
 	/**
+	 * Skip on a server without inline images: they arrived in Nextcloud 34, and older
+	 * servers keep the logo linked.
+	 *
+	 * @return void
+	 */
+	private function requireInlineImages(): void {
+		if (method_exists(EMailTemplate::class, 'getInlineImages') === false) {
+			$this->markTestSkipped(message: 'This Nextcloud has no inline images; they arrived in 34.');
+		}
+	}//end requireInlineImages()
+
+	/**
 	 * A template with a branded header, over a service answering the given logo and image.
 	 *
 	 * @param string|null $logoUrl The theme's logo URL.
@@ -249,6 +261,8 @@ class NLDesignEMailTemplateTest extends TestCase {
 	 * @return void
 	 */
 	public function testABrandedLogoIsEmbedded(): void {
+		$this->requireInlineImages();
+
 		$url = 'https://cloud.example.com/apps/thematiq/img/logos/test.svg';
 		$template = $this->brandedTemplate(logoUrl: $url, image: ['content' => '<svg/>', 'mimeType' => 'image/svg+xml']);
 
@@ -266,6 +280,8 @@ class NLDesignEMailTemplateTest extends TestCase {
 	 * @return void
 	 */
 	public function testAnUnreadableBrandedLogoStaysLinked(): void {
+		$this->requireInlineImages();
+
 		$url = 'https://cloud.example.com/apps/thematiq/img/logos/test.svg';
 		$template = $this->brandedTemplate(logoUrl: $url, image: null);
 
@@ -279,6 +295,8 @@ class NLDesignEMailTemplateTest extends TestCase {
 	 * @return void
 	 */
 	public function testABrandedHeaderWithoutALogoEmbedsTheInstanceLogo(): void {
+		$this->requireInlineImages();
+
 		$this->themingDefaults->method('getLogoImage')->willReturn(['content' => 'instance', 'mimeType' => 'image/png']);
 		$template = $this->brandedTemplate(logoUrl: null, image: ['content' => 'wrong', 'mimeType' => 'image/png']);
 
@@ -292,6 +310,8 @@ class NLDesignEMailTemplateTest extends TestCase {
 	 * @return void
 	 */
 	public function testAHeaderEmbedsOnAServerThatAttachesWithoutAsking(): void {
+		$this->requireInlineImages();
+
 		$url = 'https://cloud.example.com/apps/thematiq/img/logos/test.svg';
 		$service = $this->createMock(originalClassName: EmailThemingService::class);
 		$theme = ['primaryColor' => '#154273', 'primaryTextColor' => '#ffffff', 'logoUrl' => $url];
@@ -314,6 +334,8 @@ class NLDesignEMailTemplateTest extends TestCase {
 	 * @return void
 	 */
 	public function testAHeaderKeepsTheLinkWithoutBytes(): void {
+		$this->requireInlineImages();
+
 		$url = 'https://cloud.example.com/apps/thematiq/img/logos/test.svg';
 		$service = $this->createMock(originalClassName: EmailThemingService::class);
 		$theme = ['primaryColor' => '#154273', 'primaryTextColor' => '#ffffff', 'logoUrl' => $url];
@@ -333,6 +355,8 @@ class NLDesignEMailTemplateTest extends TestCase {
 	 * @return void
 	 */
 	public function testAStockHeaderIsEmbeddedByTheParent(): void {
+		$this->requireInlineImages();
+
 		$this->themingDefaults->method('getLogoImage')->willReturn(['content' => 'instance', 'mimeType' => 'image/png']);
 		$template = $this->makeTemplate(service: null);
 		$template->addHeader();
@@ -347,6 +371,8 @@ class NLDesignEMailTemplateTest extends TestCase {
 	 * @return void
 	 */
 	public function testAFailingLogoReadStaysLinked(): void {
+		$this->requireInlineImages();
+
 		$url = 'https://cloud.example.com/apps/thematiq/img/logos/test.svg';
 		$service = $this->createMock(originalClassName: EmailThemingService::class);
 		$service->method('getActiveEmailTheme')->willReturn(['primaryColor' => '#154273', 'primaryTextColor' => '#ffffff', 'logoUrl' => $url]);
