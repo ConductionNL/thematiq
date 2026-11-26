@@ -119,21 +119,33 @@ class OverridesController extends Controller {
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function getOverrides(): JSONResponse {
-		$overrides = $this->writes->overridesService->read(tokenSet: $this->requestedTokenSet());
-		$registry = TokenRegistry::getTokens();
-
-		return new JSONResponse(
-			[
-				'overrides' => $overrides,
-				'darkOverrides' => $this->writes->overridesService->readDark(tokenSet: $this->requestedTokenSet()),
-				'darkDerived' => $this->writes->overridesService->derivedDark(tokenSet: $this->requestedTokenSet()),
-				'registry' => $registry,
-				'internal' => $this->internalRows(),
-				'count' => TokenRegistry::countEditable(),
-				'tabs' => TokenRegistry::getTabLabels(),
-			]
-		);
+		return new JSONResponse($this->overridesPayload(tokenSet: $this->requestedTokenSet()));
 	}//end getOverrides()
+
+	/**
+	 * What GET /settings/overrides answers for one set, also handed to the
+	 * admin page in its render (AdminBootReads). Not a route of its own.
+	 *
+	 * @param string|null $tokenSet The set whose overrides are read; null for the active set.
+	 *
+	 * @return array<string, mixed> The overrides, dark overrides, the registry and its labels.
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - TokenRegistry uses static methods by design
+	 *
+	 * @spec openspec/specs/custom-css-overrides/spec.md
+	 * @spec openspec/specs/admin-settings/spec.md
+	 */
+	public function overridesPayload(?string $tokenSet): array {
+		return [
+			'overrides' => $this->writes->overridesService->read(tokenSet: $tokenSet),
+			'darkOverrides' => $this->writes->overridesService->readDark(tokenSet: $tokenSet),
+			'darkDerived' => $this->writes->overridesService->derivedDark(tokenSet: $tokenSet),
+			'registry' => TokenRegistry::getTokens(),
+			'internal' => $this->internalRows(),
+			'count' => TokenRegistry::countEditable(),
+			'tabs' => TokenRegistry::getTabLabels(),
+		];
+	}//end overridesPayload()
 
 	/**
 	 * The internal tokens, listed per component group below the tabs. Only what a row shows:

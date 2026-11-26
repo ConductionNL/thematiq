@@ -219,7 +219,28 @@ class Admin implements IDelegatedSettings {
 
 		$this->publishPreviewState(activePreview: $state['activePreview'], iconPackSource: $state['iconPackSource']);
 		$this->publishPlaygroundState(currentTokenSet: $state['currentTokenSet'], activePreview: $state['activePreview']);
+		$this->publishBootReads(currentTokenSet: $state['currentTokenSet']);
 	}//end publishBootState()
+
+	/**
+	 * Hand the page the answers to the GETs its blocks make as it opens (`bootReads`), so they
+	 * do not queue behind one another in the browser. js/lib/bootReads.js serves them.
+	 *
+	 * The editor opens on the persisted set (a session preview does not change what it edits).
+	 *
+	 * @param string $currentTokenSet The persisted token set id.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md
+	 */
+	private function publishBootReads(string $currentTokenSet): void {
+		if ($this->page->bootReads === null) {
+			return;
+		}
+
+		$this->page->initialState->provideInitialState('bootReads', $this->page->bootReads->forTokenSet(tokenSetId: $currentTokenSet));
+	}//end publishBootReads()
 
 	/**
 	 * The template parameters: the form state, the mock switch, the environment marker, the

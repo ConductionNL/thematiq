@@ -6097,6 +6097,12 @@
 		var groupThemingGroups = []
 		var groupThemingTokenSets = []
 
+		/**
+		 * Load the stored mappings and wire Add and Save. Add stays disabled
+		 * until the mappings have loaded.
+		 *
+		 * @spec openspec/specs/per-group-theming/spec.md
+		 */
 		function initGroupTheming() {
 			var listEl = document.getElementById('nldesign-group-theming-list')
 			var addBtn = document.getElementById('nldesign-group-theming-add')
@@ -6105,6 +6111,9 @@
 				return
 			}
 
+			// Add waits for the stored mappings: a row added before they
+			// arrive would be replaced by them and lost.
+			addBtn.disabled = true
 			fetch(OC.generateUrl('/apps/thematiq/settings/group-theming'), {
 				headers: { requesttoken: OC.requestToken },
 			})
@@ -6118,6 +6127,7 @@
 						toGroupThemingRow,
 					)
 					renderGroupThemingList()
+					addBtn.disabled = false
 				})
 				.catch(function (err) {
 					console.error('Error loading group theming:', err)

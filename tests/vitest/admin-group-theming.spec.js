@@ -213,6 +213,50 @@ describe('admin.js group theming section', () => {
 		)
 	})
 
+	it('keeps Add disabled until the stored mappings have loaded, so an added row is not lost', async () => {
+		buildDom()
+		let answer
+		global.fetch = vi.fn(
+			() =>
+				new Promise((resolve) => {
+					answer = resolve
+				}),
+		)
+
+		await loadAdminScript()
+
+		const add = document.getElementById('nldesign-group-theming-add')
+		expect(add.disabled).toBe(true)
+
+		answer({
+			ok: true,
+			status: 200,
+			json: () =>
+				Promise.resolve({
+					mapping: [{ group: 'gemeente-b', tokenSet: 'utrecht' }],
+					groups: GROUPS,
+					tokenSets: TOKEN_SETS,
+				}),
+		})
+		await flush()
+
+		expect(add.disabled).toBe(false)
+		add.click()
+		expect(
+			document.querySelectorAll('.nldesign-group-theming-row').length,
+		).toBe(2)
+	})
+
+	it('leaves Add disabled when the mappings cannot be loaded', async () => {
+		buildDom()
+		global.fetch = vi.fn(() => Promise.reject(new Error('offline')))
+		vi.spyOn(console, 'error').mockImplementation(() => {})
+
+		await loadAdminScript()
+
+		expect(document.getElementById('nldesign-group-theming-add').disabled).toBe(true)
+	})
+
 	it('removes a row via its remove button', async () => {
 		buildDom()
 		installFetchRouter([

@@ -17,6 +17,8 @@
  * @var string $environmentCommand
  */
 
+// The page's first reads are answered from its render (bootReads); before every script that reads.
+script('thematiq', 'lib/bootReads');
 // Load the pure token/colour transforms first so admin.js can consume them via
 // window.NldesignTokenTransforms (admin.js falls back to inline copies if absent).
 script('thematiq', 'lib/tokenTransforms');
