@@ -173,8 +173,11 @@ const ACTIONS: Record<string, (page: Page, section: Locator) => Promise<void>> =
 	},
 	groups: async (page, section) => {
 		const rows = section.locator('.nldesign-group-theming-row')
+		const add = section.locator('#nldesign-group-theming-add')
+		// Add is enabled once the stored mappings have rendered: count after.
+		await expect(add).toBeEnabled()
 		const before = await rows.count()
-		await section.locator('#nldesign-group-theming-add').click()
+		await add.click()
 		await expect(rows).toHaveCount(before + 1)
 		await expect(rows.last().locator('[data-field="group"]')).toBeFocused()
 	},
