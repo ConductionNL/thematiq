@@ -1447,7 +1447,7 @@ if ($_['mockUi'] === true) {
 						</table>
 					</div>
 					<div class="thematiq-css-panel__actions">
-						<button type="button" id="nldesign-group-theming-add" class="thematiq-groups-panel__add"><?php p($l->t('Add connection')); ?></button>
+						<button type="button" id="nldesign-group-theming-add" class="thematiq-groups-panel__add" disabled><?php p($l->t('Add connection')); ?></button>
 						<span id="nldesign-group-theming-feedback" class="thematiq-css-panel__feedback nldesign-group-theming-feedback" role="status" aria-live="polite"></span>
 						<span class="thematiq-preview__spacer"></span>
 						<button type="button" id="nldesign-group-theming-save" class="thematiq-css-panel__save"><?php p($l->t('Save group theme')); ?></button>
