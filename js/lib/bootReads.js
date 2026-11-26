@@ -48,7 +48,10 @@
 			return null
 		}
 		var prefix = url.pathname.indexOf(APP_PATH + '/')
-		if (prefix === -1 || (prefix !== 0 && url.pathname.slice(0, prefix) !== '/index.php')) {
+		if (
+			prefix === -1
+			|| (prefix !== 0 && url.pathname.slice(0, prefix) !== '/index.php')
+		) {
 			return null
 		}
 
@@ -62,9 +65,15 @@
 	 * @return {boolean} True for a GET without a body.
 	 */
 	function isRead(options) {
-		var method = options && typeof options.method === 'string' ? options.method.toUpperCase() : 'GET'
+		var method =
+			options && typeof options.method === 'string'
+				? options.method.toUpperCase()
+				: 'GET'
 
-		return method === 'GET' && !(options && options.body !== undefined && options.body !== null)
+		return (
+			method === 'GET'
+			&& !(options && options.body !== undefined && options.body !== null)
+		)
 	}
 
 	/**
@@ -76,7 +85,10 @@
 	 * @return {{fetch: Function, stop: Function, active: Function}} The fetch, a way to stop answering, and whether it still answers.
 	 */
 	function create(realFetch, reads, base) {
-		var answering = reads !== null && typeof reads === 'object' && Object.keys(reads).length > 0
+		var answering =
+			reads !== null
+			&& typeof reads === 'object'
+			&& Object.keys(reads).length > 0
 		reads = answering === true ? Object.assign({}, reads) : {}
 
 		function stop() {
@@ -89,7 +101,10 @@
 					stop()
 				} else {
 					var key = keyOf(input, base)
-					if (key !== null && Object.prototype.hasOwnProperty.call(reads, key) === true) {
+					if (
+						key !== null
+						&& Object.prototype.hasOwnProperty.call(reads, key) === true
+					) {
 						var body = reads[key]
 						delete reads[key]
 						return Promise.resolve(
