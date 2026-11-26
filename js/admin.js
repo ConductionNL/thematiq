@@ -9974,7 +9974,11 @@
 				occHint.style.display = 'none'
 			}
 			// The email panel's examples and header line read these fields: tell it they changed.
-			document.dispatchEvent(new CustomEvent('thematiq:email-theming', { detail: { state: state || null, footer: footer || null } }))
+			document.dispatchEvent(
+				new CustomEvent('thematiq:email-theming', {
+					detail: { state: state || null, footer: footer || null },
+				}),
+			)
 		}
 
 		function initEmailTheming() {
