@@ -2357,7 +2357,10 @@
 	color: var(--color-main-text);
 }
 
-#nldesign-settings .nldesign-audit-table .thematiq-column-head__sort--descending svg {
+#nldesign-settings
+	.nldesign-audit-table
+	.thematiq-column-head__sort--descending
+	svg {
 	transform: rotate(180deg);
 }
 
@@ -2373,7 +2376,9 @@
 	color: var(--color-primary-element);
 }
 
-#nldesign-settings .nldesign-audit-table .thematiq-column-head__filter--active::after {
+#nldesign-settings
+	.nldesign-audit-table
+	.thematiq-column-head__filter--active::after {
 	position: absolute;
 	top: 1px;
 	inset-inline-end: 1px;
@@ -2385,7 +2390,9 @@
 }
 
 #nldesign-settings .nldesign-audit-table .thematiq-column-head__sort:focus-visible,
-#nldesign-settings .nldesign-audit-table .thematiq-column-head__filter:focus-visible {
+#nldesign-settings
+	.nldesign-audit-table
+	.thematiq-column-head__filter:focus-visible {
 	outline: 2px solid var(--color-primary-element);
 	outline-offset: 2px;
 }
@@ -2463,7 +2470,8 @@
 	min-height: 34px;
 	margin: 0 !important;
 	padding: 0 12px !important;
-	border: 1px solid var(--nldesign-color-border-dark, var(--color-border-maxcontrast));
+	border: 1px solid
+		var(--nldesign-color-border-dark, var(--color-border-maxcontrast));
 	border-radius: 8px;
 	background: var(--color-main-background);
 	color: var(--color-main-text);
@@ -2472,7 +2480,8 @@
 	cursor: pointer;
 }
 
-.thematiq-column-filter.thematiq-column-filter .thematiq-column-filter__button--primary {
+.thematiq-column-filter.thematiq-column-filter
+	.thematiq-column-filter__button--primary {
 	border-color: transparent;
 	background: var(--color-primary-element);
 	color: var(--color-primary-element-text);
@@ -2512,33 +2521,49 @@
 	color: var(--color-primary-element-light-text);
 }
 
-.nldesign-audit-pill--tokens {
+.nldesign-audit-pill--scheduled {
+	background: var(--nl-color-teal-light, var(--color-background-hover));
+	color: var(--nl-color-teal-text, var(--color-main-text));
+}
+
+.nldesign-audit-pill--group {
 	background: var(
-		--nldesign-color-accent-light,
-		var(--color-primary-element-light)
+		--nldesign-component-status-badge-warning-background-color,
+		color-mix(in srgb, var(--color-warning) 15%, var(--color-main-background))
 	);
 	color: var(
-		--nldesign-color-accent-text,
-		var(--color-primary-element-light-text)
+		--nldesign-component-status-badge-warning-color,
+		var(--color-warning-text, var(--color-main-text))
 	);
+}
+
+/* TqLogboek draws token changes in purple, not in the set's accent (which is
+ * Zuiddrecht's red, the colour of a removal). */
+.nldesign-audit-pill--tokens {
+	background: var(--nl-color-purple-light, var(--color-primary-element-light));
+	color: var(--nl-color-purple-text, var(--color-primary-element-light-text));
 }
 
 .nldesign-audit-pill--added {
-	background: color-mix(
-		in srgb,
-		var(--color-success) 12%,
-		var(--color-main-background)
+	background: var(
+		--nldesign-component-status-badge-success-background-color,
+		color-mix(in srgb, var(--color-success) 12%, var(--color-main-background))
 	);
-	color: var(--color-success-text, var(--color-success));
+	color: var(
+		--nldesign-component-status-badge-success-color,
+		var(--color-success-text, var(--color-success))
+	);
 }
 
 .nldesign-audit-pill--removed {
-	background: color-mix(
-		in srgb,
-		var(--color-error) 7%,
-		var(--color-main-background)
+	background: var(
+		--nldesign-component-status-badge-error-background-color,
+		color-mix(in srgb, var(--color-error) 7%, var(--color-main-background))
 	);
-	color: var(--color-error-text, var(--color-error));
+	color: var(
+		--nldesign-color-error-text,
+		var(--color-error-text, var(--color-error))
+	);
 }
 
 .nldesign-audit-code {
