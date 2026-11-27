@@ -106,6 +106,7 @@
 		button.type = 'button'
 		button.className = 'thematiq-page-header__action'
 		button.textContent = tr('Upload font')
+		button.dataset.thematiqIcon = 'upload'
 		button.addEventListener('click', function () {
 			var name = document.getElementById('nldesign-font-name')
 			if (name !== null) {

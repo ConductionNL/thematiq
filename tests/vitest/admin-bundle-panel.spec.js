@@ -121,6 +121,10 @@ describe('Configuration bundle panel', () => {
 			'Download configuration',
 			'Upload configuration',
 		])
+		expect([...buttons].map((b) => b.dataset.thematiqIcon)).toEqual([
+			'download',
+			'upload',
+		])
 		buttons[1].click()
 		expect(pressed).toHaveBeenCalledTimes(1)
 	})

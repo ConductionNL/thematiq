@@ -142,6 +142,7 @@
 		plan.className =
 			'thematiq-page-header__action thematiq-page-header__action--primary'
 		plan.textContent = tr('Plan a switch')
+		plan.dataset.thematiqIcon = 'plus'
 		plan.addEventListener('click', function () {
 			var field = document.getElementById('nldesign-scheduled-set')
 			if (field !== null) {

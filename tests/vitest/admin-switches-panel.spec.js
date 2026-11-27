@@ -154,6 +154,7 @@ describe('Scheduled switches panel', () => {
 			'.thematiq-page-header__actions button',
 		)
 		expect(button.textContent).toBe('Plan a switch')
+		expect(button.dataset.thematiqIcon).toBe('plus')
 		button.click()
 		expect(document.activeElement.id).toBe('nldesign-scheduled-set')
 	})

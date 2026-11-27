@@ -154,6 +154,7 @@ describe('Own token sets panel', () => {
 			'.thematiq-page-header__actions button',
 		)
 		expect(button.textContent).toBe('Create house style')
+		expect(button.dataset.thematiqIcon).toBe('plus')
 		button.click()
 		expect(clicked).toHaveBeenCalled()
 		expect(document.activeElement.id).toBe('nldesign-brand-name')
