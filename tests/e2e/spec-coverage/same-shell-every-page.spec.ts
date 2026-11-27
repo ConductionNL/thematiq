@@ -217,9 +217,12 @@ test.describe('the same shell on every page', () => {
 						'settingsNavEntries',
 						{},
 					)
-					const active = Object.values(entries ?? {}).find(
-						(entry: any) => entry && entry.active === true,
-					) as any
+					const all = Object.values(entries ?? {}) as any[]
+					// Nextcloud 34 marks no entry active on the personal settings page; the
+					// scenario names the personal settings, which is the `settings` entry.
+					const active =
+						all.find((entry: any) => entry && entry.active === true) ??
+						all.find((entry: any) => entry && entry.id === 'settings')
 					return active ? String(active.name).trim() : null
 				} catch (e) {
 					return null

@@ -169,6 +169,40 @@ describe('header brand', () => {
 		).toBe(true)
 	})
 
+	describe('when Nextcloud marks no settings entry active (Nextcloud 34 on Personal and Administration settings)', () => {
+		const NC34_SETTINGS = {
+			accessibility_settings: { active: false, name: 'Appearance and accessibility', href: '/index.php/settings/user/theming' },
+			settings: { active: false, name: 'Personal settings', href: '/index.php/settings/user' },
+			admin_settings: { active: false, name: 'Administration settings', href: '/index.php/settings/admin/overview' },
+			core_users: { active: false, name: 'Accounts', href: '/index.php/settings/users' },
+			logout: { active: false, name: 'Log out', href: '/index.php/logout?requesttoken=x' },
+		}
+		const nameOn = async (path) => {
+			window.history.pushState({}, '', path)
+			installState({ files: { active: false, name: 'Files' } }, CAPABILITIES, NC34_SETTINGS)
+			await loadScript()
+			const name = document.querySelector('a.thematiq-brand .thematiq-brand__name')
+			return name === null ? null : name.textContent
+		}
+
+		afterEach(() => window.history.pushState({}, '', '/'))
+
+		// One page per test: every load of the script observes the bar, and the suite resets the page per test.
+		it.each([
+			['/index.php/settings/user', 'Personal settings'],
+			['/index.php/settings/user/personal-info', 'Personal settings'],
+			['/index.php/settings/user/theming', 'Appearance and accessibility'],
+			['/index.php/settings/admin', 'Administration settings'],
+			['/index.php/settings/admin/theming', 'Administration settings'],
+		])('on %s names %s: the longest link prefix, else the entry sharing the first two path parts', async (path, name) => {
+			expect(await nameOn(path)).toBe(name)
+		})
+
+		it.each([['/index.php/settings/userx'], ['/index.php/apps/files/']])('names no section on %s, which no settings entry covers', async (path) => {
+			expect(await nameOn(path)).toBe(null)
+		})
+	})
+
 	it('reads a settings navigation given as a list', async () => {
 		installState(null, CAPABILITIES, [
 			{ active: false, name: 'Persoonlijk' },
