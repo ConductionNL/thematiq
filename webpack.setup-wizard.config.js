@@ -48,7 +48,8 @@ module.exports = {
 				use: [{
 					loader,
 					options: {
-						scopeOf: require.resolve('@conduction/nextcloud-vue/dist/esm/components/CnWizardDialog/CnWizardDialog.vue.js'),
+						scopeOf: ['CnWizardDialog/CnWizardDialog', 'CnStepper/CnStepper', 'CnDialog/CnDialog'].map((name) =>
+							require.resolve('@conduction/nextcloud-vue/dist/esm/components/' + name + '.vue.js')),
 					},
 				}],
 			},

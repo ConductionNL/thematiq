@@ -22,6 +22,7 @@ import { translate as t } from '@nextcloud/l10n'
 import { createApp, h, reactive } from 'vue'
 import CnWizardDialog from '@conduction/nextcloud-vue/dist/esm/components/CnWizardDialog/CnWizardDialog.vue.js'
 import '@conduction/nextcloud-vue/dist/nextcloud-vue.css'
+import './setupWizard.css'
 import {
 	applyRequest,
 	confirmationNeeded,
@@ -230,7 +231,8 @@ export const SetupWizard = {
 				return true
 			}
 			const answer = await request('POST', '/api/setup/action/apply', applyRequest(this.state.choices, this.state.licences))
-			if (!answer.ok) {
+			// A write that failed half-way answers with the parts (applied, failed) and an error status.
+			if (!answer.ok && !Array.isArray(answer.data.failed)) {
 				return answer.data.message || answer.data.error || t(APP_ID, 'Apply did not work: {status}', { status: answer.status })
 			}
 			this.state.result = answer.data

@@ -8,7 +8,7 @@
  * page on demand, with no stylesheet of its own. Its components' styles come
  * with it: each imported .css file becomes a <style> element in the head.
  *
- * With the option `scopeOf` (a compiled component such as CnWalkthrough.vue.js)
+ * With the option `scopeOf` (a compiled component such as CnWalkthrough.vue.js, or a list of them)
  * only the rules of that component's scope are kept: @conduction/nextcloud-vue
  * ships every component's style in one 1.4 MB file, and the walkthrough needs
  * 32 rules of it.
@@ -96,9 +96,14 @@ module.exports = function styleInjectLoader(source) {
 	const options = (this.getOptions && this.getOptions()) || {}
 	let css = String(source)
 	if (options.scopeOf) {
-		this.addDependency(options.scopeOf)
-		const id = scopeId(options.scopeOf)
-		css = id === '' ? '' : keep(css, '[' + id + ']')
+		// One compiled component, or a list of them (the setup wizard needs its dialog, stepper and frame).
+		const files = Array.isArray(options.scopeOf) ? options.scopeOf : [options.scopeOf]
+		const source = css
+		css = files.map((file) => {
+			this.addDependency(file)
+			const id = scopeId(file)
+			return id === '' ? '' : keep(source, '[' + id + ']')
+		}).join('')
 	}
 	return 'var css = ' + JSON.stringify(css) + ';\n'
 		+ 'if (css !== "" && typeof document !== "undefined") {\n'
