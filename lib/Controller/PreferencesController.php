@@ -63,16 +63,12 @@ class PreferencesController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function show(string $key): JSONResponse {
-		if ($this->preferences->serves(key: $key) === false) {
-			return new JSONResponse(['message' => 'Not found'], Http::STATUS_NOT_FOUND);
+		$refused = $this->refused(key: $key);
+		if ($refused !== null) {
+			return $refused;
 		}
 
-		$user = $this->userSession->getUser();
-		if ($user === null) {
-			return new JSONResponse(['value' => null], Http::STATUS_UNAUTHORIZED);
-		}
-
-		return new JSONResponse(['value' => $this->preferences->get(userId: $user->getUID(), key: $key)]);
+		return new JSONResponse(['value' => $this->preferences->get(userId: $this->uid(), key: $key)]);
 	}//end show()
 
 	/**
@@ -87,20 +83,45 @@ class PreferencesController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function update(string $key, mixed $value = null): JSONResponse {
-		if ($this->preferences->serves(key: $key) === false) {
-			return new JSONResponse(['message' => 'Not found'], Http::STATUS_NOT_FOUND);
-		}
-
-		$user = $this->userSession->getUser();
-		if ($user === null) {
-			return new JSONResponse(['value' => null], Http::STATUS_UNAUTHORIZED);
+		$refused = $this->refused(key: $key);
+		if ($refused !== null) {
+			return $refused;
 		}
 
 		if ($value !== null && is_scalar($value) === false) {
 			return new JSONResponse(['message' => 'The value must be text.'], Http::STATUS_BAD_REQUEST);
 		}
 
-		$stored = $this->preferences->set(userId: $user->getUID(), key: $key, value: (string)$value);
-		return new JSONResponse(['value' => $stored]);
+		return new JSONResponse(['value' => $this->preferences->set(userId: $this->uid(), key: $key, value: (string)$value)]);
 	}//end update()
+
+	/**
+	 * The answer for a request the routes refuse: 404 for another key, 401 without a signed-in user.
+	 *
+	 * @param string $key The key.
+	 *
+	 * @return JSONResponse|null The refusal, or null to serve the request.
+	 *
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
+	 */
+	private function refused(string $key): ?JSONResponse {
+		if ($this->preferences->serves(key: $key) === false) {
+			return new JSONResponse(['message' => 'Not found'], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($this->userSession->getUser() === null) {
+			return new JSONResponse(['value' => null], Http::STATUS_UNAUTHORIZED);
+		}
+
+		return null;
+	}//end refused()
+
+	/**
+	 * The signed-in user's id; only called after {@see self::refused()} let the request through.
+	 *
+	 * @return string
+	 */
+	private function uid(): string {
+		return (string)$this->userSession->getUser()?->getUID();
+	}//end uid()
 }//end class

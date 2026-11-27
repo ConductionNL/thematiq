@@ -342,6 +342,54 @@ export function createMenuWalkthrough(options = {}) {
 	}
 
 	/**
+	 * Take a start request's options.
+	 *
+	 * @param {object} request The request.
+	 * @return {void}
+	 */
+	const take = (request) => {
+		if (request.state && typeof request.state === 'object') {
+			state = { ...state, ...request.state }
+		}
+		onEnd = typeof request.onEnd === 'function' ? request.onEnd : null
+		parts = request.parts && typeof request.parts === 'object' ? request.parts : {}
+	}
+
+	/**
+	 * Put the overlay in its container and keep it over the window.
+	 *
+	 * @param {Element|undefined} container Where the overlay goes.
+	 * @return {void}
+	 */
+	const place = (container) => {
+		const target = container && container.appendChild ? container : document.body
+		if (host.parentElement !== target) {
+			target.appendChild(host)
+		}
+		if (frame === null) {
+			follow()
+		}
+	}
+
+	/**
+	 * Run the due steps, at the step left part-way when there is one.
+	 *
+	 * @return {void}
+	 */
+	const runDue = () => {
+		const steps = stepsFor(tourSteps(), { seen: state.seen, appVersion: state.appVersion })
+			.filter((step) => !step.optional || present(step.target.ref))
+		const progress = progressOf(state.progress)
+		const stepId = progress ? progress.stepId : ''
+		if (steps.length === 0) {
+			// Progress left over from a tour the person has seen since.
+			wt.resumeAt(TOUR_ID, stepId)
+			return
+		}
+		wt.start(TOUR_ID, Math.max(0, steps.findIndex((step) => step.id === stepId)))
+	}
+
+	/**
 	 * Start the tour.
 	 *
 	 * @param {object} request `{ mode: 'auto'|'replay', state, container, parts, onEnd }`:
@@ -354,41 +402,18 @@ export function createMenuWalkthrough(options = {}) {
 		if (wt && wt.running.value) {
 			return true
 		}
-		if (request.state && typeof request.state === 'object') {
-			state = { ...state, ...request.state }
-		}
-		onEnd = typeof request.onEnd === 'function' ? request.onEnd : null
-		parts = request.parts && typeof request.parts === 'object' ? request.parts : {}
+		take(request)
 		const replay = request.mode === 'replay'
 		if (!replay && !isDue(state)) {
 			return false
 		}
 		mount()
-		const container = request.container && request.container.appendChild ? request.container : document.body
-		if (host.parentElement !== container) {
-			container.appendChild(host)
-		}
-		const run = () => {
-			if (frame === null) {
-				follow()
-			}
-		}
 		if (replay) {
 			wt.restart(TOUR_ID)
-			run()
-			return true
-		}
-		const steps = stepsFor(tourSteps(), { seen: state.seen, appVersion: state.appVersion })
-			.filter((step) => !step.optional || present(step.target.ref))
-		const progress = progressOf(state.progress)
-		const at = progress ? steps.findIndex((step) => step.id === progress.stepId) : -1
-		if (steps.length === 0) {
-			// Progress left over from a tour the person has seen since.
-			wt.resumeAt(TOUR_ID, progress ? progress.stepId : '')
 		} else {
-			wt.start(TOUR_ID, Math.max(0, at))
+			runDue()
 		}
-		run()
+		place(request.container)
 		return true
 	}
 

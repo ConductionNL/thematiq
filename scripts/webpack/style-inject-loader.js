@@ -16,6 +16,7 @@
  * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-apps-menu-has-a-walkthrough-with-one-step-per-feature-req-tqwt-001
  */
 
+/* global module, require */
 'use strict'
 
 const fs = require('fs')
