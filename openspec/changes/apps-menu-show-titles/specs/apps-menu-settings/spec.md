@@ -101,7 +101,8 @@ Boards: AppMenuZonderTitels, AppMenuVastzetten.
 
 ### Requirement: Menu settings and the setup wizard offer Show titles (REQ-TQMT-004)
 The Theming tab of Menu settings MUST have the switch "Show titles" (`role="switch"`, with its help
-text) between "Show items as tiles" and "Show payoff". While it is off, Show payoff MUST be disabled
+text) after "Show items as tiles", then "Show titles in the top bar" (REQ-TQMT-005), then "Show
+payoff". While Show titles is off, Show payoff MUST be disabled
 with the note "Only with Show titles." and keep its value, and Save MUST store that value unchanged.
 The preview MUST draw its items without names and without payoff while titles is off, and its sentence
 MUST say "without titles" in place of the payoff part ("Round, large icons in the brand colour, without
@@ -140,10 +141,13 @@ It replaces the admin page's former option "Show text labels in app menu (hide i
 the former app value `show_menu_labels` MUST move into it once, and until then MUST be read while
 `menu.topBarTitles` is absent. The OCS capability field `showMenuLabels` and the configuration bundle
 key `showMenuLabels` MUST carry its value, so they keep their names; importing a bundle or restoring a
-theme version with `showMenuLabels` MUST set `menu.topBarTitles`. It is set on the admin page, Layout
-and options, Menu card, as "Show titles in the top bar".
+theme version with `showMenuLabels` MUST set `menu.topBarTitles`. It is set in two places, both for
+administrators only: Menu settings, For everyone, tab Theming, as the switch "Show titles in the top
+bar" (`role="switch"`, with its help text) directly under "Show titles"; and the admin page, Layout and
+options, Menu card, in place of the former option. It does not depend on `titles` and does not
+disable Show payoff. Save with For everyone MUST send it with the other settings.
 
-Boards: TqLayout.
+Boards: AppMenuVormgeving, TqLayout.
 
 #### Scenario: Titles in the top bar are off unless the administrator switches them on
 @e2e exclude Pure service logic: PHPUnit tests/Unit/Service/AppMenuSettingsTest.php (testTopBarTitlesShipOff)
@@ -155,6 +159,13 @@ Boards: TqLayout.
 - GIVEN the app value `show_menu_labels` is `'1'`
 - WHEN thematiq is upgraded
 - THEN `menu.topBarTitles` MUST be true and `show_menu_labels` MUST be gone
+
+#### Scenario: The administrator switches titles in the top bar on in Menu settings
+@e2e exclude a dialog save; proven by tests/vitest/menuSettingsDialog.spec.js (Show titles in the top bar sits under Show titles and is saved for everyone)
+- GIVEN an administrator in Menu settings, For everyone, tab Theming
+- WHEN they switch "Show titles in the top bar" on and press Save
+- THEN `POST /apps/thematiq/app-menu/defaults` MUST carry `topBarTitles: true`
+- AND "Show payoff" MUST stay as it was
 
 #### Scenario: A person may not set titles in the top bar
 @e2e exclude Pure controller logic: PHPUnit tests/Unit/Controller/AppMenuSettingsControllerTest.php (testAPersonMayNotSetTopBarTitles)
@@ -172,7 +183,7 @@ off the pins stay icon-only with the tooltip. On a page that shows Nextcloud's o
 classic style or a house style without the workplace top bar, `topBarTitles` on MUST give Nextcloud's
 menu its names, as the former option did (menu-labels).
 
-Boards: AppMenuVastzetten, TqLayout.
+Boards: AppMenuBalkTitels, AppMenuVastzetten, TqLayout.
 
 #### Scenario: Pins show their names
 - GIVEN the administrator switched "Show titles in the top bar" on and Anna pinned Files and Deck

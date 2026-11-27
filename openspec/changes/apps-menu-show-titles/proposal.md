@@ -28,7 +28,8 @@ default. It replaces the admin page's older option "Show text labels in app menu
 - **Payoff follows titles.** With titles off the payoff is not drawn, and the Show payoff switch is
   disabled with a note saying why. Its stored value is kept, so switching titles back on brings the
   payoff back as it was.
-- **Set in Menu settings, Theming tab**, between "Show items as tiles" and "Show payoff". Like every
+- **Set in Menu settings, Theming tab**, after "Show items as tiles", with "Show titles in the top bar"
+  directly under it and "Show payoff" after that. Like every
   Theming choice it is the administrator's, set with For everyone; a person cannot override it. The
   preview and its sentence follow the switch.
 - **A second setting, `topBarTitles`, shipped off: Show titles in the top bar.** On, each pinned app in
@@ -39,7 +40,8 @@ default. It replaces the admin page's older option "Show text labels in app menu
   page; "Show titles in the top bar" takes its place in the Menu card. A repair step moves the stored
   value once, so an instance with text labels keeps them. Its endpoint `/settings/menulabels` goes; the
   capability field and the bundle key `showMenuLabels` keep their names and carry the new value.
-- **Both are the administrator's.** Like every Theming choice, neither is a personal key.
+- **Both are the administrator's.** Like every Theming choice, neither is a personal key. Show titles
+  in the top bar is set in Menu settings, Theming, and on the admin page's Menu card.
 - **The setup wizard's apps menu step gets Show titles too**, because that step already offers Show payoff, a
   Theming choice: "Show titles" comes before "Show payoff" and is stored as the administrator's default.
 
@@ -57,9 +59,10 @@ default. It replaces the admin page's older option "Show text labels in app menu
 
 ## Boards
 
-Merged in ConductionNL/design-system#1220: the Theming tab with the new switch (werkplek/AppMenuVormgeving)
-and the menu with titles off (werkplek/AppMenuZonderTitels). thematiq/TqLayout still draws the older
-option and needs "Show titles in the top bar" in its place (board follow-up). Boards are
+Merged in ConductionNL/design-system#1220 and #1221: the Theming tab with both switches
+(werkplek/AppMenuVormgeving), the menu with titles off (werkplek/AppMenuZonderTitels), the pins with
+their names (werkplek/AppMenuBalkTitels), the pin tooltip (werkplek/AppMenuVastzetten) and the Menu
+card with "Show titles in the top bar" in place of the older option (thematiq/TqLayout). Boards are
 canon. See `screens.md`.
 
 ## Impact

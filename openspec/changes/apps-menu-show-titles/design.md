@@ -1,7 +1,9 @@
 # Design
 
-The boards are in ConductionNL/design-system#1220: werkplek/AppMenuVormgeving (the Theming tab with
-"Show titles") and werkplek/AppMenuZonderTitels (the open menu with titles off). The column count of
+The boards are in ConductionNL/design-system#1220 and #1221: werkplek/AppMenuVormgeving (the Theming
+tab with "Show titles" and "Show titles in the top bar"), werkplek/AppMenuZonderTitels (the open menu
+with titles off), werkplek/AppMenuBalkTitels (pins with their names), werkplek/AppMenuVastzetten (the
+pin tooltip) and thematiq/TqLayout (the Menu card). The column count of
 the icon-only grid follows AppMenuZonderTitels. They
 are canon; where this design and a board differ, the build follows the board, including the size of an
 icon-only entry.
@@ -88,9 +90,10 @@ and the other way round.
 ### A Theming key, the administrator's
 
 `topBarTitles` follows `titles`: `DEFAULTS` false, `SWITCHES`, not `PERSONAL`. The workplace pins and
-Nextcloud's own menu both read the administrator's value. It is set in the Menu card of the admin page,
-where the older option was, because that card is also reachable when the classic style is on. The
-Theming tab of Menu settings does not get it: AppMenuVormgeving does not draw it.
+Nextcloud's own menu both read the administrator's value. It is set in two places, as the boards draw:
+Menu settings, tab Theming (For everyone only), directly under "Show titles"; and the Menu card of the
+admin page, where the older option was, which is also reachable when the classic style is on. It does
+not depend on `titles` and does not disable Show payoff.
 
 ### The older option moves into it
 
@@ -116,7 +119,7 @@ padding, above the 24 px of WCAG 2.5.8.
 ## The Menu settings dialog
 
 Theming, in the look section: "Show items as tiles", then "Show titles" with its help, then "Show
-payoff". The preview draws its four items without names when titles is off and adds nothing for
+titles in the top bar" with its help, then "Show payoff". The preview draws its four items without names when titles is off and adds nothing for
 payoff. The preview sentence swaps its payoff part: "Round, large icons in the brand colour, without
 titles and without tiles." with titles off; with titles on it reads as today.
 
@@ -142,7 +145,7 @@ values.
 | `titles` | Show titles | Titels tonen |
 | `titlesHelp` | The name of the app under or next to the icon. Off: icons only, the name appears as a tooltip. | De naam van de app onder of naast het pictogram. Uit: alleen pictogrammen, de naam verschijnt als tooltip. |
 | `topBarTitles` | Show titles in the top bar | Titels in de bovenbalk tonen |
-| `topBarTitlesHelp` | The name next to each pinned app, and in Nextcloud's own app menu. Off: icons only, the name appears as a tooltip. | De naam naast elke vastgezette app, en in het eigen appmenu van Nextcloud. Uit: alleen pictogrammen, de naam verschijnt als tooltip. |
+| `topBarTitlesHelp` | The name next to the icon of every pinned app in the top bar. Off: icons only, the name appears as a tooltip. | De naam naast het pictogram van elke vastgezette app in de bovenbalk. Uit: alleen pictogrammen, de naam verschijnt als tooltip. |
 | `payoffNeedsTitles` | Only with Show titles. | Alleen met Titels tonen. |
 | `withoutTitles` | without titles | zonder titels |
 | existing string | (opens in a new tab) | as translated today |

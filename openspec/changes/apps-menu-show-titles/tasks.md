@@ -1,7 +1,7 @@
 # Tasks: apps-menu-show-titles
 
 Nothing here is built until this change is merged; its boards are merged in
-ConductionNL/design-system#1220, TqLayout and AppMenuVastzetten have follow-ups. Copy, entry size and tooltip placement follow the boards.
+ConductionNL/design-system#1220 and #1221; TqSetupAppmenu has a follow-up. Copy, entry size and tooltip placement follow the boards.
 
 ## 1. Server
 
@@ -56,14 +56,15 @@ ConductionNL/design-system#1220, TqLayout and AppMenuVastzetten have follow-ups.
 
 ## 3. Menu settings and the setup wizard
 
-- [ ] 3.1 `js/dialogs/menu-settings-dialog.js`: "Show titles" between "Show items as tiles" and "Show
-      payoff"; Show payoff disabled with "Only with Show titles." and its value kept; preview without
+- [ ] 3.1 `js/dialogs/menu-settings-dialog.js`: "Show titles" after "Show items as tiles", "Show
+      titles in the top bar" directly under it, then "Show payoff"; `topBarTitles` saved with For
+      everyone (REQ-TQMT-005); Show payoff disabled with "Only with Show titles." and its value kept; preview without
       names and payoff; sentence "without titles". REQ-TQMT-004.
 - [ ] 3.2 The setup wizard's apps menu step (first-time-setup, REQ-TQFS-010): "Show titles" before
       "Show payoff", payoff disabled while titles is off, Apply stores `menu.titles`. Built with the
       step. REQ-TQMT-004.
-- [ ] 3.3 vitest `menuSettingsDialog.spec.js` (switch place, payoff disabled and kept, preview,
-      sentence), `setupWizard.spec.js` (the step offers Show titles before Show payoff).
+- [ ] 3.3 vitest `menuSettingsDialog.spec.js` (switch places, payoff disabled and kept, preview,
+      sentence, top bar titles saved for everyone), `setupWizard.spec.js` (the step offers Show titles before Show payoff).
 
 ## 4. Copy
 
