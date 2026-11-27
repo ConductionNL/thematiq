@@ -44,7 +44,7 @@
 	 * @param {Element} model The entry to copy (`li`).
 	 * @param {string} label The entry's text.
 	 * @return {Element} The entry.
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
 	 */
 	function buildReplayEntry(model, label) {
 		var entry = model.cloneNode(true)
@@ -92,7 +92,7 @@
 	 * workplace apps menu carries it.
 	 *
 	 * @return {object|null} The `walkthrough` part of `thematiq/app-menu`.
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
 	 */
 	function tourState() {
 		var tour = null
@@ -111,7 +111,7 @@
 	 *
 	 * @param {Element} list The account menu's list.
 	 * @param {string} label The entry's text.
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
 	 */
 	function placeReplayEntry(list, label) {
 		var help = list.querySelector(':scope > li #help')
@@ -131,7 +131,7 @@
 	 * Nextcloud's Help entry, or last when Help is not there. Only with the
 	 * workplace apps menu, whose state carries the tour.
 	 *
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
 	 */
 	function thematiqReplayEntryMain() {
 		var tour = tourState()

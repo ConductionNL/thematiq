@@ -13,7 +13,7 @@
  * ships every component's style in one 1.4 MB file, and the walkthrough needs
  * 32 rules of it.
  *
- * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-apps-menu-has-a-walkthrough-with-one-step-per-feature-req-tqwt-001
+ * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-apps-menu-has-a-walkthrough-with-one-step-per-feature-req-tqwt-001
  */
 
 /* global module, require */

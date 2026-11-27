@@ -24,7 +24,7 @@
  * `npm run build:menu-walkthrough` bundles this file into
  * js/vendor/menuWalkthrough.js.
  *
- * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-apps-menu-has-a-walkthrough-with-one-step-per-feature-req-tqwt-001
+ * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-apps-menu-has-a-walkthrough-with-one-step-per-feature-req-tqwt-001
  */
 
 import { register, translate as t } from '@nextcloud/l10n'
@@ -78,7 +78,7 @@ export function tourSteps() {
  *
  * @param {string} version Such as `1.3.0-unstable.20261201`.
  * @return {string} Such as `1.3.0`, or ''.
- * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-a-new-menu-feature-gets-its-own-step-after-an-upgrade-req-tqwt-005
+ * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-a-new-menu-feature-gets-its-own-step-after-an-upgrade-req-tqwt-005
  */
 export function versionCore(version) {
 	const match = /^\s*v?(\d+)(?:\.(\d+))?(?:\.(\d+))?/.exec(String(version || ''))
@@ -96,7 +96,7 @@ export function versionCore(version) {
  * @param {Array<object>} steps The tour's steps.
  * @param {object} options `{ seen, appVersion, replay }`.
  * @return {Array<object>} The steps to show.
- * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-a-new-menu-feature-gets-its-own-step-after-an-upgrade-req-tqwt-005
+ * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-a-new-menu-feature-gets-its-own-step-after-an-upgrade-req-tqwt-005
  */
 export function stepsFor(steps, options) {
 	const seen = versionCore(options.seen)
@@ -144,7 +144,7 @@ function parsed(value) {
  *
  * @param {object} state `{ seen, progress, appVersion }`.
  * @return {boolean}
- * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+ * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
  */
 export function isDue(state) {
 	const s = state || {}
@@ -168,7 +168,7 @@ export function translate(text) {
  * The card's labels.
  *
  * @return {object} `nextLabel`, `backLabel`, `finishLabel`, `closeLabel`, `skipLabel`.
- * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-apps-menu-has-a-walkthrough-with-one-step-per-feature-req-tqwt-001
+ * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-apps-menu-has-a-walkthrough-with-one-step-per-feature-req-tqwt-001
  */
 export function labels() {
 	return {
@@ -186,7 +186,7 @@ export function labels() {
  * from thematiq's catalogue: "Step 1 of 7" reads "Stap 1 van 7" in Dutch.
  *
  * @return {void}
- * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-is-accessible-req-tqwt-007
+ * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-is-accessible-req-tqwt-007
  */
 export function registerEngineStrings() {
 	const strings = Object.fromEntries(['Step {current} of {total}', 'Step {n} of {total}', 'Walkthrough']
@@ -223,7 +223,7 @@ function reducedMotion() {
  * @param {object} [options] `{ http, storage }`, the engine's injection points, and
  *                           `present(ref)`, whether a part is drawn (default: in the page).
  * @return {object} `{ start, close, isRunning, currentStepId }`.
- * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
+ * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
  */
 export function createMenuWalkthrough(options = {}) {
 	const io = { http: options.http, storage: options.storage }
@@ -291,7 +291,7 @@ export function createMenuWalkthrough(options = {}) {
 	 * the page, so every run takes its own.
 	 *
 	 * @return {void}
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-apps-menu-has-a-walkthrough-with-one-step-per-feature-req-tqwt-001
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-apps-menu-has-a-walkthrough-with-one-step-per-feature-req-tqwt-001
 	 */
 	const mount = () => {
 		if (app !== null) {

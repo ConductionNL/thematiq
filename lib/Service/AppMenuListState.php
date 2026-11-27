@@ -73,7 +73,7 @@ class AppMenuListState {
 	 * @spec openspec/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
 	 * @spec openspec/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
 	 */
 	public function state(IL10N $l): array {
 		$state = [];
@@ -144,7 +144,7 @@ class AppMenuListState {
 	 *
 	 * @return array<string, string>|null `seen`, `progress`, `appVersion`, `replayLabel` and `replayDiscard`, or null.
 	 *
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
 	 */
 	private function walkthroughState(array $settings, ?string $userId, IL10N $l): ?array {
 		$style = ($settings['style'] ?? AppMenuSettings::DEFAULTS['style']);
