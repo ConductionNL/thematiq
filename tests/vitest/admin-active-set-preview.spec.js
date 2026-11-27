@@ -53,6 +53,20 @@ describe('the preview of the active set', () => {
 		expect(values[5]).toBe('#1B1C1D')
 	})
 
+	it('draws the swatches only once the page has painted, when the helper is loaded', async () => {
+		const pending = []
+		window.ThematiqAfterPaint = vi.fn((run) => pending.push(run))
+		try {
+			await loadScript()
+			expect(window.ThematiqAfterPaint).toHaveBeenCalledTimes(1)
+			expect(document.querySelectorAll('.thematiq-swatch__value')).toHaveLength(0)
+			pending[0]()
+			expect(document.querySelectorAll('.thematiq-swatch__value')).toHaveLength(8)
+		} finally {
+			delete window.ThematiqAfterPaint
+		}
+	})
+
 	it('shows the instance name, the initials and the slogan', async () => {
 		await loadScript()
 		expect(

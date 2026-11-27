@@ -190,6 +190,24 @@
 			)
 		}
 
+		/**
+		 * Run a read of the page's computed style once the page has painted, so
+		 * the boot does not force a whole-document style recalc before the first
+		 * paint (PERF-HANDOFF thematiq Theming settings, lever 2). Without
+		 * js/lib/afterPaint.js it runs at once.
+		 *
+		 * @spec openspec/specs/admin-settings/spec.md
+		 * @param {Function} run The work that reads computed style.
+		 * @return {void}
+		 */
+		function afterPaint(run) {
+			if (typeof window.ThematiqAfterPaint !== 'function') {
+				run()
+				return
+			}
+			window.ThematiqAfterPaint(run)
+		}
+
 		// Read a live CSS custom property with a fallback. Reads from <body> first
 		// (Nextcloud and the nldesign themes set their token vars there), then :root.
 		function readVar(name, fallback) {
@@ -1304,7 +1322,10 @@
 			})
 
 			// Set initial preview for selected item and remember initial value.
-			updatePreview(tokenSetSelect.value)
+			// The preview reads the live colours, so it is drawn once the page has painted.
+			afterPaint(function () {
+				updatePreview(tokenSetSelect.value)
+			})
 			updateDesignSystemBadge(tokenSetSelect.value)
 			updateCompletenessBadge(tokenSetSelect.value)
 			updateIconPackIndicator(tokenSetSelect.value)
@@ -7372,7 +7393,8 @@
 			if (coloursTab !== null) {
 				coloursTab.addEventListener('click', followTheme)
 			}
-			followTheme()
+			// Reads the live colours: once the page has painted.
+			afterPaint(followTheme)
 
 			var logoBtn = document.getElementById('nldesign-brand-logo-btn')
 			var logoName = document.getElementById('nldesign-brand-logo-name')

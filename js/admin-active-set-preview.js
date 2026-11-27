@@ -291,7 +291,15 @@
 			el('span', 'thematiq-active-set-preview__note', notes[1]),
 		)
 		panels[1].appendChild(loginSample())
-		drawSwatches(strip)
+		// The swatches read the page's computed colours: once the page has
+		// painted, so the boot does not force a style recalc before it.
+		if (typeof window.ThematiqAfterPaint === 'function') {
+			window.ThematiqAfterPaint(function () {
+				drawSwatches(strip)
+			})
+		} else {
+			drawSwatches(strip)
+		}
 
 		tabs.forEach(function (tab, i) {
 			tab.addEventListener('click', function () {
