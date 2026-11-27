@@ -163,6 +163,7 @@
 				'thematiq-page-header__action'
 				+ (entry[2] === true ? ' thematiq-page-header__action--primary' : '')
 			button.textContent = entry[1]
+			button.dataset.thematiqIcon = entry[2] === true ? 'upload' : 'download'
 			button.addEventListener('click', function () {
 				var target = document.getElementById(entry[0])
 				if (target !== null) {

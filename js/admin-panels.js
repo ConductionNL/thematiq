@@ -327,6 +327,7 @@
 		toggle.type = 'button'
 		toggle.className = 'thematiq-page-header__action thematiq-page-header__more'
 		toggle.textContent = label
+		toggle.dataset.thematiqIcon = 'chevron-down'
 		toggle.setAttribute('aria-haspopup', 'true')
 		toggle.setAttribute('aria-expanded', 'false')
 		var list = document.createElement('div')

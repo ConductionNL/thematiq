@@ -152,6 +152,7 @@
 		create.className =
 			'thematiq-page-header__action thematiq-page-header__action--primary'
 		create.textContent = tr('Create house style')
+		create.dataset.thematiqIcon = 'plus'
 		create.addEventListener('click', function () {
 			var tab = document.getElementById('nldesign-create-tab-colours')
 			if (tab !== null) {

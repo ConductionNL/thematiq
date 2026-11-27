@@ -348,6 +348,7 @@
 			['nldesign-compliance-report-json', tr('Download as JSON')],
 		].map(function (entry) {
 			var button = el('button', 'thematiq-page-header__action', entry[1])
+			button.dataset.thematiqIcon = 'download'
 			button.type = 'button'
 			button.addEventListener('click', function () {
 				var link = document.getElementById(entry[0])

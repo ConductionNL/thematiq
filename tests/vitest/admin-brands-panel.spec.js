@@ -102,6 +102,7 @@ describe('Brand per app panel', () => {
 			'.thematiq-page-header__actions button',
 		)
 		expect(button.textContent).toBe('Add brand')
+		expect(button.dataset.thematiqIcon).toBe('plus')
 		button.click()
 		expect(document.activeElement.id).toBe('nldesign-app-brands-app')
 	})

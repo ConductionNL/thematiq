@@ -89,6 +89,7 @@
 		add.className =
 			'thematiq-page-header__action thematiq-page-header__action--primary'
 		add.textContent = tr('Add brand')
+		add.dataset.thematiqIcon = 'plus'
 		add.addEventListener('click', function () {
 			var app = document.getElementById('nldesign-app-brands-app')
 			if (app !== null) {

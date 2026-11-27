@@ -107,6 +107,7 @@
 			pick.type = 'button'
 			pick.className = 'button'
 			pick.id = id + '-btn'
+			pick.dataset.thematiqIcon = 'image'
 			pick.setAttribute('aria-labelledby', label.id + ' ' + pick.id)
 			pick.setAttribute('aria-describedby', hint.id)
 			pick.textContent = t('thematiq', 'Choose image')

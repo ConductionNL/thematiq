@@ -264,15 +264,19 @@
 	 * @param {string} label The text.
 	 * @param {string} id The control's id.
 	 * @param {boolean} primary Whether it is the main action.
+	 * @param {string} [icon] The board's button icon (data-thematiq-icon).
 	 * @return {HTMLElement} The button.
 	 */
-	function headerButton(label, id, primary) {
+	function headerButton(label, id, primary, icon) {
 		var button = document.createElement('button')
 		button.type = 'button'
 		button.className =
 			'thematiq-page-header__action'
 			+ (primary === true ? ' thematiq-page-header__action--primary' : '')
 		button.textContent = label
+		if (icon) {
+			button.dataset.thematiqIcon = icon
+		}
 		button.addEventListener('click', function () {
 			var control = document.getElementById(id)
 			if (control !== null) {
@@ -326,7 +330,7 @@
 			},
 			actions: function () {
 				return [
-					headerButton(tr('Download'), 'nldesign-export-btn', false),
+					headerButton(tr('Download'), 'nldesign-export-btn', false, 'download'),
 					headerButton(tr('Save'), 'nldesign-save-btn', true),
 				]
 			},
