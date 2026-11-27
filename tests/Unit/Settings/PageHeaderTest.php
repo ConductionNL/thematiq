@@ -107,6 +107,27 @@ class PageHeaderTest extends TestCase {
 	}//end testTemplateKeepsTheActionIds()
 
 	/**
+	 * The breadcrumb and the status line share one row, with the middle dot
+	 * between them that every panel board draws.
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md#requirement-each-tool-is-the-page-or-panel-its-board-draws-req-aset-103
+	 *
+	 * @return void
+	 */
+	public function testBreadcrumbAndStatusShareOneRow(): void {
+		$template = (string)file_get_contents(__DIR__ . '/../../../templates/settings/page-header.php');
+
+		$meta = strpos(haystack: $template, needle: 'class="thematiq-page-header__meta"');
+		$crumbs = strpos(haystack: $template, needle: 'class="thematiq-page-header__crumbs"');
+		$dot = strpos(haystack: $template, needle: 'class="thematiq-page-header__dot" aria-hidden="true">&middot;');
+		$intro = strpos(haystack: $template, needle: 'class="thematiq-page-header__intro"');
+
+		$this->assertNotFalse(condition: $meta);
+		$this->assertNotFalse(condition: $dot);
+		$this->assertTrue(condition: $meta < $crumbs && $crumbs < $dot && $dot < $intro);
+	}//end testBreadcrumbAndStatusShareOneRow()
+
+	/**
 	 * With Buildiq enabled the square links to Buildiq; the template draws it.
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md#requirement-the-admin-page-is-drawn-as-tqtheming-req-aset-101

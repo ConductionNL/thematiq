@@ -95,9 +95,54 @@
 
 .thematiq-page-header__crumbs {
 	display: flex;
+	flex-wrap: wrap;
 	gap: 8px;
 	color: var(--color-text-maxcontrast);
 	font-size: 14px;
+	line-height: normal;
+}
+
+/* Breadcrumb and status line. On TqTheming the intro is a paragraph under the
+ * breadcrumb; on every panel board the status follows the breadcrumb on the
+ * same line after a middle dot, at 14px. The header row is as tall as the 40px
+ * actions even when a panel has none, as each board draws it. */
+.thematiq-page-header__meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 10px;
+}
+
+.thematiq-page-header__meta .thematiq-page-header__intro {
+	flex: 1 0 100%;
+}
+
+.thematiq-page-header__dot {
+	display: none;
+	color: var(--color-text-maxcontrast);
+	font-size: 14px;
+}
+
+html[data-thematiq-open-panel] .thematiq-page-header {
+	gap: 8px;
+}
+
+html[data-thematiq-open-panel] .thematiq-page-header__row {
+	min-height: 40px;
+}
+
+html[data-thematiq-open-panel] .thematiq-page-header__meta .thematiq-page-header__intro {
+	flex: 0 1 auto;
+}
+
+html[data-thematiq-open-panel] #thematiq-page-header p.thematiq-page-header__intro {
+	color: var(--color-text-maxcontrast);
+	font-size: 14px !important;
+	line-height: normal !important;
+}
+
+html[data-thematiq-open-panel] .thematiq-page-header__dot:has(+ .thematiq-page-header__intro:not(:empty)) {
+	display: inline;
 }
 
 #thematiq-page-header p.thematiq-page-header__intro {

@@ -45,11 +45,13 @@ style('thematiq', 'admin-page');
 			<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps ?>
 		</div>
 	</div>
+	<div class="thematiq-page-header__meta">
 	<nav class="thematiq-page-header__crumbs" aria-label="<?php p($l->t('Breadcrumb')); ?>">
 		<span><?php p($l->t('Administration settings')); ?></span>
 		<span aria-hidden="true">/</span>
 		<span aria-current="page"><?php p($l->t('Themes and appearance')); ?></span>
 	</nav>
+	<span class="thematiq-page-header__dot" aria-hidden="true">&middot;</span>
 	<p class="thematiq-page-header__intro">
 		<?php
 		// One literal, so the translation tools find the sentence whole.
@@ -57,4 +59,5 @@ style('thematiq', 'admin-page');
 		p($l->t('Nextcloud sets the name, the colour and the logo. On top of that, thematiq lays your organisation\'s house style over the whole workplace: tokens, layout, website and the dark variant.'));
 		?>
 	</p>
+	</div>
 </section>
