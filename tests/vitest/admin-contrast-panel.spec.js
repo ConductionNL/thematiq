@@ -146,6 +146,12 @@ describe('Contrast report panel', () => {
 			rows[1].querySelector('.thematiq-contrast-panel__pill--fail')
 				.textContent,
 		).toBe('Too low')
+		for (const verdict of ['pass', 'fail']) {
+			const icon = document.querySelector(
+				`.thematiq-contrast-panel__pill--${verdict} .thematiq-contrast-panel__pill-icon`,
+			)
+			expect(icon.getAttribute('aria-hidden')).toBe('true')
+		}
 		expect(
 			rows[0].querySelector('.thematiq-contrast-panel__example').style
 				.background,
