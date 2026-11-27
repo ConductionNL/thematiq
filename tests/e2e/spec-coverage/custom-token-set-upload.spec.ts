@@ -28,17 +28,18 @@ async function openRowMenu(row: Locator): Promise<void> {
 }
 
 /**
- * Delete a custom set from its row menu and confirm. Delete opens an
- * OC.dialogs.confirm, an @nextcloud/dialogs Vue dialog whose confirm button
- * is "Yes", found by accessible name: its primary-variant class differs
- * between @nextcloud/vue 8 and 9 (run 30889958278).
+ * Delete a custom set from its row menu and confirm. Delete opens thematiq's
+ * admin dialog as TqEigenSets draws it: eyebrow "Own token sets", the set in
+ * the title and a red "Delete token set".
  */
 async function deleteRow(page: Page, row: Locator): Promise<void> {
 	await openRowMenu(row)
 	await row.getByRole('button', { name: 'Delete', exact: true }).click()
-	const dialog = page.locator('.dialog__modal[role="dialog"]')
+	const dialog = page.locator('#thematiq-delete-custom-set-dialog')
 	await expect(dialog).toBeVisible({ timeout: 10000 })
-	const confirmBtn = dialog.getByRole('button', { name: 'Yes', exact: true })
+	await expect(dialog).toContainText('Own token sets')
+	await expect(dialog.getByRole('heading')).toContainText('Delete custom token set')
+	const confirmBtn = dialog.getByRole('button', { name: 'Delete token set', exact: true })
 	await expect(confirmBtn).toBeVisible({ timeout: 10000 })
 	await confirmBtn.click()
 	await expect(row).toBeHidden({ timeout: 10000 })

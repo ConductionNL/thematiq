@@ -2071,7 +2071,10 @@ OC.L10N.register(
         "Contains": "Contains",
         "Filter by {column}": "Filter by {column}",
         "Filter by {column} (active)": "Filter by {column} (active)",
-        "No values to filter on": "No values to filter on"
+        "No values to filter on": "No values to filter on",
+        "Delete custom token set {name}?": "Delete custom token set {name}?",
+        "Delete token set": "Delete token set",
+        "If it is active at that moment, the theme falls back to Nextcloud.": "If it is active at that moment, the theme falls back to Nextcloud."
     },
     "nplurals=2; plural=(n != 1);"
 )

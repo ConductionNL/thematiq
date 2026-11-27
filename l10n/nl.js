@@ -2065,7 +2065,10 @@ OC.L10N.register(
         "Contains": "Bevat",
         "Filter by {column}": "Filteren op {column}",
         "Filter by {column} (active)": "Filteren op {column} (actief)",
-        "No values to filter on": "Geen waarden om op te filteren"
+        "No values to filter on": "Geen waarden om op te filteren",
+        "Delete custom token set {name}?": "Eigen tokenset {name} verwijderen?",
+        "Delete token set": "Tokenset verwijderen",
+        "If it is active at that moment, the theme falls back to Nextcloud.": "Is hij op dat moment actief, dan valt het thema terug op Nextcloud."
     },
     "nplurals=2; plural=(n != 1);"
 )
