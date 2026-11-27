@@ -263,7 +263,7 @@ class InternalScopesServiceTest extends TestCase {
 	private function cachedService(CssParserService $parser = new CssParserService()): InternalScopesService {
 		$cache = new ArrayCache();
 		$factory = $this->createMock(originalClassName: ICacheFactory::class);
-		$factory->expects($this->once())->method('createLocal')->with(InternalScopesService::CACHE_PREFIX)->willReturn($cache);
+		$factory->expects($this->once())->method('createLocal')->with(InternalScopesService::CACHE_PREFIX)->willReturn(value: $cache);
 		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('getAppPath')->willReturn($this->dir . '/app');
 		$locator = new RuntimeFileLocator(
@@ -282,8 +282,8 @@ class InternalScopesServiceTest extends TestCase {
 	 */
 	public function testACacheBuildsTheSameInputsOnce(): void {
 		$this->store->write('css/tokens/custom-test.css', ":root {\n\t--nldesign-nc-dp-hover-color: #e8eef5;\n}\n");
-		$parser = $this->getMockBuilder(className: CssParserService::class)->onlyMethods(['parseRootBlock'])->getMock();
-		$parser->expects($this->exactly(2))->method('parseRootBlock')->willReturnCallback(
+		$parser = $this->getMockBuilder(className: CssParserService::class)->onlyMethods(methods: ['parseRootBlock'])->getMock();
+		$parser->expects($this->exactly(count: 2))->method('parseRootBlock')->willReturnCallback(
 			static fn (string $css): array => (new CssParserService())->parseRootBlock(css: $css)
 		);
 		$service = $this->cachedService(parser: $parser);

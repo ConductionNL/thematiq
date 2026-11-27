@@ -518,12 +518,11 @@ class TokenRegistry implements TokenRegistryInterface {
 	 * @spec openspec/specs/component-tokens/spec.md
 	 */
 	public static function internalTokensStamp(): string {
-		$stat = @stat(self::INTERNAL_TOKENS_PATH);
-		if ($stat === false) {
+		if (is_file(self::INTERNAL_TOKENS_PATH) === false) {
 			return 'missing';
 		}
 
-		return $stat['mtime'] . ':' . $stat['size'];
+		return filemtime(self::INTERNAL_TOKENS_PATH) . ':' . filesize(self::INTERNAL_TOKENS_PATH);
 	}//end internalTokensStamp()
 
 	/**
