@@ -63,7 +63,7 @@ dialog.thematiq-admin-dialog::backdrop {
 	color: var(--color-main-text);
 }
 
-.thematiq-admin-dialog .thematiq-admin-dialog__close {
+.thematiq-admin-dialog.thematiq-admin-dialog .thematiq-admin-dialog__close {
 	display: inline-flex;
 	flex: none;
 	align-items: center;
@@ -82,8 +82,8 @@ dialog.thematiq-admin-dialog::backdrop {
 	cursor: pointer;
 }
 
-.thematiq-admin-dialog .thematiq-admin-dialog__close:hover,
-.thematiq-admin-dialog .thematiq-admin-dialog__close:focus-visible {
+.thematiq-admin-dialog.thematiq-admin-dialog .thematiq-admin-dialog__close:hover,
+.thematiq-admin-dialog.thematiq-admin-dialog .thematiq-admin-dialog__close:focus-visible {
 	background: var(--color-background-hover);
 }
 
@@ -176,7 +176,14 @@ dialog.thematiq-admin-dialog::backdrop {
 	border-top: 1px solid var(--color-background-dark);
 }
 
-.thematiq-admin-dialog .thematiq-admin-dialog__button {
+/* The class is doubled on purpose. The nldesign layer puts the set's button
+ * weight, corner and border on every plain <button> with
+ * `button:not(.button-vue, ...):not(.action-button, ...)` (0,2,1), which beat
+ * this rule at (0,2,0): the dialog buttons TqTokenToevoegen, TqTerugNaarNextcloud
+ * and the other dialog boards draw at 600 rendered at the set's 700, and the
+ * secondary border lost its field colour. (0,3,0) keeps the board's values; the
+ * variants below carry the same prefix so they still outrank this base. */
+.thematiq-admin-dialog.thematiq-admin-dialog .thematiq-admin-dialog__button {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -185,7 +192,9 @@ dialog.thematiq-admin-dialog::backdrop {
 	min-height: 40px;
 	margin: 0 !important;
 	padding: 0 14px !important;
-	border: 1px solid var(--color-border-maxcontrast);
+	/* The field colour the boards draw (#828a95 under Zuiddrecht); a set may
+	 * raise --color-border-maxcontrast to its text colour for inputs. */
+	border: 1px solid var(--nldesign-color-border-dark, var(--color-border-maxcontrast));
 	border-radius: 8px;
 	background: var(--color-main-background);
 	color: var(--color-main-text);
@@ -195,24 +204,24 @@ dialog.thematiq-admin-dialog::backdrop {
 	cursor: pointer;
 }
 
-.thematiq-admin-dialog .thematiq-admin-dialog__button--secondary:focus {
+.thematiq-admin-dialog.thematiq-admin-dialog .thematiq-admin-dialog__button--secondary:focus {
 	background: var(--color-main-background);
 }
 
-.thematiq-admin-dialog .thematiq-admin-dialog__button--primary {
+.thematiq-admin-dialog.thematiq-admin-dialog .thematiq-admin-dialog__button--primary {
 	padding: 0 18px !important;
 	border: 0;
 	background: var(--color-primary-element);
 	color: var(--color-primary-element-text);
 }
 
-.thematiq-admin-dialog .thematiq-admin-dialog__button--danger {
+.thematiq-admin-dialog.thematiq-admin-dialog .thematiq-admin-dialog__button--danger {
 	border: 0;
 	background: var(--color-error-text, var(--color-error));
 	color: var(--color-main-background);
 }
 
-.thematiq-admin-dialog .thematiq-admin-dialog__button--link {
+.thematiq-admin-dialog.thematiq-admin-dialog .thematiq-admin-dialog__button--link {
 	margin-inline-end: auto !important;
 	gap: 6px;
 	padding: 0 4px !important;
@@ -221,7 +230,7 @@ dialog.thematiq-admin-dialog::backdrop {
 	color: var(--nldesign-color-link, var(--color-primary-element));
 }
 
-.thematiq-admin-dialog .thematiq-admin-dialog__button:disabled {
+.thematiq-admin-dialog.thematiq-admin-dialog .thematiq-admin-dialog__button:disabled {
 	opacity: 0.6;
 	cursor: default;
 }
