@@ -15,14 +15,15 @@ apps-menu-walkthrough built.
 - [ ] 1.3 `lib/Controller/SetupController.php` and the routes `GET /api/setup/status`,
       `POST /api/setup/config`, `POST /api/setup/action/{actionId}`; admin only (no
       `#[NoAdminRequired]`), CSRF on the POSTs; config through `LayoutOptionValues` and
-      `AppMenuSettings::saveDefaults()`, whole patch refused with 400 naming the key; 404 for an unknown
+      `AppMenuSettings::saveDefaults()`, `header_style` through `LayoutOptionValues`, whole patch refused with 400 naming the key; 404 for an unknown
       action; 423 under a configuration source through the existing middleware. REQ-TQFS-004,
       REQ-TQFS-008, REQ-TQFS-009.
-- [ ] 1.4 PHPUnit `tests/Unit/Service/SetupStatusServiceTest.php` (configured by an earlier version, a
-      run in progress stays due, a configuration source counts as configured, each step's done),
-      `tests/Unit/Service/SetupActionsTest.php` (the licence gate, the sync parts, skip changes nothing),
+- [ ] 1.4 PHPUnit `tests/Unit/Service/SetupStatusServiceTest.php` (configured by an earlier version, an
+      upgrade with nothing stored is due, a run in progress stays due, a configuration source counts as configured, each step's done),
+      `tests/Unit/Service/SetupActionsTest.php` (the licence gate, the sync parts, skip changes nothing and keeps what earlier steps saved),
       `tests/Unit/Controller/SetupControllerTest.php` (a wrong value refuses the patch, an unknown action
-      is not found, the menu switch stores the style).
+      is not found, the menu switch stores the style, and turning it on stores `header_style` workplace
+      when the set does not draw the workplace top bar).
 - [ ] 1.5 Hydra gates on the new routes: route-auth, semantic-auth, no-admin-idor, route-reachability.
 
 ## 2. Opening the wizard on any page
@@ -33,7 +34,8 @@ apps-menu-walkthrough built.
 - [ ] 2.2 `js/setup-wizard-loader.js`: add `js/vendor/setupWizard.js` once the page is idle; wait while
       Nextcloud's first-run wizard is open. REQ-TQFS-001.
 - [ ] 2.3 PHPUnit `tests/Unit/Listener/SetupWizardListenerTest.php` (only an admin's user page gets the
-      wizard; nothing once set up; nothing for a non-admin, guest or public page).
+      wizard; nothing once set up; nothing for a non-admin, a delegated theming administrator, a guest
+      or a public page).
 
 ## 3. The wizard
 
@@ -46,8 +48,9 @@ apps-menu-walkthrough built.
       statement, confirm then apply, the refusal in the step. REQ-TQFS-006.
 - [ ] 3.4 The Nextcloud theming step: the plan with current and new values, the part checkboxes, Keep
       Nextcloud's own, skipped for Nextcloud. REQ-TQFS-007.
-- [ ] 3.5 The login page and apps menu steps as config fields with their previews. REQ-TQFS-008,
-      REQ-TQFS-009.
+- [ ] 3.5 The login page and apps menu steps as config fields with their previews; turning the menu on
+      with a set that does not draw the workplace top bar says so and also stores `header_style`
+      workplace. REQ-TQFS-008, REQ-TQFS-009.
 - [ ] 3.6 The finish step: the summary, Finish, Finish and show me the apps menu (stores the tour
       progress), reload. REQ-TQFS-010.
 - [ ] 3.7 vitest `tests/vitest/setupWizard.spec.js`: Later stores nothing, Skip runs `skip`, the
@@ -69,12 +72,13 @@ apps-menu-walkthrough built.
       back in a `finally`, with `_theme-state` restoring the active set and core theming; withdraw the
       confirmation of `amsterdam` when it is not applied, and restore it after.
 - [ ] 5.2 Walk: the welcome on the dashboard and in Files; a non-admin sees nothing and the page has no
-      `setup_status`; Later and back on the next page; Skip and nothing on the next page; a configured
+      `setup_status`; Later and back on the next page; Skip and nothing on the next page; Skip on the login
+      step keeps the house style applied earlier; a configured
       instance shows nothing; status is 403 for a non-admin.
 - [ ] 5.3 Full run: choose `amsterdam`, Next disabled until the statement, applied and audited; the
       Nextcloud theming step sets the core primary colour, logo and favicon (`_core-theming.ts`); the
       login step hides the slogan on an anonymous login page; the menu step sets 3 columns seen by a
-      non-admin; Finish and show me the apps menu, then the tour starts on the next menu open.
+      non-admin, and with a set without the workplace top bar it turns that bar on; Finish and show me the apps menu, then the tour starts on the next menu open.
 - [ ] 5.4 Set up again from the version card opens the wizard with the stored set; Later leaves setup
       done.
 

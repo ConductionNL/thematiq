@@ -7,7 +7,7 @@
 While setup is due, thematiq's global script MUST open the welcome screen and setup wizard
 (nextcloud-vue's `CnSetupWizard`, ADR-042) over any Nextcloud user page an administrator opens: the
 dashboard, Files, any app, thematiq's own settings page. It MUST be shown only to members of the `admin`
-group. A page for anyone else, and a guest, public, error or login page, MUST carry neither the
+group; delegated theming administrators and subadmins MUST NOT get it. A page for anyone else, and a guest, public, error or login page, MUST carry neither the
 `setup_status` initial state nor the wizard's script. The wizard MUST NOT open while Nextcloud's own
 first-run wizard is open; it opens once that one is closed.
 
@@ -26,6 +26,12 @@ first-run wizard is open; it opens once that one is closed.
 - WHEN a user who is not an administrator opens the dashboard
 - THEN no wizard MUST open
 - AND the page MUST NOT carry the `setup_status` initial state or load the wizard's script
+
+#### Scenario: A delegated theming administrator does not get it
+@e2e exclude needs a delegation set up on the shared instance; proven by tests/Unit/Listener/SetupWizardListenerTest.php (testADelegatedAdministratorGetsNoWizard)
+- GIVEN setup is due and a user who is not in the `admin` group has delegated access to the Theming settings
+- WHEN that user opens the dashboard
+- THEN no wizard MUST open and the page MUST NOT carry the wizard's state or script
 
 #### Scenario: A public share page carries nothing
 @e2e exclude a public page has no signed-in user, so the listener returns before any work; proven by tests/Unit/Listener/SetupWizardListenerTest.php (testOnlyAnAdminsUserPageGetsTheWizard)
@@ -49,6 +55,12 @@ upgrade.
 - WHEN an administrator opens the dashboard
 - THEN no wizard MUST open
 
+#### Scenario: An upgraded instance that was never configured gets the wizard
+@e2e exclude an upgrade cannot be staged on the test instance; the same state is the fresh-instance scenario above, and the derivation is proven by tests/Unit/Service/SetupStatusServiceTest.php (testAnUpgradeWithNothingStoredIsDue)
+- GIVEN an instance upgraded from an earlier thematiq with none of the configuration values stored and no `setup.*` value
+- WHEN an administrator opens the dashboard
+- THEN the welcome screen MUST open
+
 #### Scenario: A saved step does not end the run
 @e2e exclude covered end to end by "Later brings it back on the next page" after a saved step; the derivation itself by tests/Unit/Service/SetupStatusServiceTest.php (testARunInProgressStaysDue)
 - GIVEN an administrator applied a house style in the wizard and closed it with Later
@@ -66,7 +78,8 @@ upgrade.
 Every step MUST offer Later, and the dialog's close button and Escape MUST act as Later: the wizard
 closes and nothing is stored, so it opens again on the next page load while setup is due. The welcome
 step and every step after it MUST offer "Skip, keep Nextcloud as it is", which MUST run the `skip`
-action: store `setup.skipped` with the administrator and the time and change nothing else.
+action: store `setup.skipped` with the administrator and the time and change nothing else. Values that
+earlier steps of the same run saved MUST stay saved.
 
 #### Scenario: Later brings it back on the next page
 - GIVEN the welcome screen is open
@@ -81,13 +94,19 @@ action: store `setup.skipped` with the administrator and the time and change not
 - THEN the wizard MUST close and no token set, login or menu value MUST be stored
 - AND on the next page no wizard MUST open
 
+#### Scenario: Skip on a later step keeps what was saved
+- GIVEN the administrator applied a house style in the wizard and is on the login page step
+- WHEN they press "Skip, keep Nextcloud as it is"
+- THEN the wizard MUST close and the house style MUST stay the active token set
+- AND on the next page no wizard MUST open
+
 ### Requirement: The setup contract is for administrators only (REQ-TQFS-004)
 
 thematiq MUST serve `GET /apps/thematiq/api/setup/status`, `POST /apps/thematiq/api/setup/config` and
 `POST /apps/thematiq/api/setup/action/{actionId}` to administrators only, refused by Nextcloud's
 middleware with 403 before the controller runs for anyone else, with CSRF on both POSTs. Status MUST
 answer `{version, completed, skipped, configured, inProgress, steps}`, each step `{done, detail}`.
-Config MUST take only `hide_slogan`, `login_watermark`, `brand_stripe_placement` and `menu`, check
+Config MUST take only `hide_slogan`, `login_watermark`, `brand_stripe_placement`, `header_style` and `menu`, check
 each value with the rules of the settings page and of `POST /app-menu/defaults`, and refuse the whole
 patch with 400 naming the key when one is unknown or wrong, storing nothing. Actions MUST be
 `apply-house-style`, `apply-nextcloud-theming`, `skip` and `complete`; any other id MUST answer 404.
@@ -192,7 +211,16 @@ The apps menu step MUST have a switch "Use the workplace apps menu", stored as t
 `menu.style` default (workplace on, classic off), and, while it is on, the defaults for columns, rows
 above More, the Create section and the external apps with the Menu settings grid preview. They MUST be
 stored as the administrator's `menu.<key>` defaults through `POST /api/setup/config`, checked as
-`POST /app-menu/defaults` checks them.
+`POST /app-menu/defaults` checks them. The workplace apps menu shows only in the workplace top bar: when
+the administrator turns the menu on and the chosen house style does not draw the workplace top bar, the
+step MUST say that the workplace top bar comes with the menu, and Next MUST also store `header_style`
+workplace. With the menu off, `header_style` MUST be left as it is.
+
+#### Scenario: Turning the menu on brings the workplace top bar
+- GIVEN the administrator chose a house style that does not draw the workplace top bar
+- WHEN they keep "Use the workplace apps menu" on in the apps menu step and press Next
+- THEN `header_style` MUST be workplace
+- AND a user who is not an administrator MUST see the workplace top bar with the workplace apps menu
 
 #### Scenario: The menu defaults reach everyone
 - GIVEN the apps menu step is open

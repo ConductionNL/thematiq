@@ -62,8 +62,8 @@ already treats a 403 on status as "set up" for the caller.
 - `GET /apps/thematiq/api/setup/status` answers `{version, completed, skipped, configured, inProgress,
   steps: {<id>: {done, detail}}}`. `detail` of `house-style` names the stored set.
 - `POST /apps/thematiq/api/setup/config` takes `{hide_slogan, login_watermark, brand_stripe_placement,
-  menu: {...}}`. Login keys go through `LayoutOptionValues`; `menu` goes through
-  `AppMenuSettings::saveDefaults()`, the same check as `POST /app-menu/defaults`. An unknown key or a
+  header_style, menu: {...}}`. Login keys and `header_style` go through `LayoutOptionValues`; `menu`
+  goes through `AppMenuSettings::saveDefaults()`, the same check as `POST /app-menu/defaults`. An unknown key or a
   wrong value refuses the whole patch with 400 naming it, and nothing is stored.
 - `POST /apps/thematiq/api/setup/action/{actionId}`:
   - `apply-house-style` `{tokenSet}`: `ActiveTokenSetService::switchTo()`, so the licence gate, the audit
@@ -73,7 +73,8 @@ already treats a 403 on status as "set up" for the caller.
     apply, through the same service as `occ thematiq:theme:set --sync-core` and the theming sync
     dialog. A part the set does not bring is reported as skipped. All false records the choice to keep
     Nextcloud's own and changes nothing.
-  - `skip`: stores `setup.skipped` (who, when) and changes nothing else.
+  - `skip`: stores `setup.skipped` (who, when) and changes nothing else. What earlier steps of the run
+    saved stays saved (Ruben, 27 November 2026).
   - `complete`: stores `setup.completed` (who, when).
   - any other id answers 404.
 
@@ -103,7 +104,11 @@ house style.
    stripe shows, with a preview of the login card. Writes through `POST /api/setup/config`.
 5. **Apps menu** (`config-fields`): a switch "Use the workplace apps menu" (`menu.style` workplace or
    classic) and, when on, the defaults columns, rows above More, the Create section and external apps,
-   with the grid preview of Menu settings. Writes the administrator's `menu.<key>` defaults.
+   with the grid preview of Menu settings. Writes the administrator's `menu.<key>` defaults. The
+   workplace apps menu only shows in the workplace top bar. When the administrator turns the menu on
+   and the chosen house style does not draw that bar, the step says the workplace top bar comes with
+   it, and Next also stores `header_style` workplace (Ruben, 27 November 2026). With the menu off,
+   `header_style` is left as it is.
 6. **Finish** (`summary`): what was set, and two buttons: "Finish and show me the apps menu" (only when
    the workplace menu is on) and "Finish". Both run `complete` and reload the page so the new house
    style draws. The first also stores the apps menu tour's progress at its first step for this
@@ -111,7 +116,8 @@ house style.
    apps-menu-walkthrough, REQ-TQWT-002).
 
 Later is the dialog's close button and a Later button in the footer of every step; Skip is on the
-welcome step and in the footer of every step after it. The walkthrough never starts while the wizard is
+welcome step and in the footer of every step after it. Skip on a later step keeps what earlier steps
+saved; it only ends the run. The walkthrough never starts while the wizard is
 open (REQ-TQWT-002).
 
 ## Set up again
@@ -128,11 +134,12 @@ Set up again simply opens the pending wizard.
 
 - **Non-admins**: never see the wizard, never load its script or state; the setup routes answer 403.
 - **Delegated theming administrators** (`IDelegatedSettings`) and subadmins: treated as non-admins
-  for the wizard; they keep their delegated settings pages.
+  for the wizard; they keep their delegated settings pages. Only the `admin` group gets the wizard
+  (Ruben, 27 November 2026).
 - **Upgrade from a configured earlier version**: configured, so set up; nothing shows, nothing is
   migrated. The version card reads "Set up" without a date, because no run recorded one.
 - **Upgrade from an earlier version that was never configured**: not configured, so the wizard opens
-  on the administrator's next page. See the open question in the pull request.
+  on the administrator's next page (Ruben, 27 November 2026).
 - **Restricted sets**: the wizard applies a set only through the same gate. A confirmation withdrawn
   by another administrator between the tick and Next gives the 403 in the step, which stays open
   and asks again.
@@ -148,6 +155,12 @@ Set up again simply opens the pending wizard.
 - **Narrow screens**: the wizard is a full-screen dialog on a phone.
 - **Accessibility**: `CnSetupWizard`'s dialog semantics, focus trap and step heading; Later and Skip
   are buttons with their full text; the licence statement is a labelled checkbox.
+
+## Left to the boards
+
+The wording of the version card's setup states and the place of the apps menu tour entry in the user
+menu (change apps-menu-walkthrough) follow the boards (Ruben, 27 November 2026). The states above are a
+draft.
 
 ## Copy (draft until the boards land)
 
