@@ -170,10 +170,10 @@ test.describe('the apps menu walkthrough', () => {
 		test.skip(all <= fold, `this instance shows ${all} apps; the More step needs more than ${fold} (task 4.2)`)
 
 		await expect(card(page)).toBeVisible({ timeout: 15_000 })
-		const total = settings.showCreateActions ? 7 : 6
+		const total = settings.showCreateRow ? 7 : 6
 		await expect(counter(page)).toHaveText(`Step 1 of ${total}`)
 		await expect(title(page)).toHaveText('Open the apps menu')
-		const shown = STEPS.filter((id) => id !== 'create' || settings.showCreateActions)
+		const shown = STEPS.filter((id) => id !== 'create' || settings.showCreateRow)
 		for (let i = 0; i < shown.length; i++) {
 			const id = shown[i]
 			await expect(title(page)).toHaveText(TITLES[id])
@@ -343,7 +343,7 @@ test.describe('the apps menu walkthrough', () => {
 		const before = (await api(page, 'GET', SETTINGS)).json
 		const defaults = before.defaults || before.effective
 		try {
-			await api(page, 'POST', '/index.php/apps/thematiq/app-menu/defaults', { settings: { ...defaults, showCreateActions: false } })
+			await api(page, 'POST', '/index.php/apps/thematiq/app-menu/defaults', { settings: { ...defaults, showCreateRow: false } })
 			await page.reload({ waitUntil: 'domcontentloaded' })
 			await openWithTour(page)
 			const total = Number(((await counter(page).textContent()) || '').replace(/^Step 1 of /, ''))

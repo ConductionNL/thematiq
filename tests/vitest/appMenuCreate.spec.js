@@ -299,27 +299,45 @@ describe('the title, the chevron and the Create row', () => {
 		document.removeEventListener('thematiq:create-actions', announced)
 	})
 
-	it('shares nothing when the create actions are switched off', async () => {
-		openMenu()
-		installState({
-			labels: LABELS,
-			order: [],
-			settings: { showCreateActions: false },
-		})
-		await loadScript()
-
-		expect(await window.thematiqCreateActions.list()).toEqual([])
-	})
-
-	it('draws no row and asks nothing when the create actions are switched off', async () => {
+	// quick-actions-toggles: the Create button and the Create row switch apart.
+	it('shares the Create actions with the row switched off, and draws no row', async () => {
 		const grid = openMenu()
 		installState({
 			labels: LABELS,
 			order: [],
-			settings: { showCreateActions: false },
+			settings: { showCreateRow: false, showCreateButton: true },
 		})
 		await loadScript()
 
+		expect(grid.querySelector('[data-thematiq-row="create"]')).toBeNull()
+		expect(grid.querySelector('[data-thematiq-row="create-title"]')).toBeNull()
+		expect(window.thematiqCreateActions.button).toBe(true)
+		const entries = await window.thematiqCreateActions.list()
+		expect(entries.length).toBeGreaterThan(0)
+	})
+
+	it('shares the Create actions for the row with the button switched off', async () => {
+		openMenu()
+		installState({
+			labels: LABELS,
+			order: [],
+			settings: { showCreateRow: true, showCreateButton: false },
+		})
+		await loadScript()
+
+		expect(window.thematiqCreateActions.button).toBe(false)
+	})
+
+	it('shares nothing, draws no row and asks nothing with both switched off', async () => {
+		const grid = openMenu()
+		installState({
+			labels: LABELS,
+			order: [],
+			settings: { showCreateRow: false, showCreateButton: false },
+		})
+		await loadScript()
+
+		expect(window.thematiqCreateActions).toBeUndefined()
 		expect(grid.querySelector('[data-thematiq-row="create"]')).toBeNull()
 		expect(requests).toHaveLength(0)
 	})

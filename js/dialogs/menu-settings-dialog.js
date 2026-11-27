@@ -16,11 +16,21 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
  * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
+ * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
  */
 ;(function thematiqMenuSettingsDialog() {
 	var SVG_NS = 'http://www.w3.org/2000/svg'
 	var BLOCK = 'thematiq-menu-settings'
-	var PERSONAL = ['order', 'pinned', 'hidden', 'externalApps']
+	// The keys a person sets for themselves (AppMenuSettings::PERSONAL): the
+	// two create switches stay editable in Only for me (quick-actions-toggles).
+	var PERSONAL = [
+		'order',
+		'pinned',
+		'hidden',
+		'externalApps',
+		'showCreateButton',
+		'showCreateRow',
+	]
 	var MAX_PINNED = 5
 	var RANGES = { columns: [2, 5], rows: [1, 12], rowsAboveFold: [1, 12] }
 	var ICONS = {
@@ -1203,8 +1213,11 @@
 					],
 				),
 			)
+			// The create switches are a person's own (REQ-TQQT-001); the
+			// external apps switch is the administrator's.
 			var toggles = [
-				['showCreateActions', 'showCreateActionsHelp'],
+				['showCreateButton', 'showCreateButtonHelp'],
+				['showCreateRow', 'showCreateRowHelp'],
 				['showExternalApps', 'showExternalAppsHelp'],
 			]
 			panel.appendChild(
@@ -1218,7 +1231,7 @@
 						h('h3', { id: BLOCK + '-sections', text: t('sections') }),
 					].concat(
 						toggles.map(function (item) {
-							return toggleRow(item[0], item[1], locked)
+							return toggleRow(item[0], item[1], !editable(item[0]))
 						}),
 					),
 				),

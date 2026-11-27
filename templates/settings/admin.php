@@ -543,6 +543,29 @@ if ($_['mockUi'] === true) {
 					<div data-thematiq-slot="thematiq-navigation-active-style"></div>
 					<div data-thematiq-slot="thematiq-navigation-width-input"></div>
 					<div data-thematiq-slot="nldesign-show-menu-labels"></div>
+					<!-- The quick actions for everyone (quick-actions-toggles REQ-TQQT-003, board TqLayout):
+					     saved at once by js/admin-layout-panel.js; people can change both in Menu settings. -->
+					<?php $classicMenu = ($_['menuStyle'] === 'classic'); ?>
+					<div class="thematiq-create-switches"<?php if ($classicMenu === true): ?> data-classic-menu<?php endif; ?>>
+						<?php foreach (['showCreateButton' => [$l->t('Create button in the top bar'), $l->t('The plus button before the notifications, on every page.')], 'showCreateRow' => [$l->t('Create row in the apps menu'), $l->t('The Create row at the bottom of the menu.')]] as $menuKey => $menuText): ?>
+						<div class="nldesign-option">
+							<input type="checkbox" class="checkbox" role="switch"
+								   id="thematiq-<?php p($menuKey); ?>"
+								   data-menu-key="<?php p($menuKey); ?>"
+								   aria-describedby="thematiq-<?php p($menuKey); ?>-help<?php if ($classicMenu === true): ?> thematiq-create-switches-classic<?php endif; ?>"
+								   <?php if ($_[$menuKey] === true): ?>checked<?php endif; ?>
+								   <?php if ($classicMenu === true): ?>disabled<?php endif; ?>>
+							<label for="thematiq-<?php p($menuKey); ?>"><?php p($menuText[0]); ?></label>
+							<p class="settings-hint" id="thematiq-<?php p($menuKey); ?>-help"><?php p($menuText[1]); ?></p>
+						</div>
+						<?php endforeach; ?>
+						<p class="settings-hint thematiq-create-switches__note"><?php p($l->t('People can change both for themselves in Menu settings.')); ?></p>
+						<?php if ($classicMenu === true): ?>
+						<p class="settings-hint" id="thematiq-create-switches-classic"><?php p($l->t('Only with the workplace menu.')); ?></p>
+						<?php endif; ?>
+						<p class="hidden-visually thematiq-create-switches__live" role="status" aria-live="polite"></p>
+						<p class="thematiq-create-switches__alert" role="alert" hidden></p>
+					</div>
 				</section>
 				<section class="thematiq-card thematiq-panel__card">
 					<h2 class="thematiq-panel__card-title"><?php p($l->t('Brand stripe and sign-in page')); ?></h2>

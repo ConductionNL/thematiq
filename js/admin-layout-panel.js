@@ -9,6 +9,7 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
  * @spec openspec/changes/admin-pages-as-the-tq-boards/specs/admin-settings/spec.md
+ * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
  */
 ;(function thematiqLayoutPanel() {
 	/**
@@ -41,6 +42,8 @@
 		{ id: 'thematiq-login-watermark', key: 'login_watermark', fallback: '1' },
 	]
 	var CHECKS = [
+		'thematiq-showCreateButton',
+		'thematiq-showCreateRow',
 		'nldesign-show-menu-labels',
 		'nldesign-hide-slogan',
 		'nldesign-primary-drives-components',
@@ -619,6 +622,70 @@
 		return [button]
 	}
 
+	/**
+	 * The two create switches of the Menu card, the administrator's values
+	 * for everyone: a toggle saves only its own key at once through the menu
+	 * defaults, says Saved in the polite live region, and on a failure says
+	 * why in an alert and sets the switch back. The template disables both
+	 * with the classic menu.
+	 *
+	 * @return {void}
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
+	 */
+	function wireCreateSwitches() {
+		var box = document.querySelector('.thematiq-create-switches')
+		if (box === null) {
+			return
+		}
+		var live = box.querySelector('.thematiq-create-switches__live')
+		var alertEl = box.querySelector('.thematiq-create-switches__alert')
+		Array.prototype.forEach.call(
+			box.querySelectorAll('input[data-menu-key]'),
+			function (input) {
+				input.addEventListener('change', function () {
+					var key = input.dataset.menuKey
+					var on = input.checked === true
+					var settings = {}
+					settings[key] = on
+					alertEl.hidden = true
+					alertEl.textContent = ''
+					live.textContent = ''
+					var token =
+						window.OC && typeof window.OC.requestToken === 'string'
+							? window.OC.requestToken
+							: ''
+					var url =
+						window.OC && typeof window.OC.generateUrl === 'function'
+							? window.OC.generateUrl('/apps/thematiq/app-menu/defaults')
+							: '/index.php/apps/thematiq/app-menu/defaults'
+					fetch(url, {
+						method: 'POST',
+						headers: {
+							requesttoken: token,
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({ settings: settings }),
+					})
+						.then(function (response) {
+							if (!response.ok) {
+								throw new Error(String(response.status))
+							}
+							live.textContent = tr('Saved')
+						})
+						.catch(function (error) {
+							input.checked = !on
+							alertEl.textContent = tr(
+								'The setting could not be saved: {reason}',
+								{ reason: error && error.message ? error.message : '' },
+							)
+							alertEl.hidden = false
+						})
+				})
+			},
+		)
+	}
+
+	wireCreateSwitches()
 	document.addEventListener('change', remember)
 	document.addEventListener('thematiq:theme-applied', function () {
 		sayWhatTheThemeSays()
