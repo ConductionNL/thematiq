@@ -111,6 +111,7 @@ test.describe('the menu shape on every icon of the menu and the bar', () => {
 		expect(await hoverRadius(page, plus(page))).toBe(square)
 	})
 
+	// @e2e apps-menu-settings::the-contacts-menu-shows-its-hover
 	// The contacts menu ships without a hover background in Nextcloud; the
 	// bar gives it the one its other icon buttons have.
 	test('the contacts menu shows a hover background', async ({ page }) => {
