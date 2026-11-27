@@ -1667,13 +1667,13 @@ if ($_['mockUi'] === true) {
 					<h2 id="thematiq-email-example-title" class="thematiq-panel__card-title"><?php p($l->t('Example: email')); ?></h2>
 					<div class="thematiq-email-panel__mail" role="img" aria-label="<?php p($l->t('Example of a system mail in the house style')); ?>">
 						<div class="thematiq-email-panel__subject"><?php p($l->t('Subject: Pieter Jansen shared "Raadsvoorstel Havenpark" with you')); ?></div>
-						<div class="thematiq-email-panel__bar"></div>
 						<div class="thematiq-email-panel__body">
+							<span class="thematiq-email-panel__logo"></span>
 							<strong><?php p($l->t('A file was shared with you')); ?></strong>
 							<span><?php p($l->t('Pieter Jansen shared Raadsvoorstel Havenpark.pdf with you.')); ?></span>
 							<span class="thematiq-email-panel__button"><?php p($l->t('Open')); ?></span>
 						</div>
-						<div class="thematiq-email-panel__foot"><span class="thematiq-email-panel__org"></span> · <span><?php p($l->t('Accessibility')); ?></span> <span><?php p($l->t('Privacy')); ?></span></div>
+						<div class="thematiq-email-panel__foot"><span class="thematiq-email-panel__org"></span><br><span class="thematiq-email-panel__link"><?php p($l->t('Accessibility')); ?></span> · <span class="thematiq-email-panel__link"><?php p($l->t('Privacy')); ?></span></div>
 					</div>
 				</section>
 				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-email-letter-title">
