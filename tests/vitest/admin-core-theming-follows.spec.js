@@ -92,7 +92,6 @@ async function loadAdminScript() {
 	await flush()
 }
 
-
 function buildDom(follows) {
 	installInitialState({
 		tokenSets: [
@@ -129,12 +128,26 @@ async function boot(follows, tokenSetAnswer, postLog) {
 			// No apply-diff preview: saveTokenSet() runs directly, and the theming sync
 			// dialog is the step after it.
 			['tokenset-preview', { error: 'not applicable' }],
-			['tokenset-stylesheets', { tokenSet: 'epe', designSystem: 'nldesign', layers: [] }],
+			[
+				'tokenset-stylesheets',
+				{ tokenSet: 'epe', designSystem: 'nldesign', layers: [] },
+			],
 			['/settings/overrides', { overrides: {}, status: 'ok' }],
-			['/settings/core-theming-follows', { status: 'ok', follows: true, applied: ['primary_color'] }],
+			[
+				'/settings/core-theming-follows',
+				{ status: 'ok', follows: true, applied: ['primary_color'] },
+			],
 			['/settings/tokenset', tokenSetAnswer],
 			['/settings/theming', { status: 'ok' }, 'POST'],
-			['/settings/theming', { primary_color: '#aaaaaa', background_color: '#bbbbbb', has_custom_logo: false, has_custom_background: false }],
+			[
+				'/settings/theming',
+				{
+					primary_color: '#aaaaaa',
+					background_color: '#bbbbbb',
+					has_custom_logo: false,
+					has_custom_background: false,
+				},
+			],
 		],
 		postLog,
 	)
@@ -163,12 +176,15 @@ describe('admin.js: keep the Nextcloud theme in line with the set', () => {
 		toggle.dispatchEvent(new window.Event('change', { bubbles: true }))
 		await flush()
 
-		const post = posts.find((p) => p.url.indexOf('/settings/core-theming-follows') !== -1)
+		const post = posts.find(
+			(p) => p.url.indexOf('/settings/core-theming-follows') !== -1,
+		)
 		expect(post).toBeDefined()
 		expect(JSON.parse(post.body)).toEqual({ follows: true })
-		expect(document.getElementById('thematiq-core-theming-follows-status').textContent).toContain(
-			'The Nextcloud theme now follows the set',
-		)
+		expect(
+			document.getElementById('thematiq-core-theming-follows-status')
+				.textContent,
+		).toContain('The Nextcloud theme now follows the set')
 	})
 
 	it('opens no theming sync dialog after a change of set while it is on', async () => {
@@ -176,15 +192,22 @@ describe('admin.js: keep the Nextcloud theme in line with the set', () => {
 		await chooseEpe()
 
 		expect(document.getElementById('nldesign-theming-dialog-overlay')).toBeNull()
-		expect(document.getElementById('thematiq-core-theming-follows-status').textContent).toBe(
-			'The Nextcloud theme followed the set.',
-		)
+		expect(
+			document.getElementById('thematiq-core-theming-follows-status')
+				.textContent,
+		).toBe('The Nextcloud theme followed the set.')
 	})
 
 	it('still asks with the theming sync dialog while it is off', async () => {
-		await boot(false, { status: 'ok', tokenSet: 'epe', nextcloudFollowed: false })
+		await boot(false, {
+			status: 'ok',
+			tokenSet: 'epe',
+			nextcloudFollowed: false,
+		})
 		await chooseEpe()
 
-		expect(document.getElementById('nldesign-theming-dialog-overlay')).not.toBeNull()
+		expect(
+			document.getElementById('nldesign-theming-dialog-overlay'),
+		).not.toBeNull()
 	})
 })
