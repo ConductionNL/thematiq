@@ -9684,6 +9684,13 @@
 						'thematiq-contrast-panel__pill thematiq-switches-panel__status thematiq-switches-panel__status--'
 						+ status
 					pill.textContent = statusNames[status] || status
+					if (status === 'failed') {
+						// The board's alert before a failed switch.
+						var mark = document.createElement('span')
+						mark.className = 'thematiq-contrast-panel__pill-icon'
+						mark.setAttribute('aria-hidden', 'true')
+						pill.insertBefore(mark, pill.firstChild)
+					}
 					state.appendChild(pill)
 					if (status === 'failed' && entry.failureReason) {
 						var reason = document.createElement('span')

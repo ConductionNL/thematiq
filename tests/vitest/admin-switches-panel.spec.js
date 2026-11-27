@@ -140,8 +140,14 @@ describe('Scheduled switches panel', () => {
 		expect(mode.classList.contains('thematiq-contrast-panel__pill--pass')).toBe(
 			true,
 		)
+		expect(
+			mode.querySelectorAll('.thematiq-contrast-panel__pill-icon'),
+		).toHaveLength(1)
 		send({ switches: [], status: { cronMode: 'ajax' } })
 		expect(mode.textContent).toBe('AJAX')
+		expect(
+			mode.querySelectorAll('.thematiq-contrast-panel__pill-icon'),
+		).toHaveLength(1)
 		expect(mode.classList.contains('thematiq-contrast-panel__pill--fail')).toBe(
 			true,
 		)
