@@ -145,7 +145,9 @@ body:not(#body-login) #header .unified-search-input__label {
 }
 
 /* The bell and the contacts menu: 44px round buttons with a 22px icon, the
- * bell's unread dot in the accent. */
+ * bell's unread dot in the accent. The bar's icon buttons read
+ * --thematiq-icon-radius, which css/app-menu.css sets for the square menu
+ * shape; without it they keep their round radius. */
 body:not(#body-login) #header .header-end > #notifications {
 	display: flex;
 	align-items: center;
@@ -173,7 +175,29 @@ body:not(#body-login) #header #contactsmenu .header-menu__trigger {
 	inset-inline-start: 0 !important;
 	margin: 0 !important;
 	padding: 0 !important;
-	border-radius: 22px !important;
+	border-radius: var(--thematiq-icon-radius, 22px) !important;
+}
+
+/* Nextcloud draws its header menu triggers without a background of their
+ * own; the bar gives them the hover, focus and open background of its other
+ * icon buttons, and the outline Nextcloud removes. */
+body:not(#body-login) #header #notifications .header-menu__trigger:hover,
+body:not(#body-login) #header #notifications .header-menu__trigger:focus-visible,
+body:not(#body-login) #header #notifications .header-menu__trigger:active,
+body:not(#body-login) #header #notifications .header-menu--opened .header-menu__trigger,
+body:not(#body-login) #header #notifications.header-menu--opened .header-menu__trigger,
+body:not(#body-login) #header #contactsmenu .header-menu__trigger:hover,
+body:not(#body-login) #header #contactsmenu .header-menu__trigger:focus-visible,
+body:not(#body-login) #header #contactsmenu .header-menu__trigger:active,
+body:not(#body-login) #header #contactsmenu .header-menu--opened .header-menu__trigger,
+body:not(#body-login) #header #contactsmenu.header-menu--opened .header-menu__trigger {
+	background-color: var(--color-background-hover) !important;
+}
+
+body:not(#body-login) #header #notifications .header-menu__trigger:focus-visible,
+body:not(#body-login) #header #contactsmenu .header-menu__trigger:focus-visible {
+	outline: 2px solid var(--nldesign-color-primary, var(--color-primary-element)) !important;
+	outline-offset: 2px;
 }
 
 body:not(#body-login) #header .notifications-button__icon {
@@ -347,13 +371,15 @@ body:not(#body-login) #header .thematiq-quick-add__button {
 	margin: 0;
 	padding: 0;
 	border: 0;
-	border-radius: 22px;
+	border-radius: var(--thematiq-icon-radius, 22px);
 	background: transparent;
 	color: var(--color-main-text) !important;
 	cursor: pointer;
 }
 
 body:not(#body-login) #header .thematiq-quick-add__button:hover,
+body:not(#body-login) #header .thematiq-quick-add__button:focus-visible,
+body:not(#body-login) #header .thematiq-quick-add__button:active,
 body:not(#body-login) #header .thematiq-quick-add__button[aria-expanded='true'] {
 	background: var(--color-background-hover);
 }
@@ -415,7 +441,7 @@ body:not(#body-login) #header .thematiq-quick-add__mark {
 	justify-content: center;
 	width: 32px;
 	height: 32px;
-	border-radius: 50%;
+	border-radius: var(--thematiq-icon-radius, 50%);
 	background: var(
 		--nldesign-color-primary-light,
 		var(--color-primary-element-light)
@@ -453,7 +479,7 @@ body:not(#body-login)
 	height: 48px !important;
 	min-height: 48px !important;
 	margin: 0 !important;
-	border-radius: 24px !important;
+	border-radius: var(--thematiq-icon-radius, 24px) !important;
 	opacity: 1;
 	z-index: 1;
 }
