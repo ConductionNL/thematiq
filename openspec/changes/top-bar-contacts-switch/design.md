@@ -1,7 +1,7 @@
 # Design
 
-The boards are werkplek/AppMenuConfiguratie and thematiq/TqLayout, with the switch the board agent adds
-next to the create switches. They are canon; where this design and a board differ, the build follows
+The boards are werkplek/AppMenuConfiguratie and thematiq/TqLayout from ConductionNL/design-system#1220,
+with the switch next to the create switches. They are canon; where this design and a board differ, the build follows
 the board.
 
 ## One personal key
@@ -32,8 +32,14 @@ once, so there is no focusable element and nothing for a screen reader. Because 
 with the page, the button never shows and then disappears. The rules in `css/header-workplace.css` that
 place the bell and the contacts menu keep the bar's spacing with one button fewer, as the board draws.
 
-With the classic menu style `AppMenuService` loads no menu assets for a person, so the switch does
-nothing there, like the Create button.
+## The classic header too
+
+Ruben decided the switch also removes the button from Nextcloud's own header (27 November 2026).
+Nextcloud's header has the same `#contactsmenu`, so the same rule works there. With the classic style
+`AppMenuService` returns early for a person and loads no menu script or menu stylesheet; the
+contacts stylesheet is added before that early return, so it loads in either style. A person cannot
+open Menu settings with the classic style (only an administrator gets the gear there), so in practice
+the administrator's default applies, and a value a person saved earlier still wins.
 
 ## Where the switch is set
 
@@ -42,14 +48,16 @@ nothing there, like the Create button.
    person's key; the rest of the tab stays disabled under the existing note.
 2. **thematiq's admin page, Layout and options, Menu card**, after the create switches, saved at once
    through `POST /apps/thematiq/app-menu/defaults` with only that key, under the same note that people
-   can change these for themselves. Disabled with the classic menu, with "Only with the workplace menu."
+   can change these for themselves. Unlike the create switches it stays enabled with the classic menu,
+   because it works there too.
 
 ## Labels
 
 | key | English | Dutch |
 |---|---|---|
-| `showContactsMenu` | Contacts menu in the top bar | Contactenmenu in de bovenbalk |
-| `showContactsMenuHelp` | The contacts button next to the notifications. Contacts stay in the Contacts app. | De contactenknop naast de meldingen. Contacten blijven in de app Contacten. |
+| `showContactsMenu` | Contacts button in the top bar | Knop Contacten in de bovenbalk |
+| `showContactsMenuHelp` (Menu settings) | The address book next to the notifications. Off: the button disappears, the Contacts app stays in the menu. | Het adresboek naast de meldingen. Uit: de knop verdwijnt, de app Contacten blijft in het menu. |
+| `showContactsMenuDefaultHelp` (admin page) | The address book next to the notifications. This is the default; off leaves the button out, the Contacts app stays in the apps menu. | Het adresboek naast de meldingen. Dit is de standaard; uit laat de knop weg, de app Contacten blijft in het appmenu. |
 
 The note "People can change both for themselves in Menu settings." from quick-actions-toggles becomes
 "People can change these for themselves in Menu settings." / "Iedereen kan deze zelf aanpassen in

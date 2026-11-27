@@ -1,7 +1,7 @@
 # Tasks: apps-menu-show-titles
 
-Nothing here is built until this change and its boards (design-system branch
-`design/thematiq-show-titles`) are merged. Copy, entry size and tooltip placement follow the boards.
+Nothing here is built until this change is merged; its boards are merged in
+ConductionNL/design-system#1220 and #1221; TqSetupAppmenu has a follow-up. Copy, entry size and tooltip placement follow the boards.
 
 ## 1. Server
 
@@ -10,9 +10,26 @@ Nothing here is built until this change and its boards (design-system branch
 - [ ] 1.2 `lib/Service/SetupRequest.php`: `MENU_KEYS` names `titles`. REQ-TQMT-004.
 - [ ] 1.3 `lib/Service/AppMenuDialogLabels.php`: `titles`, `titlesHelp`, `payoffNeedsTitles`,
       `withoutTitles` as in `design.md`; the menu's own labels get what the tooltip needs. REQ-TQMT-004.
-- [ ] 1.4 PHPUnit `AppMenuSettingsTest` (shipped on, the administrator's value, a switch only, reset
-      for everyone), `AppMenuSettingsControllerTest` (a person's `titles` refused with 400),
-      `SetupRequestTest` (the wizard sends `titles`).
+- [ ] 1.4 `lib/Service/AppMenuSettings.php`: `topBarTitles` in `DEFAULTS` (false) and `SWITCHES`, not
+      in `PERSONAL`; read `show_menu_labels` while `menu.topBarTitles` is absent. REQ-TQMT-005.
+- [ ] 1.5 `lib/Repair/MigrateMenuLabelsToTopBarTitles.php`: new, registered in `appinfo/info.xml` after
+      `MigrateAppConfigKeys`; moves `show_menu_labels` once and removes it. menu-labels.
+- [ ] 1.6 `lib/Service/CssInjectionService.php`: `show-menu-labels` only with `topBarTitles` on and no
+      workplace apps menu on the page. menu-labels.
+- [ ] 1.7 Remove `POST /settings/menulabels` (`appinfo/routes.php`, `SettingsController`) and its
+      handler in `js/admin.js`. menu-labels.
+- [ ] 1.8 `lib/Capabilities.php`, `lib/Service/ConfigBundleService.php` (export and import),
+      `lib/Service/ThemeVersionRestoreService.php`: `showMenuLabels` reads and writes
+      `menu.topBarTitles`. REQ-TQMT-005, theming-capability.
+- [ ] 1.9 `lib/Settings/Admin.php`, `templates/settings/admin.php`, `js/admin-layout-panel.js`: "Show
+      titles in the top bar" in the Menu card in place of the older checkbox, saved through the menu
+      defaults. admin-settings.
+- [ ] 1.10 PHPUnit `AppMenuSettingsTest` (both shipped values, the administrator's value, switches
+      only, the `show_menu_labels` fallback, reset for everyone), `AppMenuSettingsControllerTest` (a
+      person's `titles` and `topBarTitles` refused with 400), `SetupRequestTest` (the wizard sends
+      `titles`), new `MigrateMenuLabelsToTopBarTitlesTest`, `CssInjectionServiceTest`,
+      `CapabilitiesTest`, `ConfigBundleServiceTest`, `SettingsControllerEndpointsTest` (the old
+      endpoint gone).
 
 ## 2. The menu
 
@@ -29,20 +46,25 @@ Nothing here is built until this change and its boards (design-system branch
 - [ ] 2.4 `css/app-menu.css`: the icon-only entry as AppMenuZonderTitels draws it, the tooltip in
       Nextcloud tokens (light and dark, contrast at least 4.5:1), placed off the focus ring, and the
       focus ring kept. REQ-TQMT-003.
-- [ ] 2.5 vitest new `appMenuTitles.spec.js` (icon only per section, names and the new tab note,
+- [ ] 2.5 `js/app-menu.js`: pins draw the name next to the icon with `topBarTitles` on (ellipsis, the
+      tooltip only when cut off), and the shared tooltip under the pin with it off. REQ-TQMT-003,
+      REQ-TQMT-006.
+- [ ] 2.6 vitest new `appMenuTitles.spec.js` (icon only per section, names and the new tab note,
       Alt+P announces, tooltip on focus and hover, hoverable, Escape order); `appMenuSettings.spec.js`
-      (titles on draws as before).
+      (titles on draws as before); `appMenuPins.spec.js` (pins with names, pins with the tooltip, drag and
+      Alt+P unchanged); new `adminLayoutTopBarTitles.spec.js`.
 
 ## 3. Menu settings and the setup wizard
 
-- [ ] 3.1 `js/dialogs/menu-settings-dialog.js`: "Show titles" between "Show items as tiles" and "Show
-      payoff"; Show payoff disabled with "Only with Show titles." and its value kept; preview without
+- [ ] 3.1 `js/dialogs/menu-settings-dialog.js`: "Show titles" after "Show items as tiles", "Show
+      titles in the top bar" directly under it, then "Show payoff"; `topBarTitles` saved with For
+      everyone (REQ-TQMT-005); Show payoff disabled with "Only with Show titles." and its value kept; preview without
       names and payoff; sentence "without titles". REQ-TQMT-004.
 - [ ] 3.2 The setup wizard's apps menu step (first-time-setup, REQ-TQFS-010): "Show titles" before
       "Show payoff", payoff disabled while titles is off, Apply stores `menu.titles`. Built with the
       step. REQ-TQMT-004.
-- [ ] 3.3 vitest `menuSettingsDialog.spec.js` (switch place, payoff disabled and kept, preview,
-      sentence), `setupWizard.spec.js` (the step offers Show titles before Show payoff).
+- [ ] 3.3 vitest `menuSettingsDialog.spec.js` (switch places, payoff disabled and kept, preview,
+      sentence, top bar titles saved for everyone), `setupWizard.spec.js` (the step offers Show titles before Show payoff).
 
 ## 4. Copy
 
@@ -52,10 +74,13 @@ Nothing here is built until this change and its boards (design-system branch
 
 - [ ] 5.1 `tests/e2e/spec-coverage/apps-menu-show-titles.spec.ts` with `@e2e` tags for "The
       administrator switches titles off", "Keyboard focus shows the name", "Escape dismisses the
-      tooltip and keeps the menu open" and "The administrator switches titles off in Menu settings":
+      tooltip and keeps the menu open", "The administrator switches titles off in Menu settings", "A
+      pin shows its name on focus", "Pins show their names" and menu-labels "Checkbox change triggers
+      save":
       store `{titles: false}` through `POST /apps/thematiq/app-menu/defaults`, open Files and the apps
       menu, check the accessible names, the missing text, the tooltip on focus, its Escape and the
-      focus ring; then the Theming tab with payoff disabled; put every value back in a `finally`.
+      focus ring; then the Theming tab with payoff disabled; then `topBarTitles` on and off with two
+      pins; put every value back in a `finally`.
 
 ## 6. Verification
 
@@ -64,4 +89,6 @@ Nothing here is built until this change and its boards (design-system branch
 - [ ] 6.2 Live check on the dev instance, light and dark, a Zuiddrecht set and a plain one: titles off
       matches AppMenuZonderTitels in every section; keyboard through the whole menu shows a tooltip per
       entry and a focus ring; Escape hides the tooltip, then closes the menu; a screen reader reads each
-      name once; 200% zoom keeps the tooltip inside the viewport; titles on is unchanged.
+      name once; 200% zoom keeps the tooltip inside the viewport; titles on is unchanged. Titles in the top bar on
+      and off with pins, on the workplace menu and on the classic style (Nextcloud 32 header and 33
+      waffle); an instance upgraded with `show_menu_labels` on keeps its labels.

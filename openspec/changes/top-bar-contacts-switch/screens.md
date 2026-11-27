@@ -1,7 +1,7 @@
 # Screens
 
-Source: design-system branch `design/thematiq-show-titles`, where the board agent adds the contacts
-menu switch next to the create switches. Boards are canon: where this change and a board differ, the
+Source: ConductionNL/design-system#1220 (merged), with the contacts button switch next to the create
+switches. Boards are canon: where this change and a board differ, the
 change follows the board.
 
 ## Boards of this change
