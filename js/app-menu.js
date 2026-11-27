@@ -2093,16 +2093,13 @@
 	 * @return {object|null} `{tourId, stepId, index, immediate?}`.
 	 */
 	function tourProgress(state) {
-		var raw = state && state.progress
-		if (typeof raw !== 'string' || raw === '') {
-			return null
-		}
+		var progress = null
 		try {
-			var progress = JSON.parse(raw)
-			return progress && progress.tourId === TOUR_ID ? progress : null
+			progress = JSON.parse(String(state.progress || 'null'))
 		} catch (e) {
 			return null
 		}
+		return progress && progress.tourId === TOUR_ID ? progress : null
 	}
 
 	/**
@@ -2115,9 +2112,6 @@
 	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
 	 */
 	function tourDue(state) {
-		if (!state || typeof state !== 'object') {
-			return false
-		}
 		if (tourProgress(state) !== null) {
 			return true
 		}
@@ -2165,18 +2159,23 @@
 		if (document.querySelector('script[data-thematiq-menu-walkthrough]') !== null) {
 			return
 		}
-		var src =
-			typeof OC !== 'undefined' && typeof OC.filePath === 'function'
-				? OC.filePath('thematiq', 'js', TOUR_SCRIPT)
-				: '/apps/thematiq/js/' + TOUR_SCRIPT
 		var script = document.createElement('script')
-		script.src = src
+		script.src = walkthroughSrc()
 		script.setAttribute('data-thematiq-menu-walkthrough', '')
 		var trusted = document.querySelector('script[nonce]')
-		if (trusted !== null && trusted.nonce) {
-			script.nonce = trusted.nonce
-		}
+		script.nonce = trusted !== null ? trusted.nonce || '' : ''
 		document.head.appendChild(script)
+	}
+
+	/**
+	 * The address of the walkthrough's bundle.
+	 *
+	 * @return {string}
+	 */
+	function walkthroughSrc() {
+		return typeof OC !== 'undefined' && typeof OC.filePath === 'function'
+			? OC.filePath('thematiq', 'js', TOUR_SCRIPT)
+			: '/apps/thematiq/js/' + TOUR_SCRIPT
 	}
 
 	/**
@@ -2235,17 +2234,18 @@
 	 */
 	function maybeWalkthrough(menu, open) {
 		var state = menu.walkthrough
-		if (
-			!open
-			|| !state
-			|| state.requested
-			|| touring()
-			|| document.querySelector(SETUP_WIZARD) !== null
-			|| !tourDue(state)
-		) {
-			return
+		if (open && !state.requested && !touring() && tourDue(state) && !wizardOpen()) {
+			startWalkthrough(menu, 'auto')
 		}
-		startWalkthrough(menu, 'auto')
+	}
+
+	/**
+	 * Whether the first-time setup wizard is open on the page.
+	 *
+	 * @return {boolean}
+	 */
+	function wizardOpen() {
+		return document.querySelector(SETUP_WIZARD) !== null
 	}
 
 	/**
@@ -2262,13 +2262,12 @@
 		var tries = 0
 		var begin = function () {
 			var button = document.querySelector('.app-menu__waffle')
-			var open =
-				button !== null && button.getAttribute('aria-expanded') === 'true'
-			if (open && document.querySelector('.app-menu__grid') !== null) {
-				startWalkthrough(menu, 'replay')
+			if (button === null || tries++ > 10) {
 				return
 			}
-			if (button === null || tries++ > 10) {
+			var open = button.getAttribute('aria-expanded') === 'true'
+			if (open && document.querySelector('.app-menu__grid') !== null) {
+				startWalkthrough(menu, 'replay')
 				return
 			}
 			if (!open) {
@@ -2312,15 +2311,13 @@
 			return
 		}
 		var open = waffle.getAttribute('aria-expanded') === 'true'
-		if (menu.walkthrough.immediate) {
-			menu.walkthrough.immediate = false
-			if (!open && document.querySelector(SETUP_WIZARD) === null) {
-				// Outside this scan, so the watcher sees the menu draw.
-				setTimeout(function () {
-					waffle.click()
-				}, 0)
-			}
+		if (menu.walkthrough.immediate && !open && !wizardOpen()) {
+			// Outside this scan, so the watcher sees the menu draw.
+			setTimeout(function () {
+				waffle.click()
+			}, 0)
 		}
+		menu.walkthrough.immediate = false
 		maybeWalkthrough(menu, open && document.querySelector('.app-menu__grid') !== null)
 	}
 

@@ -118,20 +118,12 @@ export function stepsFor(steps, options) {
  */
 export function progressOf(value) {
 	let progress = value
-	if (typeof progress === 'string') {
-		if (progress === '') {
-			return null
-		}
-		try {
-			progress = JSON.parse(progress)
-		} catch {
-			return null
-		}
-	}
-	if (!progress || typeof progress !== 'object' || progress.tourId !== TOUR_ID) {
+	try {
+		progress = typeof value === 'string' ? JSON.parse(value || 'null') : value
+	} catch {
 		return null
 	}
-	return progress
+	return progress && progress.tourId === TOUR_ID ? progress : null
 }
 
 /**
@@ -239,19 +231,11 @@ export function createMenuWalkthrough(options = {}) {
 	 * @return {void}
 	 */
 	const follow = () => {
-		if (host === null) {
-			return
-		}
-		const box = host.parentElement && host.parentElement !== document.body
-			? host.parentElement.getBoundingClientRect()
-			: { top: 0, left: 0 }
+		const parent = host.parentElement
+		const box = parent && parent !== document.body ? parent.getBoundingClientRect() : { top: 0, left: 0 }
 		host.style.setProperty('--thematiq-wt-top', (-box.top) + 'px')
 		host.style.setProperty('--thematiq-wt-left', (-box.left) + 'px')
-		if (wt && wt.running.value && typeof window.requestAnimationFrame === 'function') {
-			frame = window.requestAnimationFrame(follow)
-		} else {
-			frame = null
-		}
+		frame = wt.running.value ? window.requestAnimationFrame(follow) : null
 	}
 
 	const finish = () => {

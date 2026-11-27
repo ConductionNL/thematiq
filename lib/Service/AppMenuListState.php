@@ -102,11 +102,9 @@ class AppMenuListState {
 
 		$state['admin'] = ($user !== null && $this->groups?->isAdmin($user->getUID()) === true);
 
-		// The apps menu tour: only with the workplace menu, which the classic style does not draw.
-		$style = ($state['settings']['style'] ?? AppMenuSettings::DEFAULTS['style']);
-		if ($this->walkthrough !== null && $style !== 'classic') {
-			$state['walkthrough'] = $this->walkthrough->state(userId: $user?->getUID());
-			$state['walkthrough']['replayLabel'] = $l->t('Replay walkthrough');
+		$walkthrough = $this->walkthroughState(settings: ($state['settings'] ?? []), userId: $user?->getUID(), l: $l);
+		if ($walkthrough !== null) {
+			$state['walkthrough'] = $walkthrough;
 		}
 
 		$state['labels'] = [
@@ -136,6 +134,26 @@ class AppMenuListState {
 
 		return $state;
 	}//end state()
+
+	/**
+	 * The apps menu tour's state: only with the workplace menu, which the classic style does not draw.
+	 *
+	 * @param array<string, mixed> $settings The effective menu settings.
+	 * @param string|null $userId The signed-in person.
+	 * @param IL10N $l The language of this request.
+	 *
+	 * @return array<string, string>|null `seen`, `progress`, `appVersion` and `replayLabel`, or null.
+	 *
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 */
+	private function walkthroughState(array $settings, ?string $userId, IL10N $l): ?array {
+		$style = ($settings['style'] ?? AppMenuSettings::DEFAULTS['style']);
+		if ($this->walkthrough === null || $style === 'classic') {
+			return null;
+		}
+
+		return array_merge($this->walkthrough->state(userId: $userId), ['replayLabel' => $l->t('Replay walkthrough')]);
+	}//end walkthroughState()
 
 	/**
 	 * The external apps section with the visible apps an administrator or the person added.
