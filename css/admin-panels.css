@@ -3955,3 +3955,29 @@ html[data-thematiq-open-panel]
 #nldesign-settings .thematiq-motion-panel .thematiq-motion-panel__toast {
 	flex: 0 1 220px;
 }
+
+/* The version card (first-time-setup REQ-TQFS-012, board TqSetupOpnieuw). */
+.thematiq-version-card__rows {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: 8px 24px;
+	margin: 12px 0;
+}
+
+.thematiq-version-card__rows dt {
+	color: var(--color-text-maxcontrast);
+}
+
+.thematiq-version-card__rows dd {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	margin: 0;
+}
+
+.thematiq-version-card__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-block-end: 8px;
+}

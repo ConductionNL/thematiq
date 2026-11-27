@@ -21,6 +21,8 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
+use OCP\ICache;
+use OCP\ICacheFactory;
 
 /**
  * Builds, at render time, one rule per internal token the active set or the
@@ -60,15 +62,39 @@ class InternalScopesService {
 	private const CHOSEN_DARK = 'body[data-theme-dark], body[data-themes*=dark]';
 
 	/**
+	 * The local cache prefix of the built rules.
+	 *
+	 * @var string
+	 */
+	public const CACHE_PREFIX = 'thematiq-internal-scopes';
+
+	/**
+	 * How long a built rule set is kept, in seconds; the key changes with every input anyway.
+	 *
+	 * @var int
+	 */
+	private const CACHE_TTL = 86400;
+
+	/**
+	 * Built rules by their inputs, kept between requests; null without a cache.
+	 *
+	 * @var ICache|null
+	 */
+	private readonly ?ICache $cache;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param RuntimeFileLocator $files Reads a set's files, shipped or in app data.
 	 * @param CssParserService $parser Reads a stylesheet's `:root` declarations.
+	 * @param ICacheFactory|null $cacheFactory Keeps the built rules between requests (local cache); null builds them every time.
 	 */
 	public function __construct(
 		private readonly RuntimeFileLocator $files,
 		private readonly CssParserService $parser = new CssParserService(),
+		?ICacheFactory $cacheFactory = null,
 	) {
+		$this->cache = $cacheFactory?->createLocal(self::CACHE_PREFIX);
 	}//end __construct()
 
 	/**
@@ -90,13 +116,25 @@ class InternalScopesService {
 		);
 		$dark = $this->darkCss(tokenSet: $tokenSet, withDark: $wear->withDark);
 
-		return $this->build(
+		// The rules are a pure function of the three stylesheets and the shipped
+		// internal-token registry: keyed on exactly those, a cached build is the
+		// build. Parsing them and reading the registry took ~2 ms of every page.
+		$key = sha1($light . "\0" . $overrides . "\0" . $dark . "\0" . TokenRegistry::internalTokensStamp());
+		$cached = $this->cache?->get($key);
+		if (is_string($cached) === true) {
+			return $cached;
+		}
+
+		$css = $this->build(
 			lightNames: array_merge(
 				array_keys($this->parser->parseRootBlock(css: $light)),
 				array_keys($this->parser->parseRootBlock(css: $overrides))
 			),
 			anyNames: $this->declaredNames(css: $light . "\n" . $overrides . "\n" . $dark)
 		);
+		$this->cache?->set($key, $css, self::CACHE_TTL);
+
+		return $css;
 	}//end forSet()
 
 	/**

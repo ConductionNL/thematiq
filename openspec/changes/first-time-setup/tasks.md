@@ -71,11 +71,15 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
 
 ## 4. The version card
 
-- [ ] 4.1 `templates/settings/admin.php` and new `js/admin-version-card.js`: the version card with the
+- [x] 4.1 `templates/settings/admin.php` and new `js/admin-version-card.js`: the version card with the
       installed version, the setup state and detail, Set up again, Apps menu walkthrough and Help us,
       Set up again disabled under a configuration source. TqSetupOpnieuw. REQ-TQFS-012.
-- [ ] 4.2 vitest `tests/vitest/adminVersionCard.spec.js`; PHPUnit for the card's state in
-      `lib/Settings/Admin.php`.
+- [x] 4.2 vitest `tests/vitest/adminVersionCard.spec.js`; PHPUnit for the card's state in
+      `lib/Settings/Admin.php`. (#VC: the card reads its state from `GET /api/setup/status` and the
+      source from `GET /settings/config-source`, so Admin.php carries none and needs no PHPUnit; vitest
+      adminVersionCard 5. Live on a sandbox NC34: Completed by admin, Set up again opens at Welcome with
+      the stored set chosen, Later closes, nothing after a reload. "Help us" links to the forge's
+      feature-request form, as nextcloud-vue's shell does since its in-product modal was removed.)
 
 ## 4b. Keep the Nextcloud theme in line, on the settings page
 
@@ -95,11 +99,11 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
 
 ## 5. End to end
 
-- [ ] 5.1 `tests/e2e/spec-coverage/first-time-setup.spec.ts` (`@e2e` tags per scenario): in setup, read
+- [x] 5.1 `tests/e2e/spec-coverage/first-time-setup.spec.ts` (`@e2e` tags per scenario): in setup, read
       and remove the setup-relevant app values and `setup.*` through `occPrefix()`, and put every one
       back in a `finally`, with `_theme-state` restoring the active set and core theming; withdraw the
       confirmation of `amsterdam` when it is not applied, and restore it after.
-- [ ] 5.2 Walk: the welcome on the dashboard and in Files; a non-admin sees nothing and the page has no
+- [x] 5.2 Walk: the welcome on the dashboard and in Files; a non-admin sees nothing and the page has no
       `setup_status`; walking the steps and Later writes nothing and the wizard comes back; Skip and
       nothing on the next page; a configured instance shows nothing; status is 403 for a non-admin.
 - [ ] 5.3 Full run: choose `amsterdam`, Next disabled until the statement; keep the theme switch on;
@@ -108,8 +112,14 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
       favicon are the set's (`_core-theming.ts`), an anonymous login page has no slogan, a non-admin
       sees the workplace top bar and 3 columns; the step offers no Style choice; Start the apps menu
       walkthrough opens the menu with the tour.
-- [ ] 5.4 The version card reads "Completed by admin on"; Set up again opens the wizard with the stored
-      set; Later leaves setup done.
+- [x] 5.4 The version card reads "Completed by admin on"; Set up again opens the wizard with the stored
+      set; Later leaves setup done. (#E2E: `first-time setup: the wizard` in first-time-setup.spec.ts, live
+      4/4 on a sandbox NC34 + MariaDB: 5.1 fixture through occ with every value put back and amsterdam's
+      confirmation withdrawn and restored; 5.2 welcome on Dashboard and Files, Later writes nothing and
+      it returns, non-admin sees nothing / no setup_status / 403, Skip; 5.4 the card and Set up again.
+      5.3 is covered except the logo and favicon checks, the set without a workplace top bar, and the
+      tour opening after "Start the apps menu walkthrough" (red on this sandbox: the menu's state had no
+      walkthrough after the reload; the stored hand-off is pinned by vitest). 5.3 stays open for those.)
 
 ## 6. Live check
 
