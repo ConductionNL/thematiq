@@ -16,7 +16,10 @@ use OCA\Thematiq\Service\RuntimeFile\DirectoryRuntimeFileStore;
 use OCA\Thematiq\Service\RuntimeFile\RuntimeFileLocator;
 use OCA\Thematiq\Service\TokenRegistry;
 use OCA\Thematiq\Service\TokenSetWear;
+use OCA\Thematiq\Service\CssParserService;
+use OC\Memcache\ArrayCache;
 use OCP\App\IAppManager;
+use OCP\ICacheFactory;
 use OCP\ITempManager;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\TestCase;
@@ -248,5 +251,79 @@ class InternalScopesServiceTest extends TestCase {
 		}
 
 		$this->assertSame(expected: ['c8f0c41f0c66', '6886c669a9f9', 'aa02dc6643c1'], actual: $out);
+	}
+
+	/**
+	 * A service whose built rules go through an in-memory local cache.
+	 *
+	 * @param CssParserService $parser The parser.
+	 *
+	 * @return InternalScopesService
+	 */
+	private function cachedService(CssParserService $parser = new CssParserService()): InternalScopesService {
+		$cache = new ArrayCache();
+		$factory = $this->createMock(originalClassName: ICacheFactory::class);
+		$factory->expects($this->once())->method('createLocal')->with(InternalScopesService::CACHE_PREFIX)->willReturn($cache);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
+		$appManager->method('getAppPath')->willReturn($this->dir . '/app');
+		$locator = new RuntimeFileLocator(
+			appManager: $appManager,
+			store: $this->store,
+			urlGenerator: $this->createMock(originalClassName: IURLGenerator::class),
+			tempManager: $this->createMock(originalClassName: ITempManager::class)
+		);
+		return new InternalScopesService(files: $locator, parser: $parser, cacheFactory: $factory);
+	}
+
+	/**
+	 * With a cache the same inputs are built once and answered the same.
+	 *
+	 * @return void
+	 */
+	public function testACacheBuildsTheSameInputsOnce(): void {
+		$this->store->write('css/tokens/custom-test.css', ":root {\n\t--nldesign-nc-dp-hover-color: #e8eef5;\n}\n");
+		$parser = $this->getMockBuilder(className: CssParserService::class)->onlyMethods(['parseRootBlock'])->getMock();
+		$parser->expects($this->exactly(2))->method('parseRootBlock')->willReturnCallback(
+			static fn (string $css): array => (new CssParserService())->parseRootBlock(css: $css)
+		);
+		$service = $this->cachedService(parser: $parser);
+		$wear = new TokenSetWear(designSystemId: 'nldesign', withDark: true);
+
+		$first = $service->forSet(tokenSet: 'custom-test', wear: $wear);
+		$second = $service->forSet(tokenSet: 'custom-test', wear: $wear);
+
+		$this->assertSame(expected: $this->service->forSet(tokenSet: 'custom-test', wear: $wear), actual: $first);
+		$this->assertSame(expected: $first, actual: $second);
+	}
+
+	/**
+	 * With a cache an override save is still reflected on the next build: the key is the inputs.
+	 *
+	 * @return void
+	 */
+	public function testACachedBuildFollowsAnOverrideSave(): void {
+		$service = $this->cachedService();
+		$wear = new TokenSetWear(designSystemId: 'nldesign', withDark: true);
+		$this->store->write('css/tokens/custom-test.css', ":root {\n\t--nldesign-nc-dp-hover-color: #e8eef5;\n}\n");
+		$before = $service->forSet(tokenSet: 'custom-test', wear: $wear);
+		$this->store->write('css/custom-overrides.css', ":root {\n\t--nldesign-cn-kpi-accent: #24578f !important;\n}\n");
+		$after = $service->forSet(tokenSet: 'custom-test', wear: $wear);
+		$this->store->write('css/tokens/dark/custom-test.css', "body[data-theme-dark] {\n\t--nldesign-nc-plyr-audio-control-background-hover: #222;\n}\n");
+		$withDark = $service->forSet(tokenSet: 'custom-test', wear: $wear);
+
+		$this->assertSame(expected: 1, actual: substr_count($before, '{'));
+		$this->assertSame(expected: 2, actual: substr_count($after, '{'));
+		$this->assertSame(expected: $this->service->forSet(tokenSet: 'custom-test', wear: $wear), actual: $withDark);
+		$this->assertNotSame(expected: $after, actual: $withDark);
+	}
+
+	/**
+	 * The registry stamp names the shipped file's state.
+	 *
+	 * @return void
+	 */
+	public function testTheRegistryStampIsStable(): void {
+		$this->assertMatchesRegularExpression(pattern: '/^\d+:\d+$/', string: TokenRegistry::internalTokensStamp());
+		$this->assertSame(expected: TokenRegistry::internalTokensStamp(), actual: TokenRegistry::internalTokensStamp());
 	}
 }

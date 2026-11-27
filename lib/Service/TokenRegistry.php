@@ -510,6 +510,23 @@ class TokenRegistry implements TokenRegistryInterface {
 	}//end isEditable()
 
 	/**
+	 * A stamp that changes whenever the shipped internal-token registry does
+	 * (its modification time and size), for caches of output built from it.
+	 *
+	 * @return string The stamp, `missing` when the file cannot be read.
+	 *
+	 * @spec openspec/specs/component-tokens/spec.md
+	 */
+	public static function internalTokensStamp(): string {
+		$stat = @stat(self::INTERNAL_TOKENS_PATH);
+		if ($stat === false) {
+			return 'missing';
+		}
+
+		return $stat['mtime'] . ':' . $stat['size'];
+	}//end internalTokensStamp()
+
+	/**
 	 * The internal tokens: one per settable component, slot and Conduction variable.
 	 *
 	 * Keyed by token name (`--nldesign-nc-dp-hover-color`, `--nldesign-cn-kpi-accent`).
