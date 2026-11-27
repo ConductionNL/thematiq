@@ -675,7 +675,10 @@ test.describe('lasuite-parity', () => {
 		//               <NcButton class="header-menu__trigger">
 		//   stable32  <div class="unified-search-menu">
 		//               <NcHeaderButton id="unified-search">
-		//   NC34      identical to stable32
+		//   NC34      identical to stable32 up to 34.0.5; 34.0.6 renders a
+		//             search field: <div class="unified-search-menu">
+		//               <search class="unified-search-input">
+		//                 <button class="unified-search-input__button">
 		//
 		// So the sole locator this test had matched nothing on any of them, the
 		// count was always 0, and the test skipped every time it was reached
@@ -689,7 +692,7 @@ test.describe('lasuite-parity', () => {
 		// `getByRole('button').first()` would land on whichever control happens
 		// to render first and pass for the wrong reason.
 		const searchButton = page.locator(
-			'#header .unified-search-menu .header-menu__trigger, #header #unified-search, #header .unified-search__button',
+			'#header .unified-search-menu .header-menu__trigger, #header #unified-search, #header .unified-search-menu .unified-search-input__button, #header .unified-search__button',
 		)
 		if ((await searchButton.count()) === 0) {
 			test.skip(
