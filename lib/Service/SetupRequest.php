@@ -51,7 +51,7 @@ class SetupRequest {
 	 *
 	 * @var array<int, string>
 	 */
-	public const MENU_KEYS = ['columns', 'rowsAboveFold', 'payoff', 'showCreateActions', 'showExternalApps'];
+	public const MENU_KEYS = ['columns', 'rowsAboveFold', 'payoff', 'showCreateButton', 'showCreateRow', 'showExternalApps'];
 
 	/**
 	 * Constructor.
@@ -171,6 +171,9 @@ class SetupRequest {
 	 * @throws InvalidArgumentException Naming `menu` or `menu.<key>`.
 	 *
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) AppMenuSettings holds the one rule for the former create switch.
 	 */
 	private function checkMenu(mixed $value): array {
 		if (is_array($value) === false) {
@@ -179,7 +182,8 @@ class SetupRequest {
 
 		$checked = ['enabled' => self::checkBool(key: 'menu.enabled', value: ($value['enabled'] ?? true))];
 		unset($value['enabled']);
-		foreach ($value as $key => $item) {
+		// A wizard built before the two create switches still sends the former one.
+		foreach (AppMenuSettings::withoutFormerCreateSwitch(values: $value) as $key => $item) {
 			$checked += $this->menuValue(key: (string)$key, value: $item);
 		}
 

@@ -92,7 +92,7 @@ function menu(walkthrough, settings = {}) {
 		labels: LABELS,
 		order: [],
 		pins: [],
-		settings: { style: 'workplace', columns: 4, rows: 6, rowsAboveFold: 2, showCreateActions: false, ...settings },
+		settings: { style: 'workplace', columns: 4, rows: 6, rowsAboveFold: 2, showCreateButton: false, showCreateRow: false, ...settings },
 		walkthrough,
 	}
 }
@@ -178,7 +178,7 @@ describe('the apps menu walkthrough in the menu script', () => {
 
 	it('starts the tour inside the menu\'s popover with the state, once per page', async () => {
 		const tour = fakeTour()
-		installState(menu({ ...DUE }, { showCreateActions: true }))
+		installState(menu({ ...DUE }, { showCreateRow: true }))
 		const waffle = header(false)
 		await loadScript()
 		expect(tour.start).not.toHaveBeenCalled()

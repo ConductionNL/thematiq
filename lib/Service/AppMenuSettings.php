@@ -26,8 +26,9 @@ use OCP\IConfig;
 
 /**
  * How the apps menu looks and what it holds. An administrator sets every key for everyone (app
- * values `menu.<key>`). A person overrides only the personal keys, `order`, `pinned`, `hidden`
- * and their own `externalApps`, in user values with the same names; the override wins, and a
+ * values `menu.<key>`). A person overrides only the personal keys, `order`, `pinned`, `hidden`,
+ * their own `externalApps` and the two create switches `showCreateButton` and `showCreateRow`,
+ * in user values with the same names; the override wins, and a
  * person's external apps follow the administrator's. Every value is checked before it is stored:
  * one value that is not allowed refuses the whole save.
  *
@@ -54,7 +55,8 @@ class AppMenuSettings {
 		'columns' => 4,
 		'rows' => 6,
 		'rowsAboveFold' => 2,
-		'showCreateActions' => true,
+		'showCreateButton' => true,
+		'showCreateRow' => true,
 		'showExternalApps' => true,
 		'shape' => 'round',
 		'tiles' => false,
@@ -72,7 +74,23 @@ class AppMenuSettings {
 	 *
 	 * @var array<int, string>
 	 */
-	public const PERSONAL = ['order', 'pinned', 'hidden', 'externalApps'];
+	public const PERSONAL = ['order', 'pinned', 'hidden', 'externalApps', 'showCreateButton', 'showCreateRow'];
+
+	/**
+	 * The former single switch of the Create button and the Create row, an administrator's key only.
+	 * It moves once into both switches of CREATE_SWITCHES.
+	 *
+	 * @var string
+	 */
+	public const FORMER_CREATE_SWITCH = 'showCreateActions';
+
+	/**
+	 * The two switches of the quick actions: the Create button in the top bar and the Create row
+	 * in the apps menu.
+	 *
+	 * @var array<int, string>
+	 */
+	public const CREATE_SWITCHES = ['showCreateButton', 'showCreateRow'];
 
 	/**
 	 * The allowed words of the choice settings.
@@ -102,7 +120,7 @@ class AppMenuSettings {
 	 *
 	 * @var array<int, string>
 	 */
-	public const SWITCHES = ['showCreateActions', 'showExternalApps', 'tiles', 'payoff'];
+	public const SWITCHES = ['showCreateButton', 'showCreateRow', 'showExternalApps', 'tiles', 'payoff'];
 
 	/**
 	 * The most pinned apps.
@@ -177,6 +195,7 @@ class AppMenuSettings {
 	 * @return array<string, mixed> The keys set.
 	 *
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-create-button-and-the-create-row-switch-on-and-off-independently-req-tqqt-001
 	 */
 	public function overrides(string $userId): array {
 		$values = [];
@@ -228,7 +247,8 @@ class AppMenuSettings {
 
 	/**
 	 * Store the administrator's values for everyone. A key sent as null goes back to the shipped
-	 * value.
+	 * value. The former `showCreateActions`, as an older setup wizard sends it, is read as both
+	 * create switches and never stored.
 	 *
 	 * @param array<mixed> $values The values as sent.
 	 * @param array<int, string> $known The keys of the entries the administrator can see.
@@ -238,8 +258,10 @@ class AppMenuSettings {
 	 * @throws InvalidArgumentException Naming the first key or value that is not allowed; nothing is stored then.
 	 *
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
 	 */
 	public function saveDefaults(array $values, array $known): array {
+		$values = self::withoutFormerCreateSwitch(values: $values);
 		$clean = self::strict(values: $values, known: $known);
 		foreach (array_keys($values) as $key) {
 			if (array_key_exists($key, $clean) === true) {
@@ -252,6 +274,32 @@ class AppMenuSettings {
 
 		return $clean;
 	}//end saveDefaults()
+
+	/**
+	 * Move the administrator's former single create switch (app value `menu.showCreateActions`)
+	 * into `menu.showCreateButton` and `menu.showCreateRow` once. Runs where the external apps
+	 * move runs: on the first page that draws the menu and when Menu settings opens.
+	 *
+	 * @return bool Whether a stored value was moved.
+	 *
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 */
+	public function moveFormerCreateSwitch(): bool {
+		return (new AppMenuFormerCreateSwitch(config: $this->config))->move();
+	}//end moveFormerCreateSwitch()
+
+	/**
+	 * Values as sent with the former `showCreateActions` read as both create switches.
+	 *
+	 * @param array<mixed> $values The values as sent.
+	 *
+	 * @return array<mixed> The values without the former key.
+	 *
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 */
+	public static function withoutFormerCreateSwitch(array $values): array {
+		return AppMenuFormerCreateSwitch::strip(values: $values);
+	}//end withoutFormerCreateSwitch()
 
 	/**
 	 * Remove a person's personal keys, so the administrator's values apply again.
@@ -281,6 +329,8 @@ class AppMenuSettings {
 		foreach (array_keys(self::DEFAULTS) as $key) {
 			$this->config->deleteAppValue(Application::APP_ID, self::PREFIX . $key);
 		}
+
+		$this->config->deleteAppValue(Application::APP_ID, self::PREFIX . self::FORMER_CREATE_SWITCH);
 	}//end resetDefaults()
 
 	/**

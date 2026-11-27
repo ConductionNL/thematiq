@@ -34,7 +34,8 @@
 		columns: 4,
 		rows: 6,
 		rowsAboveFold: 2,
-		showCreateActions: true,
+		showCreateButton: true,
+		showCreateRow: true,
 		showExternalApps: true,
 		shape: 'round',
 		tiles: false,
@@ -493,22 +494,29 @@
 	 * bar's Quick add menu, js/header-create.js), so both list the same things
 	 * in the same order: `window.thematiqCreateActions.list()` resolves to
 	 * `{name, icon, run}` entries: the row's kinds, the other creators, then
-	 * Nextcloud's navigation actions. Empty while the setting is off.
+	 * Nextcloud's navigation actions. Shared while the Create button
+	 * (`showCreateButton`, read by Quick add as `button`) or the Create row
+	 * (`showCreateRow`) is on, so Quick add works without the row; with both
+	 * off nothing is shared and the templates API is never asked.
 	 * Announced with the `thematiq:create-actions` event.
 	 *
 	 * @param {object} menu The menu.
 	 * @spec openspec/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
 	 */
 	function shareCreateActions(menu) {
 		var labels = menu.labels || {}
-		var on = text(labels, 'create') !== '' && settingsOf(menu).showCreateActions
+		var settings = settingsOf(menu)
+		var on = text(labels, 'create') !== ''
+		if (!on || (!settings.showCreateButton && !settings.showCreateRow)) {
+			window.thematiqCreateActions = undefined
+			return
+		}
 		window.thematiqCreateActions = {
+			button: settings.showCreateButton === true,
 			title: text(labels, 'create'),
 			failed: text(labels, 'createFailed'),
 			list: function () {
-				if (!on) {
-					return Promise.resolve([])
-				}
 				return creators().then(function (list) {
 					var row = rowCreators(list)
 					var entries = row.map(function (item) {
@@ -560,16 +568,18 @@
 	 * The Create row above the footer: New document, New spreadsheet, New
 	 * presentation and New whiteboard when an installed app offers them, and
 	 * More, which unfolds every creator and every Nextcloud navigation action.
-	 * Drawn once the creators are known; hidden when there are none.
+	 * Drawn once the creators are known; hidden when there are none, and
+	 * never drawn with `showCreateRow` off.
 	 *
 	 * @param {Element} grid The grid.
 	 * @param {object} menu The menu.
 	 * @spec openspec/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
 	 */
 	function createRow(grid, menu) {
 		var labels = menu.labels || {}
 		var off =
-			text(labels, 'create') === '' || !settingsOf(menu).showCreateActions
+			text(labels, 'create') === '' || !settingsOf(menu).showCreateRow
 		var heading = grid.querySelector(
 			':scope > [data-thematiq-row="create-title"]',
 		)
@@ -2217,7 +2227,7 @@
 				// The Create row draws once Nextcloud's templates have answered,
 				// often after the tour starts: it counts when the menu has it on.
 				parts: {
-					'apps-menu-create': settingsOf(menu).showCreateActions === true,
+					'apps-menu-create': settingsOf(menu).showCreateRow === true,
 				},
 				onEnd: function () {
 					state.seen = versionCore(state.appVersion) || TOUR_LATEST
