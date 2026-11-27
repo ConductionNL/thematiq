@@ -256,6 +256,37 @@ final class AppMenuSettingsTest extends TestCase {
 	}//end testAPersonsCreateSwitchesWinOverTheAdministrators()
 
 	/**
+	 * The contacts menu switch ships on, is a personal key, and a person's value wins over the
+	 * administrator's: the administrator switches it off, Anna switches it on for herself, Bob keeps
+	 * the administrator's off; null and reset follow the administrator again.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
+	 */
+	public function testAPersonsContactsMenuSwitchWinsOverTheAdministrators(): void {
+		$settings = $this->settings();
+		$this->assertTrue(condition: $settings->effective(userId: 'bob')['showContactsMenu']);
+
+		$settings->saveDefaults(values: ['showContactsMenu' => false], known: []);
+		$stored = $settings->saveOverrides(userId: 'anna', values: ['showContactsMenu' => 'true'], known: []);
+		$this->assertSame(expected: ['showContactsMenu' => true], actual: $stored);
+		$this->assertTrue(condition: $settings->effective(userId: 'anna')['showContactsMenu']);
+		$this->assertFalse(condition: $settings->effective(userId: 'bob')['showContactsMenu']);
+
+		$settings->saveOverrides(userId: 'anna', values: ['showContactsMenu' => null], known: []);
+		$this->assertFalse(condition: $settings->effective(userId: 'anna')['showContactsMenu']);
+		$settings->saveOverrides(userId: 'anna', values: ['showContactsMenu' => true], known: []);
+		$settings->resetOverrides(userId: 'anna');
+		$this->assertFalse(condition: $settings->effective(userId: 'anna')['showContactsMenu']);
+		$this->assertSame(expected: [], actual: $this->user['anna']);
+
+		// Only true or false.
+		$this->expectException(exception: InvalidArgumentException::class);
+		$settings->saveOverrides(userId: 'anna', values: ['showContactsMenu' => 'sometimes'], known: []);
+	}//end testAPersonsContactsMenuSwitchWinsOverTheAdministrators()
+
+	/**
 	 * Scenario: an administrator who switched create actions off keeps both off. The move runs
 	 * once, keeps a new key that is already stored, and removes the old one; reset removes it too.
 	 *

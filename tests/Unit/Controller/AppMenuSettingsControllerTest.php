@@ -183,6 +183,20 @@ final class AppMenuSettingsControllerTest extends TestCase {
 	}//end testAPersonSavesOnlyTheirOwnKeys()
 
 	/**
+	 * A person saves the contacts menu switch as their own key.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
+	 */
+	public function testAPersonSavesTheContactsMenuSwitch(): void {
+		$response = $this->controller(uid: 'anna')->save(settings: ['showContactsMenu' => false]);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertFalse(condition: $response->getData()['effective']['showContactsMenu']);
+		$this->assertSame(expected: 'false', actual: $this->user['anna']['menu.showContactsMenu']);
+	}//end testAPersonSavesTheContactsMenuSwitch()
+
+	/**
 	 * A person saves both create switches as their own keys; the former key is refused with 400.
 	 * Opening Menu settings moves an administrator's former create switch into both new ones.
 	 *
