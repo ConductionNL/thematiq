@@ -55,8 +55,9 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
       skipped for Nextcloud default. TqSetupTheming. REQ-TQFS-008.
 - [ ] 3.5 The login page step: the two styles, the slogan checkbox, the login card preview.
       TqSetupInlogpagina. REQ-TQFS-009.
-- [ ] 3.6 The apps menu step: the switch, style, columns, rows above More apps, the three switches,
-      Apply with the parts reported on a failure. TqSetupAppmenu. REQ-TQFS-003, REQ-TQFS-010.
+- [ ] 3.6 The apps menu step: the one switch (on is workplace, off is classic, no Style choice), and
+      while it is on the columns, rows above More apps and the three switches; Apply with the parts
+      reported on a failure. TqSetupAppmenu, without its Style row. REQ-TQFS-003, REQ-TQFS-010.
 - [ ] 3.7 The done step: the summary rows, Close, Start the apps menu walkthrough (stores the immediate
       start, reloads). TqSetupKlaar. REQ-TQFS-011.
 - [ ] 3.8 vitest `tests/vitest/setupWizard.spec.js`: Later and the steps store nothing, Skip runs `skip`
@@ -72,6 +73,22 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
 - [ ] 4.2 vitest `tests/vitest/adminVersionCard.spec.js`; PHPUnit for the card's state in
       `lib/Settings/Admin.php`.
 
+## 4b. Keep the Nextcloud theme in line, on the settings page
+
+- [ ] 4b.1 `SettingsController::setCoreThemingFollows()` and the route
+      `POST /settings/core-theming-follows`: admin only, audit entry, 423 under a configuration source;
+      on applies the active set through the `--sync-core` path with the old theme as a version.
+      REQ-TQFS-013.
+- [ ] 4b.2 `templates/settings/admin.php` and `js/admin.js`: the switch in the Active token set card
+      with its hint and status line, filled from `core_theming_follows_set`; no theming sync dialog on a
+      change of set while it is on; disabled under a configuration source. REQ-TQFS-013.
+- [ ] 4b.3 PHPUnit `tests/Unit/Controller/SettingsControllerTest.php` (on applies and stores `1`, off
+      stores `0` and leaves core theming, 423 under a source, audit entry); vitest for the switch and
+      the skipped dialog.
+- [ ] 4b.4 e2e in `tests/e2e/spec-coverage/first-time-setup.spec.ts`: turn the switch on, the core
+      primary colour is the set's; choose another set, no dialog and the core colour follows; turn it
+      off, choose a set, the dialog asks; restore core theming and the set in a `finally`.
+
 ## 5. End to end
 
 - [ ] 5.1 `tests/e2e/spec-coverage/first-time-setup.spec.ts` (`@e2e` tags per scenario): in setup, read
@@ -85,15 +102,16 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
       Follow the house style with the slogan hidden; menu on with 3 columns on a set without the
       workplace top bar; Apply; then the set is active and audited, the core primary colour, logo and
       favicon are the set's (`_core-theming.ts`), an anonymous login page has no slogan, a non-admin
-      sees the workplace top bar and 3 columns; Start the apps menu walkthrough opens the menu with the
-      tour.
+      sees the workplace top bar and 3 columns; the step offers no Style choice; Start the apps menu
+      walkthrough opens the menu with the tour.
 - [ ] 5.4 The version card reads "Completed by admin on"; Set up again opens the wizard with the stored
       set; Later leaves setup done.
 
 ## 6. Live check
 
 - [ ] 6.1 On a fresh reference instance: enable thematiq, open the dashboard as admin and run the
-      wizard through; open as a non-admin; screenshots against the TqSetup boards.
+      wizard through; open as a non-admin; screenshots against the TqSetup boards; the switch on the
+      Theming settings page.
 - [ ] 6.2 On an instance configured by an earlier version, upgrade and confirm nothing opens and the
       version card reads the earlier-version state.
 - [ ] 6.3 Speed: an admin page with setup done and a non-admin page carry no wizard script; record

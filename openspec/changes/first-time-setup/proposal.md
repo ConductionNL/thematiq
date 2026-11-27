@@ -31,12 +31,16 @@ is.
 - **Six steps**: welcome; the house style (a token set, with the licence confirmation for a restricted
   set, or your own uploaded set); the Nextcloud theme (keep Nextcloud's logo, colours and favicon in line
   with the set, now and on later changes of set); the login page (follow the house style or Nextcloud
-  default, hide the slogan); the apps menu (on or off, and its defaults, with the workplace top bar it
-  needs); done, which offers the apps menu walkthrough (change apps-menu-walkthrough).
+  default, hide the slogan); the apps menu (one switch: on is thematiq's workplace apps menu, with the
+  workplace top bar it needs, off is Nextcloud's own menu; and its defaults); done, which offers the apps menu walkthrough (change apps-menu-walkthrough).
 - **Nothing changes until Apply.** The steps collect the choices; Apply on the apps menu step writes
   them all in one checked request.
 - **Later and Skip.** Later closes the wizard for this page; it opens again on the next page until setup
   is applied or skipped. "Skip, keep Nextcloud as it is" ends it without changing anything.
+- **"Keep the Nextcloud theme in line with the set" on the settings page too.** The value the wizard's
+  Nextcloud theme step stores, `core_theming_follows_set`, is a switch in the Active token set card of
+  thematiq's Theming settings page, so an administrator can change it without running setup again
+  (Ruben, 27 November 2026).
 - **A version card** on thematiq's Theming settings page shows who completed setup and when, and offers
   Set up again, the apps menu walkthrough and Help us.
 - **Completion is read from the saved configuration.** An instance that an earlier version already
@@ -48,9 +52,10 @@ is.
 
 ## Not in this change
 
-- New theming options on the settings page. Every step sets something the settings page already sets,
-  except the new "keep the Nextcloud theme in line" value, which the wizard and the version card show.
-  A settings-page control for it is not drawn yet.
+- New theming options on the settings page beyond the "keep the Nextcloud theme in line" switch. Every
+  other step sets something the settings page already sets.
+- A choice between the workplace and the classic apps menu in the wizard (Ruben, 27 November 2026):
+  the apps menu step is one switch. The classic style stays available in the menu's own settings.
 - A wizard for subadmins or delegated theming administrators.
 - Seeding. thematiq has no data to seed; Apply writes configuration.
 
@@ -59,6 +64,14 @@ is.
 ConductionNL/design-system#1213: TqSetupWelkom, TqSetupHuisstijl, TqSetupHuisstijlLicentie,
 TqSetupTheming, TqSetupInlogpagina, TqSetupAppmenu, TqSetupKlaar and TqSetupOpnieuw. Boards are canon;
 `design.md` carries their copy. See `screens.md`.
+
+Two board follow-ups from Ruben's decisions of 27 November 2026. Until they are drawn, this change leads
+on both points:
+
+- TqSetupAppmenu draws a Style choice (Workplace, Classic) under the switch. It goes: the step is the
+  switch "Use the thematiq apps menu" with the menu's defaults under it while it is on.
+- TqTheming (the Active token set card) does not draw the switch "Keep the Nextcloud theme in line with
+  the set" yet.
 
 ## Impact
 
@@ -69,6 +82,8 @@ TqSetupTheming, TqSetupInlogpagina, TqSetupAppmenu, TqSetupKlaar and TqSetupOpni
   initial state and the loader script, for an administrator on a user page while setup is due
 - `lib/Service/ActiveTokenSetService.php`: apply the set to Nextcloud's theme on every switch while
   `core_theming_follows_set` is `1`
+- `lib/Controller/SettingsController.php`, route `POST /settings/core-theming-follows`: the settings
+  page switch; `templates/settings/admin.php` and `js/admin.js`: the switch in the Active token set card
 - new `js/setup-wizard-loader.js`, `src/setupWizard.js`, `webpack.setup-wizard.config.js`, bundled to
   `js/vendor/setupWizard.js`
 - `src/manifest.json`: the ADR-042 `setup` block

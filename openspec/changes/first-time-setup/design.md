@@ -118,15 +118,18 @@ footer; steps 2 to 5 add Back; steps 2 to 4 have Next and step 5 has Apply. The 
    in the log. Skipped when the house style is Nextcloud default.
 4. **Login page** (TqSetupInlogpagina): "Login page style" with Follow the house style or Nextcloud
    default, the checkbox "Hide the Nextcloud slogan", and a preview of the login card.
-5. **Apps menu** (TqSetupAppmenu): the switch "Use the thematiq apps menu" ("Off: Nextcloud keeps its own
-   menu, the rest of the house style stays."), the style Workplace or Classic, columns 3 to 5, rows above
-   More apps 1 to 3, and the switches Show payoff, Show Create and Show external apps, with "Change
-   later: in the menu itself, under Menu settings, tab Configuration." The workplace apps menu shows
-   only in the workplace top bar: when the menu is on and the chosen set does not draw that bar, Apply
-   also stores `header_style` workplace (Ruben, 27 November 2026). Then Apply. Open point: the
-   menu settings know one `style`, workplace or classic, and classic already means Nextcloud's own
-   menu. So "on" with Classic reads the same as "off". Until the board or Ruben says otherwise, off
-   stores classic and on stores the chosen style.
+5. **Apps menu** (TqSetupAppmenu): one switch, "Use the thematiq apps menu" ("Off: Nextcloud keeps its
+   own menu, the rest of the house style stays."), on by default. There is no Style choice (Ruben,
+   27 November 2026): the menu settings know one `style`, workplace or classic, and classic already
+   means Nextcloud's own menu, so a Workplace or Classic choice under "on" made "on with Classic" read
+   the same as "off". On stores the administrator's `menu.style` default workplace; off stores classic.
+   While the switch is on the step shows the workplace menu's defaults: columns 3 to 5, rows above More
+   apps 1 to 3, and the switches Show payoff, Show Create and Show external apps, with "Change later: in
+   the menu itself, under Menu settings, tab Configuration." Off hides them and stores none of them. The
+   workplace apps menu shows only in the workplace top bar: when the switch is on and the chosen set
+   does not draw that bar, Apply also stores `header_style` workplace (Ruben, 27 November 2026); off
+   leaves `header_style` as it is. Then Apply. The board still draws the Style choice; it goes (board
+   follow-up in the proposal).
 6. **Done** (TqSetupKlaar): "Done, <set> is set", "Applied.", "Everyone sees the house style on the next
    page they open. Version <n> is in the log.", a checked row per part (house style, Nextcloud theme,
    login page, apps menu), the invitation to the walkthrough, "You can always set up again from the
@@ -150,9 +153,25 @@ TqSetupTheming's switch reaches past the wizard: "Also on the next change of set
 `core_theming_follows_set` holds it. When it is `1`, every later change of the instance's set (the
 settings page, `occ thematiq:theme:set`, a planned switch) also applies the set to Nextcloud's theme, as
 `--sync-core` and a planned switch already do, with the snapshot of the old theme as a version. When it
-is `0` or absent, those paths behave as today. The settings page shows the value on the version card's
-detail line ("Nextcloud theme kept in line"); a control for it on the settings page is not drawn yet and
-is not part of this change.
+is `0` or absent, those paths behave as today. The version card's detail line shows the value
+("Nextcloud theme kept in line").
+
+The value is also a switch on thematiq's Theming settings page (Ruben, 27 November 2026), in the Active
+token set card under the set's preview, with the label of the wizard, "Keep the Nextcloud theme in line
+with the set", and its hint "Also on the next change of set. Off: thematiq leaves the Nextcloud theme
+alone." It saves at once through `POST /apps/thematiq/settings/core-theming-follows` with
+`{follows: bool}`, admin only like the other settings routes, with an audit entry and 423 under a
+configuration source (the switch is then disabled with the source note).
+
+- Turning it on applies the active set to Nextcloud's theme straight away, through the same
+  `--sync-core` path as the wizard, with the old theme kept as a version, and says so in the card's
+  status line. With Nextcloud default as the active set there is nothing to apply; the value is stored.
+- Turning it off changes nothing in Nextcloud's theme; later changes of set leave it alone.
+- While it is on, choosing another set on the settings page applies that set to Nextcloud's theme
+  without the theming sync dialog (theming-sync, "Theming Sync Dialog"), and the status line says
+  Nextcloud's theme followed. While it is off, the dialog asks as it does today.
+
+The wizard and the switch read and write the same value, so Set up again shows what the switch says.
 
 ## Set up again
 
