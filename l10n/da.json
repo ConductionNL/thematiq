@@ -188,6 +188,7 @@
         "Publish": "Publish",
         "Theme published instance-wide. Reload the page to see changes.": "Theme published instance-wide. Reload the page to see changes.",
         "Preview in my session": "Preview in my session",
+        "Edit in Buildiq": "Edit in Buildiq",
         "Previewing \"{name}\" in your session only.": "Previewing \"{name}\" in your session only.",
         "Configuration bundle (OTAP promotion)": "Configuration bundle (OTAP promotion)",
         "Download or upload the complete NL Design configuration as one JSON file — the active token set, toggles, per-app exclusions, token overrides, custom token sets, email footer, and the upstream-update toggle. Use this to promote configuration between dev, test, acceptance, and production environments identically. This is different from the overrides-only download above.": "Download or upload the complete NL Design configuration as one JSON file — the active token set, toggles, per-app exclusions, token overrides, custom token sets, email footer, and the upstream-update toggle. Use this to promote configuration between dev, test, acceptance, and production environments identically. This is different from the overrides-only download above.",

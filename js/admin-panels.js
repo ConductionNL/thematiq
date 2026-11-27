@@ -133,10 +133,28 @@
 		} else {
 			parts.intro.textContent = intro
 		}
+		var square = document.getElementById('thematiq-buildiq-edit')
 		parts.actions.replaceChildren.apply(
 			parts.actions,
 			typeof config.actions === 'function' ? config.actions(argument) : [],
 		)
+		keepBuildiqSquare(parts.actions, square)
+	}
+
+	/**
+	 * Put the buildiq square back among a panel's actions, where every board
+	 * draws it: after the secondary actions, before the primary one.
+	 *
+	 * @param {HTMLElement} actions The header's actions.
+	 * @param {HTMLElement|null} square The square, or null when Buildiq is off.
+	 * @return {void}
+	 */
+	function keepBuildiqSquare(actions, square) {
+		if (square === null) {
+			return
+		}
+		var primary = actions.querySelector('.thematiq-page-header__action--primary')
+		actions.insertBefore(square, primary)
 	}
 
 	/**
