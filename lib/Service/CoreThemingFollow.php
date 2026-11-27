@@ -87,7 +87,7 @@ class CoreThemingFollow {
 			return [];
 		}
 
-		return $this->sync(tokenSet: $activeSet, auditContext: []);
+		return $this->apply(tokenSet: $activeSet, auditContext: []);
 	}//end setFollows()
 
 	/**
@@ -102,7 +102,7 @@ class CoreThemingFollow {
 	 */
 	public function afterSwitch(string $tokenSet, array $auditContext): void {
 		if ($this->follows() === true) {
-			$this->sync(tokenSet: $tokenSet, auditContext: $auditContext);
+			$this->apply(tokenSet: $tokenSet, auditContext: $auditContext);
 		}
 	}//end afterSwitch()
 
@@ -116,7 +116,7 @@ class CoreThemingFollow {
 	 *
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
 	 */
-	private function sync(string $tokenSet, array $auditContext): array {
+	public function apply(string $tokenSet, array $auditContext): array {
 		$applied = $this->coreSync->sync(tokenSetId: $tokenSet);
 		if ($applied !== []) {
 			$this->auditService->log(
@@ -126,5 +126,5 @@ class CoreThemingFollow {
 		}
 
 		return $applied;
-	}//end sync()
+	}//end apply()
 }//end class
