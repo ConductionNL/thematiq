@@ -605,7 +605,8 @@ test.describe('token-sets', () => {
 				{ tokenSet: 'utrecht' },
 			)
 			expect(res.status).toBe(200)
-			expect(res.json).toEqual({ status: 'ok', tokenSet: 'utrecht' })
+			// nextcloudFollowed: false, Nextcloud's theme does not follow the set here (first-time-setup REQ-TQFS-013).
+			expect(res.json).toEqual({ status: 'ok', tokenSet: 'utrecht', nextcloudFollowed: false })
 			expect(await getTokenSet(page, await requestToken(page))).toBe('utrecht')
 		})
 	})
@@ -976,7 +977,7 @@ test.describe('token-sets', () => {
 				'/apps/thematiq/settings/tokenset',
 				{ tokenSet: 'denhaag' },
 			)
-			expect(res.json).toEqual({ status: 'ok', tokenSet: 'denhaag' })
+			expect(res.json).toEqual({ status: 'ok', tokenSet: 'denhaag', nextcloudFollowed: false })
 			expect(await getTokenSet(page, await requestToken(page))).toBe('denhaag')
 		})
 	})
