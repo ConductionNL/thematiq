@@ -5763,6 +5763,11 @@
 							if (tokenSetSelect !== null && publishMode !== true) {
 								tokenSetSelect.dataset.previousValue = newTokenSetId
 							}
+							if (tsData.nextcloudFollowed === true || coreThemingFollows()) {
+								setCoreFollowsStatus(
+									t('thematiq', 'The Nextcloud theme followed the set.'),
+								)
+							}
 
 							// The dialog stays open across this step: `swap()` only
 							// settles once every new <link> has fired `load`, so the
