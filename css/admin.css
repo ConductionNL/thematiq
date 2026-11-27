@@ -2310,6 +2310,172 @@
 	white-space: nowrap;
 }
 
+/* Column headers that sort and filter (table[data-column-controls],
+ * js/lib/tableColumnControls.js), as the Tq boards draw them: the label and a
+ * chevron are one sort button, then a 22px filter button. The pale chevron is
+ * the field colour, the sorted one the ink; the funnel is muted until its
+ * filter is set, then primary with a 6px dot. Specificity (1,2,0) outranks the
+ * nldesign layer's plain-button rule (0,2,1). */
+#nldesign-settings .nldesign-audit-table .thematiq-column-head {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}
+
+#nldesign-settings .nldesign-audit-table .thematiq-column-head__sort,
+#nldesign-settings .nldesign-audit-table .thematiq-column-head__filter {
+	display: inline-flex;
+	align-items: center;
+	box-sizing: border-box;
+	min-width: 0;
+	min-height: 0;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0;
+	border-radius: 4px;
+	background: transparent;
+	box-shadow: none;
+	color: inherit;
+	font: inherit;
+	font-weight: inherit;
+	cursor: pointer;
+}
+
+#nldesign-settings .nldesign-audit-table .thematiq-column-head__sort {
+	gap: 4px;
+	text-align: start;
+}
+
+#nldesign-settings .nldesign-audit-table .thematiq-column-head__sort svg {
+	flex: none;
+	color: var(--nldesign-color-border-dark, var(--color-border-maxcontrast));
+	transition: transform var(--animation-quick, 100ms) ease;
+}
+
+#nldesign-settings .nldesign-audit-table .thematiq-column-head__sort--sorted svg {
+	color: var(--color-main-text);
+}
+
+#nldesign-settings .nldesign-audit-table .thematiq-column-head__sort--descending svg {
+	transform: rotate(180deg);
+}
+
+#nldesign-settings .nldesign-audit-table .thematiq-column-head__filter {
+	position: relative;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	color: var(--color-text-maxcontrast);
+}
+
+#nldesign-settings .nldesign-audit-table .thematiq-column-head__filter--active {
+	color: var(--color-primary-element);
+}
+
+#nldesign-settings .nldesign-audit-table .thematiq-column-head__filter--active::after {
+	position: absolute;
+	top: 1px;
+	inset-inline-end: 1px;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: currentColor;
+	content: '';
+}
+
+#nldesign-settings .nldesign-audit-table .thematiq-column-head__sort:focus-visible,
+#nldesign-settings .nldesign-audit-table .thematiq-column-head__filter:focus-visible {
+	outline: 2px solid var(--color-primary-element);
+	outline-offset: 2px;
+}
+
+/* The column filter dialog, placed under its filter button on the page body. */
+.thematiq-column-filter {
+	position: absolute;
+	z-index: 10000;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	box-sizing: border-box;
+	width: 260px;
+	max-width: calc(100vw - 32px);
+	padding: 16px;
+	border: 1px solid var(--color-border);
+	border-radius: 12px;
+	background: var(--color-main-background);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	color: var(--color-main-text);
+	font-size: 14px;
+}
+
+.thematiq-column-filter .thematiq-column-filter__heading {
+	margin: 0;
+	font-weight: 600;
+}
+
+.thematiq-column-filter .thematiq-column-filter__options {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	max-height: 260px;
+	margin: 0;
+	padding: 0;
+	overflow-y: auto;
+	border: 0;
+}
+
+.thematiq-column-filter .thematiq-column-filter__option {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	cursor: pointer;
+}
+
+.thematiq-column-filter .thematiq-column-filter__field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.thematiq-column-filter .thematiq-column-filter__label,
+.thematiq-column-filter .thematiq-column-filter__hint {
+	margin: 0;
+	color: var(--color-text-maxcontrast);
+	font-size: 13px;
+}
+
+.thematiq-column-filter .thematiq-column-filter__input {
+	width: 100%;
+	margin: 0;
+}
+
+.thematiq-column-filter .thematiq-column-filter__actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+}
+
+.thematiq-column-filter.thematiq-column-filter .thematiq-column-filter__button {
+	box-sizing: border-box;
+	height: 34px;
+	min-height: 34px;
+	margin: 0 !important;
+	padding: 0 12px !important;
+	border: 1px solid var(--nldesign-color-border-dark, var(--color-border-maxcontrast));
+	border-radius: 8px;
+	background: var(--color-main-background);
+	color: var(--color-main-text);
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.thematiq-column-filter.thematiq-column-filter .thematiq-column-filter__button--primary {
+	border-color: transparent;
+	background: var(--color-primary-element);
+	color: var(--color-primary-element-text);
+}
+
 .nldesign-audit-ts {
 	white-space: nowrap;
 }
