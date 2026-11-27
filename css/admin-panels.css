@@ -799,24 +799,37 @@ html[data-thematiq-open-panel]
 	color: var(--nl-color-grey-text, var(--color-main-text));
 }
 
-#nldesign-settings .thematiq-panel .thematiq-dark-panel__pill--pass,
-#thematiq-page-header .thematiq-dark-panel__status--generated {
-	background: color-mix(
-		in srgb,
-		var(--color-success) 12%,
-		var(--color-main-background)
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__pill--pass {
+	background: var(
+		--nldesign-component-status-badge-success-background-color,
+		color-mix(in srgb, var(--color-success) 12%, var(--color-main-background))
 	) !important;
-	color: var(--color-success-text, var(--color-success));
+	color: var(
+		--nldesign-component-status-badge-success-color,
+		var(--color-success-text, var(--color-success))
+	);
 }
 
 #nldesign-settings .thematiq-panel .thematiq-dark-panel__pill--warn,
 #thematiq-page-header .thematiq-dark-panel__status--warn {
-	background: color-mix(
-		in srgb,
-		var(--color-warning-hover) 35%,
-		var(--color-main-background)
+	background: var(
+		--nldesign-component-status-badge-warning-background-color,
+		color-mix(
+			in srgb,
+			var(--color-warning-hover) 35%,
+			var(--color-main-background)
+		)
 	) !important;
-	color: var(--color-warning-text, var(--color-warning));
+	color: var(
+		--nldesign-component-status-badge-warning-color,
+		var(--color-warning-text, var(--color-warning))
+	);
+}
+
+/* TqDonker draws a generated dark variant in teal, as the set page's dark status. */
+#thematiq-page-header .thematiq-dark-panel__status--generated {
+	background: var(--nl-color-teal-light, var(--color-background-hover)) !important;
+	color: var(--nl-color-teal-text, var(--color-main-text));
 }
 
 #thematiq-page-header .thematiq-page-header__intro .thematiq-dark-panel__status {
@@ -936,7 +949,10 @@ html[data-thematiq-open-panel]
 	gap: 3px 10px;
 }
 
-#nldesign-settings .thematiq-panel .thematiq-css-panel__check > input[type="checkbox"] {
+#nldesign-settings
+	.thematiq-panel
+	.thematiq-css-panel__check
+	> input[type='checkbox'] {
 	grid-row: 1;
 	grid-column: 1;
 	width: 18px;
@@ -1501,12 +1517,21 @@ html[data-thematiq-open-panel]
 	mask: var(--thematiq-pill-icon) center / contain no-repeat;
 }
 
-#nldesign-settings .thematiq-panel .thematiq-contrast-panel__pill--pass .thematiq-contrast-panel__pill-icon {
+#nldesign-settings
+	.thematiq-panel
+	.thematiq-contrast-panel__pill--pass
+	.thematiq-contrast-panel__pill-icon {
 	--thematiq-pill-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z'/%3E%3C/svg%3E");
 }
 
-#nldesign-settings .thematiq-panel .thematiq-contrast-panel__pill--fail .thematiq-contrast-panel__pill-icon,
-#nldesign-settings .thematiq-panel .thematiq-switches-panel__status--failed .thematiq-contrast-panel__pill-icon {
+#nldesign-settings
+	.thematiq-panel
+	.thematiq-contrast-panel__pill--fail
+	.thematiq-contrast-panel__pill-icon,
+#nldesign-settings
+	.thematiq-panel
+	.thematiq-switches-panel__status--failed
+	.thematiq-contrast-panel__pill-icon {
 	--thematiq-pill-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z'/%3E%3C/svg%3E");
 }
 
@@ -1770,7 +1795,11 @@ html[data-thematiq-open-panel]
 #nldesign-settings .thematiq-panel .thematiq-switches-panel__status--running {
 	background: var(
 		--nldesign-component-status-badge-info-background-color,
-		color-mix(in srgb, var(--color-primary-element) 12%, var(--color-main-background))
+		color-mix(
+			in srgb,
+			var(--color-primary-element) 12%,
+			var(--color-main-background)
+		)
 	) !important;
 	color: var(
 		--nldesign-component-status-badge-info-color,
@@ -2051,21 +2080,29 @@ html[data-thematiq-open-panel]
 }
 
 #nldesign-settings .thematiq-own-sets-panel .thematiq-upload-result__pill--pass {
-	background: color-mix(
-		in srgb,
-		var(--color-success) 12%,
-		var(--color-main-background)
+	background: var(
+		--nldesign-component-status-badge-success-background-color,
+		color-mix(in srgb, var(--color-success) 12%, var(--color-main-background))
 	) !important;
-	color: var(--color-success);
+	color: var(
+		--nldesign-component-status-badge-success-color,
+		var(--color-success)
+	);
 }
 
 #nldesign-settings .thematiq-own-sets-panel .thematiq-upload-result__pill--warn {
-	background: color-mix(
-		in srgb,
-		var(--color-warning-hover) 35%,
-		var(--color-main-background)
+	background: var(
+		--nldesign-component-status-badge-warning-background-color,
+		color-mix(
+			in srgb,
+			var(--color-warning-hover) 35%,
+			var(--color-main-background)
+		)
 	) !important;
-	color: var(--color-warning);
+	color: var(
+		--nldesign-component-status-badge-warning-color,
+		var(--color-warning)
+	);
 }
 
 #nldesign-settings .thematiq-own-sets-panel .thematiq-upload-result__file {
@@ -3110,7 +3147,11 @@ html[data-thematiq-open-panel]
 	font-size: 14px;
 }
 
-#nldesign-settings .thematiq-panel .thematiq-environment-panel__sample figcaption strong {
+#nldesign-settings
+	.thematiq-panel
+	.thematiq-environment-panel__sample
+	figcaption
+	strong {
 	font-weight: 600;
 }
 
@@ -3350,21 +3391,25 @@ html[data-thematiq-open-panel]
 
 #nldesign-settings .thematiq-panel .thematiq-set-panel__pill--pass,
 #thematiq-page-header .thematiq-set-panel__status--active {
-	background: color-mix(
-		in srgb,
-		var(--color-success) 12%,
-		var(--color-main-background)
+	background: var(
+		--nldesign-component-status-badge-success-background-color,
+		color-mix(in srgb, var(--color-success) 12%, var(--color-main-background))
 	) !important;
-	color: var(--color-success-text, var(--color-main-text));
+	color: var(
+		--nldesign-component-status-badge-success-color,
+		var(--color-success-text, var(--color-main-text))
+	);
 }
 
 #nldesign-settings .thematiq-panel .thematiq-set-panel__pill--warn {
-	background: color-mix(
-		in srgb,
-		var(--color-warning) 15%,
-		var(--color-main-background)
+	background: var(
+		--nldesign-component-status-badge-warning-background-color,
+		color-mix(in srgb, var(--color-warning) 15%, var(--color-main-background))
 	) !important;
-	color: var(--color-warning-text, var(--color-main-text));
+	color: var(
+		--nldesign-component-status-badge-warning-color,
+		var(--color-warning-text, var(--color-main-text))
+	);
 }
 
 #thematiq-page-header .thematiq-set-panel__status--dark {
