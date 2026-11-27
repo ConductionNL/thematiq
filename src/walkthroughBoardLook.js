@@ -10,7 +10,7 @@
  * and needs none of them, so webpack.menu-walkthrough.config.js points the
  * library's boardLookSheet.js here and the tour costs a page none of it.
  *
- * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+ * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
  */
 
 export const BOARD_LOOK_CSS = ''

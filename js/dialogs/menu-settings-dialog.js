@@ -1852,7 +1852,7 @@
 		 * Close without saving, asking first when something changed, and start
 		 * the apps menu walkthrough from its first step.
 		 *
-		 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-settings/spec.md#requirement-menu-settings-offers-to-replay-the-tour-req-tqwt-008
+		 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-offers-to-replay-the-tour-req-tqwt-008
 		 */
 		var replay = function () {
 			var changed =

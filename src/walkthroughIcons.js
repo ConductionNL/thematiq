@@ -8,7 +8,7 @@
  * loader for. webpack.menu-walkthrough.config.js points the walkthrough's three
  * icon imports here; each draws the same markup as the package's component.
  *
- * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-apps-menu-has-a-walkthrough-with-one-step-per-feature-req-tqwt-001
+ * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-apps-menu-has-a-walkthrough-with-one-step-per-feature-req-tqwt-001
  */
 
 import { h } from 'vue'

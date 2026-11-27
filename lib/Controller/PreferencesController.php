@@ -31,7 +31,7 @@ use OCP\IUserSession;
  * for the two keys of the apps menu tour. The routes take no user id: a person reads and writes only
  * their own values. Any other key answers 404.
  *
- * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
+ * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
  */
 class PreferencesController extends Controller {
 
@@ -59,7 +59,7 @@ class PreferencesController extends Controller {
 	 *
 	 * @return JSONResponse `{value}` (null when none is stored), 404 for another key, 401 without a user.
 	 *
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
 	 */
 	#[NoAdminRequired]
 	public function show(string $key): JSONResponse {
@@ -79,7 +79,7 @@ class PreferencesController extends Controller {
 	 *
 	 * @return JSONResponse `{value}` as stored, 404 for another key, 400 for a value that is not text, 401 without a user.
 	 *
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
 	 */
 	#[NoAdminRequired]
 	public function update(string $key, mixed $value = null): JSONResponse {
@@ -102,7 +102,7 @@ class PreferencesController extends Controller {
 	 *
 	 * @return JSONResponse|null The refusal, or null to serve the request.
 	 *
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
 	 */
 	private function refused(string $key): ?JSONResponse {
 		if ($this->preferences->serves(key: $key) === false) {

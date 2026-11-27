@@ -2013,7 +2013,7 @@
 	 *
 	 * @param {Element} grid The grid.
 	 * @param {object} menu The menu.
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-apps-menu-has-a-walkthrough-with-one-step-per-feature-req-tqwt-001
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-apps-menu-has-a-walkthrough-with-one-step-per-feature-req-tqwt-001
 	 */
 	function hooks(grid, menu) {
 		if (!menu.walkthrough) {
@@ -2116,7 +2116,7 @@
 	 *
 	 * @param {object} state The menu's `walkthrough` state.
 	 * @return {boolean}
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
 	 */
 	function tourDue(state) {
 		if (tourProgress(state) !== null) {
@@ -2142,7 +2142,7 @@
 	 * Whether the walkthrough runs on this page.
 	 *
 	 * @return {boolean}
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-menu-keeps-working-while-the-tour-runs-req-tqwt-003
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-menu-keeps-working-while-the-tour-runs-req-tqwt-003
 	 */
 	function touring() {
 		var w = walkthrough()
@@ -2191,7 +2191,7 @@
 	 *
 	 * @param {object} menu The menu.
 	 * @param {string} mode `auto` or `replay`.
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
 	 */
 	function startWalkthrough(menu, mode) {
 		var state = menu.walkthrough
@@ -2237,7 +2237,7 @@
 	 *
 	 * @param {object} menu The menu.
 	 * @param {boolean} open Whether the menu is open.
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
 	 */
 	function maybeWalkthrough(menu, open) {
 		if (open && mayStart(menu.walkthrough)) {
@@ -2269,7 +2269,7 @@
 	 * Called from Menu settings and from the account menu.
 	 *
 	 * @param {object} menu The menu.
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
 	 */
 	function replayWalkthrough(menu) {
 		if (touring()) {
@@ -2300,7 +2300,7 @@
 	 * then the menu opens by itself once the page is drawn.
 	 *
 	 * @param {object} menu The menu.
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
 	 */
 	function prepareWalkthrough(menu) {
 		if (!menu.walkthrough || typeof menu.walkthrough !== 'object') {
@@ -2331,7 +2331,7 @@
 	 * start a due tour on an open menu.
 	 *
 	 * @param {object} menu The menu.
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
 	 */
 	function walkthroughOnScan(menu) {
 		var waffle = document.querySelector('.app-menu__waffle')

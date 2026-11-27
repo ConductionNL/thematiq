@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
+ * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Over an in-memory user config.
  *
- * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
+ * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
  */
 final class WalkthroughPreferencesTest extends TestCase {
 
@@ -111,7 +111,7 @@ final class WalkthroughPreferencesTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-a-new-menu-feature-gets-its-own-step-after-an-upgrade-req-tqwt-005
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-a-new-menu-feature-gets-its-own-step-after-an-upgrade-req-tqwt-005
 	 */
 	public function testTheVersionCoreDropsTheBuildSuffix(): void {
 		$this->assertSame(expected: '1.3.0', actual: WalkthroughPreferences::versionCore(version: '1.3.0-unstable.20261201'));
@@ -127,7 +127,7 @@ final class WalkthroughPreferencesTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
 	 */
 	public function testTheStateCarriesVersionCores(): void {
 		$this->stored['anna/' . WalkthroughPreferences::SEEN] = '1.3.0-unstable.20261201';

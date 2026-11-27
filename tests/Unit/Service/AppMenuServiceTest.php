@@ -559,7 +559,7 @@ class AppMenuServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
 	 */
 	public function testTheTourStateJoinsTheWorkplaceMenu(): void {
 		$this->configure(block: ['hint' => 'Hint']);

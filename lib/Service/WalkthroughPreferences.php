@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
+ * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ use OCP\IConfig;
  * Reads and writes the two tour keys as user values of thematiq, and names the version core of the
  * installed app, which the tour compares step versions against.
  *
- * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
+ * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
  */
 class WalkthroughPreferences {
 
@@ -79,7 +79,7 @@ class WalkthroughPreferences {
 	 *
 	 * @return bool
 	 *
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
 	 */
 	public function serves(string $key): bool {
 		return in_array($key, self::KEYS, true);
@@ -93,7 +93,7 @@ class WalkthroughPreferences {
 	 *
 	 * @return string|null
 	 *
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
 	 */
 	public function get(string $userId, string $key): ?string {
 		if ($this->serves(key: $key) === false) {
@@ -117,7 +117,7 @@ class WalkthroughPreferences {
 	 *
 	 * @return string|null The stored value, null when removed.
 	 *
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
 	 */
 	public function set(string $userId, string $key, string $value): ?string {
 		if ($this->serves(key: $key) === false) {
@@ -142,7 +142,7 @@ class WalkthroughPreferences {
 	 *
 	 * @return array{seen: string, progress: string, appVersion: string}
 	 *
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
 	 */
 	public function state(?string $userId): array {
 		$seen = '';
@@ -167,7 +167,7 @@ class WalkthroughPreferences {
 	 *
 	 * @return string Such as `1.2.48`, or ''.
 	 *
-	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-a-new-menu-feature-gets-its-own-step-after-an-upgrade-req-tqwt-005
+	 * @spec openspec/specs/apps-menu-walkthrough/spec.md#requirement-a-new-menu-feature-gets-its-own-step-after-an-upgrade-req-tqwt-005
 	 */
 	public static function versionCore(string $version): string {
 		if (preg_match('/^\s*v?(\d+)(?:\.(\d+))?(?:\.(\d+))?/', $version, $match) !== 1) {
