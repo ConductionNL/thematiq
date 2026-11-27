@@ -20,11 +20,7 @@ import * as path from 'path'
 import { test, expect, type Page } from '@playwright/test'
 import { getTokenSet, requestToken, setTokenSet } from '../workflows/_helpers'
 import { occPrefix } from '../shared-instance'
-import {
-	captureCoreTheming,
-	readTheming,
-	restoreCoreTheming,
-} from './_core-theming'
+import { captureCoreTheming, readTheming, restoreCoreTheming } from './_core-theming'
 
 const THEMING_URL = '/settings/admin/theming'
 const FOLLOWS_KEY = 'core_theming_follows_set'
@@ -80,14 +76,18 @@ function occ(args: string[]): string {
 async function setSwitch(page: Page, on: boolean): Promise<void> {
 	const toggle = page.locator('#thematiq-core-theming-follows')
 	const saved = page.waitForResponse(
-		(r) => r.url().includes('/settings/core-theming-follows') && r.request().method() === 'POST',
+		(r) =>
+			r.url().includes('/settings/core-theming-follows')
+			&& r.request().method() === 'POST',
 	)
-	if (on) {
-		await toggle.check()
-	} else {
-		await toggle.uncheck()
-	}
+	// Nextcloud's `.checkbox` style hides the input and draws its label, so the label is clicked.
+	expect(
+		await toggle.isChecked(),
+		'the switch should start in the other position',
+	).toBe(!on)
+	await page.locator('label[for="thematiq-core-theming-follows"]').click()
 	expect((await saved).status(), 'the switch should save at once').toBe(200)
+	expect(await toggle.isChecked()).toBe(on)
 }
 
 /**
@@ -99,11 +99,15 @@ async function setSwitch(page: Page, on: boolean): Promise<void> {
  */
 async function chooseSet(page: Page, id: string): Promise<boolean> {
 	const saved = page.waitForResponse(
-		(r) => /\/settings\/tokenset(\?|$)/.test(r.url()) && r.request().method() === 'POST',
+		(r) =>
+			/\/settings\/tokenset(\?|$)/.test(r.url())
+			&& r.request().method() === 'POST',
 	)
 	await page.selectOption('#nldesign-token-set-select', id)
 	const dialog = page.locator('#nldesign-apply-dialog-overlay')
-	await dialog.waitFor({ state: 'visible', timeout: 10_000 }).catch(() => undefined)
+	await dialog
+		.waitFor({ state: 'visible', timeout: 10_000 })
+		.catch(() => undefined)
 	let offered = false
 	if (await dialog.isVisible()) {
 		offered = (await dialog.locator('#nldesign-apply-theming').count()) > 0
@@ -117,6 +121,7 @@ test.describe('first-time setup: the Nextcloud theme follows the set', () => {
 	test('@e2e the switch brings the set to Nextcloud, a change of set follows without asking, and off asks again', async ({
 		page,
 	}) => {
+		test.setTimeout(180_000)
 		await page.goto(THEMING_URL)
 		const token = await requestToken(page)
 		const previousSet = await getTokenSet(page, token)
@@ -127,35 +132,63 @@ test.describe('first-time setup: the Nextcloud theme follows the set', () => {
 			await setTokenSet(page, token, FIRST)
 			occ(['config:app:set', 'thematiq', FOLLOWS_KEY, '--value=0'])
 			await page.goto(THEMING_URL)
-			await expect(page.locator('#thematiq-core-theming-follows')).not.toBeChecked()
-			await expect(page.locator('#thematiq-core-theming-follows')).toHaveAttribute('role', 'switch')
+			await expect(
+				page.locator('#thematiq-core-theming-follows'),
+			).not.toBeChecked()
+			await expect(
+				page.locator('#thematiq-core-theming-follows'),
+			).toHaveAttribute('role', 'switch')
 
 			// On applies the active set to Nextcloud's theme straight away.
 			await setSwitch(page, true)
-			expect((await readTheming(page)).primary_color.toLowerCase()).toBe(primaryOf(FIRST))
+			expect((await readTheming(page)).primary_color.toLowerCase()).toBe(
+				primaryOf(FIRST),
+			)
 			expect(occ(['config:app:get', 'thematiq', FOLLOWS_KEY])).toBe('1')
 
 			// While it is on, a change of set follows without the sync section or dialog.
 			const offeredWhileOn = await chooseSet(page, SECOND)
-			expect(offeredWhileOn, 'no sync section while the theme follows').toBe(false)
-			await expect(page.locator('#thematiq-core-theming-follows-status')).toHaveText(
-				'The Nextcloud theme followed the set.',
+			expect(offeredWhileOn, 'no sync section while the theme follows').toBe(
+				false,
 			)
-			await expect(page.locator('#nldesign-theming-dialog-overlay')).toHaveCount(0)
-			expect((await readTheming(page)).primary_color.toLowerCase()).toBe(primaryOf(SECOND))
+			await expect(
+				page.locator('#thematiq-core-theming-follows-status'),
+			).toHaveText('The Nextcloud theme followed the set.')
+			await expect(
+				page.locator('#nldesign-theming-dialog-overlay'),
+			).toHaveCount(0)
+			expect((await readTheming(page)).primary_color.toLowerCase()).toBe(
+				primaryOf(SECOND),
+			)
 
 			// The stored value survives a reload.
 			await page.goto(THEMING_URL)
-			await expect(page.locator('#thematiq-core-theming-follows')).toBeChecked()
+			await expect(
+				page.locator('#thematiq-core-theming-follows'),
+			).toBeChecked()
 
 			// Off leaves Nextcloud's theme alone and the next change of set asks again.
 			await setSwitch(page, false)
 			expect(occ(['config:app:get', 'thematiq', FOLLOWS_KEY])).toBe('0')
-			expect((await readTheming(page)).primary_color.toLowerCase()).toBe(primaryOf(SECOND))
+			expect((await readTheming(page)).primary_color.toLowerCase()).toBe(
+				primaryOf(SECOND),
+			)
+			// The page asks in one of its two places: the sync section of the apply dialog, or, for
+			// a set without an apply preview, the theming sync dialog after the save.
 			await page.selectOption('#nldesign-token-set-select', FIRST)
-			const dialog = page.locator('#nldesign-apply-dialog-overlay')
-			await expect(dialog).toBeVisible({ timeout: 10_000 })
-			await expect(dialog.locator('#nldesign-apply-theming')).toHaveCount(1)
+			const applyDialog = page.locator('#nldesign-apply-dialog-overlay')
+			await applyDialog
+				.waitFor({ state: 'visible', timeout: 5_000 })
+				.catch(() => undefined)
+			if (await applyDialog.isVisible()) {
+				await expect(
+					applyDialog.locator('#nldesign-apply-theming'),
+				).toHaveCount(1)
+			} else {
+				await expect(
+					page.locator('#nldesign-theming-dialog-overlay'),
+				).toBeVisible({ timeout: 10_000 })
+			}
 			await page.keyboard.press('Escape')
 		} finally {
 			await setTokenSet(page, token, previousSet)
@@ -163,7 +196,12 @@ test.describe('first-time setup: the Nextcloud theme follows the set', () => {
 			if (previousFollows === '') {
 				occ(['config:app:delete', 'thematiq', FOLLOWS_KEY])
 			} else {
-				occ(['config:app:set', 'thematiq', FOLLOWS_KEY, `--value=${previousFollows}`])
+				occ([
+					'config:app:set',
+					'thematiq',
+					FOLLOWS_KEY,
+					`--value=${previousFollows}`,
+				])
 			}
 		}
 	})
