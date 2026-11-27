@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "generated_from": "sets:b2c9f7a044d5a539",
+    "generated_from": "sets:6a6cea3a029bccec",
     "sets": [
         {
             "id": "amsterdam",
@@ -5098,6 +5098,7 @@
                 "color-info": "#0070b9",
                 "color-info-rgb": "0, 112, 185",
                 "color-link-hover": "#00579c",
+                "color-link-visited": "#aa418c",
                 "color-nav-background": "#ffffff",
                 "color-placeholder-dark": "#efefef",
                 "color-placeholder-light": "#f4edf4",
@@ -5111,7 +5112,8 @@
                 "color-warning-rgb": "166, 86, 0",
                 "component-table-header-background-color": "transparent",
                 "component-table-header-color": "#757575",
-                "component-table-header-font-weight": "400"
+                "component-table-header-font-weight": "400",
+                "header-icon-filter": "none"
             },
             "dark": {
                 "tokens": {
@@ -5152,7 +5154,7 @@
                     "color-info": "#45b0f5",
                     "color-info-rgb": "69, 176, 245",
                     "color-link-hover": "#5cb2f6",
-                    "color-link-visited": "#c392e3",
+                    "color-link-visited": "#b8589c",
                     "color-nav-background": "#141414",
                     "color-placeholder-dark": "#222222",
                     "color-placeholder-light": "#281a28",
@@ -5199,7 +5201,7 @@
                     "component-heading-color": "#cbcbcb",
                     "component-link-color": "#46b6ff",
                     "component-link-hover-color": "#63baff",
-                    "component-link-visited-color": "#cea0eb",
+                    "component-link-visited-color": "#c973b1",
                     "component-ordered-list-color": "#cbcbcb",
                     "component-paragraph-color": "#cbcbcb",
                     "component-separator-border-color": "#343434",
