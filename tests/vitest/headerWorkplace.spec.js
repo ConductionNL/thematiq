@@ -22,11 +22,12 @@ const ROOT = path.resolve(__dirname, '../..')
  *
  * @param {string} selector The selector, as written in the sheet.
  * @param {string} [media] The media query params, when the rule sits in one.
+ * @param {string} [sheet] The stylesheet, relative to the app.
  * @return {Record<string, string>} The merged declarations.
  */
-function declsOf(selector, media = '') {
+function declsOf(selector, media = '', sheet = 'css/header-workplace.css') {
 	const decls = {}
-	const css = fs.readFileSync(path.join(ROOT, 'css/header-workplace.css'), 'utf8')
+	const css = fs.readFileSync(path.join(ROOT, sheet), 'utf8')
 	postcss.parse(css).walkRules((rule) => {
 		const inMedia = rule.parent?.type === 'atrule' ? rule.parent.params : ''
 		if (inMedia !== media) {
@@ -74,11 +75,40 @@ describe('the DqKop bar', () => {
 		expect(button).toMatchObject({
 			width: '44px !important',
 			height: '44px !important',
-			'border-radius': '22px !important',
+			'border-radius': 'var(--thematiq-icon-radius, 22px) !important',
 		})
 		expect(declsOf(`${BAR} #notifications .header-menu__trigger`)).toEqual(
 			button,
 		)
+	})
+
+	// @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-shape-applies-to-every-icon-of-the-apps-menu-and-the-top-bar-req-tqms-001
+	it('gives the bell and the contacts menu the hover, focus, active and open background of the bar', () => {
+		;['#notifications', '#contactsmenu'].forEach((id) => {
+			;[
+				`${BAR} ${id} .header-menu__trigger:hover`,
+				`${BAR} ${id} .header-menu__trigger:focus-visible`,
+				`${BAR} ${id} .header-menu__trigger:active`,
+				`${BAR} ${id} .header-menu--opened .header-menu__trigger`,
+				`${BAR} ${id}.header-menu--opened .header-menu__trigger`,
+			].forEach((selector) => {
+				expect(declsOf(selector)['background-color'], selector).toBe(
+					'var(--color-background-hover) !important',
+				)
+			})
+			expect(
+				declsOf(`${BAR} ${id} .header-menu__trigger:focus-visible`).outline,
+			).toMatch(/^2px solid var\(--nldesign-color-primary/)
+		})
+		;[
+			`${BAR} .thematiq-quick-add__button:hover`,
+			`${BAR} .thematiq-quick-add__button:focus-visible`,
+			`${BAR} .thematiq-quick-add__button:active`,
+		].forEach((selector) => {
+			expect(declsOf(selector).background, selector).toBe(
+				'var(--color-background-hover)',
+			)
+		})
 	})
 
 	it('draws the divider before the person, after whichever control comes last', () => {
@@ -127,5 +157,76 @@ describe('the DqKop bar', () => {
 				'(max-width: 420px)',
 			).display,
 		).toBe('none')
+	})
+})
+
+// @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-shape-applies-to-every-icon-of-the-apps-menu-and-the-top-bar-req-tqms-001
+describe('the menu shape on every icon of the bar and the menu', () => {
+	const MENU = 'css/app-menu.css'
+	const SQUARE = ":root[data-thematiq-shape='square']"
+	const POPOVER = 'body:not(#body-login) .app-menu__popover-base'
+
+	it('sets the radius variable under the square root only, to the menu icons\' radius', () => {
+		expect(declsOf(SQUARE, '', MENU)).toEqual({
+			'--thematiq-icon-radius': 'var(--border-radius-element, 8px)',
+		})
+		const css = fs.readFileSync(path.join(ROOT, MENU), 'utf8')
+		const setters = []
+		postcss.parse(css).walkDecls('--thematiq-icon-radius', (d) => {
+			setters.push(d.parent.selector)
+		})
+		expect(setters).toEqual([SQUARE])
+	})
+
+	it('gives the app icons in the menu the square under the square root', () => {
+		expect(
+			declsOf(`${SQUARE} ${POPOVER} .app-item__circle`, '', MENU),
+		).toEqual({ 'border-radius': 'var(--thematiq-icon-radius)' })
+	})
+
+	it('keeps every other icon round without the variable', () => {
+		const round = [
+			[MENU, `${POPOVER} .thematiq-app-menu__create-icon`, '50%'],
+			[MENU, `${POPOVER} .thematiq-app-menu__external .app-item__circle`, '50%'],
+			[
+				MENU,
+				'body:not(#body-login) .thematiq-app-pins__ghost > .thematiq-app-pins__icon',
+				'50%',
+			],
+			[undefined, `${BAR} #notifications .header-menu__trigger`, '22px !important'],
+			[undefined, `${BAR} #contactsmenu .header-menu__trigger`, '22px !important'],
+			[undefined, `${BAR} .thematiq-quick-add__button`, '22px'],
+			[undefined, `${BAR} .thematiq-quick-add__mark`, '50%'],
+			[
+				undefined,
+				`${BAR}[data-thematiq-user-chip] #user-menu > .header-menu__trigger`,
+				'24px !important',
+			],
+		]
+		round.forEach(([sheet, selector, radius]) => {
+			const value = radius.replace(' !important', '')
+			const important = radius.endsWith('!important') ? ' !important' : ''
+			expect(declsOf(selector, '', sheet)['border-radius'], selector).toBe(
+				`var(--thematiq-icon-radius, ${value})${important}`,
+			)
+		})
+	})
+
+	it('squares the other icon buttons at the end of the bar, the search field excepted', () => {
+		const decls = declsOf(
+			`${SQUARE} ${BAR} .header-end .header-menu__trigger:not(.unified-search-menu *)`,
+			'',
+			MENU,
+		)
+		expect(decls).toEqual({
+			'border-radius': 'var(--thematiq-icon-radius) !important',
+		})
+		expect(
+			declsOf(
+				`${SQUARE} ${BAR} .header-end .button-vue--icon-only:not(.unified-search-menu *)`,
+				'',
+				MENU,
+			),
+		).toEqual(decls)
 	})
 })

@@ -2656,6 +2656,7 @@
 	 * Watch for the menu to open and arrange it.
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-shape-applies-to-every-icon-of-the-apps-menu-and-the-top-bar-req-tqms-001
 	 */
 	function thematiqAppMenuMain() {
 		if (
@@ -2674,10 +2675,13 @@
 		if (!menu || typeof menu !== 'object') {
 			return
 		}
-		if (settingsOf(menu).style === 'classic') {
+		var settings = settingsOf(menu)
+		if (settings.style === 'classic') {
 			classic(menu)
 			return
 		}
+		// On the root, so the top bar's icon buttons follow the shape too.
+		document.documentElement.setAttribute('data-thematiq-shape', settings.shape)
 		var save = saver(menu)
 		opening()
 		menu.pinBar = pinBar(menu)
