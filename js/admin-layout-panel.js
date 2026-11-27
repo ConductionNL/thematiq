@@ -614,6 +614,7 @@
 		button.className =
 			'thematiq-page-header__action thematiq-layout-panel__follow'
 		button.textContent = tr('Everything follows the theme')
+		button.dataset.thematiqIcon = 'restore'
 		button.addEventListener('click', followTheTheme)
 		return [button]
 	}

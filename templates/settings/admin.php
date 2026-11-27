@@ -209,7 +209,7 @@ if ($_['mockUi'] === true) {
 				<option value="tokens-studio-legacy"><?php p($l->t('Tokens Studio for Figma, older spelling')); ?></option>
 				<option value="openproject"><?php p($l->t('OpenProject plugin set file')); ?></option>
 			</select>
-			<button type="button" id="nldesign-dtcg-download" class="button">
+			<button type="button" id="nldesign-dtcg-download" data-thematiq-icon="download" class="button">
 				<?php p($l->t('Download as design tokens')); ?>
 			</button>
 			<!-- Token reference of the selected set (openspec/specs/token-reference/spec.md);
@@ -720,7 +720,7 @@ if ($_['mockUi'] === true) {
 						<div class="thematiq-motion-panel__sample thematiq-motion-panel__toast"><?php p($l->t('Notification: saved')); ?></div>
 					</div>
 					<div class="thematiq-css-panel__actions">
-						<button type="button" class="thematiq-css-panel__save thematiq-motion-panel__play"><?php p($l->t('Play motion')); ?></button>
+						<button type="button" class="thematiq-css-panel__save thematiq-motion-panel__play" data-thematiq-icon="play"><?php p($l->t('Play motion')); ?></button>
 						<span class="thematiq-panel__fact-hint thematiq-motion-panel__readout" role="status" aria-live="polite"></span>
 					</div>
 				</section>
@@ -1138,7 +1138,7 @@ if ($_['mockUi'] === true) {
 						</p>
 						<div class="thematiq-css-panel__actions">
 							<span class="thematiq-preview__spacer"></span>
-							<button type="submit" class="thematiq-css-panel__save" id="nldesign-scheduled-submit"><?php p($l->t('Schedule')); ?></button>
+							<button type="submit" class="thematiq-css-panel__save" id="nldesign-scheduled-submit" data-thematiq-icon="calendar-clock"><?php p($l->t('Schedule')); ?></button>
 						</div>
 					</form>
 				</section>
@@ -1261,8 +1261,8 @@ if ($_['mockUi'] === true) {
 					<div>
 						<!-- One form on screen at a time; admin.js switches the panels. -->
 						<div class="nldesign-create-tabs" role="tablist" aria-label="<?php p($l->t('Add a custom token set')); ?>">
-							<button type="button" class="nldesign-create-tab active" role="tab" id="nldesign-create-tab-upload" aria-selected="true" aria-controls="nldesign-create-panel-upload"><?php p($l->t('Upload file')); ?></button>
-							<button type="button" class="nldesign-create-tab" role="tab" id="nldesign-create-tab-colours" aria-selected="false" aria-controls="nldesign-brand-form" tabindex="-1"><?php p($l->t('Start from your colours')); ?></button>
+							<button type="button" class="nldesign-create-tab active" role="tab" id="nldesign-create-tab-upload" data-thematiq-icon="upload" aria-selected="true" aria-controls="nldesign-create-panel-upload"><?php p($l->t('Upload file')); ?></button>
+							<button type="button" class="nldesign-create-tab" role="tab" id="nldesign-create-tab-colours" data-thematiq-icon="palette" aria-selected="false" aria-controls="nldesign-brand-form" tabindex="-1"><?php p($l->t('Start from your colours')); ?></button>
 						</div>
 						<div class="nldesign-create-panels">
 						<div class="nldesign-create-panel" id="nldesign-create-panel-upload" role="tabpanel"
@@ -1295,7 +1295,7 @@ if ($_['mockUi'] === true) {
 								<?php p($l->t('From Figma: a Tokens Studio file with $themes or $metadata becomes a custom token set. Thematiq merges the sets in the theme order and reads both value and $value. What it leaves out is named in the message after the upload: a disabled set, a reference cycle or a sum. A file with a light and a dark theme is one house style, not two brands.')); ?>
 							</p>
 							<div class="nldesign-form-actions">
-								<button type="button" id="nldesign-upload-btn" class="button primary">
+								<button type="button" id="nldesign-upload-btn" data-thematiq-icon="file-upload" class="button primary">
 									<?php p($l->t('Choose file and upload')); ?>
 								</button>
 							</div>
@@ -1629,7 +1629,7 @@ if ($_['mockUi'] === true) {
 							<label id="nldesign-documents-logo-label" for="nldesign-documents-logo"><?php p($l->t('Document logo')); ?></label>
 							<div class="nldesign-file-pick">
 								<input type="file" id="nldesign-documents-logo" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
-								<button type="button" class="button" id="nldesign-documents-logo-btn" aria-labelledby="nldesign-documents-logo-label nldesign-documents-logo-btn"><?php p($l->t('Choose file')); ?></button>
+								<button type="button" class="button" id="nldesign-documents-logo-btn" data-thematiq-icon="image" aria-labelledby="nldesign-documents-logo-label nldesign-documents-logo-btn"><?php p($l->t('Choose file')); ?></button>
 								<span class="nldesign-file-pick__name" id="nldesign-documents-logo-name"><?php p($l->t('No file chosen')); ?></span>
 							</div>
 							<button type="button" class="button thematiq-email-panel__remove" id="nldesign-documents-logo-remove"><?php p($l->t('Remove document logo')); ?></button>
@@ -1639,7 +1639,7 @@ if ($_['mockUi'] === true) {
 							<label id="nldesign-documents-cover-label" for="nldesign-documents-cover"><?php p($l->t('Cover image')); ?></label>
 							<div class="nldesign-file-pick">
 								<input type="file" id="nldesign-documents-cover" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
-								<button type="button" class="button" id="nldesign-documents-cover-btn" aria-labelledby="nldesign-documents-cover-label nldesign-documents-cover-btn"><?php p($l->t('Choose file')); ?></button>
+								<button type="button" class="button" id="nldesign-documents-cover-btn" data-thematiq-icon="image" aria-labelledby="nldesign-documents-cover-label nldesign-documents-cover-btn"><?php p($l->t('Choose file')); ?></button>
 								<span class="nldesign-file-pick__name" id="nldesign-documents-cover-name"><?php p($l->t('No file chosen')); ?></span>
 							</div>
 							<button type="button" class="button thematiq-email-panel__remove" id="nldesign-documents-cover-remove"><?php p($l->t('Remove cover image')); ?></button>
@@ -2083,7 +2083,7 @@ if ($_['mockUi'] === true) {
 					<div class="thematiq-css-panel__actions">
 						<span class="thematiq-panel__fact-hint thematiq-own-tokens-panel__count"></span>
 						<span class="thematiq-preview__spacer"></span>
-						<button type="button" id="nldesign-own-token-add" class="thematiq-groups-panel__add"><?php p($l->t('Add token')); ?></button>
+						<button type="button" id="nldesign-own-token-add" data-thematiq-icon="plus" class="thematiq-groups-panel__add"><?php p($l->t('Add token')); ?></button>
 					</div>
 				</section>
 				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="nldesign-deprecations-heading">
@@ -2100,7 +2100,7 @@ if ($_['mockUi'] === true) {
 					<div class="thematiq-css-panel__actions">
 						<span class="thematiq-panel__fact-hint thematiq-own-tokens-panel__deprecated"></span>
 						<span class="thematiq-preview__spacer"></span>
-						<button type="button" id="nldesign-deprecation-add" class="thematiq-groups-panel__add"><?php p($l->t('Deprecate token')); ?></button>
+						<button type="button" id="nldesign-deprecation-add" data-thematiq-icon="deprecate" class="thematiq-groups-panel__add"><?php p($l->t('Deprecate token')); ?></button>
 					</div>
 					<p id="nldesign-own-tokens-status" class="thematiq-panel__fact-hint" role="status" aria-live="polite"></p>
 				</section>

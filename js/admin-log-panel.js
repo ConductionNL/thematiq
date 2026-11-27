@@ -92,6 +92,7 @@
 		button.type = 'button'
 		button.className = 'thematiq-page-header__action'
 		button.textContent = tr('Download full log')
+		button.dataset.thematiqIcon = 'download'
 		button.addEventListener('click', function () {
 			var download = document.getElementById('nldesign-audit-download-btn')
 			if (download !== null) {

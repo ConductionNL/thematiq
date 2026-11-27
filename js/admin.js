@@ -2507,7 +2507,7 @@
 					+ escapeHtml(t('thematiq', 'Custom token overrides'))
 					+ '</h3>'
 					+ '<div class="nldesign-token-editor-actions">'
-					+ '<button type="button" class="nldesign-btn nldesign-btn--small" id="nldesign-export-btn">'
+					+ '<button type="button" class="nldesign-btn nldesign-btn--small" id="nldesign-export-btn" data-thematiq-icon="download">'
 					+ escapeHtml(t('thematiq', 'Download'))
 					+ '</button>'
 					// A real button, so it is drawn like the ones beside it; the file
@@ -2545,7 +2545,7 @@
 					+ buildTokenGroups()
 					+ '<div class="nldesign-save-bar">'
 					+ '<span class="nldesign-save-status" id="nldesign-save-status"></span>'
-					+ '<button class="nldesign-btn nldesign-btn--primary" id="nldesign-save-btn">'
+					+ '<button class="nldesign-btn nldesign-btn--primary" id="nldesign-save-btn" data-thematiq-icon="save">'
 					+ escapeHtml(t('thematiq', 'Save overrides'))
 					+ '</button>'
 					+ '</div>'

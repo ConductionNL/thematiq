@@ -79,15 +79,19 @@
 	 * @param {string} label The text.
 	 * @param {string} id The panel button's id.
 	 * @param {boolean} primary Whether it is the main action.
+	 * @param {string} [icon] The board's button icon (data-thematiq-icon).
 	 * @return {HTMLElement} The button.
 	 */
-	function headerButton(label, id, primary) {
+	function headerButton(label, id, primary, icon) {
 		var button = document.createElement('button')
 		button.type = 'button'
 		button.className =
 			'thematiq-page-header__action'
 			+ (primary === true ? ' thematiq-page-header__action--primary' : '')
 		button.textContent = label
+		if (icon) {
+			button.dataset.thematiqIcon = icon
+		}
 		button.addEventListener('click', function () {
 			var own = document.getElementById(id)
 			if (own !== null) {
@@ -120,8 +124,14 @@
 						tr('Deprecate token'),
 						'nldesign-deprecation-add',
 						false,
+						'deprecate',
 					),
-					headerButton(tr('Add token'), 'nldesign-own-token-add', true),
+					headerButton(
+						tr('Add token'),
+						'nldesign-own-token-add',
+						true,
+						'plus',
+					),
 				]
 			},
 			onOpen: render,
