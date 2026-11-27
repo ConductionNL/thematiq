@@ -11,6 +11,11 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+# Xdebug, when loaded (the GitHub runner's PHP has it unless setup-php sets
+# coverage: none), makes every PHP step here about six times slower; the gate
+# collects no coverage, so it runs with Xdebug off unless the caller says otherwise.
+export XDEBUG_MODE="${XDEBUG_MODE:-off}"
+
 # Without --force only sets whose token file changed are regenerated, so a hand-tuned
 # dark variant of an untouched set is never rewritten.
 php scripts/generate-dark-variants.php > /dev/null
