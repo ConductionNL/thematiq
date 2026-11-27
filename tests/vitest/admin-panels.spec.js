@@ -203,11 +203,13 @@ describe('panels of the Theming page', () => {
 		expect(document.activeElement).toBe(document.getElementById('all-options'))
 	})
 
-	it('keeps the buildiq square among a panel\'s actions, before its primary one, and gives it back', async () => {
-		document.querySelector('.thematiq-page-header__actions').insertAdjacentHTML(
-			'beforeend',
-			'<a id="thematiq-buildiq-edit" href="/index.php/apps/buildiq/" aria-label="Edit in Buildiq"></a>',
-		)
+	it("keeps the buildiq square among a panel's actions, before its primary one, and gives it back", async () => {
+		document
+			.querySelector('.thematiq-page-header__actions')
+			.insertAdjacentHTML(
+				'beforeend',
+				'<a id="thematiq-buildiq-edit" href="/index.php/apps/buildiq/" aria-label="Edit in Buildiq"></a>',
+			)
 		document
 			.getElementById('nldesign-settings')
 			.insertAdjacentHTML(
@@ -233,7 +235,11 @@ describe('panels of the Theming page', () => {
 		const order = [
 			...document.querySelector('.thematiq-page-header__actions').children,
 		].map((el) => el.id || el.textContent)
-		expect(order).toEqual(['Deprecate token', 'thematiq-buildiq-edit', 'Add token'])
+		expect(order).toEqual([
+			'Deprecate token',
+			'thematiq-buildiq-edit',
+			'Add token',
+		])
 
 		await hashTo('#')
 		const back = [
