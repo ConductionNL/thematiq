@@ -95,16 +95,13 @@
 	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
 	 */
 	function tourState() {
-		var menu = null
+		var tour = null
 		try {
-			menu = window.OCP.InitialState.loadState('thematiq', 'app-menu', null)
+			tour = window.OCP.InitialState.loadState('thematiq', 'app-menu', {}).walkthrough
 		} catch (e) {
 			return null
 		}
-		var tour = menu && menu.walkthrough
-		return tour
-			&& typeof tour.replayLabel === 'string'
-			&& tour.replayLabel !== ''
+		return tour && typeof tour.replayLabel === 'string' && tour.replayLabel !== ''
 			? tour
 			: null
 	}
@@ -117,19 +114,16 @@
 	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
 	 */
 	function placeReplayEntry(list, label) {
-		var help = list.querySelector('#help')
+		var help = list.querySelector(':scope > li #help')
 		var after = help !== null ? help.closest('li') : null
-		var model =
-			after || list.querySelector('li.account-menu-entry') || list.querySelector('li')
+		var model = after || list.querySelector('li.account-menu-entry, li')
 		if (model === null) {
 			return
 		}
-		var entry = buildReplayEntry(model, label)
-		if (after !== null && after.parentNode === list) {
-			list.insertBefore(entry, after.nextSibling)
-		} else {
-			list.appendChild(entry)
-		}
+		list.insertBefore(
+			buildReplayEntry(model, label),
+			after !== null ? after.nextSibling : null,
+		)
 	}
 
 	/**

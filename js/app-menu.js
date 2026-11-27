@@ -2032,12 +2032,12 @@
 			}
 		}
 		var shown = function (el) {
-			return el !== null && !el.hasAttribute('data-thematiq-folded')
+			return el !== null && !el.hasAttribute('data-thematiq-folded') ? el : null
 		}
 		mark('apps-menu-button', document.querySelector('.app-menu__waffle'))
 		mark('apps-menu-list', grid)
 		var toggle = grid.querySelector(':scope > [data-thematiq-row="toggle"]')
-		mark('apps-menu-more', shown(toggle) ? toggle : null)
+		mark('apps-menu-more', shown(toggle))
 		var first = null
 		Array.prototype.forEach.call(grid.children, function (el) {
 			if (el.style && el.style.order === '100') {
@@ -2045,16 +2045,23 @@
 			}
 		})
 		mark('apps-menu-first-entry', first)
-		var pins = document.querySelector('nav.' + PINS)
-		mark(
-			'apps-menu-pins',
-			pins !== null && !pins.hidden
-				? pins
-				: document.querySelector('#header .app-menu, .header-start .app-menu'),
-		)
+		mark('apps-menu-pins', pinsOrCorner())
 		var create = grid.querySelector(':scope > [data-thematiq-row="create"]')
-		mark('apps-menu-create', shown(create) ? create : null)
+		mark('apps-menu-create', shown(create))
 		mark('apps-menu-settings', grid.querySelector('.' + BLOCK + '__settings'))
+	}
+
+	/**
+	 * The pinned apps in the top bar, or the menu's corner of the bar when
+	 * none is pinned, where a pin lands.
+	 *
+	 * @return {Element|null}
+	 */
+	function pinsOrCorner() {
+		var pins = document.querySelector('nav.' + PINS)
+		return pins !== null && !pins.hidden
+			? pins
+			: document.querySelector('#header .app-menu, .header-start .app-menu')
 	}
 
 	/**
@@ -2233,10 +2240,19 @@
 	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
 	 */
 	function maybeWalkthrough(menu, open) {
-		var state = menu.walkthrough
-		if (open && !state.requested && !touring() && tourDue(state) && !wizardOpen()) {
+		if (open && mayStart(menu.walkthrough)) {
 			startWalkthrough(menu, 'auto')
 		}
+	}
+
+	/**
+	 * Whether a tour may start on its own now.
+	 *
+	 * @param {object} state The menu's `walkthrough` state.
+	 * @return {boolean}
+	 */
+	function mayStart(state) {
+		return !state.requested && !touring() && tourDue(state) && !wizardOpen()
 	}
 
 	/**
@@ -2265,12 +2281,11 @@
 			if (button === null || tries++ > 10) {
 				return
 			}
-			var open = button.getAttribute('aria-expanded') === 'true'
-			if (open && document.querySelector('.app-menu__grid') !== null) {
+			if (menuDrawn(button)) {
 				startWalkthrough(menu, 'replay')
 				return
 			}
-			if (!open) {
+			if (button.getAttribute('aria-expanded') !== 'true') {
 				button.click()
 			}
 			// The menu draws a frame after the click.
@@ -2299,6 +2314,19 @@
 	}
 
 	/**
+	 * Whether the menu is open and drawn.
+	 *
+	 * @param {Element} button The grid button.
+	 * @return {boolean}
+	 */
+	function menuDrawn(button) {
+		return (
+			button.getAttribute('aria-expanded') === 'true'
+			&& document.querySelector('.app-menu__grid') !== null
+		)
+	}
+
+	/**
 	 * After each scan of the page: open the menu for an immediate tour, and
 	 * start a due tour on an open menu.
 	 *
@@ -2318,7 +2346,7 @@
 			}, 0)
 		}
 		menu.walkthrough.immediate = false
-		maybeWalkthrough(menu, open && document.querySelector('.app-menu__grid') !== null)
+		maybeWalkthrough(menu, menuDrawn(waffle))
 	}
 
 	/**

@@ -117,13 +117,25 @@ export function stepsFor(steps, options) {
  * @return {object|null} The progress of this tour.
  */
 export function progressOf(value) {
-	let progress = value
+	const progress = parsed(value)
+	return progress && progress.tourId === TOUR_ID ? progress : null
+}
+
+/**
+ * A stored value as an object: JSON text parsed, '' and broken text as null.
+ *
+ * @param {string|object|null} value The stored value.
+ * @return {object|null}
+ */
+function parsed(value) {
+	if (typeof value !== 'string') {
+		return value
+	}
 	try {
-		progress = typeof value === 'string' ? JSON.parse(value || 'null') : value
+		return JSON.parse(value || 'null')
 	} catch {
 		return null
 	}
-	return progress && progress.tourId === TOUR_ID ? progress : null
 }
 
 /**
@@ -177,19 +189,16 @@ export function labels() {
  * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-is-accessible-req-tqwt-007
  */
 export function registerEngineStrings() {
-	const strings = {}
-	for (const key of ['Step {current} of {total}', 'Step {n} of {total}', 'Walkthrough']) {
-		const value = t(APP_ID, key)
-		if (value !== key) {
-			strings[key] = value
-		}
+	const strings = Object.fromEntries(['Step {current} of {total}', 'Step {n} of {total}', 'Walkthrough']
+		.map((key) => [key, t(APP_ID, key)])
+		.filter(([key, value]) => value !== key))
+	if (Object.keys(strings).length === 0) {
+		return
 	}
-	if (Object.keys(strings).length > 0 && typeof register === 'function') {
-		try {
-			register('nextcloud-vue', strings)
-		} catch {
-			/* the English source stays */
-		}
+	try {
+		register('nextcloud-vue', strings)
+	} catch {
+		/* the English source stays */
 	}
 }
 
@@ -332,11 +341,9 @@ export function createMenuWalkthrough(options = {}) {
 	 * @return {void}
 	 */
 	const take = (request) => {
-		if (request.state && typeof request.state === 'object') {
-			state = { ...state, ...request.state }
-		}
+		state = { ...state, ...(request.state || {}) }
 		onEnd = typeof request.onEnd === 'function' ? request.onEnd : null
-		parts = request.parts && typeof request.parts === 'object' ? request.parts : {}
+		parts = { ...(request.parts || {}) }
 	}
 
 	/**
@@ -382,8 +389,10 @@ export function createMenuWalkthrough(options = {}) {
 	 *                         cannot tell yet.
 	 * @return {boolean} Whether a tour runs.
 	 */
+	const isRunning = () => !!(wt && wt.running.value)
+
 	const start = (request = {}) => {
-		if (wt && wt.running.value) {
+		if (isRunning()) {
 			return true
 		}
 		take(request)
@@ -407,7 +416,7 @@ export function createMenuWalkthrough(options = {}) {
 	 * @return {boolean} Whether a tour was running.
 	 */
 	const close = () => {
-		if (!wt || !wt.running.value) {
+		if (!isRunning()) {
 			return false
 		}
 		wt.pause()
@@ -418,7 +427,7 @@ export function createMenuWalkthrough(options = {}) {
 	return {
 		start,
 		close,
-		isRunning: () => !!(wt && wt.running.value),
+		isRunning,
 		currentStepId: () => (wt && wt.currentStep.value ? wt.currentStep.value.id : ''),
 	}
 }
