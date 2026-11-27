@@ -183,6 +183,32 @@ final class AppMenuSettingsControllerTest extends TestCase {
 	}//end testAPersonSavesOnlyTheirOwnKeys()
 
 	/**
+	 * A person saves both create switches as their own keys; the former key is refused with 400.
+	 * Opening Menu settings moves an administrator's former create switch into both new ones.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-create-button-and-the-create-row-switch-on-and-off-independently-req-tqqt-001
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 */
+	public function testAPersonSavesTheCreateSwitchesAndTheFormerOneMoves(): void {
+		$response = $this->controller(uid: 'anna')->save(settings: ['showCreateButton' => false, 'showCreateRow' => true]);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertFalse(condition: $response->getData()['effective']['showCreateButton']);
+		$this->assertSame(expected: 'false', actual: $this->user['anna']['menu.showCreateButton']);
+		$this->assertSame(expected: 'true', actual: $this->user['anna']['menu.showCreateRow']);
+
+		$refused = $this->controller(uid: 'anna')->save(settings: ['showCreateActions' => false]);
+		$this->assertSame(expected: 400, actual: $refused->getStatus());
+		$this->assertSame(expected: 'showCreateActions', actual: $refused->getData()['field']);
+
+		$this->app['menu.showCreateActions'] = 'false';
+		$shown = $this->controller(uid: 'bob')->show()->getData();
+		$this->assertFalse(condition: $shown['effective']['showCreateRow']);
+		$this->assertSame(expected: ['menu.showCreateButton' => 'false', 'menu.showCreateRow' => 'false'], actual: $this->app);
+	}//end testAPersonSavesTheCreateSwitchesAndTheFormerOneMoves()
+
+	/**
 	 * An administrator sets and resets the defaults; a person resets only their own keys.
 	 *
 	 * @return void

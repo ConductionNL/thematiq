@@ -203,6 +203,29 @@ class SetupActionsTest extends TestCase {
 	}//end testApplyWritesEveryPartThenCompletes()
 
 	/**
+	 * The apps menu step sends the two create switches; a wizard built before them still sends the
+	 * former key, which sets both and is never stored.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 */
+	public function testTheMenuStepSendsTheCreateSwitches(): void {
+		$actions = $this->make();
+		$this->coreSync->method('sync')->willReturn([]);
+		$actions->apply(
+			request: ['tokenSet' => 'amsterdam', 'menu' => ['enabled' => true, 'showCreateButton' => false, 'showCreateRow' => true]],
+			uid: 'admin'
+		);
+		$this->assertSame(expected: 'false', actual: $this->store['menu.showCreateButton']);
+		$this->assertSame(expected: 'true', actual: $this->store['menu.showCreateRow']);
+
+		$this->make()->apply(request: ['tokenSet' => 'amsterdam', 'menu' => ['enabled' => true, 'showCreateActions' => false]], uid: 'admin');
+		$this->assertSame(expected: 'false', actual: $this->store['menu.showCreateRow']);
+		$this->assertArrayNotHasKey(key: 'menu.showCreateActions', array: $this->store);
+	}//end testTheMenuStepSendsTheCreateSwitches()
+
+	/**
 	 * A wrong value refuses the whole request and stores nothing.
 	 *
 	 * @return void

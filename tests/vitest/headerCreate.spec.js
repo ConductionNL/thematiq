@@ -1,14 +1,16 @@
 /**
  * @vitest-environment jsdom
  *
- * The Quick add button in the workplace top bar (MlInbox, ClWeek, TbBoard):
- * js/header-create.js draws it before the bell on Mail, Calendar and Deck,
- * and its menu lists the apps menu's own Create actions.
+ * The Quick add button in the workplace top bar (MlInbox, ClWeek, TbBoard,
+ * AppMenuSnelacties): js/header-create.js draws it before the bell on every
+ * page while the Create button is on, and its menu lists the apps menu's own
+ * Create actions.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
  * @spec openspec/specs/workplace-layout/spec.md
+ * @spec openspec/changes/quick-actions-toggles/specs/workplace-quick-add/spec.md#requirement-every-page-shows-the-create-button-in-the-bar-req-tqqa-003
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -45,6 +47,7 @@ describe('the Quick add button', () => {
 		global.t = (app, text) => text
 		ran = []
 		window.thematiqCreateActions = {
+			button: true,
 			title: 'Create',
 			failed: 'The file could not be created.',
 			list: vi.fn(() =>
@@ -71,7 +74,7 @@ describe('the Quick add button', () => {
 		delete window.thematiqCreateActions
 	})
 
-	it('sits before the bell on Mail, a 44px round button with a menu', async () => {
+	it('sits before the bell, a 44px round button with a menu', async () => {
 		installState('mail')
 		await loadScript()
 
@@ -85,10 +88,36 @@ describe('the Quick add button', () => {
 		expect(button.getAttribute('aria-expanded')).toBe('false')
 	})
 
-	it('is not drawn on an app whose board has no Quick add', async () => {
-		installState('dossiq')
-		await loadScript()
+	it('draws the same button and the same entries on every app', async () => {
+		const drawn = []
+		for (const app of ['files', 'calendar', 'settings', 'dossiq']) {
+			document.body.innerHTML = BAR
+			installState(app)
+			await loadScript()
+			const wrap = document.querySelector('#header .header-end > .thematiq-quick-add')
+			expect(wrap, app).not.toBeNull()
+			expect(wrap.nextElementSibling.id).toBe('notifications')
+			wrap.querySelector('button').click()
+			await flush()
+			drawn.push(
+				Array.from(wrap.querySelectorAll('[role="menuitem"]')).map((item) => item.textContent),
+			)
+		}
+		expect(drawn).toEqual(Array(4).fill(['New document', 'New spreadsheet']))
+	})
 
+	it('draws the button without asking for the actions, and asks once on the first open', async () => {
+		installState('files')
+		await loadScript()
+		expect(document.querySelector('.thematiq-quick-add')).not.toBeNull()
+		expect(window.thematiqCreateActions.list).not.toHaveBeenCalled()
+	})
+
+	it('is not drawn with the Create button switched off', async () => {
+		window.thematiqCreateActions.button = false
+		installState('files')
+		await loadScript()
+		document.dispatchEvent(new window.CustomEvent('thematiq:create-actions'))
 		expect(document.querySelector('.thematiq-quick-add')).toBeNull()
 	})
 
@@ -249,22 +278,16 @@ describe('the Quick add button', () => {
 		expect(wrap.nextElementSibling.id).toBe('notifications')
 	})
 
-	it('is not drawn without translations or when the apps state cannot be read', async () => {
+	it('is not drawn without translations, and needs no apps state', async () => {
 		installState('mail')
 		delete global.t
 		await loadScript()
 		expect(document.querySelector('.thematiq-quick-add')).toBeNull()
 
 		global.t = (app, text) => text
-		global.OCP = {
-			InitialState: {
-				loadState: () => {
-					throw new Error('no state')
-				},
-			},
-		}
+		delete global.OCP
 		await loadScript()
-		expect(document.querySelector('.thematiq-quick-add')).toBeNull()
+		expect(document.querySelector('.thematiq-quick-add')).not.toBeNull()
 	})
 
 	it('waits for DOMContentLoaded while the page is loading', async () => {

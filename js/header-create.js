@@ -1,55 +1,31 @@
 /**
  * Header style "workplace": the Quick add button in the top bar, before the
- * bell, on the apps whose boards draw it (Mail: MlInbox, Calendar: ClWeek,
- * Deck: TbBoard). A 44px round button with a plus opens a menu of what the
- * person can create.
+ * bell, on every page, as the apps menu button is (boards MlInbox, ClWeek,
+ * TbBoard, AppMenuSnelacties). No app gets a button of its own. A 44px round
+ * button with a plus opens a menu of what the person can create.
  *
  * The menu lists the apps menu's own Create actions
  * (`window.thematiqCreateActions`, shared by js/app-menu.js), so both list
- * the same things in the same order. They are fetched on the first open.
- * Without that source, or with the Create actions switched off, no button is
- * drawn.
+ * the same things in the same order. They are fetched on the first open, so
+ * drawing the button asks nothing. Without that source, or with the Create
+ * button switched off (`showCreateButton`, shared as `button`), no button is
+ * drawn. Whether the apps menu draws its Create row does not matter here.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
  * @spec openspec/specs/workplace-layout/spec.md
+ * @spec openspec/changes/quick-actions-toggles/specs/workplace-quick-add/spec.md#requirement-every-page-shows-the-create-button-in-the-bar-req-tqqa-003
  */
 ;(function thematiqHeaderCreateInit() {
 	var BLOCK = 'thematiq-quick-add'
 	var SVG_NS = 'http://www.w3.org/2000/svg'
-	// The apps whose boards draw Quick add in the bar.
-	var APPS = ['mail', 'calendar', 'deck']
 	var PLUS = 'M12 5v14M5 12h14'
 
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', thematiqHeaderCreateMain)
 	} else {
 		thematiqHeaderCreateMain()
-	}
-
-	/**
-	 * The id of the open app, from Nextcloud's navigation entries.
-	 *
-	 * @return {string} The id, or the empty string.
-	 * @spec openspec/specs/workplace-layout/spec.md
-	 */
-	function openApp() {
-		var apps = null
-		try {
-			apps = OCP.InitialState.loadState('core', 'apps', null)
-		} catch (e) {
-			return ''
-		}
-		var id = ''
-		if (apps !== null && typeof apps === 'object') {
-			Object.keys(apps).forEach(function (key) {
-				if (id === '' && apps[key] && apps[key].active === true) {
-					id = String(apps[key].id || key)
-				}
-			})
-		}
-		return id
 	}
 
 	/**
@@ -208,25 +184,26 @@
 	}
 
 	/**
-	 * Draw the button before the bell on the apps whose boards have it, once
-	 * the apps menu has shared its Create actions, and keep it in the bar.
+	 * Draw the button before the bell on every page, once the apps menu has
+	 * shared its Create actions with the Create button on, and keep it in the
+	 * bar.
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md
+	 * @spec openspec/changes/quick-actions-toggles/specs/workplace-quick-add/spec.md#requirement-every-page-shows-the-create-button-in-the-bar-req-tqqa-003
 	 */
 	function thematiqHeaderCreateMain() {
-		if (
-			typeof OCP === 'undefined'
-			|| !OCP.InitialState
-			|| typeof t !== 'function'
-			|| APPS.indexOf(openApp()) === -1
-		) {
+		if (typeof t !== 'function') {
 			return
 		}
 
 		var wrap = null
 		var place = function () {
 			var source = window.thematiqCreateActions
-			if (!source || typeof source.list !== 'function') {
+			if (
+				!source
+				|| typeof source.list !== 'function'
+				|| source.button !== true
+			) {
 				return
 			}
 			if (wrap === null) {

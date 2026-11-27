@@ -89,6 +89,7 @@ class AppMenuSettingsController extends Controller {
 	 *                      or 401 without a session.
 	 *
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
 	 */
 	#[NoAdminRequired]
 	public function show(): JSONResponse {
@@ -98,6 +99,7 @@ class AppMenuSettingsController extends Controller {
 		}
 
 		$this->legacy?->migrateOnce(l: $this->l);
+		$this->settings->moveFormerCreateSwitch();
 		$admin = $this->groupManager->isAdmin($user->getUID());
 		$data = [
 			'labels' => AppMenuDialogLabels::labels(l: $this->l),
@@ -118,7 +120,8 @@ class AppMenuSettingsController extends Controller {
 	}//end show()
 
 	/**
-	 * Store the signed-in person's own keys: `order`, `pinned`, `hidden` and `externalApps`. Any
+	 * Store the signed-in person's own keys: `order`, `pinned`, `hidden`, `externalApps`,
+	 * `showCreateButton` and `showCreateRow`. Any
 	 * other key is refused; a key sent as null follows the defaults again.
 	 *
 	 * @param array<mixed> $settings The values, by setting.

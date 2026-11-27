@@ -284,12 +284,16 @@ class Admin implements IDelegatedSettings {
 	 *     navigationActiveStyle: string,
 	 *     brandStripePlacement: string,
 	 *     loginWatermark: string,
-	 *     headerStyle: string
+	 *     headerStyle: string,
+	 *     menuStyle: string,
+	 *     showCreateButton: bool,
+	 *     showCreateRow: bool
 	 * } The template parameters.
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
 	 * @spec openspec/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
 	 */
 	private function layoutParams(): array {
 		return [
@@ -300,8 +304,52 @@ class Admin implements IDelegatedSettings {
 			'brandStripePlacement' => $this->config->getAppValue(Application::APP_ID, 'brand_stripe_placement', ''),
 			'loginWatermark' => $this->config->getAppValue(Application::APP_ID, 'login_watermark', ''),
 			'headerStyle' => $this->config->getAppValue(Application::APP_ID, 'header_style', ''),
+			'menuStyle' => $this->menuValue(key: 'style', fallback: 'workplace'),
+			'showCreateButton' => $this->createSwitch(key: 'showCreateButton'),
+			'showCreateRow' => $this->createSwitch(key: 'showCreateRow'),
 		];
 	}//end layoutParams()
+
+	/**
+	 * One of the administrator's apps menu values (app value `menu.<key>`, stored as JSON), as
+	 * stored, read straight from the app config for the same coupling reason as layoutParams().
+	 *
+	 * @param string $key The menu key.
+	 * @param string $fallback What an absent or unreadable value gives.
+	 *
+	 * @return string The value.
+	 *
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
+	 */
+	private function menuValue(string $key, string $fallback): string {
+		$value = json_decode($this->config->getAppValue(Application::APP_ID, 'menu.' . $key, ''), true);
+		if (is_string($value) === true && $value !== '') {
+			return $value;
+		}
+
+		return $fallback;
+	}//end menuValue()
+
+	/**
+	 * The administrator's value of one create switch: its own app value, else the former single
+	 * switch `menu.showCreateActions` while that is not moved yet, else on.
+	 *
+	 * @param string $key `showCreateButton` or `showCreateRow`.
+	 *
+	 * @return bool Whether the switch is on for everyone.
+	 *
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
+	 */
+	private function createSwitch(string $key): bool {
+		foreach (['menu.' . $key, 'menu.showCreateActions'] as $stored) {
+			$value = json_decode($this->config->getAppValue(Application::APP_ID, $stored, ''), true);
+			if (is_bool($value) === true) {
+				return $value;
+			}
+		}
+
+		return true;
+	}//end createSwitch()
 
 	/**
 	 * The environment config.php declares, shown read-only, and the command

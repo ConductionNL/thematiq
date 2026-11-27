@@ -217,6 +217,99 @@ final class AppMenuSettingsTest extends TestCase {
 	}//end testResetClearsTheScope()
 
 	/**
+	 * Both create switches ship on, are personal keys, and a person's value wins over the
+	 * administrator's: Anna turns the Create row back on, Bob keeps the administrator's off.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-create-button-and-the-create-row-switch-on-and-off-independently-req-tqqt-001
+	 */
+	public function testAPersonsCreateSwitchesWinOverTheAdministrators(): void {
+		$settings = $this->settings();
+		$shipped = $settings->effective(userId: 'bob');
+		$this->assertTrue(condition: $shipped['showCreateButton']);
+		$this->assertTrue(condition: $shipped['showCreateRow']);
+		$this->assertArrayNotHasKey(key: 'showCreateActions', array: $shipped);
+
+		$settings->saveDefaults(values: ['showCreateRow' => false, 'showCreateButton' => false], known: []);
+		$stored = $settings->saveOverrides(userId: 'anna', values: ['showCreateRow' => true, 'showCreateButton' => 'true'], known: []);
+		$this->assertSame(expected: ['showCreateRow' => true, 'showCreateButton' => true], actual: $stored);
+
+		$anna = $settings->effective(userId: 'anna');
+		$bob = $settings->effective(userId: 'bob');
+		$this->assertTrue(condition: $anna['showCreateRow']);
+		$this->assertTrue(condition: $anna['showCreateButton']);
+		$this->assertFalse(condition: $bob['showCreateRow']);
+		$this->assertFalse(condition: $bob['showCreateButton']);
+
+		// Null follows the administrator again; reset clears both with the other personal keys.
+		$settings->saveOverrides(userId: 'anna', values: ['showCreateButton' => null], known: []);
+		$this->assertFalse(condition: $settings->effective(userId: 'anna')['showCreateButton']);
+		$this->assertTrue(condition: $settings->effective(userId: 'anna')['showCreateRow']);
+		$settings->resetOverrides(userId: 'anna');
+		$this->assertFalse(condition: $settings->effective(userId: 'anna')['showCreateRow']);
+		$this->assertSame(expected: [], actual: $this->user['anna']);
+
+		// A person may not send the former key.
+		$this->expectException(exception: InvalidArgumentException::class);
+		$settings->saveOverrides(userId: 'anna', values: ['showCreateActions' => true], known: []);
+	}//end testAPersonsCreateSwitchesWinOverTheAdministrators()
+
+	/**
+	 * Scenario: an administrator who switched create actions off keeps both off. The move runs
+	 * once, keeps a new key that is already stored, and removes the old one; reset removes it too.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 */
+	public function testTheFormerCreateSwitchMovesIntoBothNewSwitches(): void {
+		$settings = $this->settings();
+		$this->assertFalse(condition: $settings->moveFormerCreateSwitch());
+
+		$this->app['menu.showCreateActions'] = 'false';
+		$this->assertTrue(condition: $settings->moveFormerCreateSwitch());
+		$this->assertSame(expected: ['menu.showCreateButton' => 'false', 'menu.showCreateRow' => 'false'], actual: $this->app);
+		$this->assertFalse(condition: $settings->effective(userId: 'bob')['showCreateRow']);
+		$this->assertFalse(condition: $settings->moveFormerCreateSwitch());
+
+		$this->app = ['menu.showCreateActions' => 'false', 'menu.showCreateRow' => 'true'];
+		$settings->moveFormerCreateSwitch();
+		$this->assertSame(expected: ['menu.showCreateRow' => 'true', 'menu.showCreateButton' => 'false'], actual: $this->app);
+
+		$this->app = ['menu.showCreateActions' => '"nonsense"'];
+		$settings->moveFormerCreateSwitch();
+		$this->assertSame(expected: [], actual: $this->app);
+
+		$this->app = ['menu.showCreateActions' => 'false', 'menu.columns' => '3'];
+		$settings->resetDefaults();
+		$this->assertSame(expected: [], actual: $this->app);
+	}//end testTheFormerCreateSwitchMovesIntoBothNewSwitches()
+
+	/**
+	 * Scenario: the old key on a save sets both, and is never stored; a new key sent beside it wins.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 */
+	public function testTheFormerCreateSwitchOnASaveSetsBoth(): void {
+		$settings = $this->settings();
+		$stored = $settings->saveDefaults(values: ['showCreateActions' => false], known: []);
+		$this->assertSame(expected: ['showCreateButton' => false, 'showCreateRow' => false], actual: $stored);
+		$this->assertSame(expected: ['menu.showCreateButton' => 'false', 'menu.showCreateRow' => 'false'], actual: $this->app);
+
+		$settings->saveDefaults(values: ['showCreateActions' => false, 'showCreateRow' => true], known: []);
+		$this->assertSame(expected: 'true', actual: $this->app['menu.showCreateRow']);
+		$this->assertSame(expected: 'false', actual: $this->app['menu.showCreateButton']);
+		$this->assertArrayNotHasKey(key: 'menu.showCreateActions', array: $this->app);
+		$this->assertSame(
+			expected: ['showCreateRow' => true, 'columns' => 3],
+			actual: AppMenuSettings::withoutFormerCreateSwitch(values: ['showCreateRow' => true, 'columns' => 3])
+		);
+	}//end testTheFormerCreateSwitchOnASaveSetsBoth()
+
+	/**
 	 * Scenario: an external app needs a title, an https address with a host and a known icon.
 	 *
 	 * @return void
