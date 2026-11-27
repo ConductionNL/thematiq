@@ -79,7 +79,7 @@ export function clamp(value, range, fallback) {
  *
  * @param {object} choices The choices.
  * @return {string[]} The step ids.
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-req-tqfs-008
+ * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
  */
 export function visibleSteps(choices) {
 	return STEP_IDS.filter((id) => id !== 'nextcloud-theme' || choices.tokenSet !== NEXTCLOUD_DEFAULT)
@@ -92,7 +92,7 @@ export function visibleSteps(choices) {
  * @param {string} tokenSet The chosen set.
  * @param {Array<object>} licences The `sets` of `GET /settings/tokensets/licences`.
  * @return {object|null} The set's licence entry when a confirmation is needed, else null.
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-the-token-set-req-tqfs-007
+ * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
  */
 export function confirmationNeeded(tokenSet, licences) {
 	const entry = (licences || []).find((item) => item && item.id === tokenSet)
@@ -108,7 +108,7 @@ export function confirmationNeeded(tokenSet, licences) {
  * @param {object} choices The choices.
  * @param {Array<object>} licences The licence entries.
  * @return {boolean}
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-the-token-set-req-tqfs-007
+ * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
  */
 export function houseStyleReady(choices, licences) {
 	return confirmationNeeded(choices.tokenSet, licences) === null || choices.confirmRestricted === true

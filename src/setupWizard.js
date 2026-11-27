@@ -103,14 +103,15 @@ export function preloadedStatus() {
 /**
  * A labelled switch (`role="switch"`).
  *
- * @param {string} id The input id.
- * @param {string} label The label.
- * @param {boolean} checked Whether it is on.
- * @param {Function} onChange Called with the new value.
- * @param {string} [hint] The line under it.
+ * @param {object} row The switch.
+ * @param {string} row.id The input id.
+ * @param {string} row.label The label.
+ * @param {boolean} row.checked Whether it is on.
+ * @param {Function} row.onChange Called with the new value.
+ * @param {string} [row.hint] The line under it.
  * @return {object} The vnode.
  */
-function switchRow(id, label, checked, onChange, hint) {
+function switchRow({ id, label, checked, onChange, hint }) {
 	return h('div', { class: 'tq-setup__switch' }, [
 		h('input', {
 			id,
@@ -129,14 +130,15 @@ function switchRow(id, label, checked, onChange, hint) {
 /**
  * A radio card.
  *
- * @param {string} name The group name.
- * @param {string} value The value.
- * @param {boolean} checked Whether it is chosen.
- * @param {Function} onPick Called when chosen.
- * @param {Array} children The card's content.
+ * @param {object} card The card.
+ * @param {string} card.name The group name.
+ * @param {string} card.value The value.
+ * @param {boolean} card.checked Whether it is chosen.
+ * @param {Function} card.onPick Called when chosen.
+ * @param {Array} card.children The card's content.
  * @return {object} The vnode.
  */
-function radioCard(name, value, checked, onPick, children) {
+function radioCard({ name, value, checked, onPick, children }) {
 	return h('label', { class: 'tq-setup__card' + (checked ? ' tq-setup__card--on' : '') }, [
 		h('input', { type: 'radio', name, value, checked, onChange: () => onPick(value) }),
 		h('span', { class: 'tq-setup__card-body' }, children),
@@ -209,7 +211,7 @@ export const SetupWizard = {
 		 * "Skip, keep Nextcloud as it is": record the skip, change nothing else.
 		 *
 		 * @return {Promise<void>}
-		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-later-and-skip-req-tqfs-004
+		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-later-closes-the-wizard-for-this-page-skip-ends-it-req-tqfs-004
 		 */
 		async skip() {
 			await request('POST', '/api/setup/action/skip', {})
@@ -259,7 +261,7 @@ export const SetupWizard = {
 		 *
 		 * @param {File} file The set file.
 		 * @return {Promise<void>}
-		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-the-token-set-req-tqfs-007
+		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
 		 */
 		async upload(file) {
 			if (!file) {
@@ -305,38 +307,68 @@ export const SetupWizard = {
 			return t(APP_ID, 'Free to use')
 		},
 
-		houseStyle() {
+		/**
+		 * The house style cards: the chosen set and Nextcloud default first, then four more or all.
+		 *
+		 * @return {object} The vnode.
+		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
+		 */
+		setCards() {
 			const choices = this.state.choices
-			const all = this.state.sets
-			const first = all.filter((set) => set.id === choices.tokenSet || set.id === NEXTCLOUD_DEFAULT)
-			const rest = all.filter((set) => set.id !== choices.tokenSet && set.id !== NEXTCLOUD_DEFAULT)
-			const shown = this.state.showAll ? first.concat(rest) : first.concat(rest.slice(0, 4))
-			const needed = confirmationNeeded(choices.tokenSet, this.state.licences)
+			const first = this.state.sets.filter((set) => set.id === choices.tokenSet || set.id === NEXTCLOUD_DEFAULT)
+			const rest = this.state.sets.filter((set) => set.id !== choices.tokenSet && set.id !== NEXTCLOUD_DEFAULT)
+			const shown = first.concat(this.state.showAll ? rest : rest.slice(0, 4))
+			const pick = (id) => {
+				choices.tokenSet = id
+				choices.confirmRestricted = false
+			}
+			return h('div', { class: 'tq-setup__cards', role: 'radiogroup', 'aria-label': t(APP_ID, 'House style') }, shown.map((set) => radioCard({
+				name: 'tq-setup-set',
+				value: set.id,
+				checked: set.id === choices.tokenSet,
+				onPick: pick,
+				children: [
+					h('span', { class: 'tq-setup__swatch', style: { background: (set.theming || {}).primary_color || 'var(--color-primary-element)' }, 'aria-hidden': 'true' }),
+					h('strong', set.id === NEXTCLOUD_DEFAULT ? t(APP_ID, 'Nextcloud default') : set.name),
+					h('span', { class: 'tq-setup__hint' }, this.licenceLine(set)),
+				],
+			})))
+		},
+
+		/**
+		 * The line under the cards that sums up the chosen set.
+		 *
+		 * @return {string} The line.
+		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
+		 */
+		setSummary() {
+			if (this.state.choices.tokenSet === NEXTCLOUD_DEFAULT) {
+				return t(APP_ID, 'Nextcloud keeps its own look; thematiq adds only the apps menu.')
+			}
 			const theming = this.chosenSet.theming || {}
+			return t(APP_ID, '{name}: primary {primary}, background {background}.', {
+				name: this.chosenSet.name || this.state.choices.tokenSet,
+				primary: theming.primary_color || '-',
+				background: theming.background_color || '-',
+			})
+		},
+
+		houseStyle() {
+			const needed = confirmationNeeded(this.state.choices.tokenSet, this.state.licences)
+			const message = this.state.uploadMessage
 			return h('div', { class: 'tq-setup__step' }, [
 				h('h2', t(APP_ID, 'Choose the house style')),
 				h('p', t(APP_ID, 'A house style is a token set: colours, fonts, corners and spacing in one file. Choose your organisation\'s set. You use another government\'s set only with its permission; thematiq asks for it in the next step.')),
-				h('div', { class: 'tq-setup__cards', role: 'radiogroup', 'aria-label': t(APP_ID, 'House style') }, shown.map((set) =>
-					radioCard('tq-setup-set', set.id, set.id === choices.tokenSet, (id) => {
-						choices.tokenSet = id
-						choices.confirmRestricted = false
-					}, [
-						h('span', { class: 'tq-setup__swatch', style: { background: (set.theming && set.theming.primary_color) || 'var(--color-primary-element)' }, 'aria-hidden': 'true' }),
-						h('strong', set.id === NEXTCLOUD_DEFAULT ? t(APP_ID, 'Nextcloud default') : set.name),
-						h('span', { class: 'tq-setup__hint' }, this.licenceLine(set)),
-					]),
-				)),
-				h('p', { class: 'tq-setup__summary', 'aria-live': 'polite' }, choices.tokenSet === NEXTCLOUD_DEFAULT
-					? t(APP_ID, 'Nextcloud keeps its own look; thematiq adds only the apps menu.')
-					: t(APP_ID, '{name}: primary {primary}, background {background}.', { name: this.chosenSet.name || choices.tokenSet, primary: theming.primary_color || '-', background: theming.background_color || '-' })),
+				this.setCards(),
+				h('p', { class: 'tq-setup__summary', 'aria-live': 'polite' }, this.setSummary()),
 				this.state.showAll
 					? null
-					: h('button', { type: 'button', class: 'tq-setup__link', onClick: () => { this.state.showAll = true } }, t(APP_ID, 'All {count} sets in the gallery', { count: all.length })),
+					: h('button', { type: 'button', class: 'tq-setup__link', onClick: () => { this.state.showAll = true } }, t(APP_ID, 'All {count} sets in the gallery', { count: this.state.sets.length })),
 				h('label', { class: 'tq-setup__upload' }, [
 					h('span', t(APP_ID, 'Upload your own set')),
 					h('input', { type: 'file', accept: '.json,application/json', onChange: (event) => this.upload(event.target.files && event.target.files[0]) }),
 				]),
-				this.state.uploadMessage ? h('p', { class: 'tq-setup__hint', role: 'status' }, this.state.uploadMessage) : null,
+				message ? h('p', { class: 'tq-setup__hint', role: 'status' }, message) : null,
 				needed ? this.licence(needed) : null,
 			])
 		},
@@ -373,9 +405,13 @@ export const SetupWizard = {
 			])
 			return h('div', { class: 'tq-setup__step' }, [
 				h('h2', t(APP_ID, 'Update the Nextcloud theme')),
-				switchRow('tq-setup-follows', t(APP_ID, 'Keep the Nextcloud theme in line with the set'), choices.nextcloudThemeFollows,
-					(on) => { choices.nextcloudThemeFollows = on },
-					t(APP_ID, 'Also on the next change of set. Off: thematiq leaves the Nextcloud theme alone.')),
+				switchRow({
+					id: 'tq-setup-follows',
+					label: t(APP_ID, 'Keep the Nextcloud theme in line with the set'),
+					checked: choices.nextcloudThemeFollows,
+					onChange: (on) => { choices.nextcloudThemeFollows = on },
+					hint: t(APP_ID, 'Also on the next change of set. Off: thematiq leaves the Nextcloud theme alone.'),
+				}),
 				h('div', { class: 'tq-setup__cells' }, [
 					cell(t(APP_ID, 'Primary colour'), now('--color-primary'), theming.primary_color || '-'),
 					cell(t(APP_ID, 'Background colour'), now('--color-main-background'), theming.background_color || '-'),
@@ -391,8 +427,13 @@ export const SetupWizard = {
 			return h('div', { class: 'tq-setup__step' }, [
 				h('h2', t(APP_ID, 'The login page')),
 				h('div', { class: 'tq-setup__cards', role: 'radiogroup', 'aria-label': t(APP_ID, 'Login page style') }, [
-					radioCard('tq-setup-login', 'house-style', choices.loginStyle === 'house-style', (value) => { choices.loginStyle = value }, [h('strong', t(APP_ID, 'Follow the house style'))]),
-					radioCard('tq-setup-login', 'nextcloud', choices.loginStyle === 'nextcloud', (value) => { choices.loginStyle = value }, [h('strong', t(APP_ID, 'Nextcloud default'))]),
+					...[['house-style', t(APP_ID, 'Follow the house style')], ['nextcloud', t(APP_ID, 'Nextcloud default')]].map(([value, label]) => radioCard({
+						name: 'tq-setup-login',
+						value,
+						checked: choices.loginStyle === value,
+						onPick: (picked) => { choices.loginStyle = picked },
+						children: [h('strong', label)],
+					})),
 				]),
 				h('div', { class: 'tq-setup__check' }, [
 					h('input', { id: 'tq-setup-slogan', type: 'checkbox', class: 'checkbox', checked: choices.hideSlogan, onChange: (event) => { choices.hideSlogan = event.target.checked === true } }),
@@ -420,15 +461,23 @@ export const SetupWizard = {
 			const menu = this.state.choices.menu
 			return h('div', { class: 'tq-setup__step' }, [
 				h('h2', t(APP_ID, 'The apps menu')),
-				switchRow('tq-setup-menu', t(APP_ID, 'Use the thematiq apps menu'), menu.enabled, (on) => { menu.enabled = on },
-					t(APP_ID, 'Off: Nextcloud keeps its own menu, the rest of the house style stays.')),
+				switchRow({
+					id: 'tq-setup-menu',
+					label: t(APP_ID, 'Use the thematiq apps menu'),
+					checked: menu.enabled,
+					onChange: (on) => { menu.enabled = on },
+					hint: t(APP_ID, 'Off: Nextcloud keeps its own menu, the rest of the house style stays.'),
+				}),
 				menu.enabled
 					? h('div', { class: 'tq-setup__menu' }, [
 						this.stepper('tq-setup-columns', t(APP_ID, 'Columns'), 'columns'),
 						this.stepper('tq-setup-rows', t(APP_ID, 'Rows above More apps'), 'rowsAboveFold'),
-						switchRow('tq-setup-payoff', t(APP_ID, 'Show payoff'), menu.payoff, (on) => { menu.payoff = on }),
-						switchRow('tq-setup-create', t(APP_ID, 'Show Create'), menu.showCreate, (on) => { menu.showCreate = on }),
-						switchRow('tq-setup-external', t(APP_ID, 'Show external apps'), menu.showExternalApps, (on) => { menu.showExternalApps = on }),
+						...[['payoff', t(APP_ID, 'Show payoff')], ['showCreate', t(APP_ID, 'Show Create')], ['showExternalApps', t(APP_ID, 'Show external apps')]].map(([key, label]) => switchRow({
+							id: 'tq-setup-' + key,
+							label,
+							checked: menu[key],
+							onChange: (on) => { menu[key] = on },
+						})),
 						h('p', { class: 'tq-setup__note' }, t(APP_ID, 'Change later: in the menu itself, under Menu settings, tab Configuration.')),
 					])
 					: null,

@@ -33,38 +33,32 @@
       {
         "id": "welcome",
         "type": "component",
-        "title": "Welcome",
-        "cancelLabel": "Later"
+        "title": "Welcome"
       },
       {
         "id": "house-style",
         "type": "component",
-        "title": "House style",
-        "cancelLabel": "Later"
+        "title": "House style"
       },
       {
         "id": "nextcloud-theme",
         "type": "component",
-        "title": "Nextcloud theme",
-        "cancelLabel": "Later"
+        "title": "Nextcloud theme"
       },
       {
         "id": "login-page",
         "type": "component",
-        "title": "Login page",
-        "cancelLabel": "Later"
+        "title": "Login page"
       },
       {
         "id": "apps-menu",
         "type": "component",
-        "title": "Apps menu",
-        "cancelLabel": "Later"
+        "title": "Apps menu"
       },
       {
         "id": "done",
         "type": "component",
-        "title": "Done",
-        "submitLabel": "Close"
+        "title": "Done"
       }
     ]
   }
