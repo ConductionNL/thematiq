@@ -76,12 +76,13 @@ class HeaderUserService {
 	public const CREATE_SCRIPT = 'header-create';
 
 	/**
-	 * The script that gives Mail, Calendar and Deck the boards' words and day names (js/workplace-apps.js).
-	 * It acts only while css/workplace-apps/common.css is on the page.
+	 * The light layout's script (js/workplace-apps.js): the input mode and the words on every page,
+	 * an app's words and redraw on that app's page. It goes with css/workplace-layout.css, whatever
+	 * the header style.
 	 *
 	 * @var string
 	 */
-	public const APPS_SCRIPT = 'workplace-apps';
+	public const LIGHT_LAYOUT_SCRIPT = 'workplace-apps';
 
 	/**
 	 * Constructor.
@@ -123,9 +124,11 @@ class HeaderUserService {
 	}//end person()
 
 	/**
-	 * Provide the person and load the script, for a page whose header style
-	 * resolves to `workplace` with the light layout (the page then also loads
-	 * `css/header-workplace.css`). Fails open.
+	 * Load the light layout's script on every page with the light layout,
+	 * whatever the header style; then provide the person and load the header's
+	 * scripts, for a page whose header style resolves to `workplace` with the
+	 * light layout (the page then also loads `css/header-workplace.css`).
+	 * Fails open.
 	 *
 	 * @param string $tokenSet The token set the page renders with.
 	 * @param LayoutOptionsService $layoutOptions Resolves the page's layout stylesheets.
@@ -133,10 +136,15 @@ class HeaderUserService {
 	 * @return void
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#requirement-the-light-layouts-script-acts-on-every-page-req-tqss-005
 	 */
 	public function inject(string $tokenSet, LayoutOptionsService $layoutOptions): void {
 		try {
 			$sheets = $layoutOptions->stylesheets(tokenSet: $tokenSet);
+			if (in_array(LayoutOptionsService::LIGHT_LAYOUT_STYLESHEET, $sheets, true) === true) {
+				$this->emitLightLayoutScript();
+			}
+
 			if (in_array(LayoutOptionsService::HEADER_WORKPLACE_STYLESHEET, $sheets, true) === false) {
 				return;
 			}
@@ -157,18 +165,32 @@ class HeaderUserService {
 	}//end inject()
 
 	/**
-	 * Load js/header-user.js, js/header-brand.js, js/header-create.js and js/workplace-apps.js. A seam, so unit tests need no Nextcloud bootstrap.
+	 * Load js/header-user.js, js/header-brand.js and js/header-create.js. A seam, so unit tests need no
+	 * Nextcloud bootstrap. js/workplace-apps.js is not one of them: {@see self::emitLightLayoutScript()}.
 	 *
 	 * @return void
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) - \OCP\Util is the Nextcloud API for asset injection.
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-shows-the-name-and-the-role
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#requirement-the-light-layouts-script-acts-on-every-page-req-tqss-005
 	 */
 	protected function emitScript(): void {
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::SCRIPT);
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::BRAND_SCRIPT);
 		\OCP\Util::addScript(application: Application::APP_ID, file: self::CREATE_SCRIPT);
-		\OCP\Util::addScript(application: Application::APP_ID, file: self::APPS_SCRIPT);
 	}//end emitScript()
+
+	/**
+	 * Load js/workplace-apps.js, the light layout's script. A seam, so unit tests need no Nextcloud bootstrap.
+	 *
+	 * @return void
+	 *
+	 * @SuppressWarnings(PHPMD.StaticAccess) - \OCP\Util is the Nextcloud API for asset injection.
+	 *
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#requirement-the-light-layouts-script-acts-on-every-page-req-tqss-005
+	 */
+	protected function emitLightLayoutScript(): void {
+		\OCP\Util::addScript(application: Application::APP_ID, file: self::LIGHT_LAYOUT_SCRIPT);
+	}//end emitLightLayoutScript()
 }//end class

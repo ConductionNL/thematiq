@@ -89,692 +89,8 @@ body#body-login::before {
 	opacity: var(--nldesign-login-watermark-opacity, 0.07);
 }
 
-/*
- * THE LOGIN PAGE AND THE GUEST PAGES
- * (openspec/changes/workplace-layout-core-pages/specs/workplace-layout/spec.md).
- *
- * The light workplace draws Nextcloud's own login page the way its boards
- * draw it (NcLogin): the logo ABOVE the card, 56px high, and the card itself
- * a card of the workplace: 420px wide, a hairline border, the container
- * radius, the cards' shadow colour, 32px of padding, a 24px title. The in-card
- * stamp the NL Design sheet draws (40 by 32 pixels, 100px of room above the
- * form) is retired here: Nextcloud's own `header-guest` logo, which that sheet
- * hides, is shown again with the set's logo in it, so nothing is duplicated.
- *
- * The same holds for the guest pages that share `#body-login` (an error page,
- * a public share): their title takes the same size and their "Back to …"
- * action, a link dressed as a button, takes the login button's label colour.
- * The NL Design link rule paints every `a` outside the header link-blue with
- * id strength; on the primary blue of that button the label vanished
- * (measured on Nextcloud 34, 6 October 2026). The selectors here carry one id
- * and three classes so they outrank it (1,2,4).
- *
- * No colour is written: the card reads the scheme's border and the set's
- * card-shadow token, the footer reads the muted text colour, the logo reads
- * the set's logo token (and Nextcloud's own when a set names none).
- */
-body#body-login header,
-body#body-login #header.header-guest {
-	display: block !important;
-	position: static !important;
-	height: auto !important;
-	background: transparent !important;
-	border: 0 !important;
-	box-shadow: none !important;
-}
-
-body#body-login #header.header-guest .logo {
-	display: block !important;
-	position: static !important;
-	width: 100% !important;
-	max-width: 320px !important;
-	height: 56px !important;
-	margin: 0 auto 28px !important;
-	background-image: var(--nldesign-logo-url, var(--image-logo)) !important;
-	background-size: contain !important;
-	background-repeat: no-repeat !important;
-	background-position: center !important;
-	filter: none !important;
-}
-
-body#body-login .guest-box.login-box::after {
-	display: none !important;
-}
-
-body#body-login .guest-box div[class*='login-box__wrapper'] {
-	padding-top: var(--nldesign-brand-stripe-height, 0px) !important;
-}
-
-body#body-login .login-box form,
-body#body-login .guest-box > div:not(#header):not([class*='login-box__wrapper']) {
-	padding: 32px !important;
-}
-
-body#body-login .guest-box.login-box {
-	width: min(420px, 100%) !important;
-	border: 1px solid
-		var(--nldesign-component-login-box-border-color, var(--color-border)) !important;
-	border-radius: var(
-		--nldesign-component-login-box-border-radius,
-		var(--border-radius-container-large)
-	) !important;
-	box-shadow: 0 2px 12px
-		var(
-			--nldesign-login-card-shadow-color,
-			var(--nldesign-component-content-card-shadow-color, transparent)
-		) !important;
-}
-
-body#body-login .guest-box h2,
-body#body-login .login-form__headline,
-body#body-login .body-login-container h2 {
-	margin: 0 0 18px !important;
-	font-size: 24px !important;
-	line-height: 1.25 !important;
-}
-
-/* The login title starts at the left edge, as the board draws it; a guest
- * page keeps its centred title under its icon. */
-body#body-login .login-form__headline {
-	text-align: start !important;
-}
-
-/* The controls on the login page: 44px, as the board draws its fields, and
- * a 1px edge where the NL Design sheet draws 2px. */
-body#body-login {
-	--default-clickable-area: 44px;
-}
-
-body#body-login .input-field__input,
-body#body-login input:not([type='checkbox']) {
-	border-width: 1px !important;
-}
-
-/* The fields as the board draws them: the label above the field, 14px
- * semibold, and the field 44px with a 1px edge in the darker border colour
- * (3:1 on Zuiddrecht, #828A95, where the light border is not),
- * the controls' radius. Nextcloud floats its label inside the field's edge;
- * the NL Design sheet draws the edge around the field's wrapper, so the edge
- * moves to the field itself and the wrapper keeps room for the label above.
- * The login button is 46px, as the board's. */
-body#body-login .login-form .input-field {
-	margin-block: 0 !important;
-	border: 0 !important;
-	box-shadow: none !important;
-}
-
-body#body-login .login-form .input-field__main-wrapper {
-	padding: 26px 0 0 !important;
-}
-
-body#body-login .login-form .input-field__label {
-	position: absolute !important;
-	top: 0 !important;
-	inset-inline-start: 0 !important;
-	max-width: 100% !important;
-	margin: 0 !important;
-	padding: 0 !important;
-	transform: none !important;
-	background: none !important;
-	color: var(--color-main-text) !important;
-	font-size: 14px !important;
-	font-weight: 600 !important;
-	line-height: 20px !important;
-	transition: none !important;
-}
-
-body#body-login .login-form .input-field__input {
-	width: 100% !important;
-	height: 44px !important;
-	margin: 0 !important;
-	padding: 0 12px !important;
-	border: 1px solid
-		var(--nldesign-color-border-dark, var(--color-border-maxcontrast)) !important;
-	border-radius: var(--border-radius-element, 8px) !important;
-	box-shadow: none !important;
-	font-size: 15px !important;
-}
-
-body#body-login .login-form .input-field--trailing-icon .input-field__input {
-	padding-inline-end: 44px !important;
-}
-
-body#body-login .login-form .input-field__trailing-button {
-	top: 26px !important;
-	height: 44px !important;
-	min-height: 44px !important;
-}
-
-body#body-login .login-form__fieldset {
-	gap: 18px !important;
-}
-
-body#body-login .login-form button[type='submit'] {
-	height: 46px !important;
-	min-height: 46px !important;
-	border-radius: var(--border-radius-element, 8px) !important;
-	font-size: 15px !important;
-	font-weight: 600 !important;
-}
-
-/* Their colour: the link colour, blue on Zuiddrecht (#3669A5, 5.64:1 on the
- * white card), as the board draws "Wachtwoord vergeten?". The NL Design text
- * rule forces every span to the body text with id strength, but it reads
- * `--nldesign-color-on-surface` first, the opt-out it offers any surface, so
- * the buttons set that variable instead of fighting the rule. */
-body#body-login .guest-box .login-box__wrapper > .button-vue--vue-tertiary,
-body#body-login .guest-box .login-box__wrapper > div > .button-vue--vue-tertiary {
-	--nldesign-color-on-surface: var(
-		--nldesign-color-link,
-		var(--color-primary-element)
-	);
-
-	color: var(--nldesign-color-link, var(--color-primary-element)) !important;
-}
-
-/* The two text actions under the form (a device login, a forgotten password)
- * are tertiary buttons: 14px, regular weight, underlined, as the board draws
- * "Wachtwoord vergeten?". */
-body#body-login
-	.guest-box
-	.login-box__wrapper
-	> .button-vue--vue-tertiary
-	.button-vue__text,
-body#body-login
-	.guest-box
-	.login-box__wrapper
-	> div
-	> .button-vue--vue-tertiary
-	.button-vue__text {
-	font-size: 14px !important;
-	font-weight: 400 !important;
-	text-decoration: underline !important;
-}
-
-/* The footer line under the card: 13px muted text with no plate behind it
- * (Nextcloud draws a blurred plate for its coloured backgrounds; the light
- * workplace has none). */
-body#body-login footer.guest-box {
-	margin-top: 28px !important;
-	margin-bottom: 0 !important;
-	padding: 0 !important;
-	background: transparent !important;
-	box-shadow: none !important;
-	backdrop-filter: none !important;
-	-webkit-backdrop-filter: none !important;
-}
-
-body#body-login footer.guest-box p.info,
-body#body-login footer.guest-box p.info a.entity-name {
-	color: var(--color-text-maxcontrast) !important;
-	font-size: 13px !important;
-	font-weight: 400 !important;
-	line-height: normal !important;
-	text-decoration: none !important;
-}
-
-/*
- * The card in the board's order (openspec/changes/login-page-board-parity).
- *
- * js/login-copy.js puts an intro (title and subtitle) at the top of the card
- * and marks the card `data-thematiq-login-intro`; it moves the alternative
- * logins (an SSO button) under the intro with an "of" divider and marks the
- * card `data-thematiq-sso`. The card then lays its parts out itself: 32px of
- * padding under the stripe, 18px between the parts, as NcLogin draws it.
- * Without the script none of these selectors match and the rules above hold.
- */
-body#body-login .guest-box.login-box[data-thematiq-login-intro]:not(#header) {
-	position: relative !important;
-	display: flex !important;
-	flex-direction: column !important;
-	gap: 18px !important;
-	/* 420px inside the hairline, as the board's card. A fixed width, not
-	 * min(…, 100%): the page sizes the card's column
-	 * to its content, and a percentage there let the subtitle on one line
-	 * widen the column and push the card off centre. */
-	width: 422px !important;
-	max-width: 100% !important;
-	margin-inline: auto !important;
-	padding: calc(32px + var(--nldesign-brand-stripe-height, 0px)) 32px 32px !important;
-}
-
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	div[class*='login-box__wrapper'] {
-	position: static !important;
-	gap: 18px !important;
-	padding: 0 !important;
-}
-
-body#body-login .guest-box.login-box[data-thematiq-login-intro]:not(#header) form,
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	> .thematiq-login-intro,
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	> #alternative-logins,
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	> .thematiq-login-divider {
-	margin: 0 !important;
-	padding: 0 !important;
-}
-
-/* The board's rhythm: 18px between the parts and nothing more. The login
- * button drops Nextcloud's own top margin, and the text actions under the
- * form (a forgotten password) are a line of text, not a 44px bar: 24px
- * high, the smallest target WCAG 2.2 AA allows. */
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	.login-form
-	button[type='submit'] {
-	margin-top: 0 !important;
-}
-
-/* NcLogin draws the login button as its words alone, without the arrow. */
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	.login-form
-	button[type='submit']
-	.button-vue__icon {
-	display: none !important;
-}
-
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	.login-box__wrapper
-	> .button-vue--vue-tertiary {
-	height: 24px !important;
-	min-height: 24px !important;
-	/* Drawn as a 17px line of text; the 24px target overlaps the gap. */
-	margin-block: -4px -3px !important;
-}
-
-/* Remember me as NcLogin draws it: the 18px box on the fields' left edge,
- * 18px under the password, the words 14px regular beside it. The 24px
- * target overlaps the gaps, as the text actions' do. */
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	.login-form
-	.checkbox-radio-switch {
-	margin: 0 !important;
-}
-
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	.login-form
-	.checkbox-radio-switch
-	.checkbox-content {
-	align-items: center !important;
-	height: 24px !important;
-	min-height: 24px !important;
-	/* The icon draws its box 3px inside its 24px square. */
-	margin-block: -3px !important;
-	margin-inline-start: -3px !important;
-	padding: 0 !important;
-	gap: 7px !important;
-}
-
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	.login-form
-	.checkbox-radio-switch
-	.checkbox-content__icon {
-	align-self: center !important;
-	margin: 0 !important;
-}
-
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	.login-form
-	.checkbox-radio-switch
-	.checkbox-content__wrapper,
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	.login-form
-	.checkbox-radio-switch
-	.checkbox-content__wrapper
-	* {
-	padding: 0 !important;
-	color: var(--color-main-text) !important;
-	font-size: 14px !important;
-	font-weight: 400 !important;
-	line-height: 17px !important;
-}
-
-/* Under the form: Forgot your password? first, then Log in with a device
- * with a phone icon in a strip of its own at the foot of the card. Both are
- * single links, so the order on screen is the only order a reader needs. */
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	.login-box__wrapper
-	> #lost-password {
-	order: 1;
-}
-
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	.login-box__wrapper
-	> .button-vue--vue-tertiary:not(#lost-password) {
-	order: 2;
-	box-sizing: border-box !important;
-	height: 40px !important;
-	min-height: 40px !important;
-	margin-block: 0 -7px !important;
-	padding-top: 15px !important;
-	border: 0 !important;
-	border-top: 1px solid var(--color-border) !important;
-	border-radius: 0 !important;
-}
-
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	.login-box__wrapper
-	> .button-vue--vue-tertiary:not(#lost-password)
-	.button-vue__wrapper {
-	gap: 8px !important;
-}
-
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	.login-box__wrapper
-	> .button-vue--vue-tertiary:not(#lost-password)
-	.button-vue__wrapper::before {
-	content: '';
-	flex: 0 0 18px;
-	width: 18px;
-	height: 18px;
-	background-color: var(--nldesign-color-link, var(--color-primary-element));
-	mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M17,19H7V5H17M17,1H7C5.89,1 5,1.89 5,3V21A2,2 0 0,0 7,23H17A2,2 0 0,0 19,21V3C19,1.89 18.1,1 17,1Z'/%3E%3C/svg%3E")
-		center / contain no-repeat;
-}
-
-/* The field labels sit 6px above the field, as the board's label and
- * column gap draw them (Fira Sans 14px: a 17px line). */
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	.login-form
-	.input-field__main-wrapper {
-	padding-top: 23px !important;
-}
-
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	.login-form
-	.input-field__label {
-	line-height: 17px !important;
-}
-
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	.login-form
-	.input-field__trailing-button {
-	top: 23px !important;
-}
-
-/* The intro carries the title now; Nextcloud's headline would repeat it. */
-body#body-login
-	.guest-box.login-box[data-thematiq-login-intro]:not(#header)
-	.login-form__headline {
-	display: none !important;
-}
-
-/* The intro and the divider belong to the login form: the reset password
- * form and the passwordless form have their own title. */
-body#body-login
-	.guest-box.login-box:not(#header):not(:has(.login-form))
-	> .thematiq-login-intro,
-body#body-login
-	.guest-box.login-box:not(#header):not(:has(.login-form))
-	> .thematiq-login-divider {
-	display: none !important;
-}
-
-body#body-login .thematiq-login-intro {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	text-align: start;
-}
-
-body#body-login .guest-box .thematiq-login-intro__title {
-	margin: 0 !important;
-	font-size: 24px !important;
-	font-weight: 700 !important;
-	line-height: normal !important;
-	text-align: start !important;
-}
-
-/* The NL Design text rule paints every paragraph in the body text with id
- * strength; `--nldesign-color-on-surface` is the opt-out it reads first. */
-body#body-login .thematiq-login-intro__subtitle {
-	--nldesign-color-on-surface: var(--color-text-maxcontrast);
-
-	margin: 0;
-	color: var(--color-text-maxcontrast) !important;
-	font-size: 15px;
-	line-height: 18px !important;
-}
-
-/* The SSO button is the primary action: 46px, the primary colour. */
-body#body-login
-	.guest-box.login-box[data-thematiq-sso]:not(#header)
-	> #alternative-logins {
-	gap: 12px !important;
-}
-
-body#body-login
-	.guest-box.login-box[data-thematiq-sso]:not(#header)
-	> #alternative-logins
-	.button-vue {
-	--nldesign-color-on-surface: var(--color-primary-element-text);
-
-	height: 46px !important;
-	min-height: 46px !important;
-	border: 0 !important;
-	border-radius: var(--border-radius-element, 8px) !important;
-	background-color: var(--color-primary-element) !important;
-	color: var(--color-primary-element-text) !important;
-	font-size: 16px !important;
-	font-weight: 600 !important;
-	text-decoration: none !important;
-}
-
-body#body-login
-	.guest-box.login-box[data-thematiq-sso]:not(#header)
-	> #alternative-logins
-	.button-vue:hover {
-	background-color: var(--color-primary-element-hover) !important;
-}
-
-body#body-login
-	.guest-box.login-box[data-thematiq-sso]:not(#header)
-	> #alternative-logins
-	.button-vue__text {
-	color: var(--color-primary-element-text) !important;
-	font-weight: 600 !important;
-}
-
-/* "of" between the SSO button and the form, with a hairline either side. */
-body#body-login .thematiq-login-divider {
-	--nldesign-color-on-surface: var(--color-text-maxcontrast);
-
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	color: var(--color-text-maxcontrast);
-	font-size: 14px;
-	line-height: normal;
-}
-
-body#body-login .thematiq-login-divider span {
-	color: var(--color-text-maxcontrast) !important;
-}
-
-body#body-login .thematiq-login-divider::before,
-body#body-login .thematiq-login-divider::after {
-	content: '';
-	flex: 1;
-	height: 1px;
-	background: var(--color-border);
-}
-
-/* The password form's button is a primary button like the SSO button above
- * it, without the arrow. */
-body#body-login
-	.guest-box.login-box[data-thematiq-sso]:not(#header)
-	.login-form
-	button[type='submit']
-	.button-vue__icon {
-	display: none !important;
-}
-
-/* The footer hint, a second line under the footer. */
-body#body-login footer.guest-box p.thematiq-login-footer-hint {
-	margin-top: 4px;
-}
-
-body#body-login footer.guest-box p.thematiq-login-footer-hint a {
-	color: var(--nldesign-color-link, var(--color-primary-element)) !important;
-	text-decoration: underline !important;
-}
-
-/*
- * Nextcloud's "page not found" page (openspec/changes/not-found-page-board).
- *
- * Its search icon draws nothing in the light workplace and left an empty
- * white block above the title; the NietGevonden board has no icon, so it
- * goes. js/not-found.js writes the set's copy and marks the card
- * `data-thematiq-not-found`: the card then reads as the board's content
- * column, left-aligned, 24px between the parts: the error code, a 44px
- * title, the explanation, "Of ga verder naar" with its links, a closing line.
- */
-body#body-login .guest-content .body-login-container .icon-big.icon-search {
-	display: none !important;
-}
-
-body#body-login
-	.guest-content
-	.body-login-container[data-thematiq-not-found]:not(#header) {
-	display: flex !important;
-	flex-direction: column !important;
-	gap: 24px !important;
-	box-sizing: border-box !important;
-	width: 840px !important;
-	max-width: 100% !important;
-	margin-inline: auto !important;
-	padding: 40px !important;
-	background: var(--color-main-background) !important;
-	text-align: start !important;
-}
-
-body#body-login .body-login-container[data-thematiq-not-found]:not(#header) > * {
-	margin: 0 !important;
-}
-
-body#body-login .body-login-container[data-thematiq-not-found]:not(#header) h2 {
-	font-size: 44px !important;
-	font-weight: 700 !important;
-	line-height: 1.15 !important;
-	text-align: start !important;
-}
-
-body#body-login
-	.body-login-container[data-thematiq-not-found]:not(#header)
-	p.infogroup {
-	--nldesign-color-on-surface: var(--color-main-text);
-
-	color: var(--color-main-text) !important;
-	font-size: 21px !important;
-	line-height: 1.55 !important;
-	text-align: start !important;
-}
-
-body#body-login .thematiq-not-found__eyebrow,
-body#body-login .thematiq-not-found__hint {
-	--nldesign-color-on-surface: var(--color-text-maxcontrast);
-
-	color: var(--color-text-maxcontrast) !important;
-}
-
-/* Nextcloud keeps the guest column at 500px; the board's text column is
- * 760px, so the card is 840px with its 40px padding. */
-body#body-login .wrapper:has(.body-login-container[data-thematiq-not-found]) {
-	width: 840px !important;
-	max-width: 100% !important;
-}
-
-body#body-login .guest-content p.thematiq-not-found__eyebrow {
-	font-size: 18px !important;
-	font-weight: 600 !important;
-	line-height: normal !important;
-}
-
-body#body-login .guest-content h3.thematiq-not-found__heading {
-	margin-top: 8px !important;
-	font-size: 26px !important;
-	font-weight: 700 !important;
-	line-height: normal !important;
-}
-
-body#body-login .thematiq-not-found__links {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	padding: 0;
-	list-style: none;
-	font-size: 19px !important;
-}
-
-body#body-login .guest-content a.thematiq-not-found__link {
-	--nldesign-color-on-surface: var(
-		--nldesign-color-link,
-		var(--color-primary-element)
-	);
-
-	display: inline-flex;
-	gap: 8px;
-	align-items: center;
-	min-height: 44px;
-	color: var(--nldesign-color-link, var(--color-primary-element)) !important;
-	font-size: 19px !important;
-	font-weight: 600 !important;
-	text-decoration: underline !important;
-}
-
-body#body-login .thematiq-not-found__chevron {
-	flex: none;
-}
-
-body#body-login .guest-content p.thematiq-not-found__hint {
-	font-size: 16px !important;
-	line-height: 1.5 !important;
-}
-
-/* With the set's links, Nextcloud's "Back to …" button gives way to them. */
-body#body-login
-	.body-login-container[data-thematiq-not-found]
-	.thematiq-not-found__replaced {
-	display: none !important;
-}
-
-/* The guest pages' "Back to …" action and their container. */
-body#body-login .body-login-container a.button.primary,
-body#body-login .guest-content a.button.primary,
-body#body-login .guest-box .login-box__wrapper a.button-vue--vue-primary {
-	color: var(
-		--nldesign-component-login-button-color,
-		var(--color-primary-element-text)
-	) !important;
-	text-decoration: none !important;
-}
-
-body#body-login .guest-content .body-login-container {
-	border: 1px solid var(--color-border) !important;
-	border-radius: var(--border-radius-container-large) !important;
-	box-shadow: 0 2px 12px
-		var(--nldesign-component-content-card-shadow-color, transparent) !important;
-}
+/* The login page and the guest pages are drawn by css/workplace-login.css,
+ * loaded with this sheet on every render that is not a user's page. */
 
 /*
  * THE TOP BAR (the DqKop board).
@@ -1012,6 +328,433 @@ body:not(#body-login) {
 	> label {
 	font-size: 16px !important;
 	font-weight: 600 !important;
+}
+
+/*
+ * EVERY APP'S STANDARD STRUCTURES (openspec/changes/same-shell-every-page).
+ *
+ * No thematiq page differs from another: what the boards draw on Nextcloud's
+ * standard structures (MlNav, ClNav, TbNav, MlThreadList, TbCard, MlInbox)
+ * holds in every app, Conduction's own included. Every rule starts at the
+ * content element and names only structural ids and @nextcloud/vue classes,
+ * never an app; the legacy `#app-navigation` is left alone. What one app alone
+ * has stays in its sheet under css/workplace-apps/. No colour is written. The
+ * selected navigation entry follows the administrator's entry style
+ * (navigation-active-soft.css).
+ */
+
+/* js/workplace-apps.js acts only while this sheet is on the page. */
+:root {
+	--thematiq-light-layout: 1;
+}
+
+:where(body:not(#body-login)) :is(#content, #content-vue) {
+	/* The navigation (REQ-TQSS-001): 34px rows in 14px, the active label 600,
+	 * a 16px icon, a 10px gap, 1px between rows, 34px action buttons; a
+	 * caption on one line in 12px semibold muted capitals, its actions at the
+	 * end. */
+	& #app-navigation-vue {
+		& :is(.app-navigation-entry, .app-navigation-entry-link) {
+			min-height: 34px !important;
+			height: 34px;
+		}
+
+		& .app-navigation-entry {
+			border-radius: var(--border-radius-element, 8px);
+		}
+
+		& .app-navigation-entry-link {
+			gap: 10px;
+			font-size: 14px;
+			font-weight: 400;
+		}
+
+		& .app-navigation-entry-icon {
+			width: 16px;
+			min-width: 16px;
+		}
+
+		& .app-navigation-entry__name {
+			font-size: 14px;
+			font-weight: 400;
+			line-height: 34px;
+		}
+
+		& .app-navigation-entry.active .app-navigation-entry__name {
+			font-weight: 600;
+		}
+
+		& .app-navigation-entry-wrapper + .app-navigation-entry-wrapper {
+			margin-top: 1px;
+		}
+
+		& :is(.app-navigation-entry, .app-navigation-caption__actions) .button-vue {
+			min-height: 34px !important;
+			height: 34px !important;
+		}
+
+		&
+			:is(.app-navigation-entry__utils, .app-navigation-caption__actions)
+			.button-vue--icon-only {
+			width: 34px !important;
+			min-width: 34px !important;
+			padding: 0 !important;
+		}
+
+		& .app-navigation-caption {
+			display: flex !important;
+			flex-wrap: nowrap;
+			align-items: center;
+			gap: 4px;
+		}
+
+		& .app-navigation-caption__name {
+			flex: 1 1 auto;
+			width: auto;
+			min-width: 0;
+			overflow: hidden;
+			font-size: 12px !important;
+			font-weight: 600 !important;
+			letter-spacing: 0.02em;
+			text-overflow: ellipsis;
+			text-transform: uppercase;
+			white-space: nowrap;
+			color: var(--color-text-maxcontrast) !important;
+		}
+
+		& .app-navigation-caption__actions {
+			flex: none;
+			width: auto;
+		}
+	}
+
+	/* The new-item button (NcAppNavigationNew): the filled primary, 34px in
+	 * 14px semibold. */
+	& .app-navigation-new .button-vue {
+		min-height: 34px !important;
+		height: 34px !important;
+		padding-block: 0 !important;
+		border-color: var(
+			--nldesign-color-button-primary-border,
+			var(--nldesign-color-primary)
+		) !important;
+		background-color: var(
+			--nldesign-color-button-primary-background,
+			var(--nldesign-color-primary)
+		) !important;
+		color: var(
+			--nldesign-color-button-primary-text,
+			var(--nldesign-color-primary-text)
+		) !important;
+		font-size: 14px;
+		font-weight: 600;
+
+		&:hover {
+			background-color: var(
+				--nldesign-color-button-primary-hover,
+				var(--nldesign-color-primary-hover)
+			) !important;
+		}
+	}
+
+	/* Rows are links but not prose (REQ-TQSS-002): a navigation entry, a list
+	 * row, a table row and a card keep the text colour and no underline,
+	 * through the variables the link rules read. Prose keeps its underline. */
+	& :is(#app-navigation-vue .app-navigation-entry, .list-item, tr, .card) {
+		--nldesign-component-link-text-decoration: none;
+		--nldesign-color-on-surface: var(--color-main-text);
+	}
+
+	/* List rows (NcListItem): one column with a hairline between rows; the
+	 * selected one in the primary's light tint with a 3px primary edge.
+	 * Geometry and colour only. */
+	& .list-item__wrapper {
+		padding: 0 !important;
+	}
+
+	& .list-item {
+		border-bottom: 1px solid var(--color-border);
+		border-radius: 0 !important;
+
+		&:hover {
+			background-color: var(--color-background-hover) !important;
+		}
+	}
+
+	& :is(.list-item__wrapper--active .list-item, .list-item--active) {
+		box-shadow: inset 3px 0 0 var(--color-primary-element);
+		background-color: var(--color-primary-element-light) !important;
+
+		&
+			:is(
+				.list-item-content__name,
+				.list-item-content__subname,
+				.line-one,
+				.line-two
+			) {
+			color: var(--color-primary-element-light-text) !important;
+		}
+	}
+
+	/* An icon-only button is a square (REQ-TQSS-003). */
+	& .button-vue--icon-only:not(.button-vue--size-large) {
+		min-width: var(--default-clickable-area, 34px) !important;
+		padding: 0 !important;
+	}
+
+	/* The sidebar: the title 20px bold, without the ring an app's own focus
+	 * puts on it under the pointer; the tabs a strip of folder tabs in text,
+	 * the selected one joined to the panel. */
+	& #app-sidebar-vue {
+		& .app-sidebar-header__mainname {
+			font-size: 20px !important;
+			font-weight: 700 !important;
+			line-height: 26px !important;
+		}
+
+		& .app-sidebar-header__mainname:focus:not(:focus-visible),
+		:root[data-thematiq-pointer] & .app-sidebar-header__mainname:focus {
+			outline: none !important;
+			box-shadow: none !important;
+		}
+
+		& .app-sidebar-tabs__nav {
+			gap: 4px;
+			margin: 0 !important;
+			padding: 0 16px !important;
+			border-bottom: 1px solid var(--color-border-maxcontrast);
+		}
+
+		& .app-sidebar-tabs__tab {
+			flex: none !important;
+			height: 36px !important;
+			min-height: 36px !important;
+			margin: 0 0 -1px !important;
+			padding: 0 !important;
+			border: 1px solid var(--color-border-maxcontrast) !important;
+			border-bottom: 0 !important;
+			border-radius: var(--border-radius-element, 8px)
+				var(--border-radius-element, 8px) 0 0 !important;
+			background-color: color-mix(
+				in srgb,
+				var(--color-border) 60%,
+				var(--color-main-background)
+			) !important;
+		}
+
+		&
+			:is(
+				.app-sidebar-tabs__tab[aria-selected='true'],
+				.app-sidebar-tabs__tab.checkbox-radio-switch--checked
+			) {
+			height: 37px !important;
+			background-color: var(--color-main-background) !important;
+		}
+
+		& .app-sidebar-tabs__tab .checkbox-content {
+			flex-direction: row !important;
+			height: 36px;
+			padding: 0 12px !important;
+			border: 0 !important;
+			background: none !important;
+			box-shadow: none !important;
+		}
+
+		& .app-sidebar-tabs__tab .checkbox-content__icon {
+			display: none !important;
+		}
+
+		& .app-sidebar-tabs__tab-caption {
+			font-size: 14px;
+			font-weight: 500;
+			color: var(--color-main-text);
+		}
+	}
+
+	/* An empty state (NcEmptyContent): the icon in a 64px circle of the main
+	 * background with a hairline, over its title in 20px bold. */
+	& .empty-content .empty-content__icon {
+		box-sizing: border-box;
+		width: 64px !important;
+		height: 64px !important;
+		min-width: 64px;
+		min-height: 64px;
+		border: 1px solid var(--color-border);
+		border-radius: 50%;
+		background-color: var(--color-main-background);
+		opacity: 1;
+	}
+
+	& .empty-content .empty-content__name {
+		font-size: 20px !important;
+		font-weight: 700 !important;
+		line-height: 26px !important;
+		text-align: center;
+	}
+}
+
+/*
+ * The navigation rail, one mechanism (REQ-TQSS-004). An app's sheet sets
+ * `--thematiq-rail: 1` on its content element in the state its board folds
+ * the navigation; nothing else sets it, so Files never folds. From 1024px the
+ * navigation keeps a 64px column and its list lies over the content, folded
+ * to icons with a small label under each. Focus or an open menu unfolds it at
+ * once, the pointer after 200ms (at once with reduced motion): a registered
+ * property the folded rules query, as a hover delay is no selector. Without
+ * style queries the column stays unfolded.
+ */
+@property --thematiq-rail {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 0;
+}
+
+@keyframes thematiq-rail-unfold {
+	from,
+	to {
+		--thematiq-rail: 0;
+	}
+}
+
+@media (min-width: 1024px) {
+	@container style(--thematiq-rail: 1) {
+		:where(body:not(#body-login)) :is(#content, #content-vue) .app-navigation {
+			/* The list reads this: the rail is armed, folded or not. */
+			--thematiq-rail-armed: 1;
+
+			position: relative;
+			z-index: 2000;
+			flex: 0 0 64px !important;
+			width: 64px !important;
+			min-width: 64px !important;
+			max-width: 64px !important;
+
+			&:is(
+				:focus-within,
+				:has(#app-navigation-vue [aria-haspopup][aria-expanded='true'])
+			) {
+				--thematiq-rail: 0;
+			}
+
+			@media (prefers-reduced-motion: no-preference) {
+				&:hover {
+					animation: thematiq-rail-unfold 1ms 200ms forwards;
+				}
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				&:hover {
+					--thematiq-rail: 0;
+				}
+			}
+		}
+	}
+
+	@container style(--thematiq-rail-armed: 1) {
+		:where(body:not(#body-login))
+			:is(#content, #content-vue)
+			#app-navigation-vue {
+			position: absolute;
+			inset-block: 0;
+			inset-inline-start: 0;
+			width: 264px;
+			border-inline-end: 1px solid var(--color-border);
+			background-color: var(--color-main-background);
+			box-shadow: 0 4px 16px var(--color-box-shadow);
+		}
+	}
+
+	@container style(--thematiq-rail: 1) {
+		:where(body:not(#body-login))
+			:is(#content, #content-vue)
+			#app-navigation-vue {
+			width: 64px;
+			box-shadow: none;
+			padding-inline: 4px !important;
+			overflow: hidden;
+
+			&
+				:is(
+					.app-navigation-entry__children,
+					.app-navigation-entry__actions,
+					.app-navigation-caption__actions,
+					.app-navigation-caption__name,
+					.button-vue__text,
+					.icon-collapse
+				),
+			& .app-navigation-entry-wrapper:has(.app-navigation-entry-icon:empty) {
+				display: none !important;
+			}
+
+			& .app-navigation-caption {
+				height: 1px;
+				margin: 8px 12px !important;
+				padding: 0 !important;
+				border-top: 1px solid var(--color-border);
+			}
+
+			& .app-navigation-list {
+				padding-inline: 0 !important;
+			}
+
+			& :is(.app-navigation-entry, .app-navigation-entry-link) {
+				height: auto !important;
+				min-height: 48px !important;
+			}
+
+			& .app-navigation-entry-link {
+				position: relative;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				width: 100% !important;
+				padding: 4px 0 !important;
+			}
+
+			& .app-navigation-entry-icon {
+				width: 20px !important;
+				height: 22px !important;
+				min-height: 22px !important;
+				margin: 0 !important;
+			}
+
+			/* A row's counter stays, small, at the icon's corner. */
+			& .app-navigation-entry__utils {
+				position: absolute;
+				top: 2px;
+				inset-inline-end: 8px;
+				width: auto !important;
+				height: auto !important;
+				min-height: 0 !important;
+				padding: 0 !important;
+			}
+
+			& .app-navigation-entry__counter-wrapper {
+				margin: 0 !important;
+			}
+
+			& .counter-bubble__counter {
+				min-width: 16px !important;
+				height: 16px !important;
+				padding: 0 4px !important;
+				font-size: 10px !important;
+				line-height: 16px !important;
+			}
+
+			& .app-navigation-entry__name {
+				max-width: 56px;
+				height: auto !important;
+				min-height: 0 !important;
+				padding: 0 !important;
+				overflow: hidden;
+				font-size: 11px !important;
+				line-height: 14px !important;
+				text-align: center;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+		}
+	}
 }
 
 /* The keyboard ring of the light workplace

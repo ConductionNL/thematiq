@@ -7,15 +7,19 @@
  * Conduction app: a 237px link to the app with the set's emblem, the
  * organisation (Nextcloud's theming name) over the app's name, then a thin
  * divider. The emblem comes from the capabilities thematiq publishes
- * (`nldesign.logos.emblem`), the app's name and link from Nextcloud's own
- * navigation entry for the open app.
+ * (`nldesign.logos.emblem`), the page's name and link from Nextcloud's own
+ * navigation entry for the open app, or, on a page without an open app,
+ * from the active entry of Nextcloud's settings navigation
+ * (`core/settingsNavEntries`, which the account menu reads too), such as
+ * "Personal settings", translated as Nextcloud translates it. With neither,
+ * the block shows the emblem and the organisation alone, never an empty name.
  *
  * An app that draws its own brand wins: when CnBrandBar's host
  * (`.cn-brand-bar-host`) is in the bar, or the app's navigation carries the
  * brand (`.cn-app-nav__brand`), this block is not drawn, and it is taken out
- * again when either appears later. Without an open app, or without a name to
- * show, nothing is drawn and the bar keeps what css/header-workplace.css and
- * css/workplace-apps/brand.css give it.
+ * again when either appears later. With nothing to show at all (no emblem,
+ * no organisation, no name), nothing is drawn and the bar keeps the fallback
+ * css/header-workplace.css gives it.
  *
  * While the block is in the bar, the bar is marked `data-thematiq-brand`.
  * The block is drawn only when css/header-workplace.css styles it, so a
@@ -25,6 +29,7 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
  * @spec openspec/specs/workplace-layout/spec.md
+ * @spec openspec/changes/same-shell-every-page/specs/workplace-header-brand/spec.md#requirement-every-app-gets-the-brand-block-in-the-workplace-bar-req-tqwh-001
  */
 ;(function thematiqHeaderBrandInit() {
 	var HOST_CLASS = 'thematiq-brand-host'
@@ -55,39 +60,62 @@
 	}
 
 	/**
-	 * What the block shows: the emblem, the organisation and the open app.
+	 * The active entry of one of Nextcloud's navigation states (an object
+	 * keyed by id, or a list), or null.
 	 *
-	 * @return {{emblem: string, caption: string, name: string, href: string}|null} The brand, or null without an open app.
-	 * @spec openspec/specs/workplace-layout/spec.md
+	 * @param {*} entries The state.
+	 * @return {object|null} The active entry with a name.
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-header-brand/spec.md#requirement-every-app-gets-the-brand-block-in-the-workplace-bar-req-tqwh-001
 	 */
-	function resolveBrand() {
-		var apps = readState('core', 'apps', null)
-		var open = null
-		if (apps !== null && typeof apps === 'object') {
-			Object.keys(apps).forEach(function (key) {
-				if (open === null && apps[key] && apps[key].active === true) {
-					open = apps[key]
-				}
-			})
-		}
-		if (
-			open === null
-			|| typeof open.name !== 'string'
-			|| open.name.trim() === ''
-		) {
+	function activeEntry(entries) {
+		if (entries === null || typeof entries !== 'object') {
 			return null
 		}
+		var found = null
+		Object.keys(entries).forEach(function (key) {
+			var entry = entries[key]
+			if (
+				found === null
+				&& entry
+				&& entry.active === true
+				&& typeof entry.name === 'string'
+				&& entry.name.trim() !== ''
+			) {
+				found = entry
+			}
+		})
+		return found
+	}
+
+	/**
+	 * What the block shows: the emblem, the organisation and the page's name:
+	 * the open app's, else the active settings section's, else none.
+	 *
+	 * @return {{emblem: string, caption: string, name: string, href: string}|null} The brand, or null with nothing to show.
+	 * @spec openspec/specs/workplace-layout/spec.md
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-header-brand/spec.md#requirement-every-app-gets-the-brand-block-in-the-workplace-bar-req-tqwh-001
+	 */
+	function resolveBrand() {
+		var open =
+			activeEntry(readState('core', 'apps', null))
+			|| activeEntry(readState('core', 'settingsNavEntries', null))
 
 		var capabilities = readState('core', 'capabilities', {}) || {}
 		var logos = (capabilities.nldesign && capabilities.nldesign.logos) || {}
 		var theming = capabilities.theming || {}
-
-		return {
+		var brand = {
 			emblem: typeof logos.emblem === 'string' ? logos.emblem : '',
 			caption: typeof theming.name === 'string' ? theming.name.trim() : '',
-			name: open.name.trim(),
-			href: typeof open.href === 'string' ? open.href : '',
+			name: open !== null ? open.name.trim() : '',
+			href: open !== null && typeof open.href === 'string' ? open.href : '',
 		}
+		if (brand.emblem === '' && brand.caption === '' && brand.name === '') {
+			return null
+		}
+		if (brand.href === '') {
+			brand.href = (window.OC && typeof OC.webroot === 'string' ? OC.webroot : '') + '/'
+		}
+		return brand
 	}
 
 	/**
@@ -103,7 +131,7 @@
 
 		var link = document.createElement('a')
 		link.className = 'thematiq-brand'
-		link.href = brand.href || '#'
+		link.href = brand.href
 
 		if (brand.emblem !== '') {
 			// Decorative beside the name: the name already says whose app it is.
@@ -122,10 +150,12 @@
 			caption.textContent = brand.caption
 			text.appendChild(caption)
 		}
-		var name = document.createElement('strong')
-		name.className = 'thematiq-brand__name'
-		name.textContent = brand.name
-		text.appendChild(name)
+		if (brand.name !== '') {
+			var name = document.createElement('strong')
+			name.className = 'thematiq-brand__name'
+			name.textContent = brand.name
+			text.appendChild(name)
+		}
 		link.appendChild(text)
 		host.appendChild(link)
 
