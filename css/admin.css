@@ -2343,6 +2343,7 @@
 
 #nldesign-settings .nldesign-audit-table .thematiq-column-head__sort {
 	gap: 4px;
+	border-radius: 0;
 	text-align: start;
 }
 

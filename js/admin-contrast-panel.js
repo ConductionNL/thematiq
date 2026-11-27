@@ -174,6 +174,12 @@
 						+ pair.verdict,
 					verdict,
 				)
+				if (pair.verdict === 'pass' || pair.verdict === 'fail') {
+					// The board's 14px check or alert before the verdict.
+					var mark = el('span', 'thematiq-contrast-panel__pill-icon')
+					mark.setAttribute('aria-hidden', 'true')
+					pill.insertBefore(mark, pill.firstChild)
+				}
 				if (pair.note) {
 					pill.title = pair.note
 				}
