@@ -277,38 +277,19 @@ class AppMenuSettings {
 
 	/**
 	 * Move the administrator's former single create switch (app value `menu.showCreateActions`)
-	 * into `menu.showCreateButton` and `menu.showCreateRow`, each only where that key is not
-	 * stored yet, then remove it. Runs where the external apps move runs: on the first page that
-	 * draws the menu and when Menu settings opens. Once the old key is gone it does nothing.
+	 * into `menu.showCreateButton` and `menu.showCreateRow` once. Runs where the external apps
+	 * move runs: on the first page that draws the menu and when Menu settings opens.
 	 *
 	 * @return bool Whether a stored value was moved.
 	 *
 	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
 	 */
 	public function moveFormerCreateSwitch(): bool {
-		$former = self::PREFIX . self::FORMER_CREATE_SWITCH;
-		$stored = (string)$this->config->getAppValue(Application::APP_ID, $former, '');
-		if ($stored === '') {
-			return false;
-		}
-
-		$value = self::check(key: self::CREATE_SWITCHES[0], value: json_decode($stored, true), known: null);
-		if ($value !== null) {
-			foreach (self::CREATE_SWITCHES as $key) {
-				if ((string)$this->config->getAppValue(Application::APP_ID, self::PREFIX . $key, '') === '') {
-					$this->config->setAppValue(Application::APP_ID, self::PREFIX . $key, (string)json_encode($value));
-				}
-			}
-		}
-
-		$this->config->deleteAppValue(Application::APP_ID, $former);
-
-		return true;
+		return (new AppMenuFormerCreateSwitch(config: $this->config))->move();
 	}//end moveFormerCreateSwitch()
 
 	/**
-	 * Values as sent with the former `showCreateActions` read as both create switches, where
-	 * those are not sent themselves.
+	 * Values as sent with the former `showCreateActions` read as both create switches.
 	 *
 	 * @param array<mixed> $values The values as sent.
 	 *
@@ -317,19 +298,7 @@ class AppMenuSettings {
 	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
 	 */
 	public static function withoutFormerCreateSwitch(array $values): array {
-		if (array_key_exists(self::FORMER_CREATE_SWITCH, $values) === false) {
-			return $values;
-		}
-
-		$former = $values[self::FORMER_CREATE_SWITCH];
-		unset($values[self::FORMER_CREATE_SWITCH]);
-		foreach (self::CREATE_SWITCHES as $key) {
-			if (array_key_exists($key, $values) === false) {
-				$values[$key] = $former;
-			}
-		}
-
-		return $values;
+		return AppMenuFormerCreateSwitch::strip(values: $values);
 	}//end withoutFormerCreateSwitch()
 
 	/**

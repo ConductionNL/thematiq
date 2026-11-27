@@ -43,7 +43,7 @@ final class AppMenuDialogLabels {
 	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-create-button-and-the-create-row-switch-on-and-off-independently-req-tqqt-001
 	 */
 	public static function labels(IL10N $l): array {
-		return [
+		return self::createLabels(l: $l) + [
 			'title' => $l->t('Menu settings'),
 			'close' => $l->t('Close'),
 			'scope' => $l->t('Set for'),
@@ -89,11 +89,6 @@ final class AppMenuDialogLabels {
 			'moreApps' => $l->t('More'),
 			'gridPreview' => $l->t('Preview: {columns} columns, {fold} rows above More, {rows} rows in total. More scrolls.'),
 			'sections' => $l->t('Sections'),
-			'showCreateButton' => $l->t('Create button in the top bar'),
-			'showCreateButtonHelp' => $l->t('The plus button before the notifications, on every page.'),
-			'showCreateRow' => $l->t('Create row in the apps menu'),
-			'showCreateRowHelp' => $l->t('The Create row at the bottom of the menu.'),
-			'createSwitchesPersonal' => $l->t('People can change both for themselves in Menu settings.'),
 			'showExternalApps' => $l->t('Show external apps'),
 			'showExternalAppsHelp' => $l->t('The External apps section under the apps.'),
 			'manageApps' => $l->t('Manage apps'),
@@ -168,4 +163,23 @@ final class AppMenuDialogLabels {
 			'withoutTiles' => $l->t('without tiles'),
 		];
 	}//end labels()
+
+	/**
+	 * The labels and notes of the two create switches in Configuration, Sections.
+	 *
+	 * @param IL10N $l The language of this request.
+	 *
+	 * @return array<string, string> The labels, by key.
+	 *
+	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-create-button-and-the-create-row-switch-on-and-off-independently-req-tqqt-001
+	 */
+	private static function createLabels(IL10N $l): array {
+		return [
+			'showCreateButton' => $l->t('Create button in the top bar'),
+			'showCreateButtonHelp' => $l->t('The plus button before the notifications, on every page.'),
+			'showCreateRow' => $l->t('Create row in the apps menu'),
+			'showCreateRowHelp' => $l->t('The Create row at the bottom of the menu.'),
+			'createSwitchesPersonal' => $l->t('People can change both for themselves in Menu settings.'),
+		];
+	}//end createLabels()
 }//end class
