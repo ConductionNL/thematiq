@@ -17,6 +17,8 @@ import {
 	mergeEntry,
 	narrowGate,
 	OVERRIDES_HEADING,
+	retryDeadline,
+	CLOSING_GATE_MARGIN,
 } from '../../scripts/sync-upstream-tokens.mjs'
 
 describe('classifySet', () => {
@@ -607,5 +609,52 @@ describe('bisectCandidates', () => {
 		expect(late.length).toBeGreaterThan(0)
 		expect(outcome.kept).not.toContain('set-5')
 		expect([...outcome.kept, ...outcome.rejected.map((row) => row.candidate)].sort()).toEqual(sets(8).sort())
+	})
+})
+
+describe('retryDeadline', () => {
+	const minute = 60 * 1000
+	const startedAt = 1_000_000_000_000
+
+	it('keeps the retry\'s own budget when the whole run has time to spare', () => {
+		// Started 3 minutes ago, a 1-minute full gate: 25 minutes of retry still end
+		// long before 45 minutes minus the closing gate.
+		const now = startedAt + 3 * minute
+		expect(
+			retryDeadline({ now, startedAt, fullGateMs: minute, retryBudgetMinutes: 25, timeBudgetMinutes: 45 }),
+		).toBe(now + 25 * minute)
+	})
+
+	it('stops sooner so the closing full gate still fits inside the whole run', () => {
+		// A slow runner: setup and the first full gate took 12 minutes, and the
+		// closing gate needs 10 x the margin. The retry's own 25 minutes would end at
+		// minute 37 and the closing gate at about 52, past the 45-minute run budget.
+		const now = startedAt + 12 * minute
+		const fullGateMs = 10 * minute
+		const deadline = retryDeadline({ now, startedAt, fullGateMs, retryBudgetMinutes: 25, timeBudgetMinutes: 45 })
+		expect(deadline).toBe(startedAt + 45 * minute - fullGateMs * CLOSING_GATE_MARGIN)
+		expect(deadline + fullGateMs * CLOSING_GATE_MARGIN).toBeLessThanOrEqual(startedAt + 45 * minute)
+		expect(deadline).toBeLessThan(now + 25 * minute)
+	})
+
+	it('starts no retry run at all when the run budget is already spent', () => {
+		const now = startedAt + 40 * minute
+		const deadline = retryDeadline({ now, startedAt, fullGateMs: 10 * minute, retryBudgetMinutes: 25, timeBudgetMinutes: 45 })
+		expect(deadline).toBeLessThan(now)
+		// bisectCandidates then rejects the whole group untried, as not judged.
+		let runs = 0
+		const outcome = bisectCandidates(
+			['a', 'b', 'c'],
+			['x'],
+			() => {
+				runs++
+				return { ok: true, failures: [] }
+			},
+			deadline,
+			() => now,
+		)
+		expect(runs).toBe(0)
+		expect(outcome.kept).toEqual([])
+		expect(outcome.rejected.every((row) => row.timedOut)).toBe(true)
 	})
 })

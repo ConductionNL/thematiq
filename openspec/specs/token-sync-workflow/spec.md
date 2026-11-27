@@ -144,6 +144,7 @@ upstream, and MUST NOT open a PR unless the shipped token-set tests pass. The wo
 - WHEN the sync looks for the sets that fail
 - THEN it MUST halve the failing group rather than run the gate once per set
 - AND it MUST stop starting gate runs once its retry budget (`--retry-budget`, minutes) is spent
+- AND it MUST stop starting gate runs sooner when the closing full gate (the first full gate's duration, with a margin) would otherwise end past the whole run's budget (`--time-budget`, minutes from the start of the script, default 45), so the run finishes inside the job's timeout
 - AND every set it could not judge in time MUST be restored exactly as committed and named in the PR body
 
 #### Scenario: Upstream publishes a Tokens Studio export

@@ -29,8 +29,10 @@
  *      reference, the shipped-set PHPUnit tests) runs once. When it fails, the
  *      failing group is halved until the sets that fail are found; a set that
  *      fails is put back exactly as it was and listed with the failing tests.
- *      The retry has a time budget (--retry-budget); sets it could not judge in
- *      time are put back unchanged too and named in the report.
+ *      The retry has a time budget (--retry-budget), and stops sooner when the
+ *      whole run (--time-budget, from the start of the script) would otherwise
+ *      leave no time for the closing full gate; sets it could not judge in time
+ *      are put back unchanged too and named in the report.
  *
  * A set that cannot be converted cleanly is left unchanged and named in the
  * report, which the workflow uses as the PR body
@@ -39,7 +41,7 @@
  * Usage:
  *   node scripts/sync-upstream-tokens.mjs <themes-checkout> [themesCommitSha]
  *        [--report report.md] [--only a,b] [--gate "<command>"] [--no-gate]
- *        [--retry-budget <minutes>]
+ *        [--retry-budget <minutes>] [--time-budget <minutes>]
  *        [--pin <slug>:--nldesign-<token>=<value>]...   (writes a pin into the set's local overrides)
  *
  * Exit codes: 0 done (with or without changes), 1 usage error, 2 the gate
@@ -109,6 +111,20 @@ const DEFAULT_GATE = 'bash scripts/token-set-gate.sh'
  * gate runs and the retry, on a runner several times slower than a laptop.
  */
 export const DEFAULT_RETRY_BUDGET_MINUTES = 25
+
+/**
+ * Minutes the whole run may take, from the start of the script to the report.
+ * The nightly job is cancelled at 60 minutes and spends a few on setup; the
+ * retry stops early enough that the closing full gate still fits inside this.
+ */
+export const DEFAULT_TIME_BUDGET_MINUTES = 45
+
+/**
+ * How many times the duration of the first full gate is held back for the
+ * closing full gate: it runs on a tree with fewer sets, but a runner's speed
+ * varies from run to run.
+ */
+export const CLOSING_GATE_MARGIN = 1.5
 
 /** Paths a candidate can change, relative to the repo root. */
 const ALLOWLIST_PATH = 'tests/Unit/fixtures/token-set-vocabulary-allowlist.json'
@@ -428,6 +444,7 @@ function parseArgs(argv) {
 		gate: DEFAULT_GATE,
 		runGate: true,
 		retryBudget: DEFAULT_RETRY_BUDGET_MINUTES,
+		timeBudget: DEFAULT_TIME_BUDGET_MINUTES,
 		pins: {},
 	}
 	const positional = []
@@ -442,12 +459,12 @@ function parseArgs(argv) {
 			}
 			options[arg.slice(2)] =
 				arg === '--only' ? value.split(',').map((id) => id.trim()) : value
-		} else if (arg === '--retry-budget') {
+		} else if (arg === '--retry-budget' || arg === '--time-budget') {
 			const minutes = Number(argv[++index])
 			if (Number.isFinite(minutes) === false || minutes < 0) {
-				throw new Error('--retry-budget needs a number of minutes.')
+				throw new Error(`${arg} needs a number of minutes.`)
 			}
-			options.retryBudget = minutes
+			options[arg === '--retry-budget' ? 'retryBudget' : 'timeBudget'] = minutes
 		} else if (arg === '--pin') {
 			const pin = /^([a-z0-9-]+):(--nldesign-[\w-]+)=(.+)$/.exec(
 				argv[++index] ?? '',
@@ -904,7 +921,7 @@ function readOptions(argv) {
 		|| existsSync(join(resolve(options.themes), 'proprietary')) === false
 	) {
 		console.error(
-			`[${LABEL}] usage: node scripts/sync-upstream-tokens.mjs <themes-checkout> [sha] [--report out.md] [--only a,b] [--no-gate] [--retry-budget minutes]`,
+			`[${LABEL}] usage: node scripts/sync-upstream-tokens.mjs <themes-checkout> [sha] [--report out.md] [--only a,b] [--no-gate] [--retry-budget minutes] [--time-budget minutes]`,
 		)
 		return null
 	}
@@ -1184,6 +1201,31 @@ export function bisectCandidates(candidates, failures, attempt, deadline, now = 
 }
 
 /**
+ * When the retry after a failed gate must stop starting gate runs: after its
+ * own budget, and never so late that the closing full gate (about as long as
+ * the first one, times CLOSING_GATE_MARGIN) would end past the whole run's
+ * time budget. The nightly job is cancelled at a fixed limit, and a run that is
+ * cancelled opens no PR at all, so finishing with a few sets not judged beats
+ * judging them all and being cut off.
+ *
+ * @param {Object} times The clock readings and budgets.
+ * @param {number} times.now Epoch milliseconds when the retry starts.
+ * @param {number} times.startedAt Epoch milliseconds when the script started.
+ * @param {number} times.fullGateMs How long the first full gate took.
+ * @param {number} times.retryBudgetMinutes The retry's own budget.
+ * @param {number} times.timeBudgetMinutes The whole run's budget.
+ * @return {number} Epoch milliseconds after which no more gate runs start.
+ *
+ * @spec openspec/specs/token-sync-workflow/spec.md#requirement-converted-and-gated-sync
+ */
+export function retryDeadline({ now, startedAt, fullGateMs, retryBudgetMinutes, timeBudgetMinutes }) {
+	const ownBudget = now + retryBudgetMinutes * 60 * 1000
+	const closingGate = Math.ceil(fullGateMs * CLOSING_GATE_MARGIN)
+	const wholeRun = startedAt + timeBudgetMinutes * 60 * 1000 - closingGate
+	return Math.min(ownBudget, wholeRun)
+}
+
+/**
  * Retry the candidates after a failed gate and keep the ones that pass, by
  * halving (bisectCandidates). With the default gate only the tests that failed
  * run per attempt; the full gate still runs once on the result.
@@ -1193,13 +1235,13 @@ export function bisectCandidates(candidates, failures, attempt, deadline, now = 
  * @param {Object} options Options.
  * @param {Object} summary Outcome lists; gains a rejection per failing set.
  * @param {Array<string>} failures The tests that failed with every candidate in.
+ * @param {number} deadline Epoch milliseconds after which no more gate runs start (retryDeadline()).
  * @return {Array<Object>} The candidates kept.
  *
  * @spec openspec/specs/token-sync-workflow/spec.md#requirement-converted-and-gated-sync
  */
-function retryByHalving(baseline, accepted, options, summary, failures) {
+function retryByHalving(baseline, accepted, options, summary, failures, deadline) {
 	const narrowed = options.gate === DEFAULT_GATE ? narrowGate(failures) : null
-	const deadline = Date.now() + options.retryBudget * 60 * 1000
 	const attempt = (group, kept) => {
 		apply(baseline, [...kept, ...group], options.sha)
 		const result = runGate(options.gate, narrowed ?? {})
@@ -1213,7 +1255,7 @@ function retryByHalving(baseline, accepted, options, summary, failures) {
 		summary.rejected.push({
 			slug: candidate.org.slug,
 			reason: timedOut
-				? `not judged: the retry ran out of its ${options.retryBudget}-minute budget; left as it was`
+				? 'not judged: the retry ran out of time inside the nightly job; left as it was'
 				: `fails the gate: ${setFailures.slice(0, 6).join(', ')}`,
 			shipped: candidate.org.kind !== 'new',
 		})
@@ -1232,17 +1274,30 @@ function retryByHalving(baseline, accepted, options, summary, failures) {
  * @param {Array<Object>} accepted The candidates.
  * @param {Object} options Options.
  * @param {Object} summary Outcome lists.
+ * @param {number} startedAt Epoch milliseconds when the script started.
  * @return {Array<Object>|null} The candidates applied, or null when the gate still fails.
+ *
+ * @spec openspec/specs/token-sync-workflow/spec.md#requirement-converted-and-gated-sync
  */
-function gateCandidates(baseline, accepted, options, summary) {
+function gateCandidates(baseline, accepted, options, summary, startedAt) {
 	apply(baseline, accepted, options.sha)
+	const gateStarted = Date.now()
 	let gate = runGate(options.gate)
+	const fullGateMs = Date.now() - gateStarted
+	console.log(`[${LABEL}] full gate took ${Math.round(fullGateMs / 1000)} s`)
 	if (gate.ok === false && accepted.length > 0) {
+		const deadline = retryDeadline({
+			now: Date.now(),
+			startedAt,
+			fullGateMs,
+			retryBudgetMinutes: options.retryBudget,
+			timeBudgetMinutes: options.timeBudget,
+		})
 		console.log(
-			`[${LABEL}] gate failed with every candidate in (${gate.failures.join(', ')}); retrying by halving the group`,
+			`[${LABEL}] gate failed with every candidate in (${gate.failures.join(', ')}); retrying by halving the group for at most ${Math.max(0, Math.round((deadline - Date.now()) / 60000))} min`,
 		)
 		restore(baseline)
-		accepted = retryByHalving(baseline, accepted, options, summary, gate.failures)
+		accepted = retryByHalving(baseline, accepted, options, summary, gate.failures, deadline)
 		apply(baseline, accepted, options.sha)
 		gate = runGate(options.gate)
 	}
@@ -1295,6 +1350,7 @@ function changedRows(baseline, accepted) {
  * @return {number} Exit code.
  */
 function main() {
+	const startedAt = Date.now()
 	const options = readOptions(process.argv.slice(2))
 	if (options === null) {
 		return 1
@@ -1312,7 +1368,7 @@ function main() {
 	let accepted = dropIncompleteNewSets(baseline, candidates, options.sha, summary)
 
 	if (options.runGate === true) {
-		accepted = gateCandidates(baseline, accepted, options, summary)
+		accepted = gateCandidates(baseline, accepted, options, summary, startedAt)
 		if (accepted === null) {
 			return 2
 		}
