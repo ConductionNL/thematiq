@@ -84,6 +84,20 @@ describe('Save the overrides dialog', () => {
 		)
 	})
 
+	it('draws the save icon on Save overrides, as TqOverridesOpslaan does', () => {
+		window.ThematiqSaveOverridesDialog.open({
+			setName: 'X',
+			changes: CHANGES,
+			onConfirm: vi.fn(),
+		})
+		const confirm = dialog().querySelector('.nldesign-dialog-confirm')
+		const svg = confirm.querySelector('svg')
+		expect(svg).not.toBeNull()
+		expect(svg.getAttribute('aria-hidden')).toBe('true')
+		expect(svg.querySelector('path').getAttribute('d')).toMatch(/^M17 3H5/)
+		expect(confirm.textContent).toBe('Save overrides')
+	})
+
 	it('says 1 override for one change', () => {
 		window.ThematiqSaveOverridesDialog.open({
 			setName: 'X',
