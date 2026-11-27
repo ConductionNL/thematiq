@@ -85,7 +85,12 @@ describe("the light workplace draws Zuiddrecht's keyboard ring", () => {
 		postcss
 			.parse(read('css/workplace-layout.css'))
 			.walkDecls('outline', (decl) => {
-				if (decl.parent.selector.includes(':focus-visible')) {
+				// A rule that takes a ring away (the pointer-only rule of a
+				// heading an app focuses itself) is not the ring.
+				if (
+					decl.parent.selector.includes(':focus-visible')
+					&& !/^none\b/.test(decl.value)
+				) {
 					rules.push(decl)
 				}
 			})

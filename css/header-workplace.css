@@ -85,7 +85,10 @@ body:not(#body-login):not(:has(.cn-app-nav__brand))
 
 body:not(#body-login):not(:has(.cn-app-nav__brand))
 	#header:not([data-thematiq-brand]):not(:has(> .cn-brand-bar-host))
-	:is(.app-menu__current-app-icon, .app-menu__current-app-cog) {
+	.app-menu__current-app-icon,
+body:not(#body-login):not(:has(.cn-app-nav__brand))
+	#header:not([data-thematiq-brand]):not(:has(> .cn-brand-bar-host))
+	.app-menu__current-app-cog {
 	display: none !important;
 }
 
@@ -237,13 +240,27 @@ body:not(#body-login) #header #contactsmenu .header-menu__trigger {
 body:not(#body-login) #header #notifications .header-menu__trigger:hover,
 body:not(#body-login) #header #notifications .header-menu__trigger:focus-visible,
 body:not(#body-login) #header #notifications .header-menu__trigger:active,
-body:not(#body-login) #header #notifications .header-menu--opened .header-menu__trigger,
-body:not(#body-login) #header #notifications.header-menu--opened .header-menu__trigger,
+body:not(#body-login)
+	#header
+	#notifications
+	.header-menu--opened
+	.header-menu__trigger,
+body:not(#body-login)
+	#header
+	#notifications.header-menu--opened
+	.header-menu__trigger,
 body:not(#body-login) #header #contactsmenu .header-menu__trigger:hover,
 body:not(#body-login) #header #contactsmenu .header-menu__trigger:focus-visible,
 body:not(#body-login) #header #contactsmenu .header-menu__trigger:active,
-body:not(#body-login) #header #contactsmenu .header-menu--opened .header-menu__trigger,
-body:not(#body-login) #header #contactsmenu.header-menu--opened .header-menu__trigger {
+body:not(#body-login)
+	#header
+	#contactsmenu
+	.header-menu--opened
+	.header-menu__trigger,
+body:not(#body-login)
+	#header
+	#contactsmenu.header-menu--opened
+	.header-menu__trigger {
 	background-color: var(--color-background-hover) !important;
 }
 

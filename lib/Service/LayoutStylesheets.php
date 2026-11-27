@@ -58,6 +58,36 @@ final class LayoutStylesheets {
 	}//end forApp()
 
 	/**
+	 * The stylesheet of the light layout for the login page and the guest pages that share `#body-login`.
+	 *
+	 * @var string
+	 */
+	public const string LOGIN_STYLESHEET = 'workplace-login';
+
+	/**
+	 * The page's stylesheets with the light layout's login sheet right after the layout's own, on every
+	 * render that is not a signed-in user's page (the login page, a guest, error or public page, or a
+	 * context Nextcloud adds later). A user's page never shows the login card, so it does not load it.
+	 *
+	 * @param array<int, string> $files The stylesheets {@see self::forOptions()} gave the page.
+	 * @param array<string, mixed> $resolved The resolved options.
+	 * @param string $context The render context.
+	 *
+	 * @return array<int, string> The stylesheets.
+	 *
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#requirement-no-page-pays-more-layout-css-than-mail-paid-req-tqss-007
+	 */
+	public function withContext(array $files, array $resolved, string $context): array {
+		$at = array_search(LayoutOptionsService::LIGHT_LAYOUT_STYLESHEET, $files, true);
+		if ($context === 'user' || $at === false || $resolved['workplaceLayout'] !== LayoutOptionsService::LAYOUT_LIGHT) {
+			return $files;
+		}
+
+		array_splice($files, ((int)$at + 1), 0, [self::LOGIN_STYLESHEET]);
+		return $files;
+	}//end withContext()
+
+	/**
 	 * The stylesheets of the workplace layout, the brand stripe and the navigation, in that order.
 	 *
 	 * @param array<string, mixed> $resolved The resolved options.
