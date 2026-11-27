@@ -364,8 +364,16 @@ dialog.thematiq-admin-dialog::backdrop {
 	line-height: 1.45;
 }
 
+/* The switch as TqOverridesOpslaan and TqTokensetToepassen draw it: a native
+   18px checkbox in the primary colour, like the panels' switches. */
 .thematiq-admin-dialog__check input {
-	margin: 3px 0 0;
+	flex: 0 0 18px;
+	width: 18px;
+	height: 18px;
+	min-height: 0;
+	margin: 2px 0 0;
+	accent-color: var(--color-primary-element);
+	cursor: pointer;
 }
 
 .thematiq-admin-dialog__check-hint {
