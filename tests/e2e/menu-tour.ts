@@ -12,7 +12,8 @@
 import type { Page } from '@playwright/test'
 
 /** The person's seen version of the apps menu tour (WalkthroughPreferences::SEEN). */
-const SEEN_URL = '/index.php/apps/thematiq/api/preferences/apps_menu_walkthrough_seen_version'
+const SEEN_URL =
+	'/index.php/apps/thematiq/api/preferences/apps_menu_walkthrough_seen_version'
 
 /** The public OpenAPI document, whose info.version is the installed app version. */
 const OPENAPI_URL = '/index.php/apps/thematiq/api/openapi.json'
@@ -37,14 +38,20 @@ export async function markMenuTourSeen(page: Page): Promise<void> {
 	await page
 		.evaluate(
 			async ({ seenUrl, openApiUrl }) => {
-				const OC = (window as unknown as { OC?: { requestToken: string } }).OC
+				const OC = (window as unknown as { OC?: { requestToken: string } })
+					.OC
 				if (OC === undefined) return
-				const doc = await fetch(openApiUrl).then((r) => (r.ok ? r.json() : null))
+				const doc = await fetch(openApiUrl).then((r) =>
+					r.ok ? r.json() : null,
+				)
 				const version = String(doc?.info?.version ?? '').split('-')[0]
 				if (version === '') return
 				await fetch(seenUrl, {
 					method: 'PUT',
-					headers: { requesttoken: OC.requestToken, 'Content-Type': 'application/json' },
+					headers: {
+						requesttoken: OC.requestToken,
+						'Content-Type': 'application/json',
+					},
 					body: JSON.stringify({ value: version }),
 				})
 			},
