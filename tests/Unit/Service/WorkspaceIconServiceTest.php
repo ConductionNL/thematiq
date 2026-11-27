@@ -91,7 +91,7 @@ final class WorkspaceIconServiceTest extends TestCase {
 	 *
 	 * @return WorkspaceIconService
 	 */
-	private function service(?ICacheFactory $caches=null): WorkspaceIconService {
+	private function service(?ICacheFactory $caches = null): WorkspaceIconService {
 		$folder = $this->createMock(originalClassName: ISimpleFolder::class);
 		$folder->method('fileExists')->willReturnCallback(fn (string $name): bool => isset($this->files[$name]));
 		$folder->method('newFile')->willReturnCallback(
