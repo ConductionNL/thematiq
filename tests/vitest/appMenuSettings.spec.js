@@ -119,6 +119,7 @@ describe('the apps menu drawn from the settings', () => {
 		}
 		delete window.ThematiqMenuSettingsDialog
 		document.body.innerHTML = ''
+		document.documentElement.removeAttribute('data-thematiq-shape')
 		delete global.OCP
 		delete global.OC
 		delete global.fetch
@@ -133,6 +134,9 @@ describe('the apps menu drawn from the settings', () => {
 		expect(grid.style.getPropertyValue('--thematiq-app-menu-columns')).toBe('4')
 		expect(grid.style.getPropertyValue('--thematiq-app-menu-rows')).toBe('6')
 		expect(grid.getAttribute('data-thematiq-shape')).toBe('round')
+		expect(document.documentElement.getAttribute('data-thematiq-shape')).toBe(
+			'round',
+		)
 		expect(grid.getAttribute('data-thematiq-icon-size')).toBe('large')
 		expect(grid.getAttribute('data-thematiq-icon-colour')).toBe('brand')
 		expect(grid.hasAttribute('data-thematiq-tiles')).toBe(false)
@@ -155,6 +159,9 @@ describe('the apps menu drawn from the settings', () => {
 		expect(onScreen(grid)).toHaveLength(9)
 		expect(grid.style.getPropertyValue('--thematiq-app-menu-columns')).toBe('3')
 		expect(grid.getAttribute('data-thematiq-shape')).toBe('square')
+		expect(document.documentElement.getAttribute('data-thematiq-shape')).toBe(
+			'square',
+		)
 		expect(grid.getAttribute('data-thematiq-icon-size')).toBe('small')
 		expect(grid.getAttribute('data-thematiq-icon-colour')).toBe('neutral')
 		expect(grid.hasAttribute('data-thematiq-tiles')).toBe(true)
@@ -168,6 +175,29 @@ describe('the apps menu drawn from the settings', () => {
 		expect(grid.style.getPropertyValue('--thematiq-app-menu-columns')).toBe('5')
 		expect(onScreen(grid)).toHaveLength(10)
 		expect(grid.getAttribute('data-thematiq-shape')).toBe('round')
+		expect(document.documentElement.getAttribute('data-thematiq-shape')).toBe(
+			'round',
+		)
+	})
+
+	// @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-shape-applies-to-every-icon-of-the-apps-menu-and-the-top-bar-req-tqms-001
+	it('puts the shape on the root before the menu opens, so the top bar follows it', async () => {
+		installState(menu({ shape: 'square' }))
+		await loadScript()
+
+		expect(document.querySelector('.app-menu__grid')).toBeNull()
+		expect(document.documentElement.getAttribute('data-thematiq-shape')).toBe(
+			'square',
+		)
+	})
+
+	it('leaves the root alone with the classic style', async () => {
+		installState(menu({ style: 'classic', shape: 'square' }))
+		await loadScript()
+
+		expect(document.documentElement.hasAttribute('data-thematiq-shape')).toBe(
+			false,
+		)
 	})
 
 	it('leaves out hidden entries, the second line, and the external apps when switched off', async () => {

@@ -381,7 +381,7 @@ body:not(#body-login) .app-menu__popover-base .thematiq-app-menu__create-icon {
 	justify-content: center;
 	width: 40px;
 	height: 40px;
-	border-radius: 50%;
+	border-radius: var(--thematiq-icon-radius, 50%);
 	background: var(
 		--nldesign-color-primary-light,
 		var(--color-primary-element-light)
@@ -462,7 +462,7 @@ body:not(#body-login)
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border-radius: 50%;
+	border-radius: var(--thematiq-icon-radius, 50%);
 }
 
 body:not(#body-login)
@@ -497,12 +497,34 @@ body:not(#body-login)
 }
 
 /* The menu settings (apps-menu-settings): square items, tiles and the icon
- * size. js/app-menu.js marks the grid with the person's effective settings. */
-body:not(#body-login)
+ * size. js/app-menu.js marks the grid with the person's effective settings,
+ * and the root with the shape. With the square shape every icon of the menu
+ * and every icon button of the top bar reads --thematiq-icon-radius; without
+ * it each keeps its round radius. */
+:root[data-thematiq-shape='square'] {
+	--thematiq-icon-radius: var(--border-radius-element, 8px);
+}
+
+:root[data-thematiq-shape='square']
+	body:not(#body-login)
 	.app-menu__popover-base
-	.app-menu__grid[data-thematiq-shape='square']
 	.app-item__circle {
-	border-radius: var(--border-radius-element, 8px);
+	border-radius: var(--thematiq-icon-radius);
+}
+
+/* The other icon buttons at the end of the bar, the search field excepted.
+ * The bar's own buttons read the variable in css/header-workplace.css. */
+:root[data-thematiq-shape='square']
+	body:not(#body-login)
+	#header
+	.header-end
+	.header-menu__trigger:not(.unified-search-menu *),
+:root[data-thematiq-shape='square']
+	body:not(#body-login)
+	#header
+	.header-end
+	.button-vue--icon-only:not(.unified-search-menu *) {
+	border-radius: var(--thematiq-icon-radius) !important;
 }
 
 body:not(#body-login)
@@ -745,7 +767,7 @@ body:not(#body-login) .thematiq-app-pins__ghost {
 body:not(#body-login) .thematiq-app-pins__ghost > .thematiq-app-pins__icon {
 	width: 40px;
 	height: 40px;
-	border-radius: 50%;
+	border-radius: var(--thematiq-icon-radius, 50%);
 	background: var(
 		--nldesign-color-primary-light,
 		var(--color-primary-element-light)
