@@ -11,6 +11,7 @@ import * as fs from 'fs'
 import { resolveBaseUrl } from './base-url'
 import { waitForCalmInstance } from './instance-load'
 import { confirmRestrictedSets } from './restricted-sets'
+import { markMenuTourSeen } from './menu-tour'
 
 const AUTH_DIR = path.resolve(__dirname, '.auth')
 const STORAGE_STATE = path.join(AUTH_DIR, 'admin.json')
@@ -140,6 +141,9 @@ export default async function globalSetup(config: FullConfig): Promise<void> {
 			}).catch(() => undefined)
 		})
 		.catch(() => undefined)
+
+	// The apps menu walkthrough would cover the menu in every spec that opens it.
+	await markMenuTourSeen(page)
 
 	await context.storageState({ path: STORAGE_STATE })
 	await browser.close()
