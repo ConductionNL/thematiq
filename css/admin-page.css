@@ -69,6 +69,30 @@
 	outline-offset: 2px;
 }
 
+/* The buildiq square (ADR-041) as the boards draw it: 40px, white glyph on
+ * Conduction orange. A design system restyles it through --cn-buildiq-color,
+ * the variable nextcloud-vue's square reads. */
+#thematiq-page-header .thematiq-page-header__buildiq {
+	display: inline-flex;
+	box-sizing: border-box;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: var(--border-radius-element, 8px);
+	background: var(--cn-buildiq-color, #c64e0b);
+	color: #ffffff !important;
+	text-decoration: none !important;
+}
+
+#thematiq-page-header .thematiq-page-header__buildiq:focus-visible {
+	outline: 2px solid var(--nldesign-color-primary, var(--color-primary-element));
+	outline-offset: 2px;
+}
+
 .thematiq-page-header__crumbs {
 	display: flex;
 	gap: 8px;

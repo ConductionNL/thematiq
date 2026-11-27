@@ -7,9 +7,12 @@
  * The page header of the Theming page as TqTheming draws it
  * (openspec/changes/admin-pages-as-the-tq-boards). The actions keep their ids:
  * js/admin.js binds them and points Documentation at the docs of the chosen
- * set's design system.
+ * set's design system. The buildiq square (ADR-041) shows only when Buildiq is
+ * enabled for the reader; js/admin-panels.js keeps it in place when a panel
+ * swaps the actions, between the secondary actions and the primary one.
  *
  * @var \OCP\IL10N $l
+ * @var array{buildiqHref: string|null} $_
  */
 
 style('thematiq', 'admin-page');
@@ -30,6 +33,16 @@ style('thematiq', 'admin-page');
 				<?php p($l->t('Documentation')); ?>
 				<span class="hidden-visually"><?php p($l->t('(opens in a new tab)')); ?></span>
 			</a>
+			<?php // phpcs:disable Squiz.NamingConventions.ValidVariableName.NotCamelCaps -- a template reads its parameters from $_. ?>
+			<?php if (($_['buildiqHref'] ?? null) !== null) { ?>
+			<a href="<?php p($_['buildiqHref']); ?>" id="thematiq-buildiq-edit" class="thematiq-page-header__buildiq"
+				aria-label="<?php p($l->t('Edit in Buildiq')); ?>" title="<?php p($l->t('Edit in Buildiq')); ?>">
+				<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+					<path d="M12,16L19.36,10.27L21,9L12,2L3,9L4.63,10.27M12,18.54L4.62,12.81L3,14.07L12,21.07L21,14.07L19.37,12.8L12,18.54Z" />
+				</svg>
+			</a>
+			<?php } ?>
+			<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps ?>
 		</div>
 	</div>
 	<nav class="thematiq-page-header__crumbs" aria-label="<?php p($l->t('Breadcrumb')); ?>">

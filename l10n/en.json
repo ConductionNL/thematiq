@@ -197,6 +197,7 @@
         "Publish": "Publish",
         "Theme published instance-wide. Reload the page to see changes.": "Theme published instance-wide. Reload the page to see changes.",
         "Preview in my session": "Preview in my session",
+        "Edit in Buildiq": "Edit in Buildiq",
         "Previewing \"{name}\" in your session only.": "Previewing \"{name}\" in your session only.",
         "Dark logo": "Dark logo",
         "This token set also ships a dark-surface logo. Nextcloud core has no dark logo slot, so it is applied by nldesign's own dark-mode stylesheet, not synced to Nextcloud theming.": "This token set also ships a dark-surface logo. Nextcloud core has no dark logo slot, so it is applied by nldesign's own dark-mode stylesheet, not synced to Nextcloud theming.",

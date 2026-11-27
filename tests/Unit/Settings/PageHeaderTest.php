@@ -22,6 +22,10 @@ namespace OCA\Thematiq\Tests\Unit\Settings;
 
 use OCA\Thematiq\AppInfo\Application;
 use OCA\Thematiq\Settings\PageHeader;
+use OCP\App\IAppManager;
+use OCP\IURLGenerator;
+use OCP\IUser;
+use OCP\IUserSession;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -32,6 +36,32 @@ use PHPUnit\Framework\TestCase;
 class PageHeaderTest extends TestCase {
 
 	/**
+	 * A header whose reader has exactly the given apps enabled.
+	 *
+	 * @param string[] $enabled The enabled app ids.
+	 * @param bool     $signedIn Whether a user is signed in.
+	 *
+	 * @return PageHeader The header.
+	 */
+	private function header(array $enabled = [], bool $signedIn = true): PageHeader {
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
+		$appManager->method('isEnabledForUser')->willReturnCallback(
+			static fn (string $appId): bool => in_array(needle: $appId, haystack: $enabled, strict: true)
+		);
+		$session = $this->createMock(originalClassName: IUserSession::class);
+		$user = null;
+		if ($signedIn === true) {
+			$user = $this->createMock(originalClassName: IUser::class);
+		}
+
+		$session->method('getUser')->willReturn($user);
+		$urls = $this->createMock(originalClassName: IURLGenerator::class);
+		$urls->method('linkTo')->willReturn('/index.php');
+
+		return new PageHeader(appManager: $appManager, userSession: $session, urlGenerator: $urls);
+	}//end header()
+
+	/**
 	 * It sits in the Theming section before Nextcloud's own form (priority 5).
 	 *
 	 * @spec openspec/changes/admin-pages-as-the-tq-boards/specs/admin-settings/spec.md#requirement-the-admin-page-is-drawn-as-tqtheming-req-aset-101
@@ -39,7 +69,7 @@ class PageHeaderTest extends TestCase {
 	 * @return void
 	 */
 	public function testComesFirstInTheThemingSection(): void {
-		$header = new PageHeader();
+		$header = $this->header();
 
 		$this->assertSame(expected: 'theming', actual: $header->getSection());
 		$this->assertLessThan(expected: 5, actual: $header->getPriority());
@@ -53,7 +83,7 @@ class PageHeaderTest extends TestCase {
 	 * @return void
 	 */
 	public function testRendersTheHeaderTemplate(): void {
-		$form = (new PageHeader())->getForm();
+		$form = $this->header()->getForm();
 
 		$this->assertSame(expected: Application::APP_ID, actual: $form->getApp());
 		$this->assertSame(expected: 'settings/page-header', actual: $form->getTemplateName());
@@ -75,4 +105,44 @@ class PageHeaderTest extends TestCase {
 		$this->assertStringContainsString(needle: "'Themes and appearance'", haystack: $template);
 		$this->assertStringContainsString(needle: 'aria-current="page"', haystack: $template);
 	}//end testTemplateKeepsTheActionIds()
+
+	/**
+	 * With Buildiq enabled the square links to Buildiq; the template draws it.
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md#requirement-the-admin-page-is-drawn-as-tqtheming-req-aset-101
+	 *
+	 * @return void
+	 */
+	public function testBuildiqSquareLinksToBuildiq(): void {
+		$params = $this->header(enabled: ['buildiq'])->getForm()->getParams();
+		$this->assertSame(expected: '/index.php/apps/buildiq/', actual: $params['buildiqHref']);
+
+		$template = (string)file_get_contents(__DIR__ . '/../../../templates/settings/page-header.php');
+		$this->assertStringContainsString(needle: 'id="thematiq-buildiq-edit"', haystack: $template);
+		$this->assertStringContainsString(needle: "'Edit in Buildiq'", haystack: $template);
+	}//end testBuildiqSquareLinksToBuildiq()
+
+	/**
+	 * An install that still serves Buildiq's old app id gets the square too.
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md#requirement-the-admin-page-is-drawn-as-tqtheming-req-aset-101
+	 *
+	 * @return void
+	 */
+	public function testBuildiqSquareFollowsTheOldAppId(): void {
+		$params = $this->header(enabled: ['openbuild'])->getForm()->getParams();
+		$this->assertSame(expected: '/index.php/apps/openbuild/', actual: $params['buildiqHref']);
+	}//end testBuildiqSquareFollowsTheOldAppId()
+
+	/**
+	 * Without Buildiq, or without a reader, there is no square.
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md#requirement-the-admin-page-is-drawn-as-tqtheming-req-aset-101
+	 *
+	 * @return void
+	 */
+	public function testNoBuildiqSquareWithoutBuildiq(): void {
+		$this->assertNull(actual: $this->header()->getForm()->getParams()['buildiqHref']);
+		$this->assertNull(actual: $this->header(enabled: ['buildiq'], signedIn: false)->getForm()->getParams()['buildiqHref']);
+	}//end testNoBuildiqSquareWithoutBuildiq()
 }//end class
