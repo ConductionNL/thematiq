@@ -55,12 +55,15 @@ export function initialChoices(status) {
  * @param {object} menu The stored menu choices.
  * @return {object} The menu choices.
  * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+ * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
  */
 export function menuChoices(menu) {
 	return {
 		enabled: menu.enabled !== false,
 		columns: clamp(menu.columns, MENU_RANGES.columns, 4),
 		rowsAboveFold: clamp(menu.rowsAboveFold, MENU_RANGES.rowsAboveFold, 2),
+		// Show titles before Show payoff; a payoff needs titles (apps-menu-show-titles REQ-TQMT-004).
+		titles: menu.titles !== false,
 		payoff: menu.payoff !== false,
 		// One "Show Create" switch on the board; it sets both create switches (quick-actions-toggles).
 		showCreate: menu.showCreateButton !== false || menu.showCreateRow !== false,
@@ -134,6 +137,7 @@ export function houseStyleReady(choices, licences) {
  * @param {Array<object>} licences The licence entries.
  * @return {object} The request body.
  * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+ * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
  */
 export function applyRequest(choices, licences) {
 	const body = {
@@ -146,6 +150,7 @@ export function applyRequest(choices, licences) {
 				enabled: true,
 				columns: clamp(choices.menu.columns, MENU_RANGES.columns, 4),
 				rowsAboveFold: clamp(choices.menu.rowsAboveFold, MENU_RANGES.rowsAboveFold, 2),
+				titles: choices.menu.titles !== false,
 				payoff: choices.menu.payoff === true,
 				showCreateButton: choices.menu.showCreate === true,
 				showCreateRow: choices.menu.showCreate === true,

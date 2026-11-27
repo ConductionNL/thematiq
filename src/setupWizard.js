@@ -127,7 +127,7 @@ export function preloadedStatus() {
  * @param {string} [row.hint] The line under it.
  * @return {object} The vnode.
  */
-function switchRow({ id, label, checked, onChange, hint }) {
+function switchRow({ id, label, checked, onChange, hint, disabled }) {
 	return h('div', { class: 'tq-setup__switch' }, [
 		h('input', {
 			id,
@@ -135,6 +135,8 @@ function switchRow({ id, label, checked, onChange, hint }) {
 			role: 'switch',
 			class: 'checkbox',
 			checked,
+			// Disabled, not hidden: it stays in the reading order with its hint (REQ-TQMT-004).
+			disabled: disabled === true,
 			'aria-describedby': hint ? id + '-hint' : undefined,
 			onChange: (event) => onChange(event.target.checked === true),
 		}),
@@ -546,11 +548,15 @@ export const SetupWizard = {
 					? h('div', { class: 'tq-setup__menu' }, [
 						this.stepper('tq-setup-columns', t(APP_ID, 'Columns'), 'columns'),
 						this.stepper('tq-setup-rows', t(APP_ID, 'Rows above More apps'), 'rowsAboveFold'),
-						...[['payoff', t(APP_ID, 'Show payoff')], ['showCreate', t(APP_ID, 'Show Create')], ['showExternalApps', t(APP_ID, 'Show external apps')]].map(([key, label]) => switchRow({
+						// apps-menu-show-titles REQ-TQMT-004: Show titles before Show payoff; the payoff
+						// switch is disabled while titles are off and keeps its value.
+						...[['titles', t(APP_ID, 'Show titles')], ['payoff', t(APP_ID, 'Show payoff')], ['showCreate', t(APP_ID, 'Show Create')], ['showExternalApps', t(APP_ID, 'Show external apps')]].map(([key, label]) => switchRow({
 							id: 'tq-setup-' + key,
 							label,
 							checked: menu[key],
 							onChange: (on) => { menu[key] = on },
+							disabled: key === 'payoff' && menu.titles === false,
+							hint: key === 'payoff' && menu.titles === false ? t(APP_ID, 'Only with Show titles.') : undefined,
 						})),
 						h('p', { class: 'tq-setup__note' }, t(APP_ID, 'Change later: in the menu itself, under Menu settings, tab Configuration.')),
 					])

@@ -66,10 +66,10 @@ ConductionNL/design-system#1220 and #1221; TqSetupAppmenu has a follow-up. Copy,
       titles in the top bar" directly under it, then "Show payoff"; `topBarTitles` saved with For
       everyone (REQ-TQMT-005); Show payoff disabled with "Only with Show titles." and its value kept; preview without
       names and payoff; sentence "without titles". REQ-TQMT-004.
-- [ ] 3.2 The setup wizard's apps menu step (first-time-setup, REQ-TQFS-010): "Show titles" before
+- [x] 3.2 The setup wizard's apps menu step (first-time-setup, REQ-TQFS-010): "Show titles" before
       "Show payoff", payoff disabled while titles is off, Apply stores `menu.titles`. Built with the
       step. REQ-TQMT-004.
-- [ ] 3.3 vitest `menuSettingsDialog.spec.js` (switch places, payoff disabled and kept, preview,
+- [x] 3.3 vitest `menuSettingsDialog.spec.js` (switch places, payoff disabled and kept, preview,
       sentence, top bar titles saved for everyone), `setupWizard.spec.js` (the step offers Show titles before Show payoff).
 
 ## 4. Copy
