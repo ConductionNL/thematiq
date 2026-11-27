@@ -83,7 +83,8 @@ dialog.thematiq-admin-dialog::backdrop {
 }
 
 .thematiq-admin-dialog.thematiq-admin-dialog .thematiq-admin-dialog__close:hover,
-.thematiq-admin-dialog.thematiq-admin-dialog .thematiq-admin-dialog__close:focus-visible {
+.thematiq-admin-dialog.thematiq-admin-dialog
+	.thematiq-admin-dialog__close:focus-visible {
 	background: var(--color-background-hover);
 }
 
@@ -194,7 +195,8 @@ dialog.thematiq-admin-dialog::backdrop {
 	padding: 0 14px !important;
 	/* The field colour the boards draw (#828a95 under Zuiddrecht); a set may
 	 * raise --color-border-maxcontrast to its text colour for inputs. */
-	border: 1px solid var(--nldesign-color-border-dark, var(--color-border-maxcontrast));
+	border: 1px solid
+		var(--nldesign-color-border-dark, var(--color-border-maxcontrast));
 	border-radius: 8px;
 	background: var(--color-main-background);
 	color: var(--color-main-text);
@@ -204,11 +206,29 @@ dialog.thematiq-admin-dialog::backdrop {
 	cursor: pointer;
 }
 
-.thematiq-admin-dialog.thematiq-admin-dialog .thematiq-admin-dialog__button--secondary:focus {
+.thematiq-admin-dialog.thematiq-admin-dialog
+	.thematiq-admin-dialog__button--secondary:focus {
 	background: var(--color-main-background);
 }
 
-.thematiq-admin-dialog.thematiq-admin-dialog .thematiq-admin-dialog__button--primary {
+/* The dialog gives the safe choice (Cancel) focus when it opens. Nextcloud's
+ * button focus style turns its border to the text colour, which every dialog
+ * board (TqBasistokens, TqOverridesUploaden, TqTerugNaarNextcloud) draws in the
+ * field colour. Focus from a pointer keeps the field border; keyboard focus
+ * gets a clear outline instead of a border change. */
+.thematiq-admin-dialog.thematiq-admin-dialog
+	.thematiq-admin-dialog__button--secondary:focus:not(:focus-visible) {
+	border-color: var(--nldesign-color-border-dark, var(--color-border-maxcontrast));
+}
+
+.thematiq-admin-dialog.thematiq-admin-dialog
+	.thematiq-admin-dialog__button:focus-visible {
+	outline: 2px solid var(--color-main-text);
+	outline-offset: 2px;
+}
+
+.thematiq-admin-dialog.thematiq-admin-dialog
+	.thematiq-admin-dialog__button--primary {
 	padding: 0 18px !important;
 	border: 0;
 	background: var(--color-primary-element);
@@ -217,7 +237,13 @@ dialog.thematiq-admin-dialog::backdrop {
 
 .thematiq-admin-dialog.thematiq-admin-dialog .thematiq-admin-dialog__button--danger {
 	border: 0;
-	background: var(--color-error-text, var(--color-error));
+	/* The set's own error text colour first: TqTerugNaarNextcloud draws the
+	 * reset in #a30000, Zuiddrecht's error text; Nextcloud's derived
+	 * --color-error-text is darker (#8a0000). */
+	background: var(
+		--nldesign-color-error-text,
+		var(--color-error-text, var(--color-error))
+	);
 	color: var(--color-main-background);
 }
 
@@ -230,7 +256,8 @@ dialog.thematiq-admin-dialog::backdrop {
 	color: var(--nldesign-color-link, var(--color-primary-element));
 }
 
-.thematiq-admin-dialog.thematiq-admin-dialog .thematiq-admin-dialog__button:disabled {
+.thematiq-admin-dialog.thematiq-admin-dialog
+	.thematiq-admin-dialog__button:disabled {
 	opacity: 0.6;
 	cursor: default;
 }

@@ -46,6 +46,7 @@ style('thematiq', 'admin-page');
 		</div>
 	</div>
 	<div class="thematiq-page-header__meta">
+	<span class="thematiq-page-header__pills"></span>
 	<nav class="thematiq-page-header__crumbs" aria-label="<?php p($l->t('Breadcrumb')); ?>">
 		<span><?php p($l->t('Administration settings')); ?></span>
 		<span aria-hidden="true">/</span>

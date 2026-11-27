@@ -257,6 +257,59 @@ describe('panels of the Theming page', () => {
 		).toBe('Everything follows the theme')
 	})
 
+	it('leads the header line with the status pills a panel writes, and empties the slot when they go', async () => {
+		const header = document.getElementById('thematiq-page-header')
+		const slot = document.createElement('span')
+		slot.className = 'thematiq-page-header__pills'
+		header.insertBefore(
+			slot,
+			header.querySelector('.thematiq-page-header__crumbs'),
+		)
+		await load()
+		const intro = header.querySelector('.thematiq-page-header__intro')
+		const pill = (cls, text) => {
+			const el = document.createElement('span')
+			el.className = cls
+			el.textContent = text
+			return el
+		}
+		const facts = pill(
+			'thematiq-set-panel__line',
+			'NL Design System, 122 tokens',
+		)
+		intro.replaceChildren(
+			pill(
+				'thematiq-set-panel__status thematiq-set-panel__status--active',
+				'Active',
+			),
+			pill(
+				'thematiq-dark-panel__status thematiq-dark-panel__status--warn',
+				'1 contrast warning',
+			),
+			facts,
+		)
+		await Promise.resolve()
+		expect(Array.from(slot.children).map((el) => el.textContent)).toEqual([
+			'Active',
+			'1 contrast warning',
+		])
+		expect(Array.from(intro.childNodes)).toEqual([facts])
+		// The slot sits before the breadcrumb, so it is read first as well.
+		expect(slot.nextElementSibling).toBe(
+			header.querySelector('.thematiq-page-header__crumbs'),
+		)
+
+		intro.textContent = 'Speed and curve of every transition'
+		await Promise.resolve()
+		expect(slot.children).toHaveLength(0)
+
+		intro.replaceChildren(pill('thematiq-dark-panel__status', 'Not generated'))
+		await Promise.resolve()
+		expect(slot.textContent).toBe('Not generated')
+		await hashTo('#layout')
+		expect(slot.children).toHaveLength(0)
+	})
+
 	it('ignores a hash no panel has', async () => {
 		await load()
 		await hashTo('#nothing')

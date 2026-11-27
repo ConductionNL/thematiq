@@ -128,6 +128,7 @@
 			)
 		})
 		var intro = resolve(config.intro) || ''
+		clearPills()
 		if (Array.isArray(intro) === true) {
 			parts.intro.replaceChildren.apply(parts.intro, intro)
 		} else {
@@ -139,6 +140,72 @@
 			typeof config.actions === 'function' ? config.actions(argument) : [],
 		)
 		keepBuildiqSquare(parts.actions, square)
+	}
+
+	/** The status pills a panel writes into its header line. */
+	var PILLS = '.thematiq-dark-panel__status, .thematiq-set-panel__status'
+
+	/**
+	 * Empty the pills slot: the next panel's intro brings its own.
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md
+	 * @return {void}
+	 */
+	function clearPills() {
+		var slot = document.querySelector(
+			'#thematiq-page-header .thematiq-page-header__pills',
+		)
+		if (slot !== null) {
+			slot.replaceChildren()
+		}
+	}
+
+	/**
+	 * Lead the header line with the panel's status pills.
+	 *
+	 * TqDonker, TqTokenSet and the Components boards draw the pills first,
+	 * then the breadcrumb, then the facts after the middle dot. The panels
+	 * write pills and facts into the intro together, so every time the intro
+	 * gets new content its pills move into the slot before the breadcrumb;
+	 * an intro without pills empties the slot. The order in the document is
+	 * the order on screen, for a screen reader as much as for the eye.
+	 *
+	 * @spec openspec/specs/admin-settings/spec.md
+	 * @return {void}
+	 */
+	function leadWithPills() {
+		var root = document.getElementById('thematiq-page-header')
+		if (root === null || typeof MutationObserver !== 'function') {
+			return
+		}
+		var intro = root.querySelector('.thematiq-page-header__intro')
+		var slot = root.querySelector('.thematiq-page-header__pills')
+		if (intro === null || slot === null) {
+			return
+		}
+		var observer = null
+		var lead = function () {
+			slot.replaceChildren.apply(
+				slot,
+				Array.prototype.slice.call(intro.children).filter(function (node) {
+					return node.matches(PILLS)
+				}),
+			)
+			// Moving the pills out is a change of the intro too: not one to answer.
+			observer.takeRecords()
+		}
+		observer = new MutationObserver(function (records) {
+			var changed = records.some(function (record) {
+				return record.addedNodes.length > 0
+			})
+			if (changed === true || intro.childNodes.length === 0) {
+				lead()
+			}
+		})
+		observer.observe(intro, { childList: true })
+		if (intro.querySelector(PILLS) !== null) {
+			lead()
+		}
 	}
 
 	/**
@@ -169,6 +236,7 @@
 		}
 		parts.title.textContent = saved.title
 		parts.crumbs.replaceChildren.apply(parts.crumbs, saved.crumbs)
+		clearPills()
 		parts.intro.replaceChildren.apply(parts.intro, saved.intro)
 		parts.actions.replaceChildren.apply(parts.actions, saved.actions)
 		saved = null
@@ -410,6 +478,7 @@
 		return wrap
 	}
 
+	leadWithPills()
 	window.addEventListener('hashchange', follow)
 
 	window.ThematiqPanels = {
