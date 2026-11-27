@@ -6,7 +6,7 @@ sidebar_position: 30
 
 Audit of 14 October 2026. For each set: where it came from, which version, what the licence in that source says, and how Thematiq treats it. A restricted set can be applied only after an administrator confirms that the organisation may use it. See [House styles of other organisations](../features/token-set-licences.md).
 
-**45 of 64 shipped sets are restricted.** 4 declare an open licence. 15 declare none, because they are Thematiq's own, fictional, or stock Nextcloud.
+**46 of 65 shipped sets are restricted.** 4 declare an open licence. 15 declare none, because they are Thematiq's own, fictional, or stock Nextcloud.
 
 The source `nl-design-system/themes@9cfc4c5a` is commit 9cfc4c5a292b3750e44a674e6240fb8e4924dc09 of github.com/nl-design-system/themes, directory `proprietary/`. Every licence there reads, in Dutch, that the logo and house style may only be used by the organisation itself, and that you ask the organisation for permission otherwise.
 
@@ -34,6 +34,7 @@ The source `nl-design-system/themes@9cfc4c5a` is commit 9cfc4c5a292b3750e44a674e
 | `hoorn` | `@nl-design-system-unstable/hoorn-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Hoorn; permission from Gemeente Hoorn | restricted |
 | `horstaandemaas` | `@nl-design-system-unstable/horstaandemaas-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Horst aan de Maas; permission from Gemeente Horst aan de Maas | restricted |
 | `lasuite` | `@gouvfr-lasuite/cunningham-react` | not recorded | @gouvfr-lasuite/cunningham-react | MIT colour source; the Marianne font has its own gate | open |
+| `kvk` | `@nl-design-system-community/kvk-design-tokens` | 1.0.0 | nl-design-system/themes@c4ff471a | Use of logo and house style only by KVK; permission from KVK; its Ciutadella heading font needs a (paid) licence and is not shipped | restricted |
 | `leiden` | `@nl-design-system-unstable/leiden-design-tokens` | 3.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Leiden; permission from Gemeente Leiden | restricted |
 | `leidschendam-voorburg` | `@nl-design-system-unstable/leidschendam-voorburg-design-tokens` | 1.0.0 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Leidschendam-Voorburg; permission from Gemeente Leidschendam-Voorburg | restricted |
 | `losser` | `@nl-design-system-community/losser-design-tokens` | 1.0.1 | nl-design-system/themes@9cfc4c5a | Use of logo and house style only by Gemeente Losser; permission from Gemeente Losser | restricted |

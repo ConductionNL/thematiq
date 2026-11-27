@@ -1659,5 +1659,25 @@
 			"action": "upload",
 			"note": "A retail typeface with no libre release on the @fontsource registry (checked 2026-11-17). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack, Inter where the browser has it, else a sans-serif."
 		}
+	},
+	{
+		"id": "kvk",
+		"name": "Kamer van Koophandel",
+		"description": "Kamer van Koophandel's design tokens, converted from nl-design-system/themes: magenta primary actions and a dark teal header.",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#aa418c",
+			"background_color": "#FFFFFF"
+		},
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
+		"upstreamVersion": "1.0.0",
+		"note": "KVK publishes only the NL Design System basis layer (basis.color.action-1, accent-1, info and so on) and no component tokens, so the converter finds no primary, header, link or info colour in it. Those 11 values are taken from KVK's own basis tokens and kept as local overrides: primary = action-1 (#aa418c), header = accent-1 (#00526e) with white text, links = action-2 (#0070b9), info = info (#0070b9). Fonts: KVK names Roboto for text and the retail Ciutadella for headings; upstream maps neither onto a font role the converter reads, so the set renders Thematiq's self-hosted Fira Sans until an administrator uploads a licensed font under custom fonts.",
+		"licence": {
+			"id": "LicenseRef-kvk-house-style",
+			"package": "@nl-design-system-community/kvk-design-tokens",
+			"version": "1.0.0",
+			"holder": "KVK",
+			"restricted": true
+		}
 	}
 ]
