@@ -1,7 +1,8 @@
 # Design
 
-The boards are on design-system branch `design/thematiq-show-titles`: werkplek/AppMenuVormgeving (the
-Theming tab with "Show titles") and werkplek/AppMenuZonderTitels (the open menu with titles off). They
+The boards are in ConductionNL/design-system#1220: werkplek/AppMenuVormgeving (the Theming tab with
+"Show titles") and werkplek/AppMenuZonderTitels (the open menu with titles off). The column count of
+the icon-only grid follows AppMenuZonderTitels. They
 are canon; where this design and a board differ, the build follows the board, including the size of an
 icon-only entry.
 
@@ -36,7 +37,7 @@ the icon alone. Per section:
 | Nextcloud apps | icon only; the name is the link's `aria-label` and the tooltip |
 | Create row | each create chip icon only; its label is the `aria-label` and the tooltip |
 | External apps | icon only; `aria-label` is the title plus "(opens in a new tab)", the tooltip is the title |
-| Pins in the top bar | unchanged: already icon-only with the app's name as accessible name |
+| Pins in the top bar | follow `topBarTitles`, see below |
 | Headings, More, Fewer, the Create row's More | unchanged text: they are not app entries |
 
 The entry keeps everything else it has: the drag handle behaviour, Alt with the arrow keys, Alt+P, and
@@ -49,7 +50,8 @@ could read twice next to its `aria-label`.
 
 ## The tooltip
 
-One tooltip element per menu, `role="tooltip"`, reused by every entry and moved next to the entry it
+One tooltip element per menu, `role="tooltip"`, reused by every entry and, with `topBarTitles` off,
+by every pin in the top bar, and moved next to the entry it
 names. It holds the same text as the accessible name (without "(opens in a new tab)"), so it is not
 referenced with `aria-describedby`: that would make a screen reader read the name twice.
 
@@ -64,6 +66,46 @@ referenced with `aria-describedby`: that would make a screen reader read the nam
 - **Hidden** when the entry loses hover and focus, when a drag starts, and when the menu closes.
 - Colours come from the Nextcloud tokens (`--color-main-text` on `--color-main-background` with a
   border), so dark mode and the house styles follow; text contrast at least 4.5:1.
+
+## Titles in the top bar
+
+Ruben wants two separate choices (27 November 2026): titles in the cards of the apps menu (`titles`,
+on) and titles in the top bar (`topBarTitles`, off). A menu can be icon-only while the bar shows names,
+and the other way round.
+
+- **Workplace top bar.** With `topBarTitles` on, each pin draws its icon and the app's name next to it,
+  in the bar's text style, up to a maximum width with an ellipsis. The visible name is the accessible
+  name, so the pin needs no `aria-label` and no tooltip; only a name cut off by the ellipsis gets the
+  tooltip. With it off, the pins stay as today (icon-only, the name as accessible name) and get the
+  tooltip of the apps menu, placed under the pin.
+- **Nextcloud's own apps menu.** On a page where thematiq does not draw the workplace apps menu (the
+  classic style, or a house style without the workplace top bar), `topBarTitles` on loads
+  `css/show-menu-labels.css`, exactly what the older option did, on Nextcloud 32 and 33.
+- **Never both.** On a page with the workplace apps menu `show-menu-labels.css` is not loaded: its
+  `.app-item__label` rules would also reach the workplace menu's entries and put names back into an
+  icon-only menu.
+
+### A Theming key, the administrator's
+
+`topBarTitles` follows `titles`: `DEFAULTS` false, `SWITCHES`, not `PERSONAL`. The workplace pins and
+Nextcloud's own menu both read the administrator's value. It is set in the Menu card of the admin page,
+where the older option was, because that card is also reachable when the classic style is on. The
+Theming tab of Menu settings does not get it: AppMenuVormgeving does not draw it.
+
+### The older option moves into it
+
+- A repair step, `MigrateMenuLabelsToTopBarTitles`, moves `show_menu_labels` once on upgrade (`'1'`
+  true, `'0'` false, only where `menu.topBarTitles` is not stored) and removes it. A repair step,
+  not a first-page move, because with the classic style no menu script runs for a person.
+- Until it has run, `AppMenuSettings` reads `show_menu_labels` while `menu.topBarTitles` is absent, as
+  it reads `app_menu_order` for the order.
+- `POST /settings/menulabels` and `SettingsController::setMenuLabelsSetting()` go. The switch saves
+  through `POST /apps/thematiq/app-menu/defaults`.
+- The OCS capability field `showMenuLabels`, the bundle key `showMenuLabels` and the theme version
+  field `showMenuLabels` keep their names, so consumers and older bundles keep working, and carry
+  `menu.topBarTitles`. No `bundleVersion` bump: the bundle's shape does not change.
+- `MigrateAppConfigKeys` still names `show_menu_labels` for its old nldesign move; that step runs first
+  and leaves the value where the new step finds it.
 
 ## Focus
 
@@ -98,7 +140,9 @@ values.
 | key | English | Dutch |
 |---|---|---|
 | `titles` | Show titles | Titels tonen |
-| `titlesHelp` | The app's name next to its icon. Off: icons only, the name shows on hover and focus. | De naam van de app naast het icoon. Uit: alleen iconen, de naam verschijnt bij aanwijzen en focus. |
+| `titlesHelp` | The name of the app under or next to the icon. Off: icons only, the name appears as a tooltip. | De naam van de app onder of naast het pictogram. Uit: alleen pictogrammen, de naam verschijnt als tooltip. |
+| `topBarTitles` | Show titles in the top bar | Titels in de bovenbalk tonen |
+| `topBarTitlesHelp` | The name next to each pinned app, and in Nextcloud's own app menu. Off: icons only, the name appears as a tooltip. | De naam naast elke vastgezette app, en in het eigen appmenu van Nextcloud. Uit: alleen pictogrammen, de naam verschijnt als tooltip. |
 | `payoffNeedsTitles` | Only with Show titles. | Alleen met Titels tonen. |
 | `withoutTitles` | without titles | zonder titels |
 | existing string | (opens in a new tab) | as translated today |
