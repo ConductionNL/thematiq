@@ -254,22 +254,32 @@ Board: TqSetupInlogpagina.
 - WHEN the administrator chooses Nextcloud default and Apply is pressed
 - THEN `themed_contexts` MUST NOT contain `login`
 
-### Requirement: The apps menu step sets the menu and its defaults (REQ-TQFS-010)
+### Requirement: The apps menu step is one switch (REQ-TQFS-010)
 
-The apps menu step MUST have the switch "Use the thematiq apps menu" and, while it is on, the style
-Workplace or Classic, columns 3 to 5, rows above More apps 1 to 3, and the switches Show payoff, Show
-Create and Show external apps, ending in Apply. Off MUST store the administrator's `menu.style` default
-classic. On, the choices MUST be stored as the administrator's `menu.<key>` defaults, checked as
-`POST /app-menu/defaults` checks them. The workplace apps menu shows only in the workplace top bar: when
-the menu is on and the chosen house style does not draw the workplace top bar, Apply MUST also store
-`header_style` workplace. With the menu off, `header_style` MUST be left as it is.
+The apps menu step MUST have one switch, "Use the thematiq apps menu", on by default, and MUST NOT offer
+a choice between a Workplace and a Classic style. On MUST mean thematiq's workplace apps menu: Apply MUST
+store the administrator's `menu.style` default workplace. Off MUST mean Nextcloud's own menu: Apply MUST
+store the administrator's `menu.style` default classic and no other `menu.<key>` default. While the
+switch is on the step MUST show the workplace menu's defaults, columns 3 to 5, rows above More apps 1 to
+3, and the switches Show payoff, Show Create and Show external apps, ending in Apply, and Apply MUST store
+them as the administrator's `menu.<key>` defaults, checked as `POST /app-menu/defaults` checks them. The
+workplace apps menu shows only in the workplace top bar: when the switch is on and the chosen house
+style does not draw the workplace top bar, Apply MUST also store `header_style` workplace. With the
+switch off, `header_style` MUST be left as it is.
 
-Board: TqSetupAppmenu.
+Board: TqSetupAppmenu, without its Style row (Ruben, 27 November 2026).
+
+#### Scenario: The step offers no style choice
+@e2e exclude the absence of a control on a step; proven by tests/vitest/setupWizard.spec.js (the apps menu step has one switch and no Style choice)
+- GIVEN the apps menu step is open
+- THEN it MUST show the switch "Use the thematiq apps menu"
+- AND it MUST NOT offer Workplace or Classic
 
 #### Scenario: The menu defaults reach everyone
 - GIVEN the apps menu step is open
-- WHEN the administrator keeps the menu on, sets 3 columns and presses Apply
-- THEN a user who is not an administrator MUST see the apps menu with 3 columns
+- WHEN the administrator keeps the switch on, sets 3 columns and presses Apply
+- THEN the administrator's `menu.style` default MUST be workplace
+- AND a user who is not an administrator MUST see the workplace apps menu with 3 columns
 
 #### Scenario: Turning the menu on brings the workplace top bar
 - GIVEN the administrator chose a house style that does not draw the workplace top bar
@@ -277,11 +287,13 @@ Board: TqSetupAppmenu.
 - THEN `header_style` MUST be workplace
 - AND a user who is not an administrator MUST see the workplace top bar with the workplace apps menu
 
-#### Scenario: The menu off
+#### Scenario: The menu off keeps Nextcloud's own menu
 @e2e exclude switching everyone to the classic style is proven against the shared instance by apps-menu-settings; the stored default by tests/Unit/Controller/SetupControllerTest.php (testTheMenuSwitchStoresTheStyle)
-- GIVEN the apps menu step is open
+- GIVEN the apps menu step is open and the active `header_style` is `nextcloud`
 - WHEN the administrator turns "Use the thematiq apps menu" off and presses Apply
 - THEN the administrator's `menu.style` default MUST be classic
+- AND `header_style` MUST still be `nextcloud`
+- AND no column, row or show default MUST be stored
 
 ### Requirement: The done step sums up and offers the apps menu walkthrough (REQ-TQFS-011)
 
@@ -337,3 +349,59 @@ Board: TqSetupOpnieuw.
 - GIVEN `thematiq.config_source` is set
 - WHEN an administrator opens the Theming settings page
 - THEN "Set up again" MUST be disabled with the note who manages the house style
+
+### Requirement: The settings page switches Nextcloud's theme in line with the set (REQ-TQFS-013)
+
+thematiq's Theming settings page MUST show administrators, in the Active token set card, the switch "Keep
+the Nextcloud theme in line with the set" with the hint "Also on the next change of set. Off: thematiq
+leaves the Nextcloud theme alone.", showing the stored `core_theming_follows_set` (off when absent). It
+MUST save at once through `POST /apps/thematiq/settings/core-theming-follows` with `{follows}`, served to
+administrators only, with an entry in the theming audit trail naming the actor. Turning it on MUST store
+`1` and apply the active set to Nextcloud's theme through the same service as
+`occ thematiq:theme:set --sync-core`, keeping the old theme as a version; with Nextcloud default as the
+active set it MUST only store `1`. Turning it off MUST store `0` and leave Nextcloud's theme as it is.
+While it is on, choosing another set on the settings page MUST apply that set to Nextcloud's theme
+without the theming sync dialog and say so in the card's status line; while it is off the dialog MUST
+ask as before. The wizard's Nextcloud theme step (REQ-TQFS-008) and this switch MUST read and write the
+same value. Under a configuration source the switch MUST be disabled with the note who manages the
+house style, and the route MUST answer 423.
+
+Board: TqTheming (Active token set card), not drawn yet (Ruben, 27 November 2026).
+
+#### Scenario: Turning the switch on brings the set to Nextcloud
+- GIVEN the active set has a primary colour, a logo and a favicon in its theming metadata
+- AND `core_theming_follows_set` is `0`
+- WHEN an administrator turns on "Keep the Nextcloud theme in line with the set" on the Theming settings page
+- THEN `core_theming_follows_set` MUST be `1`
+- AND Nextcloud's primary colour, logo and favicon MUST be the set's
+- AND the audit log MUST hold the change by that administrator
+
+#### Scenario: A change of set follows without the dialog
+- GIVEN the switch is on
+- WHEN the administrator chooses another set with theming metadata on the settings page
+- THEN no theming sync dialog MUST open
+- AND Nextcloud's primary colour MUST be the new set's
+
+#### Scenario: Off leaves Nextcloud's theme alone
+- GIVEN the switch is on
+- WHEN the administrator turns it off and then chooses another set with theming metadata
+- THEN `core_theming_follows_set` MUST be `0`
+- AND the theming sync dialog MUST ask before Nextcloud's theme changes
+
+#### Scenario: The wizard's choice shows on the settings page
+- GIVEN the administrator kept "Keep the Nextcloud theme in line with the set" on in the wizard and pressed Apply
+- WHEN they open the Theming settings page
+- THEN the switch MUST be on
+
+#### Scenario: A user who is not an administrator is refused
+@e2e exclude pure controller authorisation; proven by tests/Unit/Controller/SettingsControllerTest.php (testCoreThemingFollowsIsAdminOnly) and the route-auth gate
+- GIVEN a user who is not an administrator
+- WHEN they post to `/apps/thematiq/settings/core-theming-follows`
+- THEN the answer MUST be 403 and `core_theming_follows_set` MUST be unchanged
+
+#### Scenario: Theme as code disables the switch
+@e2e exclude needs config.php; proven by tests/Unit/Controller/SettingsControllerTest.php (testCoreThemingFollowsIsLockedUnderASource) and the admin page vitest
+- GIVEN `thematiq.config_source` is set
+- WHEN an administrator opens the Theming settings page
+- THEN the switch MUST be disabled with the note who manages the house style
+- AND a post to the route MUST answer 423

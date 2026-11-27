@@ -12,5 +12,9 @@ canon: where this change and a board differ, the change follows the board.
 - TqSetupKlaar (step 6, done) https://identity.conduction.nl/screens/board?id=thematiq/TqSetupKlaar: REQ-TQFS-003, 005, 011
 - TqSetupOpnieuw (the version card, set up again) https://identity.conduction.nl/screens/board?id=thematiq/TqSetupOpnieuw: REQ-TQFS-003, 012
 
+Board follow-ups (Ruben, 27 November 2026): TqSetupAppmenu loses its Style row (Workplace, Classic),
+and TqTheming's Active token set card gets the switch "Keep the Nextcloud theme in line with the set"
+(REQ-TQFS-013). Until they are drawn, this change leads on those two points.
+
 The version card's completed state is drawn ("Completed by admin on 27-11-2026, 13:52"); the skipped,
 earlier-version and not-set-up states are not, and follow the board when it draws them.
