@@ -203,6 +203,54 @@ describe('panels of the Theming page', () => {
 		expect(document.activeElement).toBe(document.getElementById('all-options'))
 	})
 
+	it('keeps the buildiq square among a panel\'s actions, before its primary one, and gives it back', async () => {
+		document.querySelector('.thematiq-page-header__actions').insertAdjacentHTML(
+			'beforeend',
+			'<a id="thematiq-buildiq-edit" href="/index.php/apps/buildiq/" aria-label="Edit in Buildiq"></a>',
+		)
+		document
+			.getElementById('nldesign-settings')
+			.insertAdjacentHTML(
+				'beforeend',
+				'<section class="thematiq-panel" data-thematiq-panel="square" hidden></section>',
+			)
+		await load()
+		window.ThematiqPanels.register('square', {
+			title: 'Square',
+			actions: () => {
+				const secondary = document.createElement('button')
+				secondary.className = 'thematiq-page-header__action'
+				secondary.textContent = 'Deprecate token'
+				const primary = document.createElement('button')
+				primary.className =
+					'thematiq-page-header__action thematiq-page-header__action--primary'
+				primary.textContent = 'Add token'
+				return [secondary, primary]
+			},
+		})
+		await hashTo('#square')
+
+		const order = [
+			...document.querySelector('.thematiq-page-header__actions').children,
+		].map((el) => el.id || el.textContent)
+		expect(order).toEqual(['Deprecate token', 'thematiq-buildiq-edit', 'Add token'])
+
+		await hashTo('#')
+		const back = [
+			...document.querySelector('.thematiq-page-header__actions').children,
+		].map((el) => el.id)
+		expect(back).toEqual(['preview', 'thematiq-buildiq-edit'])
+	})
+
+	it('leaves the actions alone without the buildiq square', async () => {
+		await load()
+		await hashTo('#layout')
+		expect(document.getElementById('thematiq-buildiq-edit')).toBeNull()
+		expect(
+			document.querySelector('.thematiq-page-header__actions').textContent,
+		).toBe('Everything follows the theme')
+	})
+
 	it('ignores a hash no panel has', async () => {
 		await load()
 		await hashTo('#nothing')

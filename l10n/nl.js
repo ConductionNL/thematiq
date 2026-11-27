@@ -198,6 +198,7 @@ OC.L10N.register(
         "Publish": "Publiceren",
         "Theme published instance-wide. Reload the page to see changes.": "Thema instantiebreed gepubliceerd. Herlaad de pagina om de wijzigingen te zien.",
         "Preview in my session": "Voorbeeld bekijken in mijn sessie",
+        "Edit in Buildiq": "Bewerken in Buildiq",
         "Previewing \"{name}\" in your session only.": "U bekijkt een voorbeeld van \"{name}\", alleen zichtbaar voor u.",
         "Dark logo": "Donker logo",
         "This token set also ships a dark-surface logo. Nextcloud core has no dark logo slot, so it is applied by nldesign's own dark-mode stylesheet, not synced to Nextcloud theming.": "Deze tokenset bevat ook een logo voor een donkere ondergrond. Nextcloud zelf heeft geen apart logo-slot voor donkere modus, dus dit logo wordt toegepast via nldesign's eigen donkeremodus-stylesheet, niet gesynchroniseerd naar Nextcloud-theming.",
