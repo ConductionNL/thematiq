@@ -14,6 +14,7 @@
  * @link      https://github.com/ConductionNL/thematiq
  *
  * @spec openspec/specs/scheduled-switch/spec.md
+ * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
  */
 
 declare(strict_types=1);
@@ -53,11 +54,13 @@ class ActiveTokenSetService {
 	 * @param IConfig $config The config service.
 	 * @param TokenSetService $tokenSets Validates that a set exists.
 	 * @param ThemingAuditService $auditService Records each switch.
+	 * @param ScheduledCoreThemingSync|null $coreSync Applies a set to Nextcloud's theme while it follows the set.
 	 */
 	public function __construct(
 		private readonly IConfig $config,
 		private readonly TokenSetService $tokenSets,
 		private readonly ThemingAuditService $auditService,
+		private readonly ?ScheduledCoreThemingSync $coreSync = null,
 	) {
 	}//end __construct()
 
@@ -101,7 +104,77 @@ class ActiveTokenSetService {
 			action: $auditAction,
 			context: array_merge(['old' => $previous, 'new' => $tokenSet], $auditContext)
 		);
+		$this->followInNextcloud(tokenSet: $tokenSet, auditContext: $auditContext);
 
 		return $previous;
 	}//end switchTo()
+
+	/**
+	 * Whether Nextcloud's own theme follows every change of set (`core_theming_follows_set` is `1`).
+	 *
+	 * @return bool True while it follows.
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+	 */
+	public function nextcloudFollows(): bool {
+		return $this->config->getAppValue(Application::APP_ID, SetupStatusService::FOLLOWS_KEY, '0') === '1';
+	}//end nextcloudFollows()
+
+	/**
+	 * Store whether Nextcloud's theme follows every change of set; turning it on applies the active
+	 * set to Nextcloud's theme straight away (nothing to apply for Nextcloud default), off leaves it.
+	 *
+	 * @param bool $follows Whether Nextcloud's theme follows.
+	 *
+	 * @return array<int, string> The Nextcloud theming values applied now.
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
+	 */
+	public function setNextcloudFollows(bool $follows): array {
+		$old = $this->config->getAppValue(Application::APP_ID, SetupStatusService::FOLLOWS_KEY, '');
+		$new = ['0', '1'][(int)$follows];
+		$this->config->setAppValue(Application::APP_ID, SetupStatusService::FOLLOWS_KEY, $new);
+		if ($old !== $new) {
+			$this->auditService->log(
+				action: 'toggle_changed',
+				context: ['key' => SetupStatusService::FOLLOWS_KEY, 'old' => $old, 'new' => $new]
+			);
+		}
+
+		$active = $this->getActive();
+		if ($follows === false || $this->coreSync === null || $active === self::DEFAULT_SET) {
+			return [];
+		}
+
+		$applied = $this->coreSync->sync(tokenSetId: $active);
+		if ($applied !== []) {
+			$this->auditService->log(action: 'theming_sync_applied', context: ['new' => $active, 'key' => implode(',', $applied)]);
+		}
+
+		return $applied;
+	}//end setNextcloudFollows()
+
+	/**
+	 * While Nextcloud's theme follows the set, apply the new set to it through the `--sync-core` path.
+	 *
+	 * @param string $tokenSet The set just made active.
+	 * @param array<string, mixed> $auditContext The switch's audit context (its actor).
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+	 */
+	private function followInNextcloud(string $tokenSet, array $auditContext): void {
+		if ($this->coreSync === null || $this->nextcloudFollows() === false) {
+			return;
+		}
+
+		$applied = $this->coreSync->sync(tokenSetId: $tokenSet);
+		if ($applied !== []) {
+			$this->auditService->log(
+				action: 'theming_sync_applied',
+				context: array_merge(['new' => $tokenSet, 'key' => implode(',', $applied)], $auditContext)
+			);
+		}
+	}//end followInNextcloud()
 }//end class

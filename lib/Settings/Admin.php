@@ -59,7 +59,7 @@ class Admin implements IDelegatedSettings {
 	private const TEMPLATE_STATE_KEYS = [
 		'tokenSets', 'currentTokenSet', 'currentDesignSystem', 'hideSlogan', 'showMenuLabels', 'primaryDrivesComponents',
 		'darkVariantsEnabled', 'marianneEnabled', 'emailThemingState', 'emailFooterConfig', 'occEnableCommand',
-		'occDisableCommand', 'activePreview', 'activeIconPacks', 'iconPackSource',
+		'occDisableCommand', 'activePreview', 'activeIconPacks', 'iconPackSource', 'coreThemingFollows',
 	];
 
 	/**
@@ -174,6 +174,7 @@ class Admin implements IDelegatedSettings {
 			'confirmSaveTheme' => $this->isFlagOn(key: 'confirm_save_theme', fallback: '1'),
 			'darkVariantsEnabled' => $this->isFlagOn(key: 'dark_variants', fallback: '1'),
 			'marianneEnabled' => $this->isFlagOn(key: 'marianne_enabled'),
+			'coreThemingFollows' => $this->isFlagOn(key: 'core_theming_follows_set'),
 		];
 	}//end flagState()
 
