@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Listener;
 
 use OCA\Thematiq\Listener\SetupWizardListener;
+use OCA\Thematiq\Service\SetupAudience;
 use OCA\Thematiq\Service\SetupStatusService;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -34,47 +35,43 @@ class SetupWizardListenerTest extends TestCase {
 	 *
 	 * @var array<string, mixed>
 	 */
-	private array $states = [];
+	public array $states = [];
 
 	/**
 	 * How many times the loader was added.
 	 *
 	 * @var int
 	 */
-	private int $loaders = 0;
+	public int $loaders = 0;
 
 	/**
-	 * An app root with or without a built bundle.
+	 * Whether the wizard bundle counts as built.
 	 *
-	 * @var string
+	 * @var bool
 	 */
-	private string $root = '';
+	public bool $built = true;
 
 	/**
-	 * Make a temporary app root holding the bundle.
+	 * The audience over a user who is or is not signed in and in the admin group.
 	 *
-	 * @return void
-	 */
-	protected function setUp(): void {
-		$this->root = sys_get_temp_dir() . '/thematiq-setup-' . bin2hex(random_bytes(4));
-		mkdir($this->root . '/js/vendor', 0777, true);
-		file_put_contents($this->root . '/' . SetupWizardListener::BUNDLE, '');
-	}//end setUp()
-
-	/**
-	 * Remove the temporary app root.
+	 * @param bool $isAdmin Whether the user is in the admin group.
+	 * @param bool $loggedIn Whether someone is signed in.
 	 *
-	 * @return void
+	 * @return SetupAudience The audience.
 	 */
-	protected function tearDown(): void {
-		@unlink($this->root . '/' . SetupWizardListener::BUNDLE);
-		@rmdir($this->root . '/js/vendor');
-		@rmdir($this->root . '/js');
-		@rmdir($this->root);
-	}//end tearDown()
+	private function audience(bool $isAdmin, bool $loggedIn): SetupAudience {
+		$user = $this->createMock(originalClassName: IUser::class);
+		$user->method('getUID')->willReturn('someone');
+		$session = $this->createMock(originalClassName: IUserSession::class);
+		$session->method('getUser')->willReturn([null, $user][(int)$loggedIn]);
+		$groups = $this->createMock(originalClassName: IGroupManager::class);
+		$groups->method('isAdmin')->willReturn($isAdmin);
+
+		return new SetupAudience(userSession: $session, groupManager: $groups);
+	}//end audience()
 
 	/**
-	 * Run the listener once.
+	 * Fire the listener once.
 	 *
 	 * @param string $renderAs How the page renders.
 	 * @param bool $isAdmin Whether the user is in the admin group.
@@ -87,12 +84,6 @@ class SetupWizardListenerTest extends TestCase {
 		$status = $this->createMock(originalClassName: SetupStatusService::class);
 		$status->method('isDue')->willReturn($due);
 		$status->method('status')->willReturn(['completed' => false]);
-		$user = $this->createMock(originalClassName: IUser::class);
-		$user->method('getUID')->willReturn('someone');
-		$session = $this->createMock(originalClassName: IUserSession::class);
-		$session->method('getUser')->willReturn($loggedIn === true ? $user : null);
-		$groups = $this->createMock(originalClassName: IGroupManager::class);
-		$groups->method('isAdmin')->willReturn($isAdmin);
 		$state = $this->createMock(originalClassName: IInitialState::class);
 		$state->method('provideInitialState')->willReturnCallback(
 			function (string $key, $data): void {
@@ -100,9 +91,15 @@ class SetupWizardListenerTest extends TestCase {
 			}
 		);
 
-		$listener = new class($status, $session, $groups, $state, $this->createMock(originalClassName: LoggerInterface::class), $this->root, $this) extends SetupWizardListener {
+		$listener = new class(
+			$status,
+			$this->audience(isAdmin: $isAdmin, loggedIn: $loggedIn),
+			$state,
+			$this->createMock(originalClassName: LoggerInterface::class),
+			$this
+		) extends SetupWizardListener {
 			/**
-			 * The test, which counts the loaders.
+			 * The test, which records the loaders.
 			 *
 			 * @var SetupWizardListenerTest
 			 */
@@ -119,26 +116,26 @@ class SetupWizardListenerTest extends TestCase {
 			}//end __construct()
 
 			/**
+			 * Whether the bundle counts as built in this test.
+			 *
+			 * @return bool The test's answer.
+			 */
+			protected function bundleBuilt(): bool {
+				return $this->test->built;
+			}//end bundleBuilt()
+
+			/**
 			 * Count instead of adding the script.
 			 *
 			 * @return void
 			 */
 			protected function addLoader(): void {
-				$this->test->countLoader();
+				$this->test->loaders++;
 			}//end addLoader()
 		};
 
 		$listener->handle(new BeforeTemplateRenderedEvent($loggedIn, new TemplateResponse('dashboard', 'index', [], $renderAs)));
 	}//end fire()
-
-	/**
-	 * Count one added loader.
-	 *
-	 * @return void
-	 */
-	public function countLoader(): void {
-		$this->loaders++;
-	}//end countLoader()
 
 	/**
 	 * An administrator's user page gets the state and the loader while setup is due.
@@ -178,12 +175,18 @@ class SetupWizardListenerTest extends TestCase {
 	}//end testNothingForANonAdminOrAGuest()
 
 	/**
-	 * Nothing on a guest, public or error page, also for an administrator.
+	 * Nothing on a guest, public, error or blank page, also for an administrator.
 	 *
 	 * @return void
 	 */
 	public function testNothingOnAPageThatIsNoUserPage(): void {
-		foreach ([TemplateResponse::RENDER_AS_GUEST, TemplateResponse::RENDER_AS_PUBLIC, TemplateResponse::RENDER_AS_ERROR, TemplateResponse::RENDER_AS_BLANK] as $renderAs) {
+		$pages = [
+			TemplateResponse::RENDER_AS_GUEST,
+			TemplateResponse::RENDER_AS_PUBLIC,
+			TemplateResponse::RENDER_AS_ERROR,
+			TemplateResponse::RENDER_AS_BLANK,
+		];
+		foreach ($pages as $renderAs) {
 			$this->fire(renderAs: $renderAs, isAdmin: true, due: true);
 		}
 
@@ -196,7 +199,7 @@ class SetupWizardListenerTest extends TestCase {
 	 * @return void
 	 */
 	public function testNothingWithoutABuiltBundle(): void {
-		unlink($this->root . '/' . SetupWizardListener::BUNDLE);
+		$this->built = false;
 		$this->fire(renderAs: TemplateResponse::RENDER_AS_USER, isAdmin: true, due: true);
 
 		$this->assertSame(expected: 0, actual: $this->loaders);

@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\SetupStatusService;
-use OCP\App\IAppManager;
 use OCP\IConfig;
 use PHPUnit\Framework\TestCase;
 
@@ -37,13 +36,9 @@ class SetupStatusServiceTest extends TestCase {
 		$config->method('getAppValue')->willReturnCallback(
 			fn (string $app, string $key, $default = '') => ($stored[$key] ?? $default)
 		);
-		$config->method('getSystemValue')->willReturnCallback(
-			fn (string $key, $default = '') => ($key === 'thematiq.config_source' ? $source : $default)
-		);
-		$apps = $this->createMock(originalClassName: IAppManager::class);
-		$apps->method('getAppVersion')->willReturn('1.8.0');
+		$config->method('getSystemValue')->willReturnMap([['thematiq.config_source', '', $source]]);
 
-		return new SetupStatusService(config: $config, appManager: $apps);
+		return new SetupStatusService(config: $config);
 	}//end make()
 
 	/**
@@ -52,7 +47,9 @@ class SetupStatusServiceTest extends TestCase {
 	 * @return void
 	 */
 	public function testAFreshInstanceIsDue(): void {
-		$service = $this->make(stored: ['installed_version' => '1.8.0', 'enabled' => 'yes', 'menu.externalAppsMigrated' => '1', 'menu.externalApps' => '[]']);
+		$service = $this->make(
+			stored: ['installed_version' => '1.8.0', 'enabled' => 'yes', 'menu.externalAppsMigrated' => '1', 'menu.externalApps' => '[]']
+		);
 
 		$this->assertTrue(condition: $service->isDue());
 		$status = $service->status();
@@ -60,7 +57,10 @@ class SetupStatusServiceTest extends TestCase {
 		$this->assertFalse(condition: $status['completed']);
 		$this->assertFalse(condition: $status['skipped']);
 		$this->assertFalse(condition: $status['configured']);
-		$this->assertSame(expected: ['welcome', 'house-style', 'nextcloud-theme', 'login-page', 'apps-menu', 'done'], actual: array_keys($status['steps']));
+		$this->assertSame(
+			expected: ['welcome', 'house-style', 'nextcloud-theme', 'login-page', 'apps-menu', 'done'],
+			actual: array_keys($status['steps'])
+		);
 	}//end testAFreshInstanceIsDue()
 
 	/**
@@ -136,7 +136,13 @@ class SetupStatusServiceTest extends TestCase {
 		$status = $service->status();
 
 		$this->assertSame(
-			expected: ['tokenSet' => 'amsterdam', 'nextcloudThemeFollows' => true, 'loginStyle' => 'nextcloud', 'hideSlogan' => true, 'menu' => ['enabled' => false]],
+			expected: [
+				'tokenSet' => 'amsterdam',
+				'nextcloudThemeFollows' => true,
+				'loginStyle' => 'nextcloud',
+				'hideSlogan' => true,
+				'menu' => ['enabled' => false],
+			],
 			actual: $status['current']
 		);
 		$this->assertTrue(condition: $status['steps']['house-style']['done']);

@@ -21,14 +21,13 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Listener;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\SetupAudience;
 use OCA\Thematiq\Service\SetupStatusService;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;
-use OCP\IGroupManager;
-use OCP\IUserSession;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
@@ -56,19 +55,15 @@ class SetupWizardListener implements IEventListener {
 	 * Constructor.
 	 *
 	 * @param SetupStatusService $status Whether setup is due, and the status document.
-	 * @param IUserSession $userSession The signed-in user.
-	 * @param IGroupManager $groupManager The admin group check.
+	 * @param SetupAudience $audience Whether the signed-in user is an administrator.
 	 * @param IInitialState $initialState Carries `setup_status` to the page.
 	 * @param LoggerInterface $logger A failure here never breaks the page.
-	 * @param string|null $appRoot The app root, for the bundle check; null for this app's.
 	 */
 	public function __construct(
 		private readonly SetupStatusService $status,
-		private readonly IUserSession $userSession,
-		private readonly IGroupManager $groupManager,
+		private readonly SetupAudience $audience,
 		private readonly IInitialState $initialState,
 		private readonly LoggerInterface $logger,
-		private readonly ?string $appRoot = null,
 	) {
 	}//end __construct()
 
@@ -112,9 +107,7 @@ class SetupWizardListener implements IEventListener {
 			return false;
 		}
 
-		$uid = $this->userSession->getUser()?->getUID();
-
-		return $uid !== null && $this->groupManager->isAdmin($uid) === true;
+		return $this->audience->isAdministrator();
 	}//end appliesTo()
 
 	/**
@@ -124,10 +117,8 @@ class SetupWizardListener implements IEventListener {
 	 *
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
 	 */
-	private function bundleBuilt(): bool {
-		$root = $this->appRoot ?? dirname(__DIR__, 2);
-
-		return is_file($root . '/' . self::BUNDLE);
+	protected function bundleBuilt(): bool {
+		return is_file(dirname(__DIR__, 2) . '/' . self::BUNDLE);
 	}//end bundleBuilt()
 
 	/**

@@ -22,11 +22,7 @@ namespace OCA\Thematiq\Service;
 
 use InvalidArgumentException;
 use OCA\Thematiq\AppInfo\Application;
-use OCA\Thematiq\Kernel\Contracts\ThemingAuditServiceInterface;
-use OCA\Thematiq\Kernel\Contracts\TokenSetLicenceServiceInterface;
 use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\IConfig;
 use RuntimeException;
 use Throwable;
 
@@ -39,8 +35,6 @@ use Throwable;
  * same path the settings page uses, and stores `setup.completed` only once every part was applied.
  *
  * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
- *
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects) One write per part of the wizard, each through its own service.
  */
 class SetupActions {
 
@@ -54,26 +48,16 @@ class SetupActions {
 	/**
 	 * Constructor.
 	 *
-	 * @param IConfig $config The app values.
+	 * @param SetupRecords $records The app values, the audit trail and the clock.
 	 * @param SetupRequest $request Checks a whole request before anything is written.
-	 * @param ActiveTokenSetService $active The one write path for the active set.
-	 * @param TokenSetLicenceServiceInterface $licences Stores a licence confirmation.
-	 * @param ScheduledCoreThemingSync $coreSync Applies a set to Nextcloud's theme (`--sync-core`).
-	 * @param LayoutOptionsService $layout The top bar style.
+	 * @param SetupWriters $writers The write paths shared with the settings page.
 	 * @param AppMenuSettings $menu The administrator's menu defaults.
-	 * @param ThemingAuditServiceInterface $audit The theming audit trail.
-	 * @param ITimeFactory $time The clock.
 	 */
 	public function __construct(
-		private readonly IConfig $config,
+		private readonly SetupRecords $records,
 		private readonly SetupRequest $request,
-		private readonly ActiveTokenSetService $active,
-		private readonly TokenSetLicenceServiceInterface $licences,
-		private readonly ScheduledCoreThemingSync $coreSync,
-		private readonly LayoutOptionsService $layout,
+		private readonly SetupWriters $writers,
 		private readonly AppMenuSettings $menu,
-		private readonly ThemingAuditServiceInterface $audit,
-		private readonly ITimeFactory $time,
 	) {
 	}//end __construct()
 
@@ -114,7 +98,7 @@ class SetupActions {
 
 		if ($failed === []) {
 			$this->store(key: SetupStatusService::COMPLETED_KEY, uid: $uid);
-			$this->audit->log(action: 'setup_completed', context: ['new' => $choices['tokenSet']]);
+			$this->records->audit->log(action: 'setup_completed', context: ['new' => $choices['tokenSet']]);
 		}
 
 		return ['applied' => $applied, 'failed' => $failed, 'completed' => ($failed === [])];
@@ -147,7 +131,7 @@ class SetupActions {
 	 */
 	public function skip(string $uid): void {
 		$this->store(key: SetupStatusService::SKIPPED_KEY, uid: $uid);
-		$this->audit->log(action: 'setup_skipped', context: []);
+		$this->records->audit->log(action: 'setup_skipped', context: []);
 	}//end skip()
 
 	/**
@@ -165,7 +149,7 @@ class SetupActions {
 			return false;
 		}
 
-		$this->licences->confirm(tokenSetId: (string)$choices['tokenSet'], uid: $uid);
+		$this->writers->licences->confirm(tokenSetId: (string)$choices['tokenSet'], uid: $uid);
 
 		return true;
 	}//end confirmLicence()
@@ -180,7 +164,7 @@ class SetupActions {
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
 	 */
 	private function switchSet(string $tokenSet): bool {
-		$this->active->switchTo(tokenSet: $tokenSet, auditContext: ['via' => 'setup']);
+		$this->writers->active->switchTo(tokenSet: $tokenSet, auditContext: ['via' => 'setup']);
 
 		return true;
 	}//end switchSet()
@@ -204,13 +188,13 @@ class SetupActions {
 			return true;
 		}
 
-		$applied = $this->coreSync->sync(tokenSetId: $tokenSet);
-		if ($applied === [] && $this->coreSync->themingParams(tokenSetId: $tokenSet) !== []) {
+		$applied = $this->writers->coreSync->sync(tokenSetId: $tokenSet);
+		if ($applied === [] && $this->writers->coreSync->themingParams(tokenSetId: $tokenSet) !== []) {
 			throw new RuntimeException('The theming values of ' . $tokenSet . ' did not validate');
 		}
 
 		if ($applied !== []) {
-			$this->audit->log(action: 'theming_sync_applied', context: ['new' => $tokenSet, 'key' => implode(',', $applied)]);
+			$this->records->audit->log(action: 'theming_sync_applied', context: ['new' => $tokenSet, 'key' => implode(',', $applied)]);
 		}
 
 		return true;
@@ -246,7 +230,7 @@ class SetupActions {
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
 	 */
 	private function loginContexts(string $style): array {
-		$contexts = json_decode($this->config->getAppValue(Application::APP_ID, 'themed_contexts', '[]'), true);
+		$contexts = json_decode($this->records->config->getAppValue(Application::APP_ID, 'themed_contexts', '[]'), true);
 		if (is_array($contexts) === false) {
 			$contexts = [];
 		}
@@ -278,10 +262,10 @@ class SetupActions {
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
 	private function storeValue(string $key, string $value): void {
-		$old = $this->config->getAppValue(Application::APP_ID, $key, '');
-		$this->config->setAppValue(Application::APP_ID, $key, $value);
+		$old = $this->records->config->getAppValue(Application::APP_ID, $key, '');
+		$this->records->config->setAppValue(Application::APP_ID, $key, $value);
 		if ($old !== $value) {
-			$this->audit->log(action: 'toggle_changed', context: ['key' => $key, 'old' => $old, 'new' => $value]);
+			$this->records->audit->log(action: 'toggle_changed', context: ['key' => $key, 'old' => $old, 'new' => $value]);
 		}
 	}//end storeValue()
 
@@ -320,14 +304,14 @@ class SetupActions {
 		}
 
 		$this->menu->saveDefaults(values: $values, known: []);
-		$this->audit->log(action: 'toggle_changed', context: ['key' => 'menu.defaults', 'new' => (string)json_encode($values)]);
+		$this->records->audit->log(action: 'toggle_changed', context: ['key' => 'menu.defaults', 'new' => (string)json_encode($values)]);
 
 		$headerKey = LayoutOptionValues::HEADER_STYLE_KEY;
 		if ($menu['enabled'] === true
-			&& $this->layout->resolve(key: $headerKey, tokenSet: $tokenSet) !== LayoutOptionValues::HEADER_STYLE_WORKPLACE
+			&& $this->writers->layout->resolve(key: $headerKey, tokenSet: $tokenSet) !== LayoutOptionValues::HEADER_STYLE_WORKPLACE
 		) {
-			$old = $this->layout->setOption(key: $headerKey, value: LayoutOptionValues::HEADER_STYLE_WORKPLACE);
-			$this->audit->log(action: 'toggle_changed', context: ['key' => $headerKey, 'old' => $old, 'new' => LayoutOptionValues::HEADER_STYLE_WORKPLACE]);
+			$old = $this->writers->layout->setOption(key: $headerKey, value: LayoutOptionValues::HEADER_STYLE_WORKPLACE);
+			$this->records->audit->log(action: 'toggle_changed', context: ['key' => $headerKey, 'old' => $old, 'new' => LayoutOptionValues::HEADER_STYLE_WORKPLACE]);
 		}
 
 		return true;
@@ -344,7 +328,7 @@ class SetupActions {
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
 	 */
 	private function store(string $key, string $uid): void {
-		$record = ['by' => $uid, 'at' => gmdate('Y-m-d\TH:i:s\Z', $this->time->getTime())];
-		$this->config->setAppValue(Application::APP_ID, $key, (string)json_encode($record));
+		$record = ['by' => $uid, 'at' => gmdate('Y-m-d\TH:i:s\Z', $this->records->time->getTime())];
+		$this->records->config->setAppValue(Application::APP_ID, $key, (string)json_encode($record));
 	}//end store()
 }//end class

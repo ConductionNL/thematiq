@@ -17,6 +17,7 @@ use InvalidArgumentException;
 use OCA\Thematiq\Controller\SetupController;
 use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCA\Thematiq\Service\SetupActions;
+use OCA\Thematiq\Service\SetupContract;
 use OCA\Thematiq\Service\SetupStatusService;
 use OCP\IRequest;
 use OCP\IUser;
@@ -55,7 +56,12 @@ class SetupControllerTest extends TestCase {
 		$session = $this->createMock(originalClassName: IUserSession::class);
 		$session->method('getUser')->willReturn($user);
 
-		return new SetupController(appName: 'thematiq', request: $request, status: $status, actions: $this->actions, userSession: $session);
+		return new SetupController(
+			appName: 'thematiq',
+			request: $request,
+			setup: new SetupContract(status: $status, actions: $this->actions),
+			userSession: $session
+		);
 	}//end make()
 
 	/**
@@ -95,7 +101,7 @@ class SetupControllerTest extends TestCase {
 	 */
 	public function testAnUnconfirmedRestrictedSetIsForbidden(): void {
 		$controller = $this->make(params: ['tokenSet' => 'zuiddrecht']);
-		$this->actions->method('apply')->willThrowException(new RestrictedSetNotConfirmedException('zuiddrecht'));
+		$this->actions->method('apply')->willThrowException(new RestrictedSetNotConfirmedException(tokenSetId: 'zuiddrecht'));
 
 		$response = $controller->action(actionId: 'apply');
 

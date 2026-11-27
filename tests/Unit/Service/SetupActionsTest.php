@@ -23,7 +23,9 @@ use OCA\Thematiq\Service\LayoutOptionsService;
 use OCA\Thematiq\Service\RestrictedSetGate;
 use OCA\Thematiq\Service\ScheduledCoreThemingSync;
 use OCA\Thematiq\Service\SetupActions;
+use OCA\Thematiq\Service\SetupRecords;
 use OCA\Thematiq\Service\SetupRequest;
+use OCA\Thematiq\Service\SetupWriters;
 use OCA\Thematiq\Service\TokenSetService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
@@ -107,12 +109,14 @@ class SetupActionsTest extends TestCase {
 		$gate->method('assertMayApply')->willReturnCallback(
 			function (string $tokenSetId) use ($unconfirmed): void {
 				if (in_array($tokenSetId, $unconfirmed, true) === true) {
-					throw new RestrictedSetNotConfirmedException($tokenSetId);
+					throw new RestrictedSetNotConfirmedException(tokenSetId: $tokenSetId);
 				}
 			}
 		);
 		$tokenSets = $this->createMock(originalClassName: TokenSetService::class);
-		$tokenSets->method('isValidTokenSet')->willReturnCallback(fn (string $tokenSetId) => in_array($tokenSetId, ['nextcloud', 'amsterdam', 'zuiddrecht'], true));
+		$tokenSets->method('isValidTokenSet')->willReturnCallback(
+			fn (string $tokenSetId) => in_array($tokenSetId, ['nextcloud', 'amsterdam', 'zuiddrecht'], true)
+		);
 		$tokenSets->method('licenceGate')->willReturn($gate);
 
 		$active = $this->createMock(originalClassName: ActiveTokenSetService::class);
@@ -153,15 +157,10 @@ class SetupActionsTest extends TestCase {
 		$time->method('getTime')->willReturn(1795786320);
 
 		return new SetupActions(
-			config: $config,
+			records: new SetupRecords(config: $config, audit: $audit, time: $time),
 			request: new SetupRequest(tokenSets: $tokenSets, active: $active),
-			active: $active,
-			licences: $licences,
-			coreSync: $this->coreSync,
-			layout: $this->layout,
+			writers: new SetupWriters(active: $active, licences: $licences, coreSync: $this->coreSync, layout: $this->layout),
 			menu: new AppMenuSettings(config: $config),
-			audit: $audit,
-			time: $time,
 		);
 	}//end make()
 
@@ -195,7 +194,10 @@ class SetupActionsTest extends TestCase {
 		$this->assertSame(expected: '3', actual: $this->store['menu.columns']);
 		$this->assertSame(expected: 'false', actual: $this->store['menu.payoff']);
 		$this->assertSame(expected: 'workplace', actual: $this->store['header_style']);
-		$this->assertSame(expected: ['by' => 'admin', 'at' => gmdate('Y-m-d\TH:i:s\Z', 1795786320)], actual: json_decode($this->store['setup.completed'], true));
+		$this->assertSame(
+			expected: ['by' => 'admin', 'at' => gmdate('Y-m-d\TH:i:s\Z', 1795786320)],
+			actual: json_decode($this->store['setup.completed'], true)
+		);
 		$this->assertContains(needle: 'setup_completed', haystack: array_column($this->audit, 0));
 		$this->assertContains(needle: 'theming_sync_applied', haystack: array_column($this->audit, 0));
 	}//end testApplyWritesEveryPartThenCompletes()
@@ -210,7 +212,7 @@ class SetupActionsTest extends TestCase {
 
 		try {
 			$actions->apply(request: ['tokenSet' => 'zuiddrecht', 'menu' => ['columns' => 9]], uid: 'admin');
-			$this->fail('A wrong value was accepted');
+			$this->fail(message: 'A wrong value was accepted');
 		} catch (InvalidArgumentException $e) {
 			$this->assertSame(expected: 'menu.columns', actual: $e->getMessage());
 		}
@@ -236,7 +238,7 @@ class SetupActionsTest extends TestCase {
 		foreach ($cases as $key => $request) {
 			try {
 				$actions->check(request: $request);
-				$this->fail('Accepted ' . $key);
+				$this->fail(message: 'Accepted ' . $key);
 			} catch (InvalidArgumentException $e) {
 				$this->assertSame(expected: $key, actual: $e->getMessage());
 			}
@@ -253,7 +255,7 @@ class SetupActionsTest extends TestCase {
 
 		try {
 			$actions->apply(request: ['tokenSet' => 'zuiddrecht'], uid: 'admin');
-			$this->fail('An unconfirmed restricted set was applied');
+			$this->fail(message: 'An unconfirmed restricted set was applied');
 		} catch (RestrictedSetNotConfirmedException $e) {
 			$this->assertSame(expected: [], actual: $this->switched);
 		}
@@ -273,7 +275,10 @@ class SetupActionsTest extends TestCase {
 		$actions = $this->make();
 		$this->coreSync->method('sync')->willThrowException(new RuntimeException('disk full'));
 
-		$result = $actions->apply(request: ['tokenSet' => 'amsterdam', 'nextcloudThemeFollows' => true, 'menu' => ['enabled' => false]], uid: 'admin');
+		$result = $actions->apply(
+			request: ['tokenSet' => 'amsterdam', 'nextcloudThemeFollows' => true, 'menu' => ['enabled' => false]],
+			uid: 'admin'
+		);
 
 		$this->assertSame(expected: ['nextcloud-theme'], actual: $result['failed']);
 		$this->assertSame(expected: ['house-style', 'login-page', 'apps-menu'], actual: $result['applied']);

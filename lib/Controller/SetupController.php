@@ -22,8 +22,7 @@ namespace OCA\Thematiq\Controller;
 
 use InvalidArgumentException;
 use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
-use OCA\Thematiq\Service\SetupActions;
-use OCA\Thematiq\Service\SetupStatusService;
+use OCA\Thematiq\Service\SetupContract;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
@@ -45,15 +44,13 @@ class SetupController extends Controller {
 	 *
 	 * @param string $appName The app name.
 	 * @param IRequest $request The request.
-	 * @param SetupStatusService $status The status document.
-	 * @param SetupActions $actions The apply and skip actions.
+	 * @param SetupContract $setup The status document and the actions.
 	 * @param IUserSession $userSession The administrator.
 	 */
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private readonly SetupStatusService $status,
-		private readonly SetupActions $actions,
+		private readonly SetupContract $setup,
 		private readonly IUserSession $userSession,
 	) {
 		parent::__construct(appName: $appName, request: $request);
@@ -67,7 +64,7 @@ class SetupController extends Controller {
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
 	public function status(): JSONResponse {
-		return new JSONResponse($this->status->status());
+		return new JSONResponse($this->setup->status->status());
 	}//end status()
 
 	/**
@@ -83,10 +80,10 @@ class SetupController extends Controller {
 	public function action(string $actionId): JSONResponse {
 		$uid = (string)$this->userSession->getUser()?->getUID();
 		if ($actionId === 'skip') {
-			$this->actions->skip(uid: $uid);
-			$this->status->forget();
+			$this->setup->actions->skip(uid: $uid);
+			$this->setup->status->forget();
 
-			return new JSONResponse(['status' => $this->status->status()]);
+			return new JSONResponse(['status' => $this->setup->status->status()]);
 		}
 
 		if ($actionId !== 'apply') {
@@ -94,20 +91,20 @@ class SetupController extends Controller {
 		}
 
 		try {
-			$result = $this->actions->apply(request: $this->body(), uid: $uid);
+			$result = $this->setup->actions->apply(request: $this->body(), uid: $uid);
 		} catch (RestrictedSetNotConfirmedException $e) {
 			return new JSONResponse(['error' => 'restricted_set_not_confirmed'], 403);
 		} catch (InvalidArgumentException $e) {
 			return new JSONResponse(['error' => 'invalid_value', 'key' => $e->getMessage()], 400);
 		}
 
-		$this->status->forget();
+		$this->setup->status->forget();
 		$code = 200;
 		if ($result['completed'] === false) {
 			$code = 500;
 		}
 
-		return new JSONResponse($result + ['status' => $this->status->status()], $code);
+		return new JSONResponse($result + ['status' => $this->setup->status->status()], $code);
 	}//end action()
 
 	/**

@@ -21,7 +21,6 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Service;
 
 use OCA\Thematiq\AppInfo\Application;
-use OCP\App\IAppManager;
 use OCP\IConfig;
 
 /**
@@ -94,12 +93,10 @@ class SetupStatusService {
 	/**
 	 * Constructor.
 	 *
-	 * @param IConfig $config The app and system values.
-	 * @param IAppManager $appManager The installed version.
+	 * @param IConfig $config The app and system values, the installed version among them.
 	 */
 	public function __construct(
 		private readonly IConfig $config,
-		private readonly IAppManager $appManager,
 	) {
 	}//end __construct()
 
@@ -144,7 +141,7 @@ class SetupStatusService {
 		$current = $this->current();
 		$completed = $this->record(key: self::COMPLETED_KEY);
 		$this->cached = [
-			'version' => $this->appManager->getAppVersion(Application::APP_ID),
+			'version' => $this->value(key: 'installed_version', default: ''),
 			'completed' => $completed ?? false,
 			'skipped' => ($this->record(key: self::SKIPPED_KEY) ?? false),
 			'configured' => $this->isConfigured(),
