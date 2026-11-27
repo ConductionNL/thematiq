@@ -6,7 +6,7 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
  * Loaded only on Calendar's pages while the workplace layout is light
- * (LayoutStylesheets::forApp()), after workplace-apps/common.css. Every rule
+ * (LayoutStylesheets::forApp()), after css/workplace-layout.css. Every rule
  * starts at `.app-calendar` under the content element, except the event
  * popover's, which is mounted at the end of the body; every colour is a
  * variable, and an entry keeps its calendar's own colour.
@@ -22,6 +22,11 @@
 		--thematiq-global-color-main-background,
 		var(--color-main-background)
 	) !important;
+}
+
+/* js/workplace-apps.js sets Calendar's words and day names only while this sheet is on the page. */
+:root {
+	--thematiq-app-layer: calendar;
 }
 
 /* The navigation: the date picker fits beside its two arrows. */
@@ -287,44 +292,11 @@
 	content: none;
 }
 
-/* The navigation: 34px rows in 14px, a caption and its add button on one line. */
-:is(#content, #content-vue).app-calendar #app-navigation-vue .app-navigation-entry {
-	min-height: 34px;
-	height: 34px;
-	border-radius: var(--border-radius-element, 8px);
-}
-
-:is(#content, #content-vue).app-calendar
-	#app-navigation-vue
-	.app-navigation-entry-link {
-	min-height: 34px;
-	height: 34px;
-	gap: 10px;
-	font-size: 14px;
-	font-weight: 400;
-	line-height: 21px;
-}
-
-:is(#content, #content-vue).app-calendar
-	#app-navigation-vue
-	.app-navigation-entry-icon {
-	width: 16px;
-	min-width: 16px;
-}
-
-:is(#content, #content-vue).app-calendar
-	#app-navigation-vue
-	.app-navigation-entry-wrapper
-	+ .app-navigation-entry-wrapper {
-	margin-top: 1px;
-}
-
+/* The navigation's rows, captions and their buttons are the shared ones
+ * (css/workplace-layout.css); a caption sits 18px under the list above it. */
 :is(#content, #content-vue).app-calendar
 	#app-navigation-vue
 	.app-navigation-caption {
-	display: flex !important;
-	flex-wrap: nowrap;
-	align-items: center;
 	height: 25px;
 	margin-top: 18px;
 	padding: 0 4px 4px 10px;
@@ -332,35 +304,12 @@
 
 :is(#content, #content-vue).app-calendar
 	#app-navigation-vue
-	.app-navigation-caption__name {
-	flex: 1 1 auto;
-	width: auto;
-	min-width: 0;
-}
-
-:is(#content, #content-vue).app-calendar
-	#app-navigation-vue
-	.app-navigation-caption__actions {
-	flex: none;
-	width: auto;
-}
-
-:is(#content, #content-vue).app-calendar
-	#app-navigation-vue
-	:is(
-		.app-navigation-caption__actions,
-		.app-navigation-entry__utils,
-		.new-event-today-view-section
-	)
+	.new-event-today-view-section
 	.button-vue {
 	min-height: 34px !important;
 	height: 34px !important;
 }
 
-:is(#content, #content-vue).app-calendar
-	#app-navigation-vue
-	:is(.app-navigation-caption__actions, .app-navigation-entry__utils)
-	.button-vue,
 :is(#content, #content-vue).app-calendar
 	#app-navigation-vue
 	.new-event-today-view-section

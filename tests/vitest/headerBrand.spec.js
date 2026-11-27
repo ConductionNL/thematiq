@@ -10,6 +10,7 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
  * @spec openspec/specs/workplace-layout/spec.md
+ * @spec openspec/changes/same-shell-every-page/specs/workplace-header-brand/spec.md#requirement-every-app-gets-the-brand-block-in-the-workplace-bar-req-tqwh-001
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -34,8 +35,9 @@ let blockValue
  *
  * @param {object|null} apps The `core/apps` state.
  * @param {object|null} capabilities The `core/capabilities` state.
+ * @param {object|Array|null} settings The `core/settingsNavEntries` state.
  */
-function installState(apps, capabilities) {
+function installState(apps, capabilities, settings = null) {
 	global.OCP = {
 		InitialState: {
 			loadState: (app, key, fallback) => {
@@ -44,6 +46,9 @@ function installState(apps, capabilities) {
 				}
 				if (app === 'core' && key === 'capabilities') {
 					return capabilities
+				}
+				if (app === 'core' && key === 'settingsNavEntries') {
+					return settings
 				}
 				return fallback
 			},
@@ -125,11 +130,11 @@ describe('header brand', () => {
 		expect(host.lastChild).toBe(divider)
 	})
 
-	it('leaves out the emblem and the caption the capabilities do not give, and links to # without an href', async () => {
+	it('leaves out the emblem and the caption the capabilities do not give, and links home without an href', async () => {
 		installState({ deck: { active: true, name: 'Deck' } }, { theming: {} })
 		await loadScript()
 		const link = document.querySelector('a.thematiq-brand')
-		expect(link.getAttribute('href')).toBe('#')
+		expect(link.getAttribute('href')).toBe('/')
 		expect(link.querySelector('.thematiq-brand__emblem')).toBeNull()
 		expect(link.querySelector('.thematiq-brand__caption')).toBeNull()
 		expect(link.querySelector('.thematiq-brand__name').textContent).toBe('Deck')
@@ -144,13 +149,73 @@ describe('header brand', () => {
 		expect(document.querySelector('.thematiq-brand__emblem')).toBeNull()
 	})
 
+	it('names the active settings section on a page without an open app', async () => {
+		installState({ files: { active: false, name: 'Files' } }, CAPABILITIES, {
+			settings: {
+				active: true,
+				name: 'Persoonlijke instellingen',
+				href: '/settings/user',
+			},
+			admin_settings: { active: false, name: 'Beheerdersinstellingen' },
+		})
+		await loadScript()
+		const link = document.querySelector('a.thematiq-brand')
+		expect(link.querySelector('.thematiq-brand__name').textContent).toBe(
+			'Persoonlijke instellingen',
+		)
+		expect(link.getAttribute('href')).toBe('/settings/user')
+		expect(
+			document.getElementById('header').hasAttribute('data-thematiq-brand'),
+		).toBe(true)
+	})
+
+	it('reads a settings navigation given as a list', async () => {
+		installState(null, CAPABILITIES, [
+			{ active: false, name: 'Persoonlijk' },
+			{ active: true, name: 'Beheer', href: '/settings/admin' },
+		])
+		await loadScript()
+		expect(document.querySelector('.thematiq-brand__name').textContent).toBe(
+			'Beheer',
+		)
+	})
+
+	it('prefers the open app over a settings entry', async () => {
+		installState(MAIL_APPS, CAPABILITIES, {
+			settings: { active: true, name: 'Persoonlijk' },
+		})
+		await loadScript()
+		expect(document.querySelector('.thematiq-brand__name').textContent).toBe(
+			'Mail',
+		)
+	})
+
 	it.each([
 		['no apps state', null],
 		['no open app', { files: { active: false, name: 'Files' } }],
 		['an open app without a name', { mail: { active: true, name: '   ' } }],
 		['an open app whose name is not text', { mail: { active: true, name: 7 } }],
-	])('draws nothing with %s', async (label, apps) => {
-		installState(apps, CAPABILITIES)
+	])(
+		'shows the emblem and the organisation alone, no name element, with %s',
+		async (label, apps) => {
+			installState(apps, CAPABILITIES)
+			window.OC = { webroot: '/nc' }
+			await loadScript()
+			delete window.OC
+			const header = document.getElementById('header')
+			const link = header.querySelector('a.thematiq-brand')
+			expect(link.querySelector('.thematiq-brand__emblem')).not.toBeNull()
+			expect(link.querySelector('.thematiq-brand__caption').textContent).toBe(
+				'Zuiddrecht',
+			)
+			expect(link.querySelector('.thematiq-brand__name')).toBeNull()
+			expect(link.getAttribute('href')).toBe('/nc/')
+			expect(header.hasAttribute('data-thematiq-brand')).toBe(true)
+		},
+	)
+
+	it('draws nothing with nothing to show', async () => {
+		installState({ files: { active: false, name: 'Files' } }, null)
 		await loadScript()
 		const header = document.getElementById('header')
 		expect(header.querySelector('.thematiq-brand-host')).toBeNull()

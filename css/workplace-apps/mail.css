@@ -6,7 +6,9 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
  * Loaded only on Mail's pages while the workplace layout is light
- * (LayoutStylesheets::forApp()), after workplace-apps/common.css. Every rule
+ * (LayoutStylesheets::forApp()), after css/workplace-layout.css, whose shared
+ * section draws what every app has (the navigation rows, list rows, panels
+ * and the rail). Every rule
  * starts at `.app-mail` under the content element; every colour is a
  * variable.
  *
@@ -22,6 +24,11 @@
  * 3px primary edge. The conversation is white cards on the grey surface under
  * a white subject bar, its subject in the page title size of the boards (20px).
  */
+
+/* js/workplace-apps.js sets Mail's words only while this sheet is on the page. */
+:root {
+	--thematiq-app-layer: mail;
+}
 
 /* "New message" is the filled primary action. */
 :is(#content, #content-vue).app-mail
@@ -48,44 +55,6 @@
 		--nldesign-color-button-primary-hover,
 		var(--nldesign-color-primary-hover)
 	) !important;
-}
-
-/* The folders. */
-:is(#content, #content-vue).app-mail
-	#app-navigation-vue
-	:is(
-		.app-navigation-entry,
-		.app-navigation-entry-link,
-		.app-navigation-entry-icon,
-		.app-navigation-entry__name
-	) {
-	min-height: 34px !important;
-	height: 34px;
-}
-
-:is(#content, #content-vue).app-mail
-	#app-navigation-vue
-	.app-navigation-entry__name {
-	font-size: 14px;
-	font-weight: 400;
-	line-height: 34px;
-}
-
-:is(#content, #content-vue).app-mail
-	#app-navigation-vue
-	.app-navigation-entry.active
-	.app-navigation-entry__name {
-	font-weight: 600;
-}
-
-:is(#content, #content-vue).app-mail
-	.mail-navigation__new-message-button
-	.button-vue {
-	min-height: 34px !important;
-	height: 34px !important;
-	padding-block: 0 !important;
-	font-size: 14px;
-	font-weight: 600;
 }
 
 /* The list. */
@@ -133,32 +102,13 @@
 	);
 }
 
-:is(#content, #content-vue).app-mail .envelope-list .list-item__wrapper {
-	padding: 0 !important;
-}
-
 :is(#content, #content-vue).app-mail .envelope-list .list-item {
 	position: relative;
 	padding: 9px 14px 9px 22px !important;
-	border-bottom: 1px solid var(--color-border);
-	border-radius: 0 !important;
 	background-color: var(
 		--thematiq-global-color-main-background,
 		var(--color-main-background)
 	) !important;
-}
-
-:is(#content, #content-vue).app-mail .envelope-list .list-item:hover {
-	background-color: var(--color-background-hover) !important;
-}
-
-:is(#content, #content-vue).app-mail
-	.envelope-list
-	.list-item__wrapper--active
-	.list-item,
-:is(#content, #content-vue).app-mail .envelope-list .list-item--active {
-	box-shadow: inset 3px 0 0 var(--color-primary-element);
-	background-color: var(--color-primary-element-light) !important;
 }
 
 :is(#content, #content-vue).app-mail
@@ -251,6 +201,9 @@
 }
 
 :is(#content, #content-vue).app-mail #mail-message .mail-message-attachments {
+	/* Attachment names are rows, not links in prose: no underline. */
+	--nldesign-component-link-text-decoration: none;
+
 	margin: 0 12px;
 	padding-inline-start: 12px !important;
 	border-top: 1px solid var(--color-border);
@@ -261,91 +214,16 @@
 	font-size: 14px;
 }
 
-/* With a conversation open the folders fold to a 64px rail of icons with a
- * small label under each (MlThread, MlFolding). Keyboard focus or an open
- * folder menu unfolds the full column over the list at once; the pointer
- * unfolds it after 200ms, so crossing the rail does not flash it. The state
- * is a registered property the folded rules query, because a hover delay
- * cannot be written as a selector. Without style queries the column simply
- * stays unfolded. */
-@property --thematiq-mail-rail {
-	syntax: '<integer>';
-	inherits: true;
-	initial-value: 0;
-}
-
-@keyframes thematiq-mail-rail-unfold {
-	from,
-	to {
-		--thematiq-mail-rail: 0;
-	}
+/* With a conversation open the folders fold to the shared 64px rail
+ * (css/workplace-layout.css, MlThread, MlFolding): this sheet only says when.
+ * What is Mail's own in the rail stays here: New message as a 40px square,
+ * the settings name gone, and the open account's folders alone. */
+:is(#content, #content-vue).app-mail:has(#mail-thread-header) {
+	--thematiq-rail: 1;
 }
 
 @media (min-width: 1024px) {
-	:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-		.app-navigation.mail-navigation {
-		--thematiq-mail-rail: 1;
-
-		position: relative;
-		z-index: 2000;
-		flex: 0 0 64px !important;
-		width: 64px !important;
-		min-width: 64px !important;
-		max-width: 64px !important;
-	}
-
-	:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-		.app-navigation.mail-navigation:is(
-			:focus-within,
-			:has(#app-navigation-vue [aria-haspopup][aria-expanded='true'])
-		) {
-		--thematiq-mail-rail: 0;
-	}
-
-	:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-		.app-navigation.mail-navigation:hover {
-		animation: thematiq-mail-rail-unfold 1ms 200ms forwards;
-	}
-
-	:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-		#app-navigation-vue {
-		position: absolute;
-		inset-block: 0;
-		inset-inline-start: 0;
-		width: 264px;
-		border-inline-end: 1px solid var(--color-border);
-		background-color: var(--color-main-background);
-		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-	}
-
-	@container style(--thematiq-mail-rail: 1) {
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-			#app-navigation-vue {
-			width: 64px;
-			box-shadow: none;
-			padding-inline: 4px !important;
-			overflow: hidden;
-		}
-
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-			#app-navigation-vue
-			:is(
-				.refresh__button,
-				.button-vue__text,
-				.app-navigation-entry__actions,
-				.app-navigation-caption__actions,
-				.app-navigation-caption__name
-			) {
-			display: none !important;
-		}
-
-		/* A row without an icon ("Show all folders") has nothing to show in the rail. */
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-			#app-navigation-vue
-			.app-navigation-entry-wrapper:has(.app-navigation-entry-icon:empty) {
-			display: none !important;
-		}
-
+	@container style(--thematiq-rail: 1) {
 		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
 			#app-navigation-vue
 			.mail-navigation__new-message-button {
@@ -362,92 +240,6 @@
 			height: 40px !important;
 			min-height: 40px !important;
 			padding: 0 !important;
-		}
-
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-			#app-navigation-vue
-			.app-navigation-caption {
-			height: 1px;
-			margin: 8px 12px !important;
-			padding: 0 !important;
-			border-top: 1px solid var(--color-border);
-		}
-
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-			#app-navigation-vue
-			.app-navigation-list {
-			padding-inline: 0 !important;
-		}
-
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-			#app-navigation-vue
-			:is(.app-navigation-entry, .app-navigation-entry-link) {
-			height: auto !important;
-			min-height: 48px !important;
-		}
-
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-			#app-navigation-vue
-			.app-navigation-entry-link {
-			position: relative;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			width: 100% !important;
-			padding: 4px 0 !important;
-		}
-
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-			#app-navigation-vue
-			.app-navigation-entry-icon {
-			width: 20px !important;
-			height: 22px !important;
-			min-height: 22px !important;
-			margin: 0 !important;
-		}
-
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-			#app-navigation-vue
-			.app-navigation-entry__name {
-			max-width: 56px;
-			height: auto !important;
-			min-height: 0 !important;
-			padding: 0 !important;
-			overflow: hidden;
-			font-size: 11px !important;
-			line-height: 14px !important;
-			text-align: center;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
-
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-			#app-navigation-vue
-			.app-navigation-entry__utils {
-			position: absolute;
-			top: 2px;
-			inset-inline-end: 8px;
-			width: auto !important;
-			height: auto !important;
-			min-height: 0 !important;
-			padding: 0 !important;
-		}
-
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-			#app-navigation-vue
-			.app-navigation-entry__counter-wrapper {
-			margin: 0 !important;
-		}
-
-		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-			#app-navigation-vue
-			.app-navigation-entry__counter-wrapper
-			.counter-bubble__counter {
-			min-width: 16px !important;
-			height: 16px !important;
-			padding: 0 4px !important;
-			font-size: 10px !important;
-			line-height: 16px !important;
 		}
 
 		:is(#content, #content-vue).app-mail:has(#mail-thread-header)
@@ -748,46 +540,6 @@
 
 :is(#content, #content-vue).app-mail #mail-message .reply-buttons > .button-vue {
 	margin-inline: 0 !important;
-}
-
-/* Reduced motion: the rail unfolds on hover at once, without the delayed
- * one-frame animation that stands in for a hover delay. */
-@media (prefers-reduced-motion: reduce) and (min-width: 1024px) {
-	:is(#content, #content-vue).app-mail:has(#mail-thread-header)
-		.app-navigation.mail-navigation:hover {
-		--thematiq-mail-rail: 0;
-
-		animation: none;
-	}
-}
-
-/* An account's caption on one line, its menu at the end, as the navigation
- * captions of MlInbox and MlNav sit ("FOLDERS" with its button). The design
- * system lays a caption out as a block, which put the account's menu on a
- * row of its own under the address. */
-:is(#content, #content-vue).app-mail #app-navigation-vue .app-navigation-caption {
-	display: flex !important;
-	flex-wrap: nowrap;
-	align-items: center;
-	gap: 4px;
-}
-
-:is(#content, #content-vue).app-mail
-	#app-navigation-vue
-	.app-navigation-caption__name {
-	flex: 1 1 auto;
-	width: auto;
-	min-width: 0;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
-:is(#content, #content-vue).app-mail
-	#app-navigation-vue
-	.app-navigation-caption__actions {
-	flex: none;
-	width: auto;
 }
 
 /* The list's search field starts at the list's edge. Mail keeps room before
