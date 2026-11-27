@@ -442,7 +442,9 @@ class TokenSetService {
 			(string)json_encode(
 				[
 					$this->setFiles->appManager->getAppVersion('thematiq'),
-					md5((string)$css),
+					// xxh3, not md5: the key hashes every shipped set's CSS (~9 MB) on each
+					// catalogue read; md5 took ~8.7 ms of that, xxh3 ~0.3 ms.
+					hash('xxh3', (string)$css),
 					$set->entry['design_system'],
 					($set->entry['theming'] ?? []),
 					$set->meta,
