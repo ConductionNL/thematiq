@@ -10,7 +10,9 @@ the app entries, the Create row's icons and its More, and the external apps; in 
 Create button, the bell, the contacts menu, the person's menu, every other icon-only button or
 header menu trigger at the end of the bar, the apps menu button and the pins; and the marks of the
 Create button's menu and the chip of a pin being dragged. A top bar button MUST draw its hover,
-focus-visible, active and open background in that shape. With `shape` round each MUST keep the radius
+focus-visible, active and open background in that shape, and the bell and the contacts menu MUST
+draw that background in the hover colour, as the Create button does, where Nextcloud draws none. With
+`shape` round each MUST keep the radius
 it has without this requirement. The search field and every avatar MUST keep their own shape. The
 script of the apps menu MUST write the checked shape on the page root as `data-thematiq-shape`, so the
 rules of the bar can read it; with the classic menu style it MUST NOT write it.
@@ -19,7 +21,12 @@ rules of the bar can read it; with the classic menu style it MUST NOT write it.
 - GIVEN the administrator set the shape to square for everyone, on the Zuiddrecht set
 - WHEN a person rests the pointer on the bell
 - THEN its hover background MUST have the radius of `--border-radius-element`
-- AND the Create button's hover background MUST have the same radius
+- AND the contacts menu's and the Create button's hover backgrounds MUST have the same radius
+
+#### Scenario: The contacts menu shows its hover
+- GIVEN the workplace menu style, in either shape
+- WHEN a person rests the pointer on the contacts menu
+- THEN it MUST show the hover background of the bar's other icon buttons
 
 #### Scenario: Square icons everywhere in the menu
 - GIVEN the administrator set the shape to square for everyone, on the Zuiddrecht set

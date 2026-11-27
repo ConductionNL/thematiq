@@ -17,6 +17,9 @@ Ruben's review of 27 November 2026, item 5. Menu settings has a `shape` setting,
   contacts menu, the person's menu and the other icon buttons apps add to the end of the bar;
 - the Create button's own menu, whose item marks are circles, and the chip of a pin being dragged.
 
+And the contacts menu shows no hover background at all: Nextcloud draws its header menu triggers
+without one.
+
 So a workplace set to square shows square app icons next to round buttons and round Create icons, in
 the same menu and the same bar.
 
@@ -26,6 +29,8 @@ the same menu and the same bar.
   entries, the Create row and its More, external apps) and every icon button of the top bar takes a
   rounded square with the radius the menu's icons already use, `--border-radius-element`. The bar's
   buttons take it for their hover, focus-visible and active background alike.
+- **The contacts menu gets its hover.** The bell and the contacts menu draw the hover, focus and open
+  background of the bar's other icon buttons, and a focus outline, in either shape.
 - **Round stays as it is.** With `shape` round nothing changes, the apps menu button and the pins
   included, which are rounded squares today in both shapes.
 - **The shape at page level.** `js/app-menu.js` marks the page root with the effective shape, so a

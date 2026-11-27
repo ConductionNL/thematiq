@@ -49,6 +49,11 @@ The app entry's circle and the other triggers keep Nextcloud's radius in the rou
 rule applies under the square attribute only. The radius sits on the element, so its hover, focus,
 active and open backgrounds all follow, and the focus outline follows the radius too.
 
+Nextcloud's header menu trigger is a button without a background of its own and drops its focus
+outline, so the contacts menu shows nothing on hover. `css/header-workplace.css` gives the bell and the
+contacts menu `--color-background-hover` on hover, focus-visible, active and while open, and the
+outline the Create button has.
+
 Exclusions: the search field (`.unified-search-menu`), the person's avatar and the unread dot.
 
 ## Tests

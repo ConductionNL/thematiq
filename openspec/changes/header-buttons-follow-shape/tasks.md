@@ -17,6 +17,8 @@ Nothing here is built until this change is merged.
       the search field excluded. REQ-TQMS-001.
 - [ ] 2.2 `css/header-workplace.css`: the bell, the contacts menu, the person's menu, the Create
       button and its menu's marks read it, with today's radius behind it. REQ-TQMS-001.
+- [ ] 2.2a `css/header-workplace.css`: the bell and the contacts menu draw the hover background on
+      hover, focus-visible, active and open, and a focus outline. REQ-TQMS-001.
 - [ ] 2.3 vitest `headerWorkplace.spec.js`: every listed rule reads the variable with today's radius
       behind it, the variable is set under the square root only, no colour literal.
 
