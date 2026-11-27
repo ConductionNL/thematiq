@@ -92,10 +92,11 @@ jobs:
       contents: write
       pull-requests: write
     runs-on: ubuntu-latest
-    # Was 15 (n=11, max 1.9 min) for the raw dump. The full token-set gate takes
-    # about 3.5 min here. When its first pass fails, each of the ~40 converted
-    # sets is retried with only the failing tests (about 20 s each), then the
-    # full gate runs once more: about 15 min measured locally in total.
+    # Was 15 (n=11, max 1.9 min) for the raw dump. The full token-set gate runs
+    # once with every converted set in; when it fails, the sets are retried in
+    # halving groups with only the failing tests (about 2 log2(n) runs for one
+    # failing set, not one run per set), then the full gate runs once more.
+    # With Xdebug off (coverage: none) that is well under 15 min.
     timeout-minutes: 60
     steps:
       - name: Checkout repository
@@ -117,6 +118,10 @@ jobs:
         with:
           php-version: "8.3"
           tools: composer
+          # Without this the runner's Xdebug stays loaded and every PHP step of
+          # the gate runs about six times slower (27 Nov 2026: the full gate took
+          # 10.5 min here against about 70 s without Xdebug).
+          coverage: none
 
       - name: Install PHP dependencies
         run: composer install --no-progress --no-interaction

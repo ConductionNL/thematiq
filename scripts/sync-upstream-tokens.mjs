@@ -27,7 +27,7 @@
  *   4. lets the tests decide. All candidates go in together and the gate
  *      (`scripts/token-set-gate.sh`: dark variants, contrast report, token
  *      reference, the shipped-set PHPUnit tests) runs once. When it fails, the
- *      sets are retried one at a time and a set that fails the gate on its own
+ *      sets are retried in halving groups and a set that fails the gate on its own
  *      is put back exactly as it was and listed with the failing tests.
  *
  * A set that cannot be converted cleanly is left unchanged and named in the
@@ -1105,9 +1105,58 @@ export function narrowGate(failures) {
 }
 
 /**
- * Run the gate with one more set in at a time, keeping each set it passes with.
- * With the default gate only the tests that failed run per set; the full gate
- * still runs once on the result.
+ * Find the candidates that may go in, by halving: a group that passes on top
+ * of the sets already kept is kept whole, a group that fails is split in two
+ * and each half is tried again, and a single candidate that fails is rejected.
+ * The whole list already failed the full gate, so the search starts from its
+ * halves. With one failing set among n this costs about 2 log2(n) gate runs
+ * instead of n, which is what keeps the nightly inside its timeout (27 Nov
+ * 2026: 38 sets at about two minutes each ran past the 60-minute job limit).
+ *
+ * @param {Array<Object>} candidates The candidates, in report order.
+ * @param {Function} passes `(kept, group) => boolean`: whether the gate passes
+ *                          with the kept candidates and the group in.
+ * @return {{kept: Array<Object>, rejected: Array<Object>, runs: number}} The
+ *         candidates kept and rejected, both in input order, and the gate runs.
+ * @spec openspec/specs/token-sync-workflow/spec.md#requirement-converted-and-gated-sync
+ */
+export function bisectCandidates(candidates, passes) {
+	const kept = []
+	const rejected = []
+	let runs = 0
+	const search = (group) => {
+		if (group.length === 0) {
+			return
+		}
+		runs++
+		if (passes(kept, group) === true) {
+			kept.push(...group)
+			return
+		}
+		if (group.length === 1) {
+			rejected.push(group[0])
+			return
+		}
+		const middle = Math.ceil(group.length / 2)
+		search(group.slice(0, middle))
+		search(group.slice(middle))
+	}
+	if (candidates.length === 1) {
+		rejected.push(candidates[0])
+	} else {
+		const middle = Math.ceil(candidates.length / 2)
+		search(candidates.slice(0, middle))
+		search(candidates.slice(middle))
+	}
+	const order = (list) =>
+		list.sort((a, b) => candidates.indexOf(a) - candidates.indexOf(b))
+	return { kept: order(kept), rejected: order(rejected), runs }
+}
+
+/**
+ * Retry the candidates in halving groups (bisectCandidates), keeping every
+ * group the gate passes with. With the default gate only the tests that
+ * failed run per group; the full gate still runs once on the result.
  *
  * @param {Object} baseline The baseline snapshot.
  * @param {Array<Object>} accepted The candidates to retry.
@@ -1115,34 +1164,42 @@ export function narrowGate(failures) {
  * @param {Object} summary Outcome lists; gains a rejection per failing set.
  * @param {Array<string>} failures The tests that failed with every candidate in.
  * @return {Array<Object>} The candidates kept.
+ * @spec openspec/specs/token-sync-workflow/spec.md#requirement-converted-and-gated-sync
  */
-function retryOneAtATime(baseline, accepted, options, summary, failures) {
+function retryInGroups(baseline, accepted, options, summary, failures) {
 	const narrowed = options.gate === DEFAULT_GATE ? narrowGate(failures) : null
-	const kept = []
-	for (const candidate of accepted) {
-		apply(baseline, [...kept, candidate], options.sha)
-		const single = runGate(options.gate, narrowed ?? {})
-		if (single.ok === true) {
-			kept.push(candidate)
-			console.log(`  OK   ${candidate.org.slug}`)
-		} else {
-			summary.rejected.push({
-				slug: candidate.org.slug,
-				reason: `fails the gate: ${single.failures.slice(0, 6).join(', ')}`,
-				shipped: candidate.org.kind !== 'new',
-			})
-			console.log(
-				`  FAIL ${candidate.org.slug}: ${single.failures.join(', ')}`,
-			)
-		}
+	const lastFailures = new Map()
+	const result = bisectCandidates(accepted, (kept, group) => {
+		apply(baseline, [...kept, ...group], options.sha)
+		const started = Date.now()
+		const run = runGate(options.gate, narrowed ?? {})
 		restore(baseline)
+		const slugs = group.map((candidate) => candidate.org.slug).join(', ')
+		const seconds = Math.round((Date.now() - started) / 1000)
+		console.log(`  ${run.ok === true ? 'OK  ' : 'FAIL'} ${slugs} (${seconds} s)`)
+		if (run.ok === false && group.length === 1) {
+			lastFailures.set(group[0], run.failures)
+		}
+		return run.ok
+	})
+	for (const candidate of result.rejected) {
+		const failed = lastFailures.get(candidate) ?? failures
+		summary.rejected.push({
+			slug: candidate.org.slug,
+			reason: `fails the gate: ${failed.slice(0, 6).join(', ')}`,
+			shipped: candidate.org.kind !== 'new',
+		})
+		console.log(`  FAIL ${candidate.org.slug}: ${failed.join(', ')}`)
 	}
-	return kept
+	console.log(
+		`[${LABEL}] ${result.kept.length} kept, ${result.rejected.length} rejected in ${result.runs} gate runs`,
+	)
+	return result.kept
 }
 
 /**
  * Apply the candidates and let the gate decide; when it fails, retry the sets
- * one at a time and keep the ones that pass.
+ * in halving groups and keep the ones that pass.
  *
  * @param {Object} baseline The baseline snapshot.
  * @param {Array<Object>} accepted The candidates.
@@ -1155,10 +1212,10 @@ function gateCandidates(baseline, accepted, options, summary) {
 	let gate = runGate(options.gate)
 	if (gate.ok === false && accepted.length > 0) {
 		console.log(
-			`[${LABEL}] gate failed with every candidate in (${gate.failures.join(', ')}); retrying one set at a time`,
+			`[${LABEL}] gate failed with every candidate in (${gate.failures.join(', ')}); retrying in halving groups`,
 		)
 		restore(baseline)
-		accepted = retryOneAtATime(baseline, accepted, options, summary, gate.failures)
+		accepted = retryInGroups(baseline, accepted, options, summary, gate.failures)
 		apply(baseline, accepted, options.sha)
 		gate = runGate(options.gate)
 	}

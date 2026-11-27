@@ -15,6 +15,7 @@ import {
 	declarations,
 	mergeEntry,
 	narrowGate,
+	bisectCandidates,
 	OVERRIDES_HEADING,
 } from '../../scripts/sync-upstream-tokens.mjs'
 
@@ -550,5 +551,49 @@ describe('narrowGate', () => {
 			]),
 		).toBeNull()
 		expect(narrowGate([])).toBeNull()
+	})
+})
+
+describe('bisectCandidates (halving retry)', () => {
+	const sets = (n) => Array.from({ length: n }, (_, i) => `set-${i}`)
+	// A gate that fails whenever one of the bad sets is in.
+	const gate = (bad) => (kept, group) =>
+		[...kept, ...group].some((slug) => bad.includes(slug)) === false
+
+	it('finds one failing set among 38 in far fewer runs than one per set', () => {
+		const all = sets(38)
+		const result = bisectCandidates(all, gate(['set-21']))
+		expect(result.rejected).toEqual(['set-21'])
+		expect(result.kept).toEqual(all.filter((slug) => slug !== 'set-21'))
+		expect(result.runs).toBeLessThanOrEqual(2 * Math.ceil(Math.log2(38)))
+	})
+
+	it('rejects every failing set and keeps the rest in input order', () => {
+		const all = sets(10)
+		const result = bisectCandidates(all, gate(['set-0', 'set-7', 'set-9']))
+		expect(result.rejected).toEqual(['set-0', 'set-7', 'set-9'])
+		expect(result.kept).toEqual(['set-1', 'set-2', 'set-3', 'set-4', 'set-5', 'set-6', 'set-8'])
+	})
+
+	it('tries each group on top of the sets already kept', () => {
+		const seen = []
+		bisectCandidates(sets(4), (kept, group) => {
+			seen.push([...kept, ...group])
+			return group.includes('set-3') === false
+		})
+		expect(seen[0]).toEqual(['set-0', 'set-1'])
+		expect(seen[1]).toEqual(['set-0', 'set-1', 'set-2', 'set-3'])
+		expect(seen.at(-1)).toEqual(['set-0', 'set-1', 'set-2', 'set-3'])
+	})
+
+	it('rejects a lone candidate without another gate run, since the full gate already failed it', () => {
+		const result = bisectCandidates(['only'], () => true)
+		expect(result).toEqual({ kept: [], rejected: ['only'], runs: 0 })
+	})
+
+	it('keeps everything when only the combination failed the full gate', () => {
+		const result = bisectCandidates(sets(6), () => true)
+		expect(result.kept).toEqual(sets(6))
+		expect(result.runs).toBe(2)
 	})
 })
