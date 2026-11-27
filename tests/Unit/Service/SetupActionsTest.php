@@ -23,6 +23,7 @@ use OCA\Thematiq\Service\LayoutOptionsService;
 use OCA\Thematiq\Service\RestrictedSetGate;
 use OCA\Thematiq\Service\ScheduledCoreThemingSync;
 use OCA\Thematiq\Service\SetupActions;
+use OCA\Thematiq\Service\SetupRequest;
 use OCA\Thematiq\Service\TokenSetService;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
@@ -153,7 +154,7 @@ class SetupActionsTest extends TestCase {
 
 		return new SetupActions(
 			config: $config,
-			tokenSets: $tokenSets,
+			request: new SetupRequest(tokenSets: $tokenSets, active: $active),
 			active: $active,
 			licences: $licences,
 			coreSync: $this->coreSync,

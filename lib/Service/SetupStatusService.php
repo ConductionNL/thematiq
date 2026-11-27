@@ -246,9 +246,9 @@ class SetupStatusService {
 		$details = [
 			'welcome' => '',
 			'house-style' => (string)$current['tokenSet'],
-			'nextcloud-theme' => $current['nextcloudThemeFollows'] === true ? 'follows' : 'unchanged',
+			'nextcloud-theme' => ['unchanged', 'follows'][(int)$current['nextcloudThemeFollows']],
 			'login-page' => (string)$current['loginStyle'],
-			'apps-menu' => $current['menu']['enabled'] === true ? 'workplace' : 'classic',
+			'apps-menu' => ['classic', 'workplace'][(int)$current['menu']['enabled']],
 			'done' => '',
 		];
 		$done = [

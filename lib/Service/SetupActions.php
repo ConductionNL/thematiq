@@ -27,6 +27,7 @@ use OCA\Thematiq\Kernel\Contracts\TokenSetLicenceServiceInterface;
 use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -44,27 +45,6 @@ use Throwable;
 class SetupActions {
 
 	/**
-	 * The keys `apply` takes.
-	 *
-	 * @var array<int, string>
-	 */
-	public const APPLY_KEYS = ['tokenSet', 'confirmRestricted', 'nextcloudThemeFollows', 'loginStyle', 'hideSlogan', 'menu'];
-
-	/**
-	 * The login page styles.
-	 *
-	 * @var array<int, string>
-	 */
-	public const LOGIN_STYLES = ['house-style', 'nextcloud'];
-
-	/**
-	 * The menu keys the wizard sets besides `enabled`.
-	 *
-	 * @var array<int, string>
-	 */
-	public const MENU_KEYS = ['columns', 'rowsAboveFold', 'payoff', 'showCreateActions', 'showExternalApps'];
-
-	/**
 	 * The render contexts thematiq themes, as `themed_contexts` names them.
 	 *
 	 * @var array<int, string>
@@ -75,7 +55,7 @@ class SetupActions {
 	 * Constructor.
 	 *
 	 * @param IConfig $config The app values.
-	 * @param TokenSetService $tokenSets Which sets exist, and the licence gate.
+	 * @param SetupRequest $request Checks a whole request before anything is written.
 	 * @param ActiveTokenSetService $active The one write path for the active set.
 	 * @param TokenSetLicenceServiceInterface $licences Stores a licence confirmation.
 	 * @param ScheduledCoreThemingSync $coreSync Applies a set to Nextcloud's theme (`--sync-core`).
@@ -86,7 +66,7 @@ class SetupActions {
 	 */
 	public function __construct(
 		private readonly IConfig $config,
-		private readonly TokenSetService $tokenSets,
+		private readonly SetupRequest $request,
 		private readonly ActiveTokenSetService $active,
 		private readonly TokenSetLicenceServiceInterface $licences,
 		private readonly ScheduledCoreThemingSync $coreSync,
@@ -96,49 +76,6 @@ class SetupActions {
 		private readonly ITimeFactory $time,
 	) {
 	}//end __construct()
-
-	/**
-	 * Check a whole `apply` request; nothing is written.
-	 *
-	 * @param array<mixed> $request The request body.
-	 *
-	 * @return array<string, mixed> The request with defaults filled in.
-	 *
-	 * @throws InvalidArgumentException Naming the first key that is unknown or wrong.
-	 * @throws RestrictedSetNotConfirmedException When a restricted set is neither confirmed nor confirmed now.
-	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
-	 */
-	public function check(array $request): array {
-		foreach (array_keys($request) as $key) {
-			if (in_array($key, self::APPLY_KEYS, true) === false) {
-				throw new InvalidArgumentException((string)$key);
-			}
-		}
-
-		$checked = [
-			'tokenSet' => $this->checkTokenSet(value: ($request['tokenSet'] ?? null)),
-			'confirmRestricted' => self::checkBool(key: 'confirmRestricted', value: ($request['confirmRestricted'] ?? false)),
-			'nextcloudThemeFollows' => self::checkBool(key: 'nextcloudThemeFollows', value: ($request['nextcloudThemeFollows'] ?? false)),
-			'loginStyle' => ($request['loginStyle'] ?? 'house-style'),
-			'hideSlogan' => self::checkBool(key: 'hideSlogan', value: ($request['hideSlogan'] ?? false)),
-			'menu' => $this->checkMenu(value: ($request['menu'] ?? ['enabled' => false])),
-		];
-		if (in_array($checked['loginStyle'], self::LOGIN_STYLES, true) === false) {
-			throw new InvalidArgumentException('loginStyle');
-		}
-
-		$gate = $this->tokenSets->licenceGate();
-		if ($checked['confirmRestricted'] === false) {
-			$gate->assertMayApply(tokenSetId: $checked['tokenSet'], alreadyApplied: $this->active->getActive());
-		}
-
-		if ($checked['confirmRestricted'] === true && $gate->isRestricted(tokenSetId: $checked['tokenSet']) === false) {
-			throw new InvalidArgumentException('confirmRestricted');
-		}
-
-		return $checked;
-	}//end check()
 
 	/**
 	 * Check the request, then write every part, in order.
@@ -154,7 +91,7 @@ class SetupActions {
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
 	 */
 	public function apply(array $request, string $uid): array {
-		$choices = $this->check(request: $request);
+		$choices = $this->request->check(request: $request);
 		$parts = [
 			'licence' => fn () => $this->confirmLicence(choices: $choices, uid: $uid),
 			'house-style' => fn () => $this->switchSet(tokenSet: $choices['tokenSet']),
@@ -182,6 +119,22 @@ class SetupActions {
 
 		return ['applied' => $applied, 'failed' => $failed, 'completed' => ($failed === [])];
 	}//end apply()
+
+	/**
+	 * Check a whole `apply` request; nothing is written.
+	 *
+	 * @param array<mixed> $request The request body.
+	 *
+	 * @return array<string, mixed> The checked request.
+	 *
+	 * @throws InvalidArgumentException Naming the first key that is unknown or wrong.
+	 * @throws RestrictedSetNotConfirmedException When a restricted set is not confirmed.
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 */
+	public function check(array $request): array {
+		return $this->request->check(request: $request);
+	}//end check()
 
 	/**
 	 * End the setup without changing anything else.
@@ -240,17 +193,12 @@ class SetupActions {
 	 *
 	 * @return bool Always true.
 	 *
-	 * @throws \RuntimeException When the set's theming values did not validate, so nothing was applied.
+	 * @throws RuntimeException When the set's theming values did not validate, so nothing was applied.
 	 *
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
 	 */
 	private function nextcloudTheme(string $tokenSet, bool $follows): bool {
-		$old = $this->config->getAppValue(Application::APP_ID, SetupStatusService::FOLLOWS_KEY, '');
-		$new = $follows === true ? '1' : '0';
-		$this->config->setAppValue(Application::APP_ID, SetupStatusService::FOLLOWS_KEY, $new);
-		if ($old !== $new) {
-			$this->audit->log(action: 'toggle_changed', context: ['key' => SetupStatusService::FOLLOWS_KEY, 'old' => $old, 'new' => $new]);
-		}
+		$this->storeValue(key: SetupStatusService::FOLLOWS_KEY, value: self::flag(value: $follows));
 
 		if ($follows === false || $tokenSet === ActiveTokenSetService::DEFAULT_SET) {
 			return true;
@@ -258,7 +206,7 @@ class SetupActions {
 
 		$applied = $this->coreSync->sync(tokenSetId: $tokenSet);
 		if ($applied === [] && $this->coreSync->themingParams(tokenSetId: $tokenSet) !== []) {
-			throw new \RuntimeException('The theming values of ' . $tokenSet . ' did not validate');
+			throw new RuntimeException('The theming values of ' . $tokenSet . ' did not validate');
 		}
 
 		if ($applied !== []) {
@@ -282,32 +230,77 @@ class SetupActions {
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
 	 */
 	private function loginPage(string $style, bool $hideSlogan): bool {
-		$oldContexts = $this->config->getAppValue(Application::APP_ID, 'themed_contexts', '');
-		$contexts = json_decode($oldContexts === '' ? '[]' : $oldContexts, true);
-		$contexts = is_array($contexts) === true ? array_values(array_intersect($contexts, self::CONTEXTS)) : [];
-		if ($style === 'nextcloud') {
-			$contexts = array_values(array_diff(($contexts === [] ? self::CONTEXTS : $contexts), ['login']));
-		}
-
-		if ($style === 'house-style' && $contexts !== [] && in_array('login', $contexts, true) === false) {
-			$contexts[] = 'login';
-		}
-
-		$newContexts = (string)json_encode($contexts);
-		$this->config->setAppValue(Application::APP_ID, 'themed_contexts', $newContexts);
-		if ($oldContexts !== $newContexts) {
-			$this->audit->log(action: 'toggle_changed', context: ['key' => 'themed_contexts', 'old' => $oldContexts, 'new' => $newContexts]);
-		}
-
-		$oldSlogan = $this->config->getAppValue(Application::APP_ID, 'hide_slogan', '0');
-		$newSlogan = $hideSlogan === true ? '1' : '0';
-		$this->config->setAppValue(Application::APP_ID, 'hide_slogan', $newSlogan);
-		if ($oldSlogan !== $newSlogan) {
-			$this->audit->log(action: 'toggle_changed', context: ['key' => 'hide_slogan', 'old' => $oldSlogan, 'new' => $newSlogan]);
-		}
+		$this->storeValue(key: 'themed_contexts', value: (string)json_encode($this->loginContexts(style: $style)));
+		$this->storeValue(key: 'hide_slogan', value: self::flag(value: $hideSlogan));
 
 		return true;
 	}//end loginPage()
+
+	/**
+	 * The themed contexts with `login` added or removed.
+	 *
+	 * @param string $style `house-style` or `nextcloud`.
+	 *
+	 * @return array<int, string> The contexts to store.
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
+	 */
+	private function loginContexts(string $style): array {
+		$contexts = json_decode($this->config->getAppValue(Application::APP_ID, 'themed_contexts', '[]'), true);
+		if (is_array($contexts) === false) {
+			$contexts = [];
+		}
+
+		$contexts = array_values(array_intersect($contexts, self::CONTEXTS));
+		if ($style === 'nextcloud') {
+			if ($contexts === []) {
+				$contexts = self::CONTEXTS;
+			}
+
+			return array_values(array_diff($contexts, ['login']));
+		}
+
+		if ($contexts !== [] && in_array('login', $contexts, true) === false) {
+			$contexts[] = 'login';
+		}
+
+		return $contexts;
+	}//end loginContexts()
+
+	/**
+	 * Store an app value and audit it when it changed.
+	 *
+	 * @param string $key The app value.
+	 * @param string $value The new value.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 */
+	private function storeValue(string $key, string $value): void {
+		$old = $this->config->getAppValue(Application::APP_ID, $key, '');
+		$this->config->setAppValue(Application::APP_ID, $key, $value);
+		if ($old !== $value) {
+			$this->audit->log(action: 'toggle_changed', context: ['key' => $key, 'old' => $old, 'new' => $value]);
+		}
+	}//end storeValue()
+
+	/**
+	 * A boolean as the app value `1` or `0`.
+	 *
+	 * @param bool $value The boolean.
+	 *
+	 * @return string `1` or `0`.
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 */
+	private static function flag(bool $value): string {
+		if ($value === true) {
+			return '1';
+		}
+
+		return '0';
+	}//end flag()
 
 	/**
 	 * Store the menu defaults: workplace with its defaults when on, classic alone when off; on also
@@ -323,7 +316,7 @@ class SetupActions {
 	private function appsMenu(array $menu, string $tokenSet): bool {
 		$values = ['style' => 'classic'];
 		if ($menu['enabled'] === true) {
-			$values = ['style' => 'workplace'] + array_intersect_key($menu, array_flip(self::MENU_KEYS));
+			$values = ['style' => 'workplace'] + array_intersect_key($menu, array_flip(SetupRequest::MENU_KEYS));
 		}
 
 		$this->menu->saveDefaults(values: $values, known: []);
@@ -354,79 +347,4 @@ class SetupActions {
 		$record = ['by' => $uid, 'at' => gmdate('Y-m-d\TH:i:s\Z', $this->time->getTime())];
 		$this->config->setAppValue(Application::APP_ID, $key, (string)json_encode($record));
 	}//end store()
-
-	/**
-	 * Check the token set: a known set id.
-	 *
-	 * @param mixed $value The value sent.
-	 *
-	 * @return string The set id.
-	 *
-	 * @throws InvalidArgumentException Naming `tokenSet`.
-	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
-	 */
-	private function checkTokenSet(mixed $value): string {
-		if (is_string($value) === false || $this->tokenSets->isValidTokenSet(tokenSetId: $value) === false) {
-			throw new InvalidArgumentException('tokenSet');
-		}
-
-		return $value;
-	}//end checkTokenSet()
-
-	/**
-	 * Check the menu choice: `enabled` and, when on, the workplace defaults, as `POST /app-menu/defaults` checks them.
-	 *
-	 * @param mixed $value The value sent.
-	 *
-	 * @return array<string, mixed> The checked choice.
-	 *
-	 * @throws InvalidArgumentException Naming `menu` or `menu.<key>`.
-	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
-	 */
-	private function checkMenu(mixed $value): array {
-		if (is_array($value) === false) {
-			throw new InvalidArgumentException('menu');
-		}
-
-		$checked = ['enabled' => self::checkBool(key: 'menu.enabled', value: ($value['enabled'] ?? true))];
-		foreach ($value as $key => $item) {
-			if ($key === 'enabled') {
-				continue;
-			}
-
-			if (in_array($key, self::MENU_KEYS, true) === false) {
-				throw new InvalidArgumentException('menu.' . (string)$key);
-			}
-
-			try {
-				$checked += AppMenuSettings::strict(values: [$key => $item], known: null);
-			} catch (InvalidArgumentException $e) {
-				throw new InvalidArgumentException('menu.' . $key);
-			}
-		}
-
-		return $checked;
-	}//end checkMenu()
-
-	/**
-	 * Check a boolean value.
-	 *
-	 * @param string $key The key, for the refusal.
-	 * @param mixed $value The value sent.
-	 *
-	 * @return bool The value.
-	 *
-	 * @throws InvalidArgumentException Naming the key.
-	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
-	 */
-	private static function checkBool(string $key, mixed $value): bool {
-		if (is_bool($value) === false) {
-			throw new InvalidArgumentException($key);
-		}
-
-		return $value;
-	}//end checkBool()
 }//end class

@@ -72,6 +72,10 @@
             "description": "The OpenAPI document that describes this API."
         },
         {
+            "name": "setup",
+            "description": "The first-time setup contract of ADR-042 (`/api/setup/status`, `/api/setup/action/{actionId}`), administrators only."
+        },
+        {
             "name": "shell-token",
             "description": "GET /api/shell-tokens: the active token set as eighteen shell roles and a logo, for a product that wears the same shell as this Nextcloud (the OpenProject plugin is the first)."
         },
@@ -496,6 +500,105 @@
                     },
                     "404": {
                         "$ref": "#/components/responses/Problem404"
+                    }
+                }
+            }
+        },
+        "/setup/action/{actionId}": {
+            "post": {
+                "operationId": "setup-action",
+                "summary": "Run a first-time setup action: apply or skip",
+                "description": "`apply` takes `{tokenSet, confirmRestricted, nextcloudThemeFollows, loginStyle, hideSlogan, menu}`, checks the whole request (400 naming the key, nothing stored; 403 `restricted_set_not_confirmed`), then writes each part and answers `{applied, failed, completed, status}`; 500 when a part failed. `skip` stores who skipped and when and changes nothing else. Any other action is 404. 423 under a configuration source. Administrators only: anyone else gets 403 from Nextcloud's middleware before the controller runs.",
+                "tags": [
+                    "setup"
+                ],
+                "parameters": [
+                    {
+                        "name": "actionId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "apply",
+                                "skip"
+                            ]
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "additionalProperties": true
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The request succeeded.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/Problem400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Problem401"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Problem403"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/Problem404"
+                    }
+                }
+            }
+        },
+        "/setup/status": {
+            "get": {
+                "operationId": "setup-status",
+                "summary": "The first-time setup status (ADR-042)",
+                "description": "Answers `{version, completed, skipped, configured, steps, current}`: whether the setup was completed or skipped (the stored `{by, at}` record or false), whether the instance is configured, each step's `{done, detail}`, and the stored choices. Administrators only: anyone else gets 403 from Nextcloud's middleware before the controller runs.",
+                "tags": [
+                    "setup"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The request succeeded.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Problem401"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/Problem403"
                     }
                 }
             }
