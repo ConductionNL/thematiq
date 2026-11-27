@@ -46,6 +46,18 @@ export const HOST_CLASS = 'thematiq-menu-walkthrough'
 export const REDUCED_MOTION_CLASS = 'thematiq-menu-walkthrough--reduced-motion'
 
 /**
+ * The host's own rules. Inside the menu's popover, which is moved with a
+ * transform, a fixed overlay is placed against the popover, not the window:
+ * the host shifts it back by the popover's offset (`--thematiq-wt-top`,
+ * `--thematiq-wt-left`), sizes it to the window and makes it the frame its
+ * own fixed parts (dimmer, ring, card) are placed in. With reduced motion the
+ * tour draws without transitions.
+ */
+export const HOST_CSS = '.' + HOST_CLASS + '>.cn-walkthrough{inset:auto;top:var(--thematiq-wt-top,0);left:var(--thematiq-wt-left,0);width:100vw;height:100vh;transform:translateZ(0)}'
+	+ '.' + REDUCED_MOTION_CLASS + ',.' + REDUCED_MOTION_CLASS + ' *{transition:none!important;animation:none!important}'
+	+ '@media (prefers-reduced-motion:reduce){.' + HOST_CLASS + ' *{transition:none!important;animation:none!important}}'
+
+/**
  * The tour's steps as the data holds them.
  *
  * @return {Array<object>} The steps.
@@ -178,7 +190,8 @@ function reducedMotion() {
  * The walkthrough controller for this page. One per page: the engine keeps
  * one machine per app id.
  *
- * @param {object} [options] `{ http, storage }`, the engine's injection points.
+ * @param {object} [options] `{ http, storage }`, the engine's injection points, and
+ *                           `present(ref)`, whether a part is drawn (default: in the page).
  * @return {object} `{ start, close, isRunning, currentStepId }`.
  * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
  */
@@ -188,6 +201,29 @@ export function createMenuWalkthrough(options = {}) {
 	let app = null
 	let state = { seen: '', progress: '', appVersion: '' }
 	let onEnd = null
+	let host = null
+	let frame = null
+
+	/**
+	 * Keep the overlay over the window while it sits in a moved container.
+	 *
+	 * @return {void}
+	 */
+	const follow = () => {
+		if (host === null) {
+			return
+		}
+		const box = host.parentElement && host.parentElement !== document.body
+			? host.parentElement.getBoundingClientRect()
+			: { top: 0, left: 0 }
+		host.style.setProperty('--thematiq-wt-top', (-box.top) + 'px')
+		host.style.setProperty('--thematiq-wt-left', (-box.left) + 'px')
+		if (wt && wt.running.value && typeof window.requestAnimationFrame === 'function') {
+			frame = window.requestAnimationFrame(follow)
+		} else {
+			frame = null
+		}
+	}
 
 	const finish = () => {
 		const version = versionCore(state.appVersion)
@@ -220,20 +256,50 @@ export function createMenuWalkthrough(options = {}) {
 		},
 	}
 
+	let parts = {}
+	const present = typeof options.present === 'function'
+		? options.present
+		: (ref) => (typeof parts[ref] === 'boolean'
+			? parts[ref]
+			: document.querySelector('[data-walkthrough-id="' + ref + '"]') !== null)
+	let runs = 0
+
+	/**
+	 * Mount a fresh engine for one run, over the steps whose part is drawn
+	 * now: an optional step whose part is absent is left out, so the counter
+	 * counts only the steps shown. The engine keeps one machine per app id for
+	 * the page, so every run takes its own.
+	 *
+	 * @return {void}
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-apps-menu-has-a-walkthrough-with-one-step-per-feature-req-tqwt-001
+	 */
 	const mount = () => {
 		if (app !== null) {
-			return
+			app.unmount()
+			app = null
 		}
-		const manifest = { version: versionCore(state.appVersion) || '0.0.0', walkthrough: data.walkthrough }
-		// The engine keeps its machine per app id for the page; created here, it
-		// carries the installed version core and the person's seen version.
-		wt = useWalkthrough(APP_ID, manifest, { appVersion: manifest.version, seenVersion: versionCore(state.seen) })
-		const host = document.createElement('div')
-		host.className = HOST_CLASS
-		document.body.appendChild(host)
+		runs++
+		const engineId = APP_ID + '-' + TOUR_ID + '-' + runs
+		const tours = data.walkthrough.tours.map((tour) => ({
+			...tour,
+			steps: tour.steps.filter((step) => !step.optional || present(step.target.ref)),
+		}))
+		const manifest = { version: versionCore(state.appVersion) || '0.0.0', walkthrough: { ...data.walkthrough, tours } }
+		wt = useWalkthrough(engineId, manifest, { appVersion: manifest.version, seenVersion: versionCore(state.seen) })
+		if (document.querySelector('style[data-thematiq-menu-walkthrough-host]') === null) {
+			const style = document.createElement('style')
+			style.setAttribute('data-thematiq-menu-walkthrough-host', '')
+			style.textContent = HOST_CSS
+			document.head.appendChild(style)
+		}
+		if (host === null) {
+			host = document.createElement('div')
+			host.className = HOST_CLASS
+			document.body.appendChild(host)
+		}
 		app = createApp({
 			render: () => h(CnWalkthrough, {
-				appId: APP_ID,
+				appId: engineId,
 				manifest,
 				seenVersion: versionCore(state.seen),
 				autoStart: false,
@@ -251,7 +317,10 @@ export function createMenuWalkthrough(options = {}) {
 	/**
 	 * Start the tour.
 	 *
-	 * @param {object} request `{ mode: 'auto'|'replay', state, onEnd }`.
+	 * @param {object} request `{ mode: 'auto'|'replay', state, container, parts, onEnd }`:
+	 *                         `container` is where the overlay goes, the menu's popover;
+	 *                         `parts` says for a part's ref whether it is drawn, where the page
+	 *                         cannot tell yet.
 	 * @return {boolean} Whether a tour runs.
 	 */
 	const start = (request = {}) => {
@@ -262,24 +331,37 @@ export function createMenuWalkthrough(options = {}) {
 			state = { ...state, ...request.state }
 		}
 		onEnd = typeof request.onEnd === 'function' ? request.onEnd : null
+		parts = request.parts && typeof request.parts === 'object' ? request.parts : {}
 		const replay = request.mode === 'replay'
 		if (!replay && !isDue(state)) {
 			return false
 		}
 		mount()
+		const container = request.container && request.container.appendChild ? request.container : document.body
+		if (host.parentElement !== container) {
+			container.appendChild(host)
+		}
+		const run = () => {
+			if (frame === null) {
+				follow()
+			}
+		}
 		if (replay) {
 			wt.restart(TOUR_ID)
+			run()
 			return true
 		}
 		const steps = stepsFor(tourSteps(), { seen: state.seen, appVersion: state.appVersion })
+			.filter((step) => !step.optional || present(step.target.ref))
 		const progress = progressOf(state.progress)
 		const at = progress ? steps.findIndex((step) => step.id === progress.stepId) : -1
 		if (steps.length === 0) {
 			// Progress left over from a tour the person has seen since.
 			wt.resumeAt(TOUR_ID, progress ? progress.stepId : '')
-			return true
+		} else {
+			wt.start(TOUR_ID, Math.max(0, at))
 		}
-		wt.start(TOUR_ID, Math.max(0, at))
+		run()
 		return true
 	}
 

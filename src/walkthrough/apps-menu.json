@@ -20,7 +20,7 @@
 						"advanceOn": {
 							"type": "manual"
 						},
-						"sinceVersion": "1.2.50"
+						"sinceVersion": "1.2.49"
 					},
 					{
 						"id": "apps",
@@ -34,7 +34,7 @@
 						"advanceOn": {
 							"type": "manual"
 						},
-						"sinceVersion": "1.2.50"
+						"sinceVersion": "1.2.49"
 					},
 					{
 						"id": "more",
@@ -50,7 +50,7 @@
 						"advanceOn": {
 							"type": "manual"
 						},
-						"sinceVersion": "1.2.50"
+						"sinceVersion": "1.2.49"
 					},
 					{
 						"id": "reorder",
@@ -65,7 +65,7 @@
 						"advanceOn": {
 							"type": "manual"
 						},
-						"sinceVersion": "1.2.50"
+						"sinceVersion": "1.2.49"
 					},
 					{
 						"id": "pin",
@@ -80,7 +80,7 @@
 						"advanceOn": {
 							"type": "manual"
 						},
-						"sinceVersion": "1.2.50"
+						"sinceVersion": "1.2.49"
 					},
 					{
 						"id": "create",
@@ -95,7 +95,7 @@
 						"advanceOn": {
 							"type": "manual"
 						},
-						"sinceVersion": "1.2.50"
+						"sinceVersion": "1.2.49"
 					},
 					{
 						"id": "settings",
@@ -110,7 +110,7 @@
 						"advanceOn": {
 							"type": "manual"
 						},
-						"sinceVersion": "1.2.50"
+						"sinceVersion": "1.2.49"
 					}
 				]
 			}
