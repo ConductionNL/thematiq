@@ -115,8 +115,13 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
 
 - [ ] 6.1 On a fresh reference instance: enable thematiq, open the dashboard as admin and run the
       wizard through; open as a non-admin; screenshots against the TqSetup boards; the switch on the
-      Theming settings page.
+      Theming settings page. (Walked live on a fresh NC 34 sandbox, #2180: Welcome to Done with
+      Gemeente Amsterdam, Next held until the statement, Apply sets the set, the Nextcloud primary
+      follows (#004699) and `setup.completed`; non-admin sees nothing. Fixed there: the house style step
+      offered no cards and "All 0 sets" while the cold catalogue loaded, and a pick left another set's
+      radio checked. Still open: the comparison with the TqSetup boards.)
 - [ ] 6.2 On an instance configured by an earlier version, upgrade and confirm nothing opens and the
       version card reads the earlier-version state.
-- [ ] 6.3 Speed: an admin page with setup done and a non-admin page carry no wizard script; record
-      the bundle size in the PR.
+- [x] 6.3 Speed: an admin page with setup done and a non-admin page carry no wizard script; record
+      the bundle size in the PR. (live lane, fresh NC 34 sandbox: after setup, Files and Theming load 0
+      wizard requests; a non-admin's dashboard 0; `js/vendor/setupWizard.js` 913,649 B, 218,026 B gzip.)
