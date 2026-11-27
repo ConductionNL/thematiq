@@ -171,7 +171,7 @@ class SetupRequest {
 	 * @throws InvalidArgumentException Naming `menu` or `menu.<key>`.
 	 *
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) AppMenuSettings holds the one rule for the former create switch.
 	 */

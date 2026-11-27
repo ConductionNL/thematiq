@@ -222,7 +222,7 @@ final class AppMenuSettingsTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-create-button-and-the-create-row-switch-on-and-off-independently-req-tqqt-001
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-create-button-and-the-create-row-switch-on-and-off-independently-req-tqqt-001
 	 */
 	public function testAPersonsCreateSwitchesWinOverTheAdministrators(): void {
 		$settings = $this->settings();
@@ -261,7 +261,7 @@ final class AppMenuSettingsTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
 	 */
 	public function testTheFormerCreateSwitchMovesIntoBothNewSwitches(): void {
 		$settings = $this->settings();
@@ -291,7 +291,7 @@ final class AppMenuSettingsTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
 	 */
 	public function testTheFormerCreateSwitchOnASaveSetsBoth(): void {
 		$settings = $this->settings();

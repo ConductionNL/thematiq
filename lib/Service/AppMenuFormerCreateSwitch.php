@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ use OCP\IConfig;
  * row. It is read as both create switches (AppMenuSettings::CREATE_SWITCHES): once from the
  * stored app value, which is then removed, and on every save that still sends it.
  *
- * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
  */
 final class AppMenuFormerCreateSwitch {
 
@@ -49,7 +49,7 @@ final class AppMenuFormerCreateSwitch {
 	 *
 	 * @return bool Whether a stored value was there.
 	 *
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
 	 */
 	public function move(): bool {
 		$former = AppMenuSettings::PREFIX . AppMenuSettings::FORMER_CREATE_SWITCH;
@@ -79,7 +79,7 @@ final class AppMenuFormerCreateSwitch {
 	 *
 	 * @return array<mixed> The values without the former key.
 	 *
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
 	 */
 	public static function strip(array $values): array {
 		if (array_key_exists(AppMenuSettings::FORMER_CREATE_SWITCH, $values) === false) {

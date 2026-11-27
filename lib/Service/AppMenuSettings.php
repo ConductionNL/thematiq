@@ -195,7 +195,7 @@ class AppMenuSettings {
 	 * @return array<string, mixed> The keys set.
 	 *
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-create-button-and-the-create-row-switch-on-and-off-independently-req-tqqt-001
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-create-button-and-the-create-row-switch-on-and-off-independently-req-tqqt-001
 	 */
 	public function overrides(string $userId): array {
 		$values = [];
@@ -258,7 +258,7 @@ class AppMenuSettings {
 	 * @throws InvalidArgumentException Naming the first key or value that is not allowed; nothing is stored then.
 	 *
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-checked-before-they-are-stored
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
 	 */
 	public function saveDefaults(array $values, array $known): array {
 		$values = self::withoutFormerCreateSwitch(values: $values);
@@ -282,7 +282,7 @@ class AppMenuSettings {
 	 *
 	 * @return bool Whether a stored value was moved.
 	 *
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
 	 */
 	public function moveFormerCreateSwitch(): bool {
 		return (new AppMenuFormerCreateSwitch(config: $this->config))->move();
@@ -295,7 +295,7 @@ class AppMenuSettings {
 	 *
 	 * @return array<mixed> The values without the former key.
 	 *
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
 	 */
 	public static function withoutFormerCreateSwitch(array $values): array {
 		return AppMenuFormerCreateSwitch::strip(values: $values);

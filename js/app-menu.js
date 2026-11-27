@@ -502,7 +502,6 @@
 	 *
 	 * @param {object} menu The menu.
 	 * @spec openspec/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
 	 */
 	function shareCreateActions(menu) {
 		var labels = menu.labels || {}
@@ -574,7 +573,6 @@
 	 * @param {Element} grid The grid.
 	 * @param {object} menu The menu.
 	 * @spec openspec/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
 	 */
 	function createRow(grid, menu) {
 		var labels = menu.labels || {}

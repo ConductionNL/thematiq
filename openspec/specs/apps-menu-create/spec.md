@@ -26,7 +26,10 @@ document for a word processing, OpenDocument text or Markdown creator, spreadshe
 for their office mimetypes, whiteboard for the Whiteboard app. More MUST unfold every creator and
 every Nextcloud navigation action (`core/navigationActions`) and fold them again; it carries
 `aria-expanded` and `aria-controls`. Without any creator or action the heading and the row MUST NOT
-be drawn. When the person switched create actions off, the menu MUST NOT ask the templates API.
+be drawn. With the effective `showCreateRow` off the heading and the row MUST NOT be drawn. The
+menu MUST share the Create actions (`window.thematiqCreateActions`) whenever `showCreateButton` or
+`showCreateRow` is on, so Quick add works without the row; with both off it MUST NOT share them and
+MUST NOT ask the templates API.
 
 #### Scenario: A kind no installed app offers is left out
 @e2e exclude installing or removing an office app changes the shared instance; proven by tests/vitest/appMenuCreate.spec.js (shows a chip per kind an installed app offers, and no whiteboard without one)
@@ -39,6 +42,13 @@ be drawn. When the person switched create actions off, the menu MUST NOT ask the
 - GIVEN the open apps menu
 - WHEN More is pressed
 - THEN every creator and every Nextcloud navigation action MUST show, and `aria-expanded` MUST be true
+
+#### Scenario: The Create row switched off leaves Quick add working
+@e2e exclude covered by the e2e scenario "Only the Create button" of apps-menu-settings; the sharing is proven by tests/vitest/appMenuCreate.spec.js (shares the Create actions with the row switched off)
+- GIVEN `showCreateRow` is off and `showCreateButton` is on
+- WHEN the apps menu script runs on a Files page
+- THEN the Create row MUST NOT be drawn
+- AND `window.thematiqCreateActions` MUST list the Create actions
 
 ### Requirement: A create action makes the file and opens it
 A chip MUST create an empty file named after the creator's label with its extension in the person's

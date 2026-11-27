@@ -23,8 +23,8 @@
  *   @e2e workplace-quick-add::files-has-the-button
  *   @e2e workplace-quick-add::settings-has-the-button
  *
- * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md
- * @spec openspec/changes/quick-actions-toggles/specs/workplace-quick-add/spec.md
+ * @spec openspec/specs/apps-menu-settings/spec.md
+ * @spec openspec/specs/workplace-quick-add/spec.md
  */
 import { test, expect, type Locator, type Page } from '@playwright/test'
 
