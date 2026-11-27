@@ -2590,7 +2590,8 @@ html[data-thematiq-open-panel]
 
 #nldesign-settings .thematiq-panel .thematiq-groups-panel__add,
 #nldesign-settings .thematiq-panel button.button:not(.primary) {
-	border: 1px solid var(--nldesign-color-border-dark, var(--color-border-maxcontrast)) !important;
+	border: 1px solid
+		var(--nldesign-color-border-dark, var(--color-border-maxcontrast)) !important;
 	background: var(--color-main-background) !important;
 	color: var(--color-main-text) !important;
 	font-size: 14px !important;
@@ -2823,9 +2824,21 @@ html[data-thematiq-open-panel]
 	font-weight: 600;
 }
 
+/* TqEmailDocumenten draws the remove as a soft danger pill: no border, the
+ * error tint, the set's error text colour, 13px. */
 #nldesign-settings .thematiq-panel .thematiq-email-panel__remove {
 	align-self: flex-start;
 	min-height: 34px;
+	height: 34px;
+	padding: 0 12px !important;
+	border: 0 !important;
+	border-radius: 17px !important;
+	background: var(
+		--nldesign-component-status-badge-error-background-color,
+		color-mix(in srgb, var(--color-error) 10%, var(--color-main-background))
+	) !important;
+	color: var(--nldesign-color-error-text, var(--color-error-text)) !important;
+	font-size: 13px;
 }
 
 #nldesign-settings .thematiq-panel .nldesign-documents-profile {
@@ -2866,43 +2879,79 @@ html[data-thematiq-open-panel]
 	font-size: 13px;
 }
 
-#nldesign-settings .thematiq-panel .thematiq-email-panel__subject {
-	padding: 8px 12px;
-	background: var(--color-background-hover) !important;
-	color: var(--color-text-maxcontrast);
-	font-size: 12px;
+/* TqEmailDocumenten "Example: email": the mail on the page's ground, a white
+ * subject line, the message as a white card inset 14px, and the footer under
+ * it in two muted lines. */
+#nldesign-settings .thematiq-panel .thematiq-email-panel__mail {
+	border-radius: 10px;
+	background: var(
+		--nldesign-component-content-surface-background-color,
+		var(--color-background-hover)
+	) !important;
 }
 
-#nldesign-settings .thematiq-panel .thematiq-email-panel__bar {
-	height: 44px;
-	background: var(--color-primary-element) !important;
+/* The organisation's logo heads the message, 30px high, as the board draws it. */
+#nldesign-settings .thematiq-panel .thematiq-email-panel__logo {
+	display: block;
+	height: 30px;
+	background: var(--image-logo) no-repeat left center / contain;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-email-panel__subject {
+	padding: 10px 12px;
+	border-bottom: 1px solid var(--color-border);
+	background: var(--color-main-background) !important;
+	color: var(--color-text-maxcontrast);
+	font-size: 13px;
 }
 
 #nldesign-settings .thematiq-panel .thematiq-email-panel__body {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
-	padding: 16px 18px;
+	gap: 12px;
+	margin: 14px;
+	padding: 18px;
+	border-radius: 8px;
+	background: var(--color-main-background) !important;
 }
 
 #nldesign-settings .thematiq-panel .thematiq-email-panel__body strong {
-	font-size: 16px;
+	font-size: 17px;
+	font-weight: 700;
 }
 
-#nldesign-settings .thematiq-panel .thematiq-email-panel__button {
+#nldesign-settings .thematiq-panel .thematiq-email-panel__body span {
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+#nldesign-settings
+	.thematiq-panel
+	.thematiq-email-panel__body
+	.thematiq-email-panel__button {
+	display: inline-flex;
 	align-self: flex-start;
-	padding: 8px 14px;
+	align-items: center;
+	box-sizing: border-box;
+	height: 36px;
+	padding: 0 14px;
 	border-radius: 8px;
 	background: var(--color-primary-element) !important;
 	color: var(--color-primary-element-text);
+	font-size: 14px;
 	font-weight: 600;
+	line-height: normal;
 }
 
 #nldesign-settings .thematiq-panel .thematiq-email-panel__foot {
-	padding: 10px 14px;
-	border-top: 1px solid var(--color-border);
+	padding: 0 14px 14px;
 	color: var(--color-text-maxcontrast);
 	font-size: 12px;
+	line-height: 1.5;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-email-panel__link {
+	text-decoration: underline;
 }
 
 #nldesign-settings .thematiq-panel .thematiq-email-panel__letter {
