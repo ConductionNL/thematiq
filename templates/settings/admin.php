@@ -193,11 +193,13 @@ if ($_['mockUi'] === true) {
 		<!-- Nextcloud's own theme follows every change of set (openspec/changes/first-time-setup,
 		     REQ-TQFS-013); js/admin.js saves it at once. Locked with the rest under a configuration source. -->
 		<div class="thematiq-core-follows">
+			<!-- Checked by js/admin.js from the coreThemingFollows initial state. -->
 			<input type="checkbox" class="checkbox" role="switch" id="thematiq-core-theming-follows"
-				   aria-describedby="thematiq-core-theming-follows-hint"
-				   <?php if ($_['coreThemingFollows'] === true): ?>checked<?php endif; ?>>
+				   aria-describedby="thematiq-core-theming-follows-hint">
 			<label for="thematiq-core-theming-follows"><?php p($l->t('Keep the Nextcloud theme in line with the set')); ?></label>
-			<p class="settings-hint" id="thematiq-core-theming-follows-hint"><?php p($l->t('Also on the next change of set. Off: thematiq leaves the Nextcloud theme alone.')); ?></p>
+			<p class="settings-hint" id="thematiq-core-theming-follows-hint">
+				<?php p($l->t('Also on the next change of set. Off: thematiq leaves the Nextcloud theme alone.')); ?>
+			</p>
 			<p class="settings-hint" id="thematiq-core-theming-follows-status" role="status" aria-live="polite"></p>
 		</div>
 		<!-- The selected set is another organisation's house style and nobody

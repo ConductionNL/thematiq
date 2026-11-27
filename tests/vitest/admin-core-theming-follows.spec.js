@@ -94,6 +94,7 @@ async function loadAdminScript() {
 
 function buildDom(follows) {
 	installInitialState({
+		coreThemingFollows: follows,
 		tokenSets: [
 			{
 				id: 'epe',
@@ -113,7 +114,7 @@ function buildDom(follows) {
 				<option value="epe" data-design-system="nldesign">Gemeente Epe</option>
 			</select>
 			<span id="nldesign-design-system-badge"></span>
-			<input type="checkbox" role="switch" id="thematiq-core-theming-follows" ${follows ? 'checked' : ''}>
+			<input type="checkbox" role="switch" id="thematiq-core-theming-follows">
 			<p id="thematiq-core-theming-follows-status"></p>
 		</div>
 		<div class="nldesign-preview" id="nldesign-preview"></div>

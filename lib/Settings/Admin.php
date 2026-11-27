@@ -59,7 +59,7 @@ class Admin implements IDelegatedSettings {
 	private const TEMPLATE_STATE_KEYS = [
 		'tokenSets', 'currentTokenSet', 'currentDesignSystem', 'hideSlogan', 'showMenuLabels', 'primaryDrivesComponents',
 		'darkVariantsEnabled', 'marianneEnabled', 'emailThemingState', 'emailFooterConfig', 'occEnableCommand',
-		'occDisableCommand', 'activePreview', 'activeIconPacks', 'iconPackSource', 'coreThemingFollows',
+		'occDisableCommand', 'activePreview', 'activeIconPacks', 'iconPackSource',
 	];
 
 	/**
@@ -214,7 +214,7 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/admin-settings/spec.md
 	 */
 	private function publishBootState(array $state): void {
-		foreach (['tokenSets', 'currentTokenSet', 'confirmSaveStock', 'confirmSaveTheme'] as $key) {
+		foreach (['tokenSets', 'currentTokenSet', 'confirmSaveStock', 'confirmSaveTheme', 'coreThemingFollows'] as $key) {
 			$this->page->initialState->provideInitialState($key, $state[$key]);
 		}
 

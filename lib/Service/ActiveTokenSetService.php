@@ -49,6 +49,13 @@ class ActiveTokenSetService {
 	public const DEFAULT_SET = 'nextcloud';
 
 	/**
+	 * The app value that makes Nextcloud's own theme follow every change of set (`1`).
+	 *
+	 * @var string
+	 */
+	public const FOLLOWS_KEY = 'core_theming_follows_set';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
@@ -117,7 +124,7 @@ class ActiveTokenSetService {
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
 	 */
 	public function nextcloudFollows(): bool {
-		return $this->config->getAppValue(Application::APP_ID, SetupStatusService::FOLLOWS_KEY, '0') === '1';
+		return $this->config->getAppValue(Application::APP_ID, self::FOLLOWS_KEY, '0') === '1';
 	}//end nextcloudFollows()
 
 	/**
@@ -131,13 +138,13 @@ class ActiveTokenSetService {
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
 	 */
 	public function setNextcloudFollows(bool $follows): array {
-		$old = $this->config->getAppValue(Application::APP_ID, SetupStatusService::FOLLOWS_KEY, '');
+		$old = $this->config->getAppValue(Application::APP_ID, self::FOLLOWS_KEY, '');
 		$new = ['0', '1'][(int)$follows];
-		$this->config->setAppValue(Application::APP_ID, SetupStatusService::FOLLOWS_KEY, $new);
+		$this->config->setAppValue(Application::APP_ID, self::FOLLOWS_KEY, $new);
 		if ($old !== $new) {
 			$this->auditService->log(
 				action: 'toggle_changed',
-				context: ['key' => SetupStatusService::FOLLOWS_KEY, 'old' => $old, 'new' => $new]
+				context: ['key' => self::FOLLOWS_KEY, 'old' => $old, 'new' => $new]
 			);
 		}
 

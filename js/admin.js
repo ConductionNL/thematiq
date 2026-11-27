@@ -1450,6 +1450,8 @@
 			'thematiq-core-theming-follows-status',
 		)
 		if (coreFollowsSwitch !== null) {
+			coreFollowsSwitch.checked =
+				loadInitialState('coreThemingFollows', false) === true
 			coreFollowsSwitch.addEventListener('change', function () {
 				var follows = coreFollowsSwitch.checked === true
 				coreFollowsSwitch.disabled = true
