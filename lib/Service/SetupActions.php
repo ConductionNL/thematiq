@@ -20,9 +20,7 @@ declare(strict_types=1);
 
 namespace OCA\Thematiq\Service;
 
-use InvalidArgumentException;
 use OCA\Thematiq\AppInfo\Application;
-use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
 use RuntimeException;
 use Throwable;
 
@@ -69,8 +67,8 @@ class SetupActions {
 	 *
 	 * @return array{applied: array<int, string>, failed: array<int, string>, completed: bool} The parts.
 	 *
-	 * @throws InvalidArgumentException Naming the first key that is unknown or wrong; nothing is written then.
-	 * @throws RestrictedSetNotConfirmedException When a restricted set is not confirmed; nothing is written then.
+	 * @throws \InvalidArgumentException Naming the first key that is unknown or wrong; nothing is written then.
+	 * @throws Exception\RestrictedSetNotConfirmedException When a restricted set is not confirmed; nothing is written then.
 	 *
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
 	 */
@@ -111,8 +109,8 @@ class SetupActions {
 	 *
 	 * @return array<string, mixed> The checked request.
 	 *
-	 * @throws InvalidArgumentException Naming the first key that is unknown or wrong.
-	 * @throws RestrictedSetNotConfirmedException When a restricted set is not confirmed.
+	 * @throws \InvalidArgumentException Naming the first key that is unknown or wrong.
+	 * @throws Exception\RestrictedSetNotConfirmedException When a restricted set is not confirmed.
 	 *
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
@@ -188,17 +186,33 @@ class SetupActions {
 			return true;
 		}
 
-		$applied = $this->writers->coreSync->sync(tokenSetId: $tokenSet);
-		if ($applied === [] && $this->writers->coreSync->themingParams(tokenSetId: $tokenSet) !== []) {
-			throw new RuntimeException('The theming values of ' . $tokenSet . ' did not validate');
-		}
-
-		if ($applied !== []) {
-			$this->records->audit->log(action: 'theming_sync_applied', context: ['new' => $tokenSet, 'key' => implode(',', $applied)]);
-		}
+		$this->syncCore(tokenSet: $tokenSet);
 
 		return true;
 	}//end nextcloudTheme()
+
+	/**
+	 * Apply a set to Nextcloud's theme through the `--sync-core` path and audit what changed.
+	 *
+	 * @param string $tokenSet The set.
+	 *
+	 * @return void
+	 *
+	 * @throws RuntimeException When the set's theming values did not validate, so nothing was applied.
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+	 */
+	private function syncCore(string $tokenSet): void {
+		$applied = $this->writers->coreSync->sync(tokenSetId: $tokenSet);
+		if ($applied !== []) {
+			$this->records->audit->log(action: 'theming_sync_applied', context: ['new' => $tokenSet, 'key' => implode(',', $applied)]);
+			return;
+		}
+
+		if ($this->writers->coreSync->themingParams(tokenSetId: $tokenSet) !== []) {
+			throw new RuntimeException('The theming values of ' . $tokenSet . ' did not validate');
+		}
+	}//end syncCore()
 
 	/**
 	 * Theme the login page or leave it to Nextcloud, and show or hide the slogan.
@@ -237,11 +251,7 @@ class SetupActions {
 
 		$contexts = array_values(array_intersect($contexts, self::CONTEXTS));
 		if ($style === 'nextcloud') {
-			if ($contexts === []) {
-				$contexts = self::CONTEXTS;
-			}
-
-			return array_values(array_diff($contexts, ['login']));
+			return self::withoutLogin(contexts: $contexts);
 		}
 
 		if ($contexts !== [] && in_array('login', $contexts, true) === false) {
@@ -250,6 +260,23 @@ class SetupActions {
 
 		return $contexts;
 	}//end loginContexts()
+
+	/**
+	 * Every themed context but `login`; an empty list stands for all of them.
+	 *
+	 * @param array<int, string> $contexts The stored contexts.
+	 *
+	 * @return array<int, string> The contexts without `login`.
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
+	 */
+	private static function withoutLogin(array $contexts): array {
+		if ($contexts === []) {
+			$contexts = self::CONTEXTS;
+		}
+
+		return array_values(array_diff($contexts, ['login']));
+	}//end withoutLogin()
 
 	/**
 	 * Store an app value and audit it when it changed.
@@ -311,7 +338,10 @@ class SetupActions {
 			&& $this->writers->layout->resolve(key: $headerKey, tokenSet: $tokenSet) !== LayoutOptionValues::HEADER_STYLE_WORKPLACE
 		) {
 			$old = $this->writers->layout->setOption(key: $headerKey, value: LayoutOptionValues::HEADER_STYLE_WORKPLACE);
-			$this->records->audit->log(action: 'toggle_changed', context: ['key' => $headerKey, 'old' => $old, 'new' => LayoutOptionValues::HEADER_STYLE_WORKPLACE]);
+			$this->records->audit->log(
+				action: 'toggle_changed',
+				context: ['key' => $headerKey, 'old' => $old, 'new' => LayoutOptionValues::HEADER_STYLE_WORKPLACE]
+			);
 		}
 
 		return true;

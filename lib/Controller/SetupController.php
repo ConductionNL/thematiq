@@ -90,6 +90,19 @@ class SetupController extends Controller {
 			return new JSONResponse(['error' => 'unknown_action', 'action' => $actionId], 404);
 		}
 
+		return $this->apply(uid: $uid);
+	}//end action()
+
+	/**
+	 * Run `apply` and answer its parts and the new status.
+	 *
+	 * @param string $uid The administrator.
+	 *
+	 * @return JSONResponse 200 when every part was applied, 500 when one failed, 400 or 403 when refused.
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 */
+	private function apply(string $uid): JSONResponse {
 		try {
 			$result = $this->setup->actions->apply(request: $this->body(), uid: $uid);
 		} catch (RestrictedSetNotConfirmedException $e) {
@@ -105,7 +118,7 @@ class SetupController extends Controller {
 		}
 
 		return new JSONResponse($result + ['status' => $this->setup->status->status()], $code);
-	}//end action()
+	}//end apply()
 
 	/**
 	 * The JSON body of the request, without the route parameter.

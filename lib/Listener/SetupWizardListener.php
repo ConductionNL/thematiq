@@ -82,16 +82,27 @@ class SetupWizardListener implements IEventListener {
 		}
 
 		try {
-			if ($this->status->isDue() === false || $this->bundleBuilt() === false) {
-				return;
-			}
-
-			$this->initialState->provideInitialState('setup_status', $this->status->status());
-			$this->addLoader();
+			$this->offer();
 		} catch (Throwable $e) {
 			$this->logger->warning('thematiq: the first-time setup was not offered: {message}', ['app' => Application::APP_ID, 'message' => $e->getMessage()]);
 		}
 	}//end handle()
+
+	/**
+	 * Provide the state and add the loader while setup is due and the bundle is built.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
+	 */
+	private function offer(): void {
+		if ($this->status->isDue() === false || $this->bundleBuilt() === false) {
+			return;
+		}
+
+		$this->initialState->provideInitialState('setup_status', $this->status->status());
+		$this->addLoader();
+	}//end offer()
 
 	/**
 	 * Whether the page is a signed-in administrator's user page.

@@ -88,25 +88,59 @@ class SetupRequest {
 			'tokenSet' => $this->checkTokenSet(value: ($request['tokenSet'] ?? null)),
 			'confirmRestricted' => self::checkBool(key: 'confirmRestricted', value: ($request['confirmRestricted'] ?? false)),
 			'nextcloudThemeFollows' => self::checkBool(key: 'nextcloudThemeFollows', value: ($request['nextcloudThemeFollows'] ?? false)),
-			'loginStyle' => ($request['loginStyle'] ?? 'house-style'),
+			'loginStyle' => self::checkLoginStyle(value: ($request['loginStyle'] ?? 'house-style')),
 			'hideSlogan' => self::checkBool(key: 'hideSlogan', value: ($request['hideSlogan'] ?? false)),
 			'menu' => $this->checkMenu(value: ($request['menu'] ?? ['enabled' => false])),
 		];
-		if (in_array($checked['loginStyle'], self::LOGIN_STYLES, true) === false) {
-			throw new InvalidArgumentException('loginStyle');
-		}
-
-		$gate = $this->tokenSets->licenceGate();
-		if ($checked['confirmRestricted'] === false) {
-			$gate->assertMayApply(tokenSetId: $checked['tokenSet'], alreadyApplied: $this->active->getActive());
-		}
-
-		if ($checked['confirmRestricted'] === true && $gate->isRestricted(tokenSetId: $checked['tokenSet']) === false) {
-			throw new InvalidArgumentException('confirmRestricted');
-		}
+		$this->checkLicence(tokenSet: $checked['tokenSet'], confirm: $checked['confirmRestricted']);
 
 		return $checked;
 	}//end check()
+
+	/**
+	 * The licence gate of the settings page: an unconfirmed restricted set needs the confirmation, and
+	 * a confirmation is only for a restricted set.
+	 *
+	 * @param string $tokenSet The set.
+	 * @param bool $confirm Whether the request confirms the licence.
+	 *
+	 * @return void
+	 *
+	 * @throws InvalidArgumentException Naming `confirmRestricted` for a set that is not restricted.
+	 * @throws RestrictedSetNotConfirmedException When a restricted set is not confirmed.
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
+	 */
+	private function checkLicence(string $tokenSet, bool $confirm): void {
+		$gate = $this->tokenSets->licenceGate();
+		if ($confirm === false) {
+			$gate->assertMayApply(tokenSetId: $tokenSet, alreadyApplied: $this->active->getActive());
+			return;
+		}
+
+		if ($gate->isRestricted(tokenSetId: $tokenSet) === false) {
+			throw new InvalidArgumentException('confirmRestricted');
+		}
+	}//end checkLicence()
+
+	/**
+	 * Check the login page style.
+	 *
+	 * @param mixed $value The value sent.
+	 *
+	 * @return string `house-style` or `nextcloud`.
+	 *
+	 * @throws InvalidArgumentException Naming `loginStyle`.
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
+	 */
+	private static function checkLoginStyle(mixed $value): string {
+		if (in_array($value, self::LOGIN_STYLES, true) === false) {
+			throw new InvalidArgumentException('loginStyle');
+		}
+
+		return (string)$value;
+	}//end checkLoginStyle()
 
 	/**
 	 * Check the token set: a known set id.
@@ -144,20 +178,9 @@ class SetupRequest {
 		}
 
 		$checked = ['enabled' => self::checkBool(key: 'menu.enabled', value: ($value['enabled'] ?? true))];
+		unset($value['enabled']);
 		foreach ($value as $key => $item) {
-			if ($key === 'enabled') {
-				continue;
-			}
-
-			if (in_array($key, self::MENU_KEYS, true) === false) {
-				throw new InvalidArgumentException('menu.' . (string)$key);
-			}
-
-			try {
-				$checked += $this->menuValue(key: $key, value: $item);
-			} catch (InvalidArgumentException $e) {
-				throw new InvalidArgumentException('menu.' . $key);
-			}
+			$checked += $this->menuValue(key: (string)$key, value: $item);
 		}
 
 		return $checked;
@@ -191,13 +214,21 @@ class SetupRequest {
 	 *
 	 * @return array<string, mixed> The checked value under its key.
 	 *
-	 * @throws InvalidArgumentException When the value is not allowed.
+	 * @throws InvalidArgumentException Naming `menu.<key>` when the key or the value is not allowed.
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) AppMenuSettings::strict() is the one rule set of the menu defaults.
 	 *
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
 	 */
 	private function menuValue(string $key, mixed $value): array {
-		return AppMenuSettings::strict(values: [$key => $value], known: null);
+		if (in_array($key, self::MENU_KEYS, true) === false) {
+			throw new InvalidArgumentException('menu.' . $key);
+		}
+
+		try {
+			return AppMenuSettings::strict(values: [$key => $value], known: null);
+		} catch (InvalidArgumentException $e) {
+			throw new InvalidArgumentException('menu.' . $key);
+		}
 	}//end menuValue()
 }//end class
