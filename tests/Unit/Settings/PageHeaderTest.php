@@ -44,16 +44,21 @@ class PageHeaderTest extends TestCase {
 	 * @return PageHeader The header.
 	 */
 	private function header(array $enabled = [], bool $signedIn = true): PageHeader {
-		$appManager = $this->createMock(IAppManager::class);
+		$appManager = $this->createMock(originalClassName: IAppManager::class);
 		$appManager->method('isEnabledForUser')->willReturnCallback(
-			static fn (string $appId): bool => in_array($appId, $enabled, true)
+			static fn (string $appId): bool => in_array(needle: $appId, haystack: $enabled, strict: true)
 		);
-		$session = $this->createMock(IUserSession::class);
-		$session->method('getUser')->willReturn($signedIn === true ? $this->createMock(IUser::class) : null);
-		$urls = $this->createMock(IURLGenerator::class);
+		$session = $this->createMock(originalClassName: IUserSession::class);
+		$user = null;
+		if ($signedIn === true) {
+			$user = $this->createMock(originalClassName: IUser::class);
+		}
+
+		$session->method('getUser')->willReturn($user);
+		$urls = $this->createMock(originalClassName: IURLGenerator::class);
 		$urls->method('linkTo')->willReturn('/index.php');
 
-		return new PageHeader($appManager, $session, $urls);
+		return new PageHeader(appManager: $appManager, userSession: $session, urlGenerator: $urls);
 	}//end header()
 
 	/**
@@ -137,7 +142,7 @@ class PageHeaderTest extends TestCase {
 	 * @return void
 	 */
 	public function testNoBuildiqSquareWithoutBuildiq(): void {
-		$this->assertNull($this->header()->getForm()->getParams()['buildiqHref']);
-		$this->assertNull($this->header(enabled: ['buildiq'], signedIn: false)->getForm()->getParams()['buildiqHref']);
+		$this->assertNull(actual: $this->header()->getForm()->getParams()['buildiqHref']);
+		$this->assertNull(actual: $this->header(enabled: ['buildiq'], signedIn: false)->getForm()->getParams()['buildiqHref']);
 	}//end testNoBuildiqSquareWithoutBuildiq()
 }//end class

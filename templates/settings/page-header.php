@@ -33,6 +33,7 @@ style('thematiq', 'admin-page');
 				<?php p($l->t('Documentation')); ?>
 				<span class="hidden-visually"><?php p($l->t('(opens in a new tab)')); ?></span>
 			</a>
+			<?php // phpcs:disable Squiz.NamingConventions.ValidVariableName.NotCamelCaps -- a template reads its parameters from $_. ?>
 			<?php if (($_['buildiqHref'] ?? null) !== null) { ?>
 			<a href="<?php p($_['buildiqHref']); ?>" id="thematiq-buildiq-edit" class="thematiq-page-header__buildiq"
 				aria-label="<?php p($l->t('Edit in Buildiq')); ?>" title="<?php p($l->t('Edit in Buildiq')); ?>">
@@ -41,6 +42,7 @@ style('thematiq', 'admin-page');
 				</svg>
 			</a>
 			<?php } ?>
+			<?php // phpcs:enable Squiz.NamingConventions.ValidVariableName.NotCamelCaps ?>
 		</div>
 	</div>
 	<nav class="thematiq-page-header__crumbs" aria-label="<?php p($l->t('Breadcrumb')); ?>">
