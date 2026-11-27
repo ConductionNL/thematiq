@@ -88,6 +88,7 @@ script('thematiq', 'admin-environment-panel');
 style('thematiq', 'environment-marker');
 style('thematiq', 'admin-panels');
 script('thematiq', 'admin-config-source');
+script('thematiq', 'admin-version-card');
 script('thematiq', 'admin-documents');
 script('thematiq', 'admin-app-brands');
 script('thematiq', 'admin-set-licence');
@@ -148,6 +149,30 @@ if ($_['mockUi'] === true) {
 			<?php p($l->t('Choose a token set from a Dutch government body as a base, or adjust single tokens.')); ?>
 		</span>
 	</div>
+
+	<!-- The version card (first-time-setup REQ-TQFS-012, board TqSetupOpnieuw): filled and wired by
+	     js/admin-version-card.js from GET /api/setup/status. -->
+	<section class="thematiq-card thematiq-version-card" id="thematiq-version-card" aria-labelledby="thematiq-version-card-title">
+		<h2 id="thematiq-version-card-title" class="thematiq-card__title"><?php p($l->t('Thematiq')); ?></h2>
+		<p class="thematiq-card__lead"><?php p($l->t('About this installation of Thematiq.')); ?></p>
+		<dl class="thematiq-version-card__rows">
+			<dt><?php p($l->t('Version')); ?></dt>
+			<dd class="thematiq-version-card__version">-</dd>
+			<dt><?php p($l->t('First-time setup')); ?></dt>
+			<dd>
+				<span class="thematiq-version-card__state">-</span>
+				<span class="thematiq-version-card__detail settings-hint"></span>
+			</dd>
+		</dl>
+		<div class="thematiq-version-card__actions">
+			<button type="button" class="button primary thematiq-version-card__setup"><?php p($l->t('Set up again')); ?></button>
+			<button type="button" class="button thematiq-version-card__walkthrough"><?php p($l->t('Apps menu walkthrough')); ?></button>
+			<a class="button thematiq-version-card__help" target="_blank" rel="noopener noreferrer"
+			   href="https://github.com/ConductionNL/thematiq/issues/new?template=feature-request.yml&amp;title=%5BFEATURE%5D+"><?php p($l->t('Help us: suggest an idea')); ?></a>
+		</div>
+		<p class="settings-hint thematiq-version-card__note"><?php p($l->t('Set up again opens the setup once more, with the current choices filled in. Nothing changes until you click Apply.')); ?></p>
+		<p class="settings-hint thematiq-version-card__locked" hidden><?php p($l->t('The house style of this environment comes from the deployment configuration, so it is set up there.')); ?></p>
+	</section>
 
 	<!-- The Active token set card TqTheming draws: the picker with its chips, then
 	     what can be done with the set. -->

@@ -71,11 +71,15 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
 
 ## 4. The version card
 
-- [ ] 4.1 `templates/settings/admin.php` and new `js/admin-version-card.js`: the version card with the
+- [x] 4.1 `templates/settings/admin.php` and new `js/admin-version-card.js`: the version card with the
       installed version, the setup state and detail, Set up again, Apps menu walkthrough and Help us,
       Set up again disabled under a configuration source. TqSetupOpnieuw. REQ-TQFS-012.
-- [ ] 4.2 vitest `tests/vitest/adminVersionCard.spec.js`; PHPUnit for the card's state in
-      `lib/Settings/Admin.php`.
+- [x] 4.2 vitest `tests/vitest/adminVersionCard.spec.js`; PHPUnit for the card's state in
+      `lib/Settings/Admin.php`. (#VC: the card reads its state from `GET /api/setup/status` and the
+      source from `GET /settings/config-source`, so Admin.php carries none and needs no PHPUnit; vitest
+      adminVersionCard 5. Live on a sandbox NC34: Completed by admin, Set up again opens at Welcome with
+      the stored set chosen, Later closes, nothing after a reload. "Help us" links to the forge's
+      feature-request form, as nextcloud-vue's shell does since its in-product modal was removed.)
 
 ## 4b. Keep the Nextcloud theme in line, on the settings page
 
