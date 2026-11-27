@@ -48,6 +48,8 @@ script('thematiq', 'lib/themingPlan');
 // The inert markup renderer (window.NldesignMarkupRender) admin.js and the
 // playground put their built markup through instead of assigning innerHTML.
 script('thematiq', 'lib/markupRender');
+// Sort and filter from the column headers of every table[data-column-controls].
+script('thematiq', 'lib/tableColumnControls');
 // The board-drawn dialog frame and the dialogs admin.js opens in it.
 script('thematiq', 'dialogs/admin-dialog');
 script('thematiq', 'dialogs/reset-theme-dialog');
@@ -807,7 +809,7 @@ if ($_['mockUi'] === true) {
 				<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Who changed what, from what to what, and when. Usable as evidence in an accessibility audit.')); ?></span>
 			</div>
 			<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('Changes')); ?>">
-				<table class="nldesign-audit-table" id="nldesign-audit-table">
+				<table class="nldesign-audit-table" data-column-controls id="nldesign-audit-table">
 					<thead>
 						<tr>
 							<th scope="col"><?php p($l->t('Time')); ?></th>
@@ -936,7 +938,7 @@ if ($_['mockUi'] === true) {
 				<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Text must reach at least 4.5:1, parts such as borders and icons at least 3:1 (WCAG 2.1 AA, 1.4.3 and 1.4.11).')); ?></span>
 			</div>
 			<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('Colour pairs of the active token set')); ?>">
-				<table class="nldesign-audit-table thematiq-contrast-panel__table">
+				<table data-column-controls class="nldesign-audit-table thematiq-contrast-panel__table">
 					<thead>
 						<tr>
 							<th scope="col"><?php p($l->t('Foreground')); ?></th>
@@ -1146,7 +1148,7 @@ if ($_['mockUi'] === true) {
 						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead thematiq-switches-panel__summary"></span>
 					</div>
 					<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('Switches')); ?>">
-						<table class="nldesign-audit-table thematiq-switches-panel__table">
+						<table data-column-controls class="nldesign-audit-table thematiq-switches-panel__table">
 							<thead>
 								<tr>
 									<th scope="col"><?php p($l->t('Token set')); ?></th>
@@ -1386,7 +1388,7 @@ if ($_['mockUi'] === true) {
 						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead thematiq-own-sets-panel__count"></span>
 					</div>
 					<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('Your own token sets')); ?>">
-						<table class="nldesign-audit-table thematiq-own-sets-panel__table">
+						<table data-column-controls class="nldesign-audit-table thematiq-own-sets-panel__table">
 							<thead>
 								<tr>
 									<th scope="col"><?php p($l->t('Token set')); ?></th>
@@ -1508,7 +1510,7 @@ if ($_['mockUi'] === true) {
 						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t("Give an app its own house style and logo, such as a knowledge base or a participation platform. On that app's pages the brand replaces the house style, for everyone. Other pages stay as they are.")); ?></span>
 					</div>
 					<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('Brand per app')); ?>">
-						<table class="nldesign-audit-table thematiq-brands-panel__table">
+						<table data-column-controls class="nldesign-audit-table thematiq-brands-panel__table">
 							<thead>
 								<tr>
 									<th scope="col"><?php p($l->t('App')); ?></th>
@@ -1767,7 +1769,7 @@ if ($_['mockUi'] === true) {
 							</figure>
 					</div>
 					<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('What the marker looks like')); ?>">
-						<table class="nldesign-audit-table thematiq-environment-panel__table">
+						<table data-column-controls class="nldesign-audit-table thematiq-environment-panel__table">
 							<thead><tr><th scope="col"><?php p($l->t('Value in config.php')); ?></th><th scope="col"><?php p($l->t('Marker')); ?></th><th scope="col"><?php p($l->t('Tab title starts with')); ?></th></tr></thead>
 							<tbody>
 								<tr><td><code>development</code></td><td><span class="thematiq-environment-panel__pill thematiq-env-marker--development"><?php p($l->t('Development environment')); ?></span></td><td><?php p($l->t('[Development]')); ?></td></tr>
@@ -2073,7 +2075,7 @@ if ($_['mockUi'] === true) {
 						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Add your own token, such as a brand accent. The name starts with --nldesign-org-. Custom CSS and apps can read it straight away, for example var(--nldesign-org-brand-accent).')); ?></span>
 					</div>
 					<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('Your own tokens')); ?>">
-						<table class="nldesign-audit-table thematiq-own-tokens-panel__table">
+						<table data-column-controls class="nldesign-audit-table thematiq-own-tokens-panel__table">
 							<thead><tr><th scope="col"><?php p($l->t('Token')); ?></th><th scope="col"><?php p($l->t('Kind')); ?></th><th scope="col"><?php p($l->t('Value')); ?></th><th scope="col"><?php p($l->t('Description')); ?></th><th scope="col"><span class="hidden-visually"><?php p($l->t('Actions')); ?></span></th></tr></thead>
 							<tbody class="nldesign-own-token-list" id="nldesign-own-token-list"></tbody>
 						</table>
@@ -2090,7 +2092,7 @@ if ($_['mockUi'] === true) {
 						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Tell the teams that use the house style that a token is going away: which token replaces it and when it can be removed. Deprecating never changes a value.')); ?></span>
 					</div>
 					<div class="nldesign-audit-scroll" tabindex="0" role="region" aria-label="<?php p($l->t('Deprecated tokens')); ?>">
-						<table class="nldesign-audit-table thematiq-own-tokens-panel__table">
+						<table data-column-controls class="nldesign-audit-table thematiq-own-tokens-panel__table">
 							<thead><tr><th scope="col"><?php p($l->t('Token')); ?></th><th scope="col"><?php p($l->t('Severity')); ?></th><th scope="col"><?php p($l->t('Replacement')); ?></th><th scope="col"><?php p($l->t('Message')); ?></th><th scope="col"><span class="hidden-visually"><?php p($l->t('Actions')); ?></span></th></tr></thead>
 							<tbody class="nldesign-deprecations" id="nldesign-deprecation-list"></tbody>
 						</table>
