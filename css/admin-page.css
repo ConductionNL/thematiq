@@ -908,31 +908,41 @@ html[data-thematiq-open-panel]:not([data-thematiq-open-panel='layout'])
 	box-shadow: inset 0 0 0 1px var(--color-border);
 }
 
+/* The status column's pills in the set's status-badge colours (Zuiddrecht:
+ * Available #3d4047 on #f0f1f3, Active #1e6b2a on #e7f3ea, licence #7a4f00 on
+ * #fff4de), with Nextcloud's own colours behind them, as TqTheming draws them. */
 .thematiq-token-sets__pill {
 	padding: 3px 10px;
 	border-radius: 12px;
-	background: var(--color-background-hover);
-	color: var(--color-main-text);
+	background: var(
+		--nldesign-component-status-badge-neutral-background-color,
+		var(--color-background-hover)
+	);
+	color: var(--nldesign-component-status-badge-neutral-color, var(--color-main-text));
 	font-size: 13px;
 	font-weight: 600;
 }
 
 .thematiq-token-sets__pill--active {
-	background: color-mix(
-		in srgb,
-		var(--color-success) 12%,
-		var(--color-main-background)
+	background: var(
+		--nldesign-component-status-badge-success-background-color,
+		color-mix(in srgb, var(--color-success) 12%, var(--color-main-background))
 	);
-	color: var(--color-success-text);
+	color: var(
+		--nldesign-component-status-badge-success-color,
+		var(--color-success-text)
+	);
 }
 
 .thematiq-token-sets__pill--licence {
-	background: color-mix(
-		in srgb,
-		var(--color-warning) 18%,
-		var(--color-main-background)
+	background: var(
+		--nldesign-component-status-badge-warning-background-color,
+		color-mix(in srgb, var(--color-warning) 18%, var(--color-main-background))
 	);
-	color: var(--color-warning-text);
+	color: var(
+		--nldesign-component-status-badge-warning-color,
+		var(--color-warning-text)
+	);
 }
 
 .thematiq-token-sets__actions {
