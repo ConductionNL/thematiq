@@ -43,7 +43,7 @@ final class AppMenuDialogLabels {
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-create-button-and-the-create-row-switch-on-and-off-independently-req-tqqt-001
 	 */
 	public static function labels(IL10N $l): array {
-		return self::createLabels(l: $l) + [
+		return self::createLabels(l: $l) + self::titleLabels(l: $l) + [
 			'title' => $l->t('Menu settings'),
 			'close' => $l->t('Close'),
 			'scope' => $l->t('Set for'),
@@ -182,4 +182,24 @@ final class AppMenuDialogLabels {
 			'createSwitchesPersonal' => $l->t('People can change both for themselves in Menu settings.'),
 		];
 	}//end createLabels()
+
+	/**
+	 * The texts of Show titles and Show titles in the top bar (apps-menu-show-titles).
+	 *
+	 * @param IL10N $l The app's translations.
+	 *
+	 * @return array<string, string> Key to text.
+	 *
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-menu-settings-and-the-setup-wizard-offer-show-titles-req-tqmt-004
+	 */
+	private static function titleLabels(IL10N $l): array {
+		return [
+			'titles' => $l->t('Show titles'),
+			'titlesHelp' => $l->t('The name of the app under or next to the icon. Off: icons only, the name appears as a tooltip.'),
+			'topBarTitles' => $l->t('Show titles in the top bar'),
+			'topBarTitlesHelp' => $l->t('The name next to the icon of every pinned app in the top bar. Off: icons only, the name appears as a tooltip.'),
+			'payoffNeedsTitles' => $l->t('Only with Show titles.'),
+			'withoutTitles' => $l->t('without titles'),
+		];
+	}//end titleLabels()
 }//end class

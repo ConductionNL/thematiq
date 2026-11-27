@@ -29,6 +29,8 @@ const DEFAULTS = {
 	showExternalApps: true,
 	shape: 'round',
 	tiles: false,
+	titles: true,
+	topBarTitles: false,
 	payoff: true,
 	iconSize: 'large',
 	iconColour: 'brand',
@@ -466,6 +468,55 @@ describe('the Menu settings dialog', () => {
 			.dispatchEvent(new Event('change'))
 		expect(caption()).toContain('withTiles')
 		expect(caption()).toContain('colourNeutral')
+	})
+
+	// @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-menu-settings-and-the-setup-wizard-offer-show-titles-req-tqmt-004
+	it('places Show titles after the tiles and Show titles in the top bar under it, disables Show payoff without titles and keeps its value', async () => {
+		const dialog = await openDialog(answer(true))
+		dialog.querySelector('#thematiq-menu-settings-tab-theming').click()
+
+		const names = Array.from(
+			dialog.querySelectorAll('.thematiq-menu-settings__toggle-name'),
+		).map((name) => name.textContent)
+		expect(names.slice(names.indexOf('tiles'))).toEqual([
+			'tiles',
+			'titles',
+			'topBarTitles',
+			'payoff',
+		])
+		const payoff = () =>
+			dialog.querySelector('#thematiq-menu-settings-switch-payoff')
+		expect(payoff().disabled).toBe(false)
+		expect(dialog.querySelector('.thematiq-menu-settings__note')).toBeNull()
+
+		dialog.querySelector('#thematiq-menu-settings-switch-titles').click()
+		expect(payoff().disabled).toBe(true)
+		expect(payoff().getAttribute('aria-checked')).toBe('true')
+		expect(
+			dialog.querySelector('.thematiq-menu-settings__note').textContent,
+		).toBe('payoffNeedsTitles')
+
+		const sample = dialog.querySelector('.thematiq-menu-settings__sample')
+		expect(sample.getAttribute('data-titles')).toBe('false')
+		expect(
+			sample.querySelectorAll('.thematiq-menu-settings__sample-text'),
+		).toHaveLength(0)
+		expect(sample.querySelectorAll('.thematiq-menu-settings__sample-item')).toHaveLength(4)
+		expect(
+			dialog.querySelector('.thematiq-menu-settings__figure figcaption')
+				.textContent,
+		).toBe('round, sizeLarge icons in colourBrand, withoutTitles and withoutTiles.')
+
+		dialog.querySelector('#thematiq-menu-settings-switch-topBarTitles').click()
+		dialog.querySelector('[data-part="save"]').click()
+		await flush()
+		const saved = requests.find((r) => r.method === 'POST')
+		expect(saved.url).toBe('/apps/thematiq/app-menu/defaults')
+		expect(saved.body.settings).toMatchObject({
+			titles: false,
+			topBarTitles: true,
+			payoff: true,
+		})
 	})
 
 	it('offers the picker icons only, and colours only the work apps in the brand', async () => {

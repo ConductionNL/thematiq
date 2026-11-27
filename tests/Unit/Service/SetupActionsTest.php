@@ -203,6 +203,28 @@ class SetupActionsTest extends TestCase {
 	}//end testApplyWritesEveryPartThenCompletes()
 
 	/**
+	 * The apps menu step sends Show titles before Show payoff; Apply stores it as the administrator's
+	 * value (apps-menu-show-titles REQ-TQMT-004).
+	 *
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-menu-settings-and-the-setup-wizard-offer-show-titles-req-tqmt-004
+	 *
+	 * @return void
+	 */
+	public function testTheWizardStoresShowTitles(): void {
+		$keys = \OCA\Thematiq\Service\SetupRequest::MENU_KEYS;
+		$this->assertLessThan(expected: array_search('payoff', $keys, true), actual: array_search('titles', $keys, true));
+
+		$actions = $this->make();
+		$actions->apply(
+			request: ['tokenSet' => 'amsterdam', 'menu' => ['enabled' => true, 'titles' => false, 'payoff' => true]],
+			uid: 'admin'
+		);
+
+		$this->assertSame(expected: 'false', actual: $this->store['menu.titles']);
+		$this->assertSame(expected: 'true', actual: $this->store['menu.payoff']);
+	}//end testTheWizardStoresShowTitles()
+
+	/**
 	 * The apps menu step sends the two create switches; a wizard built before them still sends the
 	 * former key, which sets both and is never stored.
 	 *

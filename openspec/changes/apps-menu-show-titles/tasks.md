@@ -5,26 +5,26 @@ ConductionNL/design-system#1220 and #1221; TqSetupAppmenu has a follow-up. Copy,
 
 ## 1. Server
 
-- [ ] 1.1 `lib/Service/AppMenuSettings.php`: `titles` in `DEFAULTS` (true) and `SWITCHES`, not in
+- [x] 1.1 `lib/Service/AppMenuSettings.php`: `titles` in `DEFAULTS` (true) and `SWITCHES`, not in
       `PERSONAL`. REQ-TQMT-001.
-- [ ] 1.2 `lib/Service/SetupRequest.php`: `MENU_KEYS` names `titles`. REQ-TQMT-004.
-- [ ] 1.3 `lib/Service/AppMenuDialogLabels.php`: `titles`, `titlesHelp`, `payoffNeedsTitles`,
+- [x] 1.2 `lib/Service/SetupRequest.php`: `MENU_KEYS` names `titles`. REQ-TQMT-004.
+- [x] 1.3 `lib/Service/AppMenuDialogLabels.php`: `titles`, `titlesHelp`, `payoffNeedsTitles`,
       `withoutTitles` as in `design.md`; the menu's own labels get what the tooltip needs. REQ-TQMT-004.
-- [ ] 1.4 `lib/Service/AppMenuSettings.php`: `topBarTitles` in `DEFAULTS` (false) and `SWITCHES`, not
+- [x] 1.4 `lib/Service/AppMenuSettings.php`: `topBarTitles` in `DEFAULTS` (false) and `SWITCHES`, not
       in `PERSONAL`; read `show_menu_labels` while `menu.topBarTitles` is absent. REQ-TQMT-005.
-- [ ] 1.5 `lib/Repair/MigrateMenuLabelsToTopBarTitles.php`: new, registered in `appinfo/info.xml` after
+- [x] 1.5 `lib/Repair/MigrateMenuLabelsToTopBarTitles.php`: new, registered in `appinfo/info.xml` after
       `MigrateAppConfigKeys`; moves `show_menu_labels` once and removes it. menu-labels.
-- [ ] 1.6 `lib/Service/CssInjectionService.php`: `show-menu-labels` only with `topBarTitles` on and no
+- [x] 1.6 `lib/Service/CssInjectionService.php`: `show-menu-labels` only with `topBarTitles` on and no
       workplace apps menu on the page. menu-labels.
-- [ ] 1.7 Remove `POST /settings/menulabels` (`appinfo/routes.php`, `SettingsController`) and its
+- [x] 1.7 Remove `POST /settings/menulabels` (`appinfo/routes.php`, `SettingsController`) and its
       handler in `js/admin.js`. menu-labels.
-- [ ] 1.8 `lib/Capabilities.php`, `lib/Service/ConfigBundleService.php` (export and import),
+- [x] 1.8 `lib/Capabilities.php`, `lib/Service/ConfigBundleService.php` (export and import),
       `lib/Service/ThemeVersionRestoreService.php`: `showMenuLabels` reads and writes
       `menu.topBarTitles`. REQ-TQMT-005, theming-capability.
-- [ ] 1.9 `lib/Settings/Admin.php`, `templates/settings/admin.php`, `js/admin-layout-panel.js`: "Show
+- [x] 1.9 `lib/Settings/Admin.php`, `templates/settings/admin.php`, `js/admin-layout-panel.js`: "Show
       titles in the top bar" in the Menu card in place of the older checkbox, saved through the menu
       defaults. admin-settings.
-- [ ] 1.10 PHPUnit `AppMenuSettingsTest` (both shipped values, the administrator's value, switches
+- [x] 1.10 PHPUnit `AppMenuSettingsTest` (both shipped values, the administrator's value, switches
       only, the `show_menu_labels` fallback, reset for everyone), `AppMenuSettingsControllerTest` (a
       person's `titles` and `topBarTitles` refused with 400), `SetupRequestTest` (the wizard sends
       `titles`), new `MigrateMenuLabelsToTopBarTitlesTest`, `CssInjectionServiceTest`,
@@ -56,7 +56,7 @@ ConductionNL/design-system#1220 and #1221; TqSetupAppmenu has a follow-up. Copy,
 
 ## 3. Menu settings and the setup wizard
 
-- [ ] 3.1 `js/dialogs/menu-settings-dialog.js`: "Show titles" after "Show items as tiles", "Show
+- [x] 3.1 `js/dialogs/menu-settings-dialog.js`: "Show titles" after "Show items as tiles", "Show
       titles in the top bar" directly under it, then "Show payoff"; `topBarTitles` saved with For
       everyone (REQ-TQMT-005); Show payoff disabled with "Only with Show titles." and its value kept; preview without
       names and payoff; sentence "without titles". REQ-TQMT-004.
@@ -68,7 +68,7 @@ ConductionNL/design-system#1220 and #1221; TqSetupAppmenu has a follow-up. Copy,
 
 ## 4. Copy
 
-- [ ] 4.1 l10n: the new strings in English and Dutch; `npm run test:l10n` green.
+- [x] 4.1 l10n: the new strings in English and Dutch; `npm run test:l10n` green.
 
 ## 5. End to end
 
@@ -92,3 +92,18 @@ ConductionNL/design-system#1220 and #1221; TqSetupAppmenu has a follow-up. Copy,
       name once; 200% zoom keeps the tooltip inside the viewport; titles on is unchanged. Titles in the top bar on
       and off with pins, on the workplace menu and on the classic style (Nextcloud 32 header and 33
       waffle); an instance upgraded with `show_menu_labels` on keeps its labels.
+
+## Notes from the build
+
+- `lib/Service/AppMenuTopBarTitles.php` reads `menu.topBarTitles` with the older `show_menu_labels`
+  as fallback, writes it, and says whether a page draws the workplace apps menu; the capability,
+  the bundle (export and import) and the admin page read it. `ThemeVersionRestoreService` needs no
+  change: it compares and restores bundles, whose `showMenuLabels` now carries the new key.
+- A save of `topBarTitles` through the menu defaults, and a reset for everyone, remove the older
+  `show_menu_labels`, so it never stands in again after the administrator chose.
+- The Newman request and the e2e specs that called `POST /settings/menulabels` now save through
+  `POST /apps/thematiq/app-menu/defaults` (`menu-labels.spec.ts`, the workflow helpers).
+- 3.1 is built (Theming tab order, Show payoff disabled with its note and its value kept, the preview
+  without names, the sentence's "without titles"); 3.3's menuSettingsDialog.spec.js part is written,
+  its setupWizard.spec.js part waits for 3.2.
+- `npm run test:l10n` stays red on development for js/admin.js strings that are not this change's.
