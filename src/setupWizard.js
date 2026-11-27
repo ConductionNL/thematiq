@@ -155,7 +155,9 @@ function switchRow({ id, label, checked, onChange, hint }) {
  * @return {object} The vnode.
  */
 function radioCard({ name, value, checked, onPick, children }) {
-	return h('label', { class: 'tq-setup__card' + (checked ? ' tq-setup__card--on' : '') }, [
+	// Keyed by value: the cards are re-rendered on every pick, and an unkeyed list let Vue patch
+	// the inputs in place, so the browser's own checked state stayed on another set's radio.
+	return h('label', { key: value, class: 'tq-setup__card' + (checked ? ' tq-setup__card--on' : '') }, [
 		h('input', { type: 'radio', name, value, checked, onChange: () => onPick(value) }),
 		h('span', { class: 'tq-setup__card-body' }, children),
 	])
@@ -177,6 +179,7 @@ export const SetupWizard = {
 			choices: initialChoices(props.status),
 			sets: [],
 			setsLoaded: false,
+			storedSet: initialChoices(props.status).tokenSet,
 			licences: [],
 			showAll: false,
 			stepId: 'welcome',
@@ -356,16 +359,24 @@ export const SetupWizard = {
 		},
 
 		/**
-		 * The house style cards: the chosen set and Nextcloud default first, then four more or all.
+		 * The house style cards: the stored set and Nextcloud default first, then four more (and the
+		 * chosen set when it is not among them) or all.
 		 *
 		 * @return {object} The vnode.
 		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
 		 */
 		setCards() {
 			const choices = this.state.choices
-			const first = this.state.sets.filter((set) => set.id === choices.tokenSet || set.id === NEXTCLOUD_DEFAULT)
-			const rest = this.state.sets.filter((set) => set.id !== choices.tokenSet && set.id !== NEXTCLOUD_DEFAULT)
-			const shown = first.concat(this.state.showAll ? rest : rest.slice(0, 4))
+			// The stored set and Nextcloud default lead, and stay put while the administrator picks;
+			// a set picked from the full list (or just uploaded) stays in view after them.
+			const leads = (set) => set.id === this.state.storedSet || set.id === NEXTCLOUD_DEFAULT
+			const first = this.state.sets.filter(leads)
+			const rest = this.state.sets.filter((set) => !leads(set))
+			let more = rest.slice(0, 4)
+			if (!more.some((set) => set.id === choices.tokenSet)) {
+				more = more.concat(rest.filter((set) => set.id === choices.tokenSet))
+			}
+			const shown = first.concat(this.state.showAll ? rest : more)
 			const pick = (id) => {
 				choices.tokenSet = id
 				choices.confirmRestricted = false

@@ -198,6 +198,22 @@ describe('the wizard', () => {
 		expect(loaded).toContain('Nextcloud default')
 	})
 
+	it('keeps the stored set and Nextcloud default first while picking, keys every card, and keeps a picked set in view', async () => {
+		const vm = await wizard({ completed: false, configured: false, current: { tokenSet: 'nextcloud' } })
+		vm.state.setsLoaded = true
+		vm.state.sets = ['amsterdam', 'basis', 'college', 'demodam', 'duo', 'esdoornveen', 'nextcloud', 'zuiddrecht'].map((id) => ({ id, name: id }))
+		const order = () => vm.setCards().children.map((card) => card.key)
+		expect(order()).toEqual(['nextcloud', 'amsterdam', 'basis', 'college', 'demodam'])
+
+		vm.state.choices.tokenSet = 'amsterdam'
+		expect(order()).toEqual(['nextcloud', 'amsterdam', 'basis', 'college', 'demodam'])
+		const checked = vm.setCards().children.filter((card) => card.children[0].props.checked).map((card) => card.key)
+		expect(checked).toEqual(['amsterdam'])
+
+		vm.state.choices.tokenSet = 'zuiddrecht'
+		expect(order()).toEqual(['nextcloud', 'amsterdam', 'basis', 'college', 'demodam', 'zuiddrecht'])
+	})
+
 	it('stops saying loading when reading the sets fails', async () => {
 		const vm = await wizard()
 		vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('offline'))))
