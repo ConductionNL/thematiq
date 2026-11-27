@@ -261,6 +261,7 @@
 			me: formFor(data, 'me'),
 		}
 		var form = forms[scope]
+		var initialForms = JSON.stringify(forms)
 		var touched = {}
 		var apps = (options.entries || []).filter(function (entry) {
 			return !entry.external
@@ -1847,6 +1848,34 @@
 				})
 		}
 
+		/**
+		 * Close without saving, asking first when something changed, and start
+		 * the apps menu walkthrough from its first step.
+		 *
+		 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-settings/spec.md#requirement-menu-settings-offers-to-replay-the-tour-req-tqwt-008
+		 */
+		var replay = function () {
+			var changed =
+				Object.keys(touched).length > 0 || JSON.stringify(forms) !== initialForms
+			if (changed && !window.confirm(t('replayDiscard'))) {
+				return
+			}
+			// After the dialog has closed and handed focus back, so the menu it
+			// opens is not closed again by that focus move.
+			dialog.addEventListener(
+				'close',
+				function () {
+					setTimeout(window.thematiqAppMenuReplay, 0)
+				},
+				{ once: true },
+			)
+			close()
+		}
+		var canReplay =
+			typeof window.thematiqAppMenuReplay === 'function'
+			&& !!(options.menu && options.menu.walkthrough)
+			&& t('replay') !== ''
+
 		var reset = function () {
 			if (
 				!window.confirm(
@@ -1899,6 +1928,15 @@
 					[svg(ICONS.reset, 18), t('reset')],
 				),
 				h('div', { class: BLOCK + '__foot-end' }, [
+					canReplay
+						? h('button', {
+								type: 'button',
+								class: BLOCK + '__button',
+								'data-part': 'replay',
+								text: t('replay'),
+								on: { click: replay },
+							})
+						: null,
 					h('button', {
 						type: 'button',
 						class: BLOCK + '__button',

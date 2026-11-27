@@ -2259,15 +2259,23 @@
 		if (touring()) {
 			return
 		}
-		var button = document.querySelector('.app-menu__waffle')
+		var tries = 0
 		var begin = function () {
-			startWalkthrough(menu, 'replay')
-		}
-		if (button !== null && button.getAttribute('aria-expanded') !== 'true') {
-			button.click()
+			var button = document.querySelector('.app-menu__waffle')
+			var open =
+				button !== null && button.getAttribute('aria-expanded') === 'true'
+			if (open && document.querySelector('.app-menu__grid') !== null) {
+				startWalkthrough(menu, 'replay')
+				return
+			}
+			if (button === null || tries++ > 10) {
+				return
+			}
+			if (!open) {
+				button.click()
+			}
 			// The menu draws a frame after the click.
-			setTimeout(begin, 150)
-			return
+			setTimeout(begin, 100)
 		}
 		begin()
 	}
