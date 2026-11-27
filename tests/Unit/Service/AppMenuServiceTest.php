@@ -571,7 +571,7 @@ class AppMenuServiceTest extends TestCase {
 			$config->method('getUserValue')->willReturnCallback(
 				static fn (string $uid, string $app, string $key, $default = '') => ([
 					'annaapps_menu_walkthrough_seen_version' => '1.2.40-unstable.20261101',
-				][$uid.$key] ?? $default)
+				][$uid . $key] ?? $default)
 			);
 			$apps = $this->createMock(originalClassName: IAppManager::class);
 			$apps->method('getAppVersion')->willReturn('1.2.49-unstable.20261127113354');
@@ -598,21 +598,11 @@ class AppMenuServiceTest extends TestCase {
 				userSession: $session,
 				pins: new AppMenuPins(config: $config),
 				settings: new AppMenuSettings(config: $config),
-				groups: $groups
+				groups: $groups,
+				walkthrough: new WalkthroughPreferences(config: $config, appManager: $apps)
 			);
 			$service = $this->getMockBuilder(className: AppMenuService::class)
-				->setConstructorArgs(
-					[
-						$this->config,
-						$this->designSystemService,
-						$initialState,
-						$factory,
-						$this->logger,
-						$listState,
-						new WalkthroughPreferences(config: $config, appManager: $apps),
-						$session,
-					]
-				)
+				->setConstructorArgs([$this->config, $this->designSystemService, $initialState, $factory, $this->logger, $listState])
 				->onlyMethods(['emitScript', 'emitMenuStyle'])
 				->getMock();
 

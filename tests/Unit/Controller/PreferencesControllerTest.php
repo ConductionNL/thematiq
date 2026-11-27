@@ -57,10 +57,10 @@ final class PreferencesControllerTest extends TestCase {
 	private function controller(?string $uid): PreferencesController {
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getUserValue')->willReturnCallback(
-			fn (string $user, string $app, string $key, $default = '') => ($this->stored[$user.'/'.$key] ?? $default)
+			fn (string $user, string $app, string $key, $default = '') => ($this->stored[$user . '/' . $key] ?? $default)
 		);
 		$config->method('setUserValue')->willReturnCallback(function (string $user, string $app, string $key, $value): void {
-			$this->stored[$user.'/'.$key] = (string)$value;
+			$this->stored[$user . '/' . $key] = (string)$value;
 		});
 		$session = $this->createMock(originalClassName: IUserSession::class);
 		$user = null;
@@ -89,7 +89,7 @@ final class PreferencesControllerTest extends TestCase {
 		$response = $this->controller(uid: 'anna')->update(key: WalkthroughPreferences::SEEN, value: '1.2.49');
 		$this->assertSame(expected: 200, actual: $response->getStatus());
 		$this->assertSame(expected: ['value' => '1.2.49'], actual: $response->getData());
-		$this->assertSame(expected: ['anna/'.WalkthroughPreferences::SEEN => '1.2.49'], actual: $this->stored);
+		$this->assertSame(expected: ['anna/' . WalkthroughPreferences::SEEN => '1.2.49'], actual: $this->stored);
 
 		$this->assertSame(expected: ['value' => '1.2.49'], actual: $this->controller(uid: 'anna')->show(key: WalkthroughPreferences::SEEN)->getData());
 		$this->assertSame(expected: ['value' => null], actual: $this->controller(uid: 'bram')->show(key: WalkthroughPreferences::SEEN)->getData());
@@ -124,7 +124,8 @@ final class PreferencesControllerTest extends TestCase {
 	public function testItNeedsASessionAndText(): void {
 		$this->assertSame(expected: 401, actual: $this->controller(uid: null)->show(key: WalkthroughPreferences::SEEN)->getStatus());
 		$this->assertSame(expected: 401, actual: $this->controller(uid: null)->update(key: WalkthroughPreferences::SEEN, value: '1.2.49')->getStatus());
-		$this->assertSame(expected: 400, actual: $this->controller(uid: 'anna')->update(key: WalkthroughPreferences::PROGRESS, value: ['tourId' => 'x'])->getStatus());
+		$notText = $this->controller(uid: 'anna')->update(key: WalkthroughPreferences::PROGRESS, value: ['tourId' => 'x']);
+		$this->assertSame(expected: 400, actual: $notText->getStatus());
 		$this->assertSame(expected: [], actual: $this->stored);
 	}//end testItNeedsASessionAndText()
 }//end class

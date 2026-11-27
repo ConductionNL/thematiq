@@ -81,7 +81,7 @@ class WalkthroughPreferences {
 	 *
 	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
 	 */
-	public static function serves(string $key): bool {
+	public function serves(string $key): bool {
 		return in_array($key, self::KEYS, true);
 	}//end serves()
 
@@ -96,7 +96,7 @@ class WalkthroughPreferences {
 	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
 	 */
 	public function get(string $userId, string $key): ?string {
-		if (self::serves(key: $key) === false) {
+		if ($this->serves(key: $key) === false) {
 			return null;
 		}
 
@@ -120,7 +120,7 @@ class WalkthroughPreferences {
 	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-finishing-or-closing-records-the-seen-version-req-tqwt-004
 	 */
 	public function set(string $userId, string $key, string $value): ?string {
-		if (self::serves(key: $key) === false) {
+		if ($this->serves(key: $key) === false) {
 			return null;
 		}
 

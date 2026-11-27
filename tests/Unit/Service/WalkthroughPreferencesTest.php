@@ -49,14 +49,14 @@ final class WalkthroughPreferencesTest extends TestCase {
 	private function preferences(string $installed = '1.2.49'): WalkthroughPreferences {
 		$config = $this->createMock(originalClassName: IConfig::class);
 		$config->method('getUserValue')->willReturnCallback(
-			fn (string $uid, string $app, string $key, $default = '') => ($this->stored[$uid.'/'.$key] ?? $default)
+			fn (string $uid, string $app, string $key, $default = '') => ($this->stored[$uid . '/' . $key] ?? $default)
 		);
 		$config->method('setUserValue')->willReturnCallback(function (string $uid, string $app, string $key, $value): void {
 			$this->assertSame(expected: 'thematiq', actual: $app);
-			$this->stored[$uid.'/'.$key] = (string)$value;
+			$this->stored[$uid . '/' . $key] = (string)$value;
 		});
 		$config->method('deleteUserValue')->willReturnCallback(function (string $uid, string $app, string $key): void {
-			unset($this->stored[$uid.'/'.$key]);
+			unset($this->stored[$uid . '/' . $key]);
 		});
 		$apps = $this->createMock(originalClassName: IAppManager::class);
 		$apps->method('getAppVersion')->willReturn($installed);
@@ -79,7 +79,7 @@ final class WalkthroughPreferencesTest extends TestCase {
 
 		$preferences->set(userId: 'anna', key: WalkthroughPreferences::PROGRESS, value: '{"tourId":"apps-menu","stepId":"reorder","index":3}');
 		$this->assertNull(actual: $preferences->set(userId: 'anna', key: WalkthroughPreferences::PROGRESS, value: ''));
-		$this->assertSame(expected: ['anna/'.WalkthroughPreferences::SEEN => '1.2.49'], actual: $this->stored);
+		$this->assertSame(expected: ['anna/' . WalkthroughPreferences::SEEN => '1.2.49'], actual: $this->stored);
 	}//end testTheTourKeysAreStoredPerPerson()
 
 	/**
@@ -89,7 +89,7 @@ final class WalkthroughPreferencesTest extends TestCase {
 	 */
 	public function testOtherKeysAreRefused(): void {
 		$preferences = $this->preferences();
-		$this->assertFalse(condition: WalkthroughPreferences::serves(key: 'token_set'));
+		$this->assertFalse(condition: $preferences->serves(key: 'token_set'));
 		$this->assertNull(actual: $preferences->set(userId: 'anna', key: 'token_set', value: 'rijkshuisstijl'));
 		$this->assertNull(actual: $preferences->get(userId: 'anna', key: 'token_set'));
 		$this->assertSame(expected: [], actual: $this->stored);
@@ -130,8 +130,8 @@ final class WalkthroughPreferencesTest extends TestCase {
 	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
 	 */
 	public function testTheStateCarriesVersionCores(): void {
-		$this->stored['anna/'.WalkthroughPreferences::SEEN] = '1.3.0-unstable.20261201';
-		$this->stored['anna/'.WalkthroughPreferences::PROGRESS] = '{"tourId":"apps-menu","stepId":"pin","index":4}';
+		$this->stored['anna/' . WalkthroughPreferences::SEEN] = '1.3.0-unstable.20261201';
+		$this->stored['anna/' . WalkthroughPreferences::PROGRESS] = '{"tourId":"apps-menu","stepId":"pin","index":4}';
 		$preferences = $this->preferences(installed: '1.3.1-unstable.20261210');
 
 		$this->assertSame(

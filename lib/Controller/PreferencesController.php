@@ -63,7 +63,7 @@ class PreferencesController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function show(string $key): JSONResponse {
-		if (WalkthroughPreferences::serves(key: $key) === false) {
+		if ($this->preferences->serves(key: $key) === false) {
 			return new JSONResponse(['message' => 'Not found'], Http::STATUS_NOT_FOUND);
 		}
 
@@ -87,7 +87,7 @@ class PreferencesController extends Controller {
 	 */
 	#[NoAdminRequired]
 	public function update(string $key, mixed $value = null): JSONResponse {
-		if (WalkthroughPreferences::serves(key: $key) === false) {
+		if ($this->preferences->serves(key: $key) === false) {
 			return new JSONResponse(['message' => 'Not found'], Http::STATUS_NOT_FOUND);
 		}
 

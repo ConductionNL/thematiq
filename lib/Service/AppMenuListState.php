@@ -46,6 +46,7 @@ class AppMenuListState {
 	 * @param IURLGenerator|null $urls Builds the address of an uploaded icon.
 	 * @param IGroupManager|null $groups Whether the person is an administrator.
 	 * @param AppMenuLegacyExternalApps|null $legacy Moves the admin page's external apps into the settings, once.
+	 * @param WalkthroughPreferences|null $walkthrough The person's apps menu tour state.
 	 */
 	public function __construct(
 		private readonly AppMenuOrder $order,
@@ -55,6 +56,7 @@ class AppMenuListState {
 		private readonly ?IURLGenerator $urls = null,
 		private readonly ?IGroupManager $groups = null,
 		private readonly ?AppMenuLegacyExternalApps $legacy = null,
+		private readonly ?WalkthroughPreferences $walkthrough = null,
 	) {
 	}//end __construct()
 
@@ -63,13 +65,15 @@ class AppMenuListState {
 	 *
 	 * @param IL10N $l The language of this request.
 	 *
-	 * @return array<string, mixed> `external` (when an app has an address), `order`, `pins`, `settings` and `labels`.
+	 * @return array<string, mixed> `external` (when an app has an address), `order`, `pins`, `settings`, `labels`
+	 *                              and, with the workplace menu, `walkthrough`.
 	 *
 	 * @spec openspec/specs/apps-menu-order/spec.md#requirement-the-order-is-stored-for-the-person-on-the-server
 	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
 	 * @spec openspec/specs/apps-menu-create/spec.md#requirement-the-create-row-offers-what-nextcloud-offers
 	 * @spec openspec/specs/apps-menu-pins/spec.md#requirement-pins-are-stored-for-the-person-on-the-server
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
 	 */
 	public function state(IL10N $l): array {
 		$state = [];
@@ -97,6 +101,13 @@ class AppMenuListState {
 		}
 
 		$state['admin'] = ($user !== null && $this->groups?->isAdmin($user->getUID()) === true);
+
+		// The apps menu tour: only with the workplace menu, which the classic style does not draw.
+		$style = ($state['settings']['style'] ?? AppMenuSettings::DEFAULTS['style']);
+		if ($this->walkthrough !== null && $style !== 'classic') {
+			$state['walkthrough'] = $this->walkthrough->state(userId: $user?->getUID());
+			$state['walkthrough']['replayLabel'] = $l->t('Replay walkthrough');
+		}
 
 		$state['labels'] = [
 			'title' => $l->t('Apps'),
