@@ -5319,9 +5319,16 @@
 			Promise.all([preview, theming, saved])
 				.then(function (results) {
 					var data = results[0]
+					// While Nextcloud's theme follows the set the server applies it
+					// with the switch, so the dialog carries no sync section (REQ-TQFS-013).
+					var followsSwitch = document.getElementById(
+						'thematiq-core-theming-follows',
+					)
 					var themingPlan = window.NldesignThemingPlan.computeThemingPlan(
 						tokenSetsData[newTokenSetId],
-						results[1],
+						followsSwitch !== null && followsSwitch.checked === true
+							? null
+							: results[1],
 						t,
 					)
 					if (data.error !== undefined) {
