@@ -50,6 +50,28 @@ export const REDUCED_MOTION_CLASS = 'thematiq-menu-walkthrough--reduced-motion'
 let runs = 0
 
 /**
+ * The card as TqMenuRondleiding draws it: 320 px wide, the title at line
+ * height 1.25 with 8 px to the text, a round 36 px close button, and Back and
+ * Next 36 px high in 14 px semibold, Back outlined in the border colour with
+ * ink text and no icon, Next filled without a border. The tour's buttons are Nextcloud buttons, and a
+ * token set restyles every Nextcloud button on the page (Zuiddrecht: 54 px,
+ * 15 px bold); the bundle leaves out the library's board-look sheet, so these
+ * rules put the drawn size back inside the tour only. The outline
+ * colour and text of Back are important because the set's secondary-button
+ * scope sets them important for every Nextcloud button.
+ */
+export const ACTIONS_CSS = '.' + HOST_CLASS + ' .cn-walkthrough__actions .button-vue{min-height:36px;height:36px;padding:0 12px;border-radius:var(--border-radius-element,8px);font-size:14px;font-weight:600}'
+	+ '.' + HOST_CLASS + ' .cn-walkthrough__actions .button-vue .button-vue__wrapper{min-height:0;height:100%}'
+	+ '.' + HOST_CLASS + ' .cn-walkthrough__actions .button-vue .button-vue__text{font-size:14px;font-weight:600}'
+	+ '.' + HOST_CLASS + ' .cn-walkthrough__actions .button-vue--secondary{border:1px solid var(--color-border-maxcontrast)!important;background:var(--color-main-background);color:var(--color-main-text)!important}'
+	+ '.' + HOST_CLASS + ' .cn-walkthrough__actions .button-vue--secondary .button-vue__icon{display:none}'
+	+ '.' + HOST_CLASS + ' .cn-walkthrough__actions .button-vue--primary{border:0;padding:0 14px}'
+	+ '.' + HOST_CLASS + ' .cn-walkthrough .cn-walkthrough__card{box-sizing:border-box;width:320px}'
+	+ '.' + HOST_CLASS + ' .cn-walkthrough .cn-walkthrough__counter{line-height:1.2}'
+	+ '.' + HOST_CLASS + ' .cn-walkthrough .cn-walkthrough__title{line-height:1.25;margin-bottom:8px}'
+	+ '.' + HOST_CLASS + ' .cn-walkthrough .cn-walkthrough__close{width:36px;min-width:36px;height:36px;min-height:36px;padding:0;border:0!important;border-radius:18px}'
+
+/**
  * The host's own rules. Inside the menu's popover, which is moved with a
  * transform, a fixed overlay is placed against the popover, not the window:
  * the host shifts it back by the popover's offset (`--thematiq-wt-top`,
@@ -60,6 +82,7 @@ let runs = 0
 export const HOST_CSS = '.' + HOST_CLASS + '>.cn-walkthrough{inset:auto;top:var(--thematiq-wt-top,0);left:var(--thematiq-wt-left,0);width:100vw;height:100vh;transform:translateZ(0)}'
 	+ '.' + REDUCED_MOTION_CLASS + ',.' + REDUCED_MOTION_CLASS + ' *{transition:none!important;animation:none!important}'
 	+ '@media (prefers-reduced-motion:reduce){.' + HOST_CLASS + ' *{transition:none!important;animation:none!important}}'
+	+ ACTIONS_CSS
 
 /**
  * The tour's steps as the data holds them.
