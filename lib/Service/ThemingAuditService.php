@@ -111,6 +111,9 @@ class ThemingAuditService implements ThemingAuditServiceInterface {
 	 * added by change `token-set-licence-gate` (an administrator states that
 	 * this organisation may use a restricted token set, or takes that back).
 	 *
+	 * `setup_completed` and `setup_skipped` added by change `first-time-setup`
+	 * (an administrator applied the first-time setup, or skipped it).
+	 *
 	 * @var array<int, string>
 	 */
 	private const VOCABULARY = [
@@ -132,6 +135,8 @@ class ThemingAuditService implements ThemingAuditServiceInterface {
 		'token_deprecation_changed',
 		'restricted_set_confirmed',
 		'restricted_set_confirmation_withdrawn',
+		'setup_completed',
+		'setup_skipped',
 	];
 
 	/**

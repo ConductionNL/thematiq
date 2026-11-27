@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\AppInfo;
 
 use OCA\Thematiq\Capabilities;
+use OCA\Thematiq\Listener\SetupWizardListener;
 use OCA\Thematiq\Listener\ThemeInjectionListener;
 use OCA\Thematiq\Listener\WorkspaceIconListener;
 use OCA\Thematiq\Middleware\ApiContractMiddleware;
@@ -151,6 +152,9 @@ class Application extends App implements IBootstrap {
 		// Event-driven CSS injection — see lib/Listener/ThemeInjectionListener.php.
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, ThemeInjectionListener::class);
 		$context->registerEventListener(BeforeLoginTemplateRenderedEvent::class, ThemeInjectionListener::class);
+
+		// The first-time setup over an administrator's first page (openspec/changes/first-time-setup).
+		$context->registerEventListener(BeforeTemplateRenderedEvent::class, SetupWizardListener::class);
 
 		// The workspace's mobile logo and touch icon (openspec/changes/mobile-logo-and-touch-icon).
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, WorkspaceIconListener::class);

@@ -21,6 +21,10 @@ return \OCA\Thematiq\Middleware\Support\ApiPathAliases::withVersionedAliases([
 		// posture (#[PublicPage] + #[NoCSRFRequired]) and the
 		// {status, app, version, checks} contract.
 		['name' => 'health#index', 'url' => '/api/health', 'verb' => 'GET'],
+		// First-time setup (ADR-042 contract, change first-time-setup). Admin only: no
+		// #[NoAdminRequired] on SetupController, CSRF on the POST, 423 under a configuration source.
+		['name' => 'setup#status', 'url' => '/api/setup/status', 'verb' => 'GET'],
+		['name' => 'setup#action', 'url' => '/api/setup/action/{actionId}', 'verb' => 'POST'],
 
 		// Non-admin, read-only token-set catalogue + shared contrast
 		// evaluation (app-token-set-selection) — #[NoAdminRequired] on both
