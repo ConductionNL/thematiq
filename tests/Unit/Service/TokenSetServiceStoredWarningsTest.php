@@ -187,7 +187,7 @@ class TokenSetServiceStoredWarningsTest extends TestCase {
 	public function testAnAuditedSetIsStoredAndWrittenOnce(): void {
 		$this->stored->method('get')->willReturn(null);
 		$this->stored->expects($this->once())->method('put')->with(
-			$this->stringStartsWith('utrecht-'),
+			$this->stringStartsWith(prefix: 'utrecht-'),
 			[['pair' => 'text', 'verdict' => 'fail']]
 		);
 		$this->stored->expects($this->once())->method('write')->with($this->appDir);
@@ -198,23 +198,21 @@ class TokenSetServiceStoredWarningsTest extends TestCase {
 	}//end testAnAuditedSetIsStoredAndWrittenOnce()
 
 	/**
-	 * A set the local cache answers is handed to the store as known, so the store's next write keeps it.
+	 * A set the local cache answers is handed to the store to keep, so the store's next write holds it.
 	 *
 	 * @return void
 	 */
-	public function testLocalCacheHitIsPassedAsKnown(): void {
-		$calls = [];
+	public function testLocalCacheHitIsKept(): void {
 		$this->stored->method('get')->willReturn(null);
-		$this->stored->method('put')->willReturnCallback(
-			static function (string $key, array $warnings, bool $known = false) use (&$calls): void {
-				$calls[] = $known;
-			}
+		$this->stored->expects($this->once())->method('put');
+		$this->stored->expects($this->once())->method('keep')->with(
+			$this->stringStartsWith(prefix: 'utrecht-'),
+			[['pair' => 'text', 'verdict' => 'fail']]
 		);
 
 		$this->service->getAvailableTokenSets();
 		$this->service->getAvailableTokenSets();
 
-		$this->assertSame(expected: [false, true], actual: $calls, message: 'first the audit, then the local cache hit as known');
 		$this->assertSame(expected: 1, actual: $this->auditRuns);
-	}//end testLocalCacheHitIsPassedAsKnown()
+	}//end testLocalCacheHitIsKept()
 }//end class

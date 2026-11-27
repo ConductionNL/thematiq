@@ -462,7 +462,7 @@ class TokenSetService {
 
 		$cached = $this->warningsCache->get(key: $key);
 		if (is_array($cached) === true) {
-			$this->audits->stored?->put(key: $key, warnings: $cached, known: true);
+			$this->audits->stored?->keep(key: $key, warnings: $cached);
 			return $cached;
 		}
 

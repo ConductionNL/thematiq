@@ -148,7 +148,7 @@ class AuditWarningsStoreTest extends TestCase {
 	 * @return void
 	 */
 	public function testNothingStoredAnswersNull(): void {
-		$this->assertNull($this->newStore()->get(appPath: $this->appDir, key: 'utrecht-1'));
+		$this->assertNull(actual: $this->newStore()->get(appPath: $this->appDir, key: 'utrecht-1'));
 	}//end testNothingStoredAnswersNull()
 
 	/**
@@ -165,7 +165,7 @@ class AuditWarningsStoreTest extends TestCase {
 			expected: [['pair' => 'text', 'verdict' => 'fail']],
 			actual: $this->newStore()->get(appPath: $this->appDir, key: 'utrecht-1')
 		);
-		$this->assertNull($this->newStore()->get(appPath: $this->appDir, key: 'utrecht-2'));
+		$this->assertNull(actual: $this->newStore()->get(appPath: $this->appDir, key: 'utrecht-2'));
 	}//end testWrittenWarningsComeBackInTheNextRequest()
 
 	/**
@@ -181,7 +181,7 @@ class AuditWarningsStoreTest extends TestCase {
 		file_put_contents($this->appDir . '/css/tokens/utrecht.css', ':root { --nldesign-color-primary: #154273; --x: 1; }');
 		clearstatcache();
 
-		$this->assertNull($this->newStore()->get(appPath: $this->appDir, key: 'utrecht-1'));
+		$this->assertNull(actual: $this->newStore()->get(appPath: $this->appDir, key: 'utrecht-1'));
 	}//end testChangedAppFilesAreNotServedOldWarnings()
 
 	/**
@@ -191,7 +191,7 @@ class AuditWarningsStoreTest extends TestCase {
 	 */
 	public function testOnlyAnAuditCausesAWrite(): void {
 		$store = $this->newStore();
-		$store->put(key: 'utrecht-1', warnings: [], known: true);
+		$store->keep(key: 'utrecht-1', warnings: []);
 		$store->write(appPath: $this->appDir);
 		$this->assertSame(expected: 0, actual: $this->writes);
 
@@ -219,7 +219,7 @@ class AuditWarningsStoreTest extends TestCase {
 		$second->put(key: 'utrecht-new', warnings: []);
 		$second->write(appPath: $this->appDir);
 
-		$this->assertNull($this->newStore()->get(appPath: $this->appDir, key: 'utrecht-old'));
+		$this->assertNull(actual: $this->newStore()->get(appPath: $this->appDir, key: 'utrecht-old'));
 		$this->assertSame(expected: [], actual: $this->newStore()->get(appPath: $this->appDir, key: 'utrecht-new'));
 	}//end testAWriteDropsSetsThisReadDidNotAskFor()
 
@@ -231,6 +231,6 @@ class AuditWarningsStoreTest extends TestCase {
 	public function testDamagedFileIsReadAsEmpty(): void {
 		$this->files[AuditWarningsStore::FOLDER] = [AuditWarningsStore::FILE => '{not json'];
 
-		$this->assertNull($this->newStore()->get(appPath: $this->appDir, key: 'utrecht-1'));
+		$this->assertNull(actual: $this->newStore()->get(appPath: $this->appDir, key: 'utrecht-1'));
 	}//end testDamagedFileIsReadAsEmpty()
 }//end class

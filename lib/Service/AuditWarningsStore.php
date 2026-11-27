@@ -122,26 +122,34 @@ class AuditWarningsStore {
 	}//end get()
 
 	/**
-	 * Remember a set's warnings for write().
-	 *
-	 * Warnings the local cache answered are passed as known: they are kept in
-	 * the next write, so it holds the whole catalogue, but they do not cause
-	 * one. Freshly audited warnings do.
+	 * Remember a set's freshly audited warnings; the next write() stores them.
 	 *
 	 * @param string $key The set's cache key.
 	 * @param array<int, mixed> $warnings The warnings.
-	 * @param bool $known Whether the warnings came from the local cache rather than an audit.
 	 *
 	 * @return void
 	 *
 	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
 	 */
-	public function put(string $key, array $warnings, bool $known = false): void {
+	public function put(string $key, array $warnings): void {
 		$this->touched[$key] = $warnings;
-		if ($known === false) {
-			$this->dirty = true;
-		}
+		$this->dirty = true;
 	}//end put()
+
+	/**
+	 * Remember warnings the local cache answered, so the next write() keeps
+	 * the whole catalogue; they do not cause a write themselves.
+	 *
+	 * @param string $key The set's cache key.
+	 * @param array<int, mixed> $warnings The warnings.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
+	 */
+	public function keep(string $key, array $warnings): void {
+		$this->touched[$key] = $warnings;
+	}//end keep()
 
 	/**
 	 * Store the warnings of this request's catalogue read, when it audited any set.
@@ -167,24 +175,37 @@ class AuditWarningsStore {
 		}
 
 		try {
-			try {
-				$folder = $this->appData->getFolder(self::FOLDER);
-			} catch (NotFoundException $e) {
-				$folder = $this->appData->newFolder(self::FOLDER);
-			}
-
-			if ($folder->fileExists(self::FILE) === true) {
-				$folder->getFile(self::FILE)->putContent($content);
-			} else {
-				$folder->newFile(self::FILE, $content);
-			}
-
+			$this->writeFile(content: $content);
 			$this->stored = $this->touched;
 			$this->dirty = false;
 		} catch (Throwable $e) {
 			$this->logger->debug('thematiq: the token set audit warnings were not stored: {message}', ['message' => $e->getMessage()]);
 		}
 	}//end write()
+
+	/**
+	 * Replace the app data file with the given content, creating its folder and the file when absent.
+	 *
+	 * @param string $content The file content.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
+	 */
+	private function writeFile(string $content): void {
+		try {
+			$folder = $this->appData->getFolder(self::FOLDER);
+		} catch (NotFoundException $e) {
+			$folder = $this->appData->newFolder(self::FOLDER);
+		}
+
+		if ($folder->fileExists(self::FILE) === true) {
+			$folder->getFile(self::FILE)->putContent($content);
+			return;
+		}
+
+		$folder->newFile(self::FILE, $content);
+	}//end writeFile()
 
 	/**
 	 * A fingerprint of the audit inputs the per-set key does not cover.
@@ -201,18 +222,8 @@ class AuditWarningsStore {
 		}
 
 		$lines = [];
-		foreach ([$appPath . '/design-systems.json', $appPath . '/token-sets.json'] as $path) {
-			$lines[] = $this->describe(path: $path, relative: basename($path));
-		}
-
-		$css = $appPath . '/css';
-		if (is_dir($css) === true) {
-			$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($css, FilesystemIterator::SKIP_DOTS));
-			foreach ($iterator as $file) {
-				if ($file->isFile() === true) {
-					$lines[] = $this->describe(path: $file->getPathname(), relative: substr($file->getPathname(), strlen($appPath) + 1));
-				}
-			}
+		foreach ($this->inputFiles(appPath: $appPath) as $path) {
+			$lines[] = $this->describe(path: $path, relative: substr($path, strlen($appPath) + 1));
 		}
 
 		sort($lines);
@@ -220,6 +231,31 @@ class AuditWarningsStore {
 
 		return $this->fingerprints[$appPath];
 	}//end fingerprint()
+
+	/**
+	 * The files the audits read besides the set's own CSS: both manifests and every file under css/.
+	 *
+	 * @param string $appPath The app root.
+	 *
+	 * @return array<int, string> The absolute paths.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
+	 */
+	private function inputFiles(string $appPath): array {
+		$paths = [$appPath . '/design-systems.json', $appPath . '/token-sets.json'];
+		if (is_dir($appPath . '/css') === false) {
+			return $paths;
+		}
+
+		$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($appPath . '/css', FilesystemIterator::SKIP_DOTS));
+		foreach ($iterator as $file) {
+			if ($file->isFile() === true) {
+				$paths[] = $file->getPathname();
+			}
+		}
+
+		return $paths;
+	}//end inputFiles()
 
 	/**
 	 * One file's line in the fingerprint: its path, modification time and size.
@@ -232,12 +268,11 @@ class AuditWarningsStore {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
 	 */
 	private function describe(string $path, string $relative): string {
-		$stat = @stat($path);
-		if ($stat === false) {
+		if (is_file($path) === false) {
 			return $relative . ':missing';
 		}
 
-		return $relative . ':' . $stat['mtime'] . ':' . $stat['size'];
+		return $relative . ':' . (string)filemtime($path) . ':' . (string)filesize($path);
 	}//end describe()
 
 	/**
@@ -261,16 +296,32 @@ class AuditWarningsStore {
 			return $this->stored;
 		}
 
-		$decoded = json_decode((string)$raw, true);
-		if (is_array($decoded) === false
-			|| ($decoded['inputs'] ?? null) !== $this->fingerprint(appPath: $appPath)
-			|| is_array($decoded['warnings'] ?? null) === false
-		) {
-			return $this->stored;
-		}
-
-		$this->stored = $decoded['warnings'];
+		$this->stored = $this->warningsFrom(raw: (string)$raw, fingerprint: $this->fingerprint(appPath: $appPath));
 
 		return $this->stored;
 	}//end stored()
+
+	/**
+	 * The warnings in a stored file, when it was made from the given inputs.
+	 *
+	 * @param string $raw The file content.
+	 * @param string $fingerprint The fingerprint of the current inputs.
+	 *
+	 * @return array<string, array<int, mixed>> The warnings by set key; empty for a damaged file or other inputs.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
+	 */
+	private function warningsFrom(string $raw, string $fingerprint): array {
+		$decoded = json_decode($raw, true);
+		if (is_array($decoded) === false || ($decoded['inputs'] ?? null) !== $fingerprint) {
+			return [];
+		}
+
+		$warnings = ($decoded['warnings'] ?? null);
+		if (is_array($warnings) === false) {
+			return [];
+		}
+
+		return $warnings;
+	}//end warningsFrom()
 }//end class
