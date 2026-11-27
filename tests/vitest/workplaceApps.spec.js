@@ -4,12 +4,16 @@
  * js/workplace-apps.js: the boards' words for Mail and Calendar as
  * translated variables, Calendar's week days as "Mon 12" (ClWeek), and the
  * pointer mark that lets Deck's card title drop a focus ring it did not ask
- * for (TbCard). It acts only while workplace-apps/common.css is on the page.
+ * for (TbCard). It acts only while css/workplace-layout.css is on the page
+ * (`--thematiq-light-layout: 1`), and an app's part only on that app's page
+ * while its sheet names it (`--thematiq-app-layer`).
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
  * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+ * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#requirement-the-light-layouts-script-acts-on-every-page-req-tqss-005
+ * @spec openspec/changes/same-shell-every-page/specs/workplace-app-sheets/spec.md
  */
 
 import fs from 'node:fs'
@@ -21,6 +25,13 @@ const ROOT = path.resolve(__dirname, '../..')
 const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8')
 
 let sheetLoaded = true
+// The app layer the page's sheets name; null reads it from the page's app, as its sheet would.
+let appLayer = null
+const pageLayer = () => {
+	const content = document.querySelector('#content, #content-vue')
+	const match = content ? /app-(mail|calendar|deck)/.exec(content.className) : null
+	return match ? match[1] : ''
+}
 const realComputedStyle = window.getComputedStyle.bind(window)
 
 async function loadScript() {
@@ -41,16 +52,22 @@ const WEEK =
 describe('the workplace app layer script', () => {
 	beforeEach(() => {
 		sheetLoaded = true
+		appLayer = null
 		global.t = (app, text) => (text === 'New event' ? 'Nieuwe afspraak' : text)
 		vi.spyOn(window, 'getComputedStyle').mockImplementation((element) => {
 			const style = realComputedStyle(element)
 			return {
-				getPropertyValue: (name) =>
-					name === '--thematiq-workplace-apps'
-					&& sheetLoaded
-					&& element === document.documentElement
-						? ' 1'
-						: style.getPropertyValue(name),
+				getPropertyValue: (name) => {
+					if (element === document.documentElement && sheetLoaded) {
+						if (name === '--thematiq-light-layout') {
+							return ' 1'
+						}
+						if (name === '--thematiq-app-layer') {
+							return ' ' + (appLayer === null ? pageLayer() : appLayer)
+						}
+					}
+					return style.getPropertyValue(name)
+				},
 			}
 		})
 	})
@@ -67,7 +84,7 @@ describe('the workplace app layer script', () => {
 		vi.restoreAllMocks()
 	})
 
-	it("sets the boards' words as translated, quoted variables", async () => {
+	it("sets an app's words as translated, quoted variables on that app's page only", async () => {
 		document.body.innerHTML = '<div id="content" class="app-mail"></div>'
 		await loadScript()
 
@@ -75,9 +92,62 @@ describe('the workplace app layer script', () => {
 		expect(style.getPropertyValue('--thematiq-mail-empty-title')).toBe(
 			'"Select a conversation"',
 		)
+		expect(style.getPropertyValue('--thematiq-calendar-new-event')).toBe('')
+
+		document.documentElement.removeAttribute('style')
+		document.body.innerHTML = '<div id="content-vue" class="app-calendar"></div>'
+		await loadScript()
 		expect(style.getPropertyValue('--thematiq-calendar-new-event')).toBe(
 			'"Nieuwe afspraak"',
 		)
+		expect(style.getPropertyValue('--thematiq-mail-empty-title')).toBe('')
+	})
+
+	it("does not wake Mail's words on a Deck page, nor without Mail's sheet", async () => {
+		document.body.innerHTML = '<div id="content" class="app-deck"></div>'
+		appLayer = 'mail'
+		await loadScript()
+		expect(
+			document.documentElement.style.getPropertyValue(
+				'--thematiq-mail-empty-title',
+			),
+		).toBe('')
+
+		document.body.innerHTML = '<div id="content" class="app-mail"></div>'
+		appLayer = ''
+		await loadScript()
+		expect(
+			document.documentElement.style.getPropertyValue(
+				'--thematiq-mail-empty-title',
+			),
+		).toBe('')
+	})
+
+	it('marks pointer use on a Files page and asks nothing of Deck there', async () => {
+		global.fetch = vi.fn()
+		window.history.replaceState({}, '', '/apps/deck/board/2')
+		document.body.innerHTML =
+			'<div id="content" class="app-files"><div class="card"><span class="cardid"><span>#4</span></span></div><button>x</button></div>'
+		await loadScript()
+
+		document
+			.querySelector('button')
+			.dispatchEvent(new window.Event('pointerdown', { bubbles: true }))
+		expect(document.documentElement.hasAttribute('data-thematiq-pointer')).toBe(
+			true,
+		)
+		document.dispatchEvent(
+			new window.KeyboardEvent('keydown', { key: 'Tab', bubbles: true }),
+		)
+		expect(document.documentElement.hasAttribute('data-thematiq-pointer')).toBe(
+			false,
+		)
+		expect(global.fetch).not.toHaveBeenCalled()
+		expect(window.thematiqWorkplaceAppsObserver).toBeUndefined()
+		expect(document.documentElement.getAttribute('style')).toBeNull()
+
+		delete global.fetch
+		window.history.replaceState({}, '', '/')
 	})
 
 	it('names a week day "Mon 23" from the column\'s own date, also after a re-render', async () => {
@@ -261,7 +331,7 @@ describe('the workplace app layer script', () => {
 		window.history.replaceState({}, '', '/')
 	})
 
-	it('does nothing without the app layer sheet', async () => {
+	it('does nothing without the light layout', async () => {
 		sheetLoaded = false
 		document.body.innerHTML = WEEK
 		await loadScript()
@@ -295,9 +365,17 @@ describe('the app sheets show the words only once the script set them', () => {
 		)
 	})
 
-	it('common.css carries the mark the script waits for', () => {
-		expect(read('css/workplace-apps/common.css')).toMatch(
-			/--thematiq-workplace-apps: 1;/,
+	it('workplace-layout.css carries the mark the script waits for, each app sheet its layer', () => {
+		expect(read('css/workplace-layout.css')).toMatch(
+			/--thematiq-light-layout: 1;/,
+		)
+		for (const app of ['mail', 'calendar', 'deck']) {
+			expect(read('css/workplace-apps/' + app + '.css')).toMatch(
+				new RegExp('--thematiq-app-layer: ' + app + ';'),
+			)
+		}
+		expect(read('js/workplace-apps.js')).not.toContain(
+			'--thematiq-workplace-apps',
 		)
 	})
 })
@@ -369,14 +447,8 @@ describe('every rule of the app sheets starts at an allowed root', () => {
 		return found
 	}
 
-	it('finds the five sheets', () => {
-		expect(SHEETS.sort()).toEqual([
-			'brand.css',
-			'calendar.css',
-			'common.css',
-			'deck.css',
-			'mail.css',
-		])
+	it('finds the three sheets', () => {
+		expect(SHEETS.sort()).toEqual(['calendar.css', 'deck.css', 'mail.css'])
 	})
 
 	it.each(SHEETS)(
@@ -592,5 +664,89 @@ describe('the entry states of Calendar and the card mid-move of Deck', () => {
 		expect(tilt.decls.transform).toMatch(/^rotate\(/)
 		expect(startsAtContent(rules)).toBe(true)
 		expect(writesNoColour(rules)).toBe(true)
+	})
+})
+
+/**
+ * The app sheets hold only what exists in that app: the shared rows, panel
+ * title, tabs and rail are in css/workplace-layout.css.
+ *
+ * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#requirement-what-stays-app-specific-is-listed-req-tqss-006
+ * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#requirement-the-navigation-rail-is-one-mechanism-req-tqss-004
+ */
+describe('the app sheets hold no shared rule', () => {
+	const SHARED_SUBJECT =
+		/(\.app-navigation-entry|\.app-navigation-entry-link|\.app-navigation-caption|\.app-navigation-caption__name|\.app-sidebar-tabs__tab|\.app-sidebar-tabs__nav|\.app-sidebar-header__mainname|\.list-item__wrapper)$/
+
+	it.each(['mail.css', 'deck.css', 'calendar.css'])(
+		'%s declares no rail property and no rail animation of its own',
+		(sheet) => {
+			const root = postcss.parse(read('css/workplace-apps/' + sheet))
+			const ats = []
+			root.walkAtRules((at) => {
+				if (at.name === 'property' || /keyframes$/.test(at.name)) {
+					ats.push(at.name + ' ' + at.params)
+				}
+			})
+			expect(ats.filter((at) => /rail/.test(at))).toEqual([])
+			expect(read('css/workplace-apps/' + sheet)).not.toMatch(
+				/--thematiq-(mail|deck)-rail/,
+			)
+		},
+	)
+
+	it.each(['mail.css', 'deck.css'])(
+		'%s styles no navigation row, caption, panel title or tab on its own',
+		(sheet) => {
+			const strays = []
+			postcss.parse(read('css/workplace-apps/' + sheet)).walkRules((rule) => {
+				for (const selector of rule.selector.split(/,(?![^(]*\))/)) {
+					const trimmed = selector.replace(/\s+/g, ' ').trim()
+					// Mail's account fold hides whole list items and captions of the other accounts.
+					const accountFold = trimmed.includes('.app-navigation-list >')
+					if (SHARED_SUBJECT.test(trimmed) && !accountFold) {
+						strays.push(trimmed)
+					}
+				}
+			})
+			expect(strays).toEqual([])
+		},
+	)
+
+	it("Deck's card panel title has no size of its own", () => {
+		postcss
+			.parse(read('css/workplace-apps/deck.css'))
+			.walkDecls('font-size', (decl) => {
+				expect(decl.parent.selector).not.toContain(
+					'.app-sidebar-header__mainname',
+				)
+			})
+	})
+
+	it('Mail and Deck only switch the shared rail on, on their content element', () => {
+		for (const [sheet, app] of [
+			['mail.css', 'mail'],
+			['deck.css', 'deck'],
+		]) {
+			const sets = []
+			postcss
+				.parse(read('css/workplace-apps/' + sheet))
+				.walkDecls('--thematiq-rail', (decl) => {
+					sets.push([
+						decl.parent.selector.replace(/\s+/g, ' '),
+						decl.value,
+					])
+				})
+			expect(sets).toHaveLength(1)
+			expect(sets[0][0]).toMatch(
+				new RegExp(
+					'^:is\\(#content, #content-vue\\)\\.app-' + app + ':has\\(',
+				),
+			)
+			expect(sets[0][1]).toBe('1')
+		}
+		expect(read('css/workplace-apps/calendar.css')).not.toContain(
+			'--thematiq-rail',
+		)
 	})
 })

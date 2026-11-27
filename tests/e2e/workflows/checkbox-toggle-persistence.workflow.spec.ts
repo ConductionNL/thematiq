@@ -56,7 +56,12 @@ async function setCheckbox(
 	])
 	expect(resp.status(), `${endpoint} save should 200`).toBe(200)
 	const body = await resp.json()
-	expect(body.status).toBe('ok')
+	// The menu defaults answer with the stored defaults, the older toggles with a status.
+	if (endpoint.includes('app-menu')) {
+		expect(body.defaults).toBeTruthy()
+	} else {
+		expect(body.status).toBe('ok')
+	}
 	await expect
 		.poll(async () => await checkboxState(page, id), { timeout: 5_000 })
 		.toBe(target)
@@ -129,7 +134,7 @@ test.describe('workflow: checkbox toggle persistence', () => {
 			page,
 			'nldesign-show-menu-labels',
 			target,
-			'/settings/menulabels',
+			'/app-menu/defaults',
 		)
 
 		await openTheming(page)
@@ -142,7 +147,7 @@ test.describe('workflow: checkbox toggle persistence', () => {
 			page,
 			'nldesign-show-menu-labels',
 			before,
-			'/settings/menulabels',
+			'/app-menu/defaults',
 		)
 		await openTheming(page)
 		expect(

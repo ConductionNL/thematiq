@@ -33,6 +33,8 @@ final class TokenSetAudits {
 	 * @param ShippedTokenSetAuditService $audit The shipped-set contrast audit service.
 	 * @param TokenSetVocabularyAuditService $vocabularyAudit The vocabulary-completeness audit service.
 	 * @param TokenSetFontAuditService $fontAudit The typeface audit service.
+	 * @param AuditWarningsStore|null $stored The warnings kept in app data, read on a local cache miss;
+	 *                                        null keeps them in the local cache only.
 	 *
 	 * @spec openspec/specs/token-sets/spec.md
 	 */
@@ -40,6 +42,7 @@ final class TokenSetAudits {
 		public readonly ShippedTokenSetAuditService $audit,
 		public readonly TokenSetVocabularyAuditService $vocabularyAudit,
 		public readonly TokenSetFontAuditService $fontAudit = new TokenSetFontAuditService(),
+		public readonly ?AuditWarningsStore $stored = null,
 	) {
 	}//end __construct()
 }//end class

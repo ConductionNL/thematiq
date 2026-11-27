@@ -1919,16 +1919,8 @@
 			})
 		}
 
-		// Handle show menu labels checkbox
-		var showMenuLabelsCheckbox = document.getElementById(
-			'nldesign-show-menu-labels',
-		)
-		if (showMenuLabelsCheckbox) {
-			showMenuLabelsCheckbox.addEventListener('change', function () {
-				var showMenuLabels = this.checked
-				saveMenuLabelsSetting(showMenuLabels)
-			})
-		}
+		// "Show titles in the top bar" (the old menu labels checkbox's place) saves
+		// through the menu defaults: js/admin-layout-panel.js wires it.
 
 		// Handle the two layout options. They are saved together: one request
 		// carries both choices, so the page never holds a half-saved pair.
@@ -2213,38 +2205,6 @@
 				})
 				.catch(function (error) {
 					console.error('Error saving layout options:', error)
-					notify(t('thematiq', 'Failed to save setting.'))
-				})
-		}
-
-		// Save show menu labels setting to server.
-		function saveMenuLabelsSetting(showMenuLabels) {
-			var url = OC.generateUrl('/apps/thematiq/settings/menulabels')
-
-			fetch(url, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					requesttoken: OC.requestToken,
-				},
-				body: JSON.stringify({ showMenuLabels: showMenuLabels }),
-			})
-				.then(function (response) {
-					return response.json()
-				})
-				.then(function (data) {
-					if (data.status === 'ok') {
-						setConditionalLayer(
-							'show-menu-labels',
-							showMenuLabels === true,
-						)
-						notify(t('thematiq', 'Applied.'))
-					} else {
-						notify(t('thematiq', 'Failed to save setting.'))
-					}
-				})
-				.catch(function (error) {
-					console.error('Error saving menu labels setting:', error)
 					notify(t('thematiq', 'Failed to save setting.'))
 				})
 		}

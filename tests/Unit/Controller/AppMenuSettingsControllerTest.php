@@ -197,6 +197,28 @@ final class AppMenuSettingsControllerTest extends TestCase {
 	}//end testAPersonSavesTheContactsMenuSwitch()
 
 	/**
+	 * Show titles and Show titles in the top bar are the administrator's: a person's save of either
+	 * is refused with 400 naming it; the administrator's is stored.
+	 *
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-is-a-theming-choice-of-the-administrator-req-tqmt-001
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 *
+	 * @return void
+	 */
+	public function testAPersonsTitlesAreRefused(): void {
+		foreach (['titles', 'topBarTitles'] as $key) {
+			$refused = $this->controller(uid: 'anna')->save(settings: [$key => false]);
+			$this->assertSame(expected: 400, actual: $refused->getStatus());
+			$this->assertSame(expected: $key, actual: $refused->getData()['field']);
+		}
+
+		$saved = $this->controller(uid: 'root', admin: true)->saveDefaults(settings: ['titles' => false, 'topBarTitles' => true]);
+		$this->assertSame(expected: 200, actual: $saved->getStatus());
+		$this->assertSame(expected: 'false', actual: $this->app['menu.titles']);
+		$this->assertSame(expected: 'true', actual: $this->app['menu.topBarTitles']);
+	}//end testAPersonsTitlesAreRefused()
+
+	/**
 	 * A person saves both create switches as their own keys; the former key is refused with 400.
 	 * Opening Menu settings moves an administrator's former create switch into both new ones.
 	 *

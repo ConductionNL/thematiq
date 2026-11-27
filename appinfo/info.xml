@@ -110,7 +110,7 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 		which quoted the grep command in order to WARN about the problem —
 		made it read ")[^". The warning reproduced the bug it described.
 	-->
-	<version>1.2.51-unstable.20261127151549</version>
+	<version>1.2.52-unstable.20261127203000</version>
 	<licence>EUPL-1.2</licence>
 	<author mail="info@conduction.nl" homepage="https://www.conduction.nl/">Conduction</author>
 	<namespace>Thematiq</namespace>
@@ -231,6 +231,9 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 	<repair-steps>
 		<post-migration>
 			<step>OCA\Thematiq\Repair\MigrateAppConfigKeys</step>
+			<!-- After MigrateAppConfigKeys, which moves show_menu_labels from the old app id first:
+			     the older menu labels option moves into menu.topBarTitles (apps-menu-show-titles). -->
+			<step>OCA\Thematiq\Repair\MigrateMenuLabelsToTopBarTitles</step>
 			<step>OCA\Thematiq\Repair\MigrateUserPreferences</step>
 			<step>OCA\Thematiq\Repair\MigrateStoredClassNames</step>
 			<!--

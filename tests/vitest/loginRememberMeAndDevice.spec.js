@@ -15,7 +15,7 @@ import path from 'node:path'
 
 const css = fs
 	.readFileSync(
-		path.resolve(__dirname, '..', '..', 'css/workplace-layout.css'),
+		path.resolve(__dirname, '..', '..', 'css/workplace-login.css'),
 		'utf8',
 	)
 	.replace(/\/\*[\s\S]*?\*\//g, '')

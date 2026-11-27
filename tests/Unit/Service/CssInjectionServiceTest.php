@@ -1721,26 +1721,66 @@ class CssInjectionServiceTest extends TestCase {
 	}//end testASetsLayoutDefaultsEmitBothStylesheets()
 
 	/**
-	 * A Deck page with the light layout links the shared app sheet and then
-	 * Deck's own after the workplace layout; a Files page links none of them.
+	 * Nextcloud's own menu labels load with Show titles in the top bar on and no workplace apps menu
+	 * on the page, and never next to the workplace menu.
+	 *
+	 * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
+	 *
+	 * @return void
+	 */
+	public function testMenuLabelsLoadOnlyWithoutTheWorkplaceMenu(): void {
+		$this->configureAppValues(overrides: ['token_set' => 'zuiddrecht', 'menu.topBarTitles' => 'true']);
+		$this->configureLayoutSet(meta: ['layout' => ['workplace_layout' => 'light', 'header_style' => 'workplace']]);
+
+		$styleLog = [];
+		$linkLog = [];
+		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject(context: 'user', appId: 'files');
+
+		$this->assertFalse(condition: $this->linksStylesheet(linkLog: $linkLog, file: 'show-menu-labels'));
+	}//end testMenuLabelsLoadOnlyWithoutTheWorkplaceMenu()
+
+	/**
+	 * With the classic header the labels load from `menu.topBarTitles`.
+	 *
+	 * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
+	 *
+	 * @return void
+	 */
+	public function testMenuLabelsLoadFromTopBarTitlesWithTheClassicHeader(): void {
+		$this->configureAppValues(overrides: ['token_set' => 'zuiddrecht', 'menu.topBarTitles' => 'true']);
+		$this->configureLayoutSet(meta: ['layout' => ['workplace_layout' => 'light']]);
+
+		$styleLog = [];
+		$linkLog = [];
+		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject(context: 'user', appId: 'files');
+
+		$this->assertTrue(condition: $this->linksStylesheet(linkLog: $linkLog, file: 'show-menu-labels'));
+	}//end testMenuLabelsLoadFromTopBarTitlesWithTheClassicHeader()
+
+	/**
+	 * A Deck page with the light layout links only Deck's own sheet, after the
+	 * workplace layout; a Files page links none of the app sheets.
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#scenario-deck-loads-its-sheets
 	 *
 	 * @return void
 	 */
 	public function testTheRenderedAppLinksItsOwnWorkplaceStylesheet(): void {
 		$this->configureAppValues(overrides: ['token_set' => 'zuiddrecht']);
-		$this->configureLayoutSet(meta: ['layout' => ['workplace_layout' => 'light']]);
+		$this->configureLayoutSet(meta: ['layout' => ['workplace_layout' => 'light', 'header_style' => 'workplace']]);
 
 		$styleLog = [];
 		$linkLog = [];
 		$this->buildService(styleLog: $styleLog, fontLog: $linkLog)->inject(context: 'user', appId: 'deck');
 
 		$layout = $this->indexStartingWith(log: $linkLog, prefix: '/custom_apps/thematiq/css/workplace-layout.css');
-		$common = $this->indexStartingWith(log: $linkLog, prefix: '/custom_apps/thematiq/css/workplace-apps/common.css');
 		$deck = $this->indexStartingWith(log: $linkLog, prefix: '/custom_apps/thematiq/css/workplace-apps/deck.css');
-		$this->assertGreaterThan(expected: $layout, actual: $common);
-		$this->assertGreaterThan(expected: $common, actual: $deck);
+		$this->assertGreaterThan(expected: $layout, actual: $deck);
+		$this->assertSame(
+			expected: ['/custom_apps/thematiq/css/workplace-apps/deck.css'],
+			actual: array_values(array_map(fn (string $url) => explode('?', $url)[0], preg_grep('#/css/workplace-apps/#', $linkLog)))
+		);
 
 		$styleLog = [];
 		$linkLog = [];

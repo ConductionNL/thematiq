@@ -1,32 +1,38 @@
 /**
- * Workplace app layer: what the Mail, Calendar and Deck boards need that a
- * stylesheet cannot do alone. Acts only while css/workplace-apps/common.css
- * is on the page (it sets `--thematiq-workplace-apps: 1`), so the light
- * layout's other apps and the default layout are left alone.
+ * The light layout's script: what the boards need that a stylesheet cannot
+ * do alone. Acts only while css/workplace-layout.css is on the page (it sets
+ * `--thematiq-light-layout: 1`), so the default layout is left alone.
  *
- * - The words the boards use where the app's own differ, as translated CSS
- *   variables the app sheets show in place of the app's text: Mail's empty
- *   reading pane reads "Select a conversation" (MlInbox), Calendar's new
- *   event button "New event" (ClMonth, ClWeek).
- * - Calendar's week view names a day "Mon 12" (ClWeek), where the locale
- *   format writes "Mon 23/11/2026": the weekday the app wrote, then the day
- *   of the month from the column's own date, in a span the sheet styles.
+ * On every page with the light layout:
+ * - The input in use: `data-thematiq-pointer` on the root while the person
+ *   works with a pointer, so the sheets can leave out a focus ring that an
+ *   app puts on a heading it focuses itself (a sidebar title, TbCard). A
+ *   key press removes it again.
+ * - The words mechanism: a board's word where the app's own differs, as a
+ *   translated, quoted CSS variable (`cssString()`) a sheet shows in place of
+ *   the app's text.
+ *
+ * Only on an app's own page, and only while that app's sheet is on it (the
+ * sheet sets `--thematiq-app-layer: <app>`):
+ * - Mail's empty reading pane reads "Select a conversation" (MlInbox).
+ * - Calendar's new event button reads "New event" (ClMonth, ClWeek), and its
+ *   week view names a day "Mon 12" (ClWeek), where the locale format writes
+ *   "Mon 23/11/2026": the weekday the app wrote, then the day of the month
+ *   from the column's own date, in a span the sheet styles.
  * - Deck's card faces as TbBoard draws them: the card's number next to its
  *   type label, the due date as a short date ("16 Oct") from the full date
  *   Deck keeps on the badge, and the number of open cards under the board
  *   title, each as a data attribute the Deck sheet shows. From the board's
- *   cards as Deck's API returns them: the lines "From mail: <sender>" and
- *   "Project: <name>" a description starts with, shown under the title, and
- *   a label named "Priority high" shown as the priority mark.
- * - The input in use: `data-thematiq-pointer` on the root while the person
- *   works with a pointer, so the sheets can leave out a focus ring that an
- *   app puts on a heading it focuses itself (Deck's card title, TbCard). A
- *   key press removes it again.
+ *   cards as Deck's API returns them (read on a Deck page only): the lines
+ *   "From mail: <sender>" and "Project: <name>" a description starts with,
+ *   shown under the title, and a label named "Priority high" shown as the
+ *   priority mark.
  *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
  * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+ * @spec openspec/changes/same-shell-every-page/specs/workplace-app-sheets/spec.md
  */
 ;(function thematiqWorkplaceAppsInit() {
 	var POINTER = 'data-thematiq-pointer'
@@ -403,30 +409,37 @@
 	}
 
 	/**
-	 * Set the words, mark the input in use, and keep Calendar's day names short.
+	 * Whether this page is the app's own page with the app's sheet on it.
+	 *
+	 * @param {string} app The app id: mail, calendar or deck.
+	 * @param {string} layer The app layer the page's sheets name.
+	 * @return {boolean} True on that app's page with its sheet.
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-app-sheets/spec.md
+	 */
+	function onAppPage(app, layer) {
+		return (
+			layer === app
+			&& document.querySelector(
+				'#content.app-' + app + ', #content-vue.app-' + app,
+			) !== null
+		)
+	}
+
+	/**
+	 * Mark the input in use and set an app's words, on every page with the
+	 * light layout; keep Calendar's day names short and Deck's card faces drawn
+	 * on their own pages only.
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-app-sheets/spec.md
 	 */
 	function thematiqWorkplaceAppsMain() {
 		var root = document.documentElement
-		if (
-			getComputedStyle(root)
-				.getPropertyValue('--thematiq-workplace-apps')
-				.trim() !== '1'
-		) {
+		var style = getComputedStyle(root)
+		if (style.getPropertyValue('--thematiq-light-layout').trim() !== '1') {
 			return
 		}
-
-		if (typeof t === 'function') {
-			root.style.setProperty(
-				'--thematiq-mail-empty-title',
-				cssString(t('thematiq', 'Select a conversation')),
-			)
-			root.style.setProperty(
-				'--thematiq-calendar-new-event',
-				cssString(t('thematiq', 'New event')),
-			)
-		}
+		var layer = style.getPropertyValue('--thematiq-app-layer').trim()
 
 		document.addEventListener(
 			'pointerdown',
@@ -443,13 +456,24 @@
 			true,
 		)
 
-		var calendar =
-			document.querySelector(
-				'#content.app-calendar, #content-vue.app-calendar',
-			) !== null
-		var deck =
-			document.querySelector('#content.app-deck, #content-vue.app-deck')
-			!== null
+		var mail = onAppPage('mail', layer)
+		var calendar = onAppPage('calendar', layer)
+		var deck = onAppPage('deck', layer)
+		if (typeof t === 'function') {
+			if (mail) {
+				root.style.setProperty(
+					'--thematiq-mail-empty-title',
+					cssString(t('thematiq', 'Select a conversation')),
+				)
+			}
+			if (calendar) {
+				root.style.setProperty(
+					'--thematiq-calendar-new-event',
+					cssString(t('thematiq', 'New event')),
+				)
+			}
+		}
+
 		if (!calendar && !deck) {
 			return
 		}

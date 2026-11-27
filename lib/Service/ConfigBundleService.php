@@ -113,7 +113,6 @@ class ConfigBundleService implements ConfigBundleServiceInterface {
 	 */
 	private const array CONFIG_FLAG_KEYS = [
 		'hideSlogan' => 'hide_slogan',
-		'showMenuLabels' => 'show_menu_labels',
 		'primaryDrivesComponents' => 'primary_drives_components',
 	];
 
@@ -161,6 +160,8 @@ class ConfigBundleService implements ConfigBundleServiceInterface {
 	 * The bundle's `config` section: the active set, the toggles, the exclusions and the schedule.
 	 *
 	 * @return array<string, mixed> The section.
+	 *
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 */
 	private function exportedConfig(): array {
 		$config = $this->appSettings->config;
@@ -168,7 +169,8 @@ class ConfigBundleService implements ConfigBundleServiceInterface {
 		return [
 			'tokenSet' => $config->getAppValue(Application::APP_ID, 'token_set', 'nextcloud'),
 			'hideSlogan' => ($config->getAppValue(Application::APP_ID, 'hide_slogan', '0') === '1'),
-			'showMenuLabels' => ($config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1'),
+			// The bundle key keeps its name and carries "Show titles in the top bar" (apps-menu-show-titles).
+			'showMenuLabels' => (new AppMenuTopBarTitles(config: $config))->isOn(),
 			'primaryDrivesComponents' => ($config->getAppValue(Application::APP_ID, 'primary_drives_components', '0') === '1'),
 			'layoutOptions' => $this->exportLayoutOptions(),
 			'disabledApps' => $this->appSettings->appThemingService->getDisabledApps(),
@@ -402,7 +404,7 @@ class ConfigBundleService implements ConfigBundleServiceInterface {
 		}
 
 		$resolved = ['tokenSet' => $this->validateConfigTokenSet(config: $config, errors: $errors)];
-		$flags = $this->flagValues(config: $config, flags: array_keys(self::CONFIG_FLAG_KEYS));
+		$flags = $this->flagValues(config: $config, flags: array_merge(array_keys(self::CONFIG_FLAG_KEYS), ['showMenuLabels']));
 		$resolved += $this->validateConfigFlags(values: $flags, errors: $errors);
 		$resolved['layoutOptions'] = LayoutOptionValues::fromBundle(options: ($config['layoutOptions'] ?? null), errors: $errors);
 		$resolved['disabledApps'] = $this->validateDisabledApps(config: $config, errors: $errors);
@@ -693,12 +695,17 @@ class ConfigBundleService implements ConfigBundleServiceInterface {
 	 * @return void
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 */
 	private function applyConfig(array $config): void {
 		$this->appSettings->config->setAppValue(Application::APP_ID, 'token_set', $config['tokenSet']);
 		foreach (self::CONFIG_FLAG_KEYS as $flag => $key) {
 			$this->appSettings->config->setAppValue(Application::APP_ID, $key, (string)(int)$config[$flag]);
 		}
+
+		// `showMenuLabels` is "Show titles in the top bar" now: menu.topBarTitles, the older key gone.
+		(new AppMenuTopBarTitles(config: $this->appSettings->config))->set(on: (bool)$config['showMenuLabels']);
+		$this->appSettings->config->deleteAppValue(Application::APP_ID, AppMenuTopBarTitles::LEGACY_KEY);
 
 		foreach ($config['layoutOptions'] as $key => $value) {
 			$this->appSettings->config->setAppValue(Application::APP_ID, $key, $value);

@@ -1272,7 +1272,9 @@
 			}
 		}
 
-		var toggleRow = function (key, helpKey, locked) {
+		// A switch row; `noteKey` adds a note under the help (Show payoff's
+		// "Only with Show titles." while titles are off, REQ-TQMT-004).
+		var toggleRow = function (key, helpKey, locked, noteKey) {
 			var labelId = BLOCK + '-label-' + key
 			return h('div', { class: BLOCK + '__toggle' }, [
 				h('span', { class: BLOCK + '__toggle-text' }, [
@@ -1282,6 +1284,12 @@
 						text: t(key),
 					}),
 					h('span', { class: BLOCK + '__help', text: t(helpKey) }),
+					noteKey
+						? h('span', {
+								class: BLOCK + '__help ' + BLOCK + '__note',
+								text: t(noteKey),
+							})
+						: null,
 				]),
 				swatch(
 					form[key] === true,
@@ -1343,7 +1351,17 @@
 					{ class: BLOCK + '__section', 'aria-label': t('look') },
 					[
 						toggleRow('tiles', 'tilesHelp', false),
-						toggleRow('payoff', 'payoffHelp', false),
+						// Show titles, then Show titles in the top bar, then
+						// Show payoff, which needs titles: disabled while they
+						// are off, its value kept (apps-menu-show-titles).
+						toggleRow('titles', 'titlesHelp', false),
+						toggleRow('topBarTitles', 'topBarTitlesHelp', false),
+						toggleRow(
+							'payoff',
+							'payoffHelp',
+							form.titles === false,
+							form.titles === false ? 'payoffNeedsTitles' : null,
+						),
 					],
 				),
 			)
@@ -1449,6 +1467,7 @@
 				'data-icon-size': form.iconSize,
 				'data-icon-colour': form.iconColour,
 				'data-tiles': form.tiles ? 'true' : 'false',
+				'data-titles': form.titles === false ? 'false' : 'true',
 			})
 			apps.slice(0, 4).forEach(function (entry) {
 				sample.appendChild(
@@ -1466,15 +1485,18 @@
 									+ '")'
 								: null,
 						}),
-						h('span', { class: BLOCK + '__sample-text' }, [
-							h('span', { text: entry.name }),
-							form.payoff && entry.description
-								? h('span', {
-										class: BLOCK + '__sub',
-										text: entry.description,
-									})
-								: null,
-						]),
+						// Without titles the preview shows the icons alone.
+						form.titles === false
+							? null
+							: h('span', { class: BLOCK + '__sample-text' }, [
+									h('span', { text: entry.name }),
+									form.payoff && entry.description
+										? h('span', {
+												class: BLOCK + '__sub',
+												text: entry.description,
+											})
+										: null,
+								]),
 					]),
 				)
 			})
@@ -1485,7 +1507,12 @@
 					form.iconColour === 'neutral'
 						? t('colourNeutral')
 						: t('colourBrand'),
-				payoff: form.payoff ? t('withPayoff') : t('withoutPayoff'),
+				payoff:
+					form.titles === false
+						? t('withoutTitles')
+						: form.payoff
+							? t('withPayoff')
+							: t('withoutPayoff'),
 				tiles: form.tiles ? t('withTiles') : t('withoutTiles'),
 			})
 			panel.appendChild(

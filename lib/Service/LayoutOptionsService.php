@@ -111,6 +111,14 @@ class LayoutOptionsService {
 	public const HEADER_WORKPLACE_STYLESHEET = 'header-workplace';
 
 	/**
+	 * The stylesheet of the light layout, under `css/`. The page loads the
+	 * light layout's script with it ({@see HeaderUserService}).
+	 *
+	 * @var string
+	 */
+	public const LIGHT_LAYOUT_STYLESHEET = 'workplace-layout';
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.

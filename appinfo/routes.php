@@ -61,7 +61,6 @@ return \OCA\Thematiq\Middleware\Support\ApiPathAliases::withVersionedAliases([
 		['name' => 'scheduledSwitch#create', 'url' => '/settings/scheduled-switches', 'verb' => 'POST'],
 		['name' => 'scheduledSwitch#cancel', 'url' => '/settings/scheduled-switches/{id}', 'verb' => 'DELETE'],
 		['name' => 'settings#setSloganSetting', 'url' => '/settings/slogan', 'verb' => 'POST'],
-		['name' => 'settings#setMenuLabelsSetting', 'url' => '/settings/menulabels', 'verb' => 'POST'],
 		['name' => 'layout#save', 'url' => '/settings/layout', 'verb' => 'POST'],
 		['name' => 'settings#setPrimaryDrivesComponentsSetting', 'url' => '/settings/primary-drives-components', 'verb' => 'POST'],
 		['name' => 'settings#setSaveConfirmSettings', 'url' => '/settings/save-confirmations', 'verb' => 'POST'],

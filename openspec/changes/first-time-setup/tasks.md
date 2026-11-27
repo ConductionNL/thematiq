@@ -99,11 +99,11 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
 
 ## 5. End to end
 
-- [ ] 5.1 `tests/e2e/spec-coverage/first-time-setup.spec.ts` (`@e2e` tags per scenario): in setup, read
+- [x] 5.1 `tests/e2e/spec-coverage/first-time-setup.spec.ts` (`@e2e` tags per scenario): in setup, read
       and remove the setup-relevant app values and `setup.*` through `occPrefix()`, and put every one
       back in a `finally`, with `_theme-state` restoring the active set and core theming; withdraw the
       confirmation of `amsterdam` when it is not applied, and restore it after.
-- [ ] 5.2 Walk: the welcome on the dashboard and in Files; a non-admin sees nothing and the page has no
+- [x] 5.2 Walk: the welcome on the dashboard and in Files; a non-admin sees nothing and the page has no
       `setup_status`; walking the steps and Later writes nothing and the wizard comes back; Skip and
       nothing on the next page; a configured instance shows nothing; status is 403 for a non-admin.
 - [ ] 5.3 Full run: choose `amsterdam`, Next disabled until the statement; keep the theme switch on;
@@ -112,15 +112,29 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
       favicon are the set's (`_core-theming.ts`), an anonymous login page has no slogan, a non-admin
       sees the workplace top bar and 3 columns; the step offers no Style choice; Start the apps menu
       walkthrough opens the menu with the tour.
-- [ ] 5.4 The version card reads "Completed by admin on"; Set up again opens the wizard with the stored
-      set; Later leaves setup done.
+- [x] 5.4 The version card reads "Completed by admin on"; Set up again opens the wizard with the stored
+      set; Later leaves setup done. (#E2E: `first-time setup: the wizard` in first-time-setup.spec.ts, live
+      4/4 on a sandbox NC34 + MariaDB: 5.1 fixture through occ with every value put back and amsterdam's
+      confirmation withdrawn and restored; 5.2 welcome on Dashboard and Files, Later writes nothing and
+      it returns, non-admin sees nothing / no setup_status / 403, Skip; 5.4 the card and Set up again.
+      5.3 is covered except the logo and favicon checks, the set without a workplace top bar, and the
+      tour opening after "Start the apps menu walkthrough" (red on this sandbox: the menu's state had no
+      walkthrough after the reload; the stored hand-off is pinned by vitest). 5.3 stays open for those.)
 
 ## 6. Live check
 
 - [ ] 6.1 On a fresh reference instance: enable thematiq, open the dashboard as admin and run the
       wizard through; open as a non-admin; screenshots against the TqSetup boards; the switch on the
-      Theming settings page.
-- [ ] 6.2 On an instance configured by an earlier version, upgrade and confirm nothing opens and the
-      version card reads the earlier-version state.
-- [ ] 6.3 Speed: an admin page with setup done and a non-admin page carry no wizard script; record
-      the bundle size in the PR.
+      Theming settings page. (Walked live on a fresh NC 34 sandbox, #2180: Welcome to Done with
+      Gemeente Amsterdam, Next held until the statement, Apply sets the set, the Nextcloud primary
+      follows (#004699) and `setup.completed`; non-admin sees nothing. Fixed there: the house style step
+      offered no cards and "All 0 sets" while the cold catalogue loaded, and a pick left another set's
+      radio checked. Still open: the comparison with the TqSetup boards.)
+- [x] 6.2 On an instance configured by an earlier version, upgrade and confirm nothing opens and the
+      version card reads the earlier-version state. (live lane, NC 34 sandbox: thematiq 1.2.10 from main
+      with Gemeente Amsterdam set through its own settings API, upgraded in place to development by
+      `occ upgrade`: status configured, not completed; the dashboard opens nothing and requests no
+      wizard script; the version card reads "Set up by an earlier version", "Token set amsterdam".)
+- [x] 6.3 Speed: an admin page with setup done and a non-admin page carry no wizard script; record
+      the bundle size in the PR. (live lane, fresh NC 34 sandbox: after setup, Files and Theming load 0
+      wizard requests; a non-admin's dashboard 0; `js/vendor/setupWizard.js` 913,649 B, 218,026 B gzip.)

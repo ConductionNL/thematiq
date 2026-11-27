@@ -120,11 +120,12 @@ test.describe('the menu shape on every icon of the menu and the bar', () => {
 			(el) => getComputedStyle(el).backgroundColor,
 		)
 		await contacts(page).hover()
-		const hovered = await contacts(page).evaluate(
-			(el) => getComputedStyle(el).backgroundColor,
-		)
-		expect(hovered).not.toBe('rgba(0, 0, 0, 0)')
-		expect(hovered).not.toBe(rest)
+		// Nextcloud's button animates background-color (0.1 s), so read it once the
+		// transition has run: straight after hover() it is still transparent.
+		const hovered = () =>
+			contacts(page).evaluate((el) => getComputedStyle(el).backgroundColor)
+		await expect.poll(hovered).not.toBe('rgba(0, 0, 0, 0)')
+		await expect.poll(hovered).not.toBe(rest)
 	})
 
 	// @e2e apps-menu-settings::square-icons-everywhere-in-the-menu

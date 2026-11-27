@@ -29,38 +29,63 @@ namespace OCA\Thematiq\Service;
 final class LayoutStylesheets {
 
 	/**
-	 * The apps the light layout draws with a stylesheet of their own, under `css/workplace-apps/`.
+	 * The apps with content of their own that a board draws, under `css/workplace-apps/`: what every
+	 * app shares (the navigation rows, list rows, panels and the rail) is in `css/workplace-layout.css`,
+	 * and the top bar's brand fallback in `css/header-workplace.css`, so only these three pay a sheet more.
 	 *
 	 * @var string[]
 	 */
 	public const array APP_LAYERS = ['mail', 'calendar', 'deck'];
 
 	/**
-	 * The stylesheets the light layout adds for one app, only on that app's own pages: with the
-	 * workplace header first `workplace-apps/brand`, the organisation and the app name at the start
-	 * of the bar, then `workplace-apps/common`, what the three apps share, then the app's own sheet.
+	 * The stylesheet the light layout adds for one app, only on that app's own pages: the app's own
+	 * sheet under `css/workplace-apps/`, with what exists in that app alone.
 	 *
 	 * @param array<string, mixed> $resolved The resolved options.
 	 * @param string|null $appId The rendered app.
 	 *
-	 * @return array<int, string> No stylesheet, or two or three.
+	 * @return array<int, string> No stylesheet, or the app's own.
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#requirement-what-stays-app-specific-is-listed-req-tqss-006
 	 */
 	public function forApp(array $resolved, ?string $appId): array {
 		if ($resolved['workplaceLayout'] !== LayoutOptionsService::LAYOUT_LIGHT || in_array($appId, self::APP_LAYERS, true) === false) {
 			return [];
 		}
 
-		$files = [];
-		if ($resolved['headerStyle'] === LayoutOptionValues::HEADER_STYLE_WORKPLACE) {
-			$files[] = 'workplace-apps/brand';
+		return ['workplace-apps/' . $appId];
+	}//end forApp()
+
+	/**
+	 * The stylesheet of the light layout for the login page and the guest pages that share `#body-login`.
+	 *
+	 * @var string
+	 */
+	public const string LOGIN_STYLESHEET = 'workplace-login';
+
+	/**
+	 * The page's stylesheets with the light layout's login sheet right after the layout's own, on every
+	 * render that is not a signed-in user's page (the login page, a guest, error or public page, or a
+	 * context Nextcloud adds later). A user's page never shows the login card, so it does not load it.
+	 *
+	 * @param array<int, string> $files The stylesheets {@see self::forOptions()} gave the page.
+	 * @param array<string, mixed> $resolved The resolved options.
+	 * @param string $context The render context.
+	 *
+	 * @return array<int, string> The stylesheets.
+	 *
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#requirement-no-page-pays-more-layout-css-than-mail-paid-req-tqss-007
+	 */
+	public function withContext(array $files, array $resolved, string $context): array {
+		$at = array_search(LayoutOptionsService::LIGHT_LAYOUT_STYLESHEET, $files, true);
+		if ($context === 'user' || $at === false || $resolved['workplaceLayout'] !== LayoutOptionsService::LAYOUT_LIGHT) {
+			return $files;
 		}
 
-		$files[] = 'workplace-apps/common';
-		$files[] = 'workplace-apps/' . $appId;
+		array_splice($files, ((int)$at + 1), 0, [self::LOGIN_STYLESHEET]);
 		return $files;
-	}//end forApp()
+	}//end withContext()
 
 	/**
 	 * The stylesheets of the workplace layout, the brand stripe and the navigation, in that order.
@@ -91,7 +116,7 @@ final class LayoutStylesheets {
 			return [];
 		}
 
-		$files = ['workplace-layout'];
+		$files = [LayoutOptionsService::LIGHT_LAYOUT_STYLESHEET];
 		if ($resolved['loginWatermark'] === false) {
 			$files[] = 'login-watermark-off';
 		}
