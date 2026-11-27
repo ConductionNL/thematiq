@@ -1749,21 +1749,21 @@ if ($_['mockUi'] === true) {
 							<figure class="thematiq-environment-panel__sample">
 								<div class="thematiq-environment-panel__screen" aria-hidden="true">
 									<div class="thematiq-environment-panel__stripe thematiq-env-marker--development"><span class="thematiq-env-marker--development"><?php p($l->t('Development environment')); ?></span></div>
-									<div class="thematiq-environment-panel__bar"><span>Dossiq</span></div>
+									<div class="thematiq-environment-panel__bar"><span class="thematiq-environment-panel__logo"></span><span class="thematiq-environment-panel__app">Dossiq</span><span class="thematiq-environment-panel__search"></span><span class="thematiq-environment-panel__avatar"></span></div><div class="thematiq-environment-panel__ground"></div>
 								</div>
 								<figcaption><strong><?php p($l->t('Development environment')); ?></strong><span><?php p($l->t('Tab: {prefix} Cases - Dossiq', ['prefix' => $l->t('[Development]')])); ?></span></figcaption>
 							</figure>
 							<figure class="thematiq-environment-panel__sample">
 								<div class="thematiq-environment-panel__screen" aria-hidden="true">
 									<div class="thematiq-environment-panel__stripe thematiq-env-marker--test"><span class="thematiq-env-marker--test"><?php p($l->t('Test environment')); ?></span></div>
-									<div class="thematiq-environment-panel__bar"><span>Dossiq</span></div>
+									<div class="thematiq-environment-panel__bar"><span class="thematiq-environment-panel__logo"></span><span class="thematiq-environment-panel__app">Dossiq</span><span class="thematiq-environment-panel__search"></span><span class="thematiq-environment-panel__avatar"></span></div><div class="thematiq-environment-panel__ground"></div>
 								</div>
 								<figcaption><strong><?php p($l->t('Test environment')); ?></strong><span><?php p($l->t('Tab: {prefix} Cases - Dossiq', ['prefix' => $l->t('[Test]')])); ?></span></figcaption>
 							</figure>
 							<figure class="thematiq-environment-panel__sample">
 								<div class="thematiq-environment-panel__screen" aria-hidden="true">
 									<div class="thematiq-environment-panel__stripe thematiq-env-marker--acceptance"><span class="thematiq-env-marker--acceptance"><?php p($l->t('Acceptance environment')); ?></span></div>
-									<div class="thematiq-environment-panel__bar"><span>Dossiq</span></div>
+									<div class="thematiq-environment-panel__bar"><span class="thematiq-environment-panel__logo"></span><span class="thematiq-environment-panel__app">Dossiq</span><span class="thematiq-environment-panel__search"></span><span class="thematiq-environment-panel__avatar"></span></div><div class="thematiq-environment-panel__ground"></div>
 								</div>
 								<figcaption><strong><?php p($l->t('Acceptance environment')); ?></strong><span><?php p($l->t('Tab: {prefix} Cases - Dossiq', ['prefix' => $l->t('[Acceptance]')])); ?></span></figcaption>
 							</figure>
