@@ -22,6 +22,42 @@
 const fs = require('fs')
 
 /**
+ * Where the block that opens at a brace ends: just past its closing brace.
+ *
+ * @param {string} css The stylesheet.
+ * @param {number} open The index of the opening brace.
+ * @return {number} The index after the closing brace.
+ */
+function blockEnd(css, open) {
+	let depth = 1
+	let j = open + 1
+	while (j < css.length && depth > 0) {
+		depth += css[j] === '{' ? 1 : (css[j] === '}' ? -1 : 0)
+		j++
+	}
+	return j
+}
+
+/**
+ * The top-level blocks of a stylesheet: `{ prelude, body }` each.
+ *
+ * @param {string} css The stylesheet.
+ * @return {Array<object>} The blocks.
+ */
+function blocks(css) {
+	const out = []
+	let i = 0
+	let open = css.indexOf('{')
+	while (open !== -1) {
+		const end = blockEnd(css, open)
+		out.push({ prelude: css.slice(i, open).trim(), body: css.slice(open + 1, end - 1) })
+		i = end
+		open = css.indexOf('{', i)
+	}
+	return out
+}
+
+/**
  * The top-level blocks of a stylesheet that mention a text, nested blocks
  * filtered the same way.
  *
@@ -30,36 +66,13 @@ const fs = require('fs')
  * @return {string} The kept rules.
  */
 function keep(css, needle) {
-	let out = ''
-	let i = 0
-	while (i < css.length) {
-		const open = css.indexOf('{', i)
-		if (open === -1) {
-			break
+	return blocks(css).map(({ prelude, body }) => {
+		if (!prelude.startsWith('@')) {
+			return prelude.includes(needle) ? prelude + '{' + body + '}' : ''
 		}
-		let depth = 1
-		let j = open + 1
-		while (j < css.length && depth > 0) {
-			if (css[j] === '{') {
-				depth++
-			} else if (css[j] === '}') {
-				depth--
-			}
-			j++
-		}
-		const prelude = css.slice(i, open).trim()
-		const body = css.slice(open + 1, j - 1)
-		if (prelude.startsWith('@')) {
-			const inner = body.indexOf('{') === -1 ? '' : keep(body, needle)
-			if (inner !== '') {
-				out += prelude + '{' + inner + '}'
-			}
-		} else if (prelude.includes(needle)) {
-			out += prelude + '{' + body + '}'
-		}
-		i = j
-	}
-	return out
+		const inner = body.includes('{') ? keep(body, needle) : ''
+		return inner === '' ? '' : prelude + '{' + inner + '}'
+	}).join('')
 }
 
 /**

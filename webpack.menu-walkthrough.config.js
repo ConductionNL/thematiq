@@ -31,8 +31,8 @@ module.exports = {
 	},
 	resolve: {
 		alias: {
-			// CnWalkthrough needs NcButton only (src/nextcloudVue.js).
-			'@nextcloud/vue$': path.join(__dirname, 'src', 'nextcloudVue.js'),
+			// Every component's board-look rules; the walkthrough needs none (src/walkthroughBoardLook.js).
+			[require.resolve('@conduction/nextcloud-vue/dist/esm/utils/boardLookSheet.js')]: path.join(__dirname, 'src', 'walkthroughBoardLook.js'),
 			// Single-file components this app has no loader for (src/walkthroughIcons.js).
 			'vue-material-design-icons/Close.vue$': path.join(__dirname, 'src', 'icons', 'Close.js'),
 			'vue-material-design-icons/ChevronLeft.vue$': path.join(__dirname, 'src', 'icons', 'ChevronLeft.js'),

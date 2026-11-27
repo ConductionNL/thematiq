@@ -25,16 +25,16 @@ vi.mock('@nextcloud/l10n', () => ({
 	t: (app, text) => text,
 	register: vi.fn(),
 }))
-vi.mock('@nextcloud/vue', () => ({
-	NcButton: {
-		props: ['variant', 'alignment'],
-		emits: ['click'],
-		render() {
-			const { h } = require('vue')
-			return h('button', { onClick: (e) => this.$emit('click', e) }, [this.$slots.default && this.$slots.default()])
-		},
+const button = {
+	props: ['variant', 'alignment'],
+	emits: ['click'],
+	render() {
+		const { h } = require('vue')
+		return h('button', { onClick: (e) => this.$emit('click', e) }, [this.$slots.default && this.$slots.default()])
 	},
-}))
+}
+vi.mock('@nextcloud/vue/components/NcButton', () => ({ default: button }))
+vi.mock('@nextcloud/vue', () => ({ NcButton: button }))
 vi.mock('vue-material-design-icons/Close.vue', () => ({ default: { render: () => null } }))
 vi.mock('vue-material-design-icons/ChevronLeft.vue', () => ({ default: { render: () => null } }))
 vi.mock('vue-material-design-icons/ChevronRight.vue', () => ({ default: { render: () => null } }))
