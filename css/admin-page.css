@@ -697,11 +697,13 @@ html[data-thematiq-open-panel]:not([data-thematiq-open-panel='layout'])
 	background: var(--color-main-background);
 }
 
+/* TqTheming draws the sample's status pill in purple, the colour every Tq
+ * board gives a case in progress. */
 .thematiq-set-sample__pill {
 	padding: 3px 10px;
 	border-radius: 12px;
-	background: var(--color-primary-element-light);
-	color: var(--color-primary-element-light-text);
+	background: var(--nl-color-purple-light, var(--color-primary-element-light));
+	color: var(--nl-color-purple-text, var(--color-primary-element-light-text));
 	font-size: 13px;
 	font-weight: 600;
 }
@@ -940,7 +942,10 @@ html[data-thematiq-open-panel]:not([data-thematiq-open-panel='layout'])
 		--nldesign-component-status-badge-neutral-background-color,
 		var(--color-background-hover)
 	);
-	color: var(--nldesign-component-status-badge-neutral-color, var(--color-main-text));
+	color: var(
+		--nldesign-component-status-badge-neutral-color,
+		var(--color-main-text)
+	);
 	font-size: 13px;
 	font-weight: 600;
 }
