@@ -189,7 +189,7 @@ export const SetupWizard = {
 		return { state }
 	},
 	async mounted() {
-		await this.loadSets()
+		await this.loadCatalogue()
 	},
 	computed: {
 		steps() {
@@ -345,7 +345,7 @@ export const SetupWizard = {
 		 * @return {Promise<void>}
 		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
 		 */
-		async loadSets() {
+		async loadCatalogue() {
 			try {
 				const [sets, licences] = await Promise.all([
 					request('GET', '/settings/tokensets'),

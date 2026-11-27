@@ -189,7 +189,7 @@ describe('the wizard', () => {
 
 		answers['/index.php/apps/thematiq/settings/tokensets'] = { ok: true, status: 200, data: { tokenSets: [{ id: 'nextcloud', name: 'Nextcloud' }, { id: 'zuiddrecht', name: 'Zuiddrecht' }] } }
 		answers['/index.php/apps/thematiq/settings/tokensets/licences'] = { ok: true, status: 200, data: { sets: LICENCES } }
-		await vm.loadSets()
+		await vm.loadCatalogue()
 		expect(vm.state.setsLoaded).toBe(true)
 		expect(vm.state.sets).toHaveLength(2)
 		const loaded = texts(vm.houseStyle())
@@ -217,7 +217,7 @@ describe('the wizard', () => {
 	it('stops saying loading when reading the sets fails', async () => {
 		const vm = await wizard()
 		vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('offline'))))
-		await expect(vm.loadSets()).rejects.toThrow('offline')
+		await expect(vm.loadCatalogue()).rejects.toThrow('offline')
 		expect(vm.state.setsLoaded).toBe(true)
 	})
 
