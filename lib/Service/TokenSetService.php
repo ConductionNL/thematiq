@@ -169,6 +169,9 @@ class TokenSetService {
 			}
 		}
 
+		// Keep what this read audited for the next read after a cache flush.
+		$this->audits->stored?->write(appPath: $appPath);
+
 		// Sort alphabetically by name.
 		usort($tokenSets, fn ($a, $b) => strcasecmp($a['name'], $b['name']));
 
@@ -430,6 +433,11 @@ class TokenSetService {
 	 * Without a `memcache.local` Nextcloud hands out a NullCache, and the
 	 * audits then run on every read, as they did before this cache.
 	 *
+	 * On a local cache miss (after a PHP-FPM restart, or once the hour is up)
+	 * the warnings come from AuditWarningsStore when the app's files are
+	 * unchanged, so the first read after a deploy does not audit every set
+	 * again (~3 s for the shipped catalogue).
+	 *
 	 * @param ListedTokenSet $set The set: its id, app path, merged manifest metadata and entry so far.
 	 *
 	 * @return array<int, mixed> The set's warnings, contrast first.
@@ -454,10 +462,18 @@ class TokenSetService {
 
 		$cached = $this->warningsCache->get(key: $key);
 		if (is_array($cached) === true) {
+			$this->audits->stored?->put(key: $key, warnings: $cached, known: true);
 			return $cached;
 		}
 
-		$warnings = $this->auditShippedSet(set: $set);
+		// The local cache empties on every PHP-FPM restart: take the warnings
+		// app data kept for the same inputs before auditing again.
+		$warnings = $this->audits->stored?->get(appPath: $set->appPath, key: $key);
+		if ($warnings === null) {
+			$warnings = $this->auditShippedSet(set: $set);
+			$this->audits->stored?->put(key: $key, warnings: $warnings);
+		}
+
 		$this->warningsCache->set(key: $key, value: $warnings, ttl: self::WARNINGS_CACHE_TTL);
 
 		return $warnings;
