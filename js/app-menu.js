@@ -2642,7 +2642,10 @@
 				if (menu.walkthrough && menu.walkthrough.immediate && waffle !== null) {
 					menu.walkthrough.immediate = false
 					if (!open && document.querySelector(SETUP_WIZARD) === null) {
-						waffle.click()
+						// Outside this scan, so the watcher sees the menu draw.
+						setTimeout(function () {
+							waffle.click()
+						}, 0)
 					}
 				}
 				maybeWalkthrough(menu, open && document.querySelector('.app-menu__grid') !== null)

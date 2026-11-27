@@ -193,3 +193,64 @@ describe('the workplace bar sheet', () => {
 		}
 	})
 })
+
+describe('the Replay walkthrough entry in the account menu', () => {
+	const MENU =
+		'<header id="header"><div class="header-end">'
+		+ '<nav id="user-menu" class="header-menu account-menu">'
+		+ '<button class="header-menu__trigger" aria-expanded="true"></button>'
+		+ '<div id="header-menu-user-menu"><ul class="account-menu__list">'
+		+ '<li class="list-item__wrapper account-menu-entry" data-v-1=""><div class="list-item"><a id="settings" href="/settings/user"><img src="/x.svg"><div class="list-item-content__main"><div class="list-item-content__name">Personal settings</div></div></a></div></li>'
+		+ '<li class="list-item__wrapper account-menu-entry" data-v-1=""><div class="list-item"><a id="help" href="/settings/help" target="_self"><img src="/h.svg"><div class="list-item-content__main"><div class="list-item-content__name">Help &amp; privacy</div></div></a></div></li>'
+		+ '<li class="list-item__wrapper account-menu-entry" data-v-1=""><div class="list-item"><a id="logout" href="/logout"><div class="list-item-content__main"><div class="list-item-content__name">Log out</div></div></a></div></li>'
+		+ '</ul></div></nav></div></header>'
+
+	function menuState(walkthrough) {
+		global.OCP = {
+			InitialState: {
+				loadState: (app, key, fallback) =>
+					app === 'thematiq' && key === 'app-menu' ? { walkthrough } : fallback,
+			},
+		}
+	}
+
+	const names = () => Array.from(document.querySelectorAll('#header-menu-user-menu li')).map((li) => li.textContent.trim())
+
+	afterEach(() => {
+		document.body.innerHTML = ''
+		delete global.OCP
+		delete window.thematiqAppMenuReplay
+	})
+
+	it('puts the entry directly under Help, looking like its neighbours, and starts the tour', async () => {
+		document.body.innerHTML = MENU
+		menuState({ replayLabel: 'Replay walkthrough' })
+		window.thematiqAppMenuReplay = vi.fn()
+		await loadScript()
+		expect(names()).toEqual(['Personal settings', 'Help & privacy', 'Replay walkthrough', 'Log out'])
+		const entry = document.getElementById('thematiq-replay-walkthrough')
+		expect(entry.closest('li').getAttribute('data-v-1')).toBe('')
+		expect(entry.querySelector('img')).toBeNull()
+		entry.click()
+		expect(window.thematiqAppMenuReplay).toHaveBeenCalledTimes(1)
+		expect(document.querySelector('#user-menu .header-menu__trigger').getAttribute('aria-expanded')).toBe('true')
+	})
+
+	it('puts the entry last when Help is not there, and back after a re-render', async () => {
+		document.body.innerHTML = MENU
+		document.getElementById('help').closest('li').remove()
+		menuState({ replayLabel: 'Replay walkthrough' })
+		await loadScript()
+		expect(names()).toEqual(['Personal settings', 'Log out', 'Replay walkthrough'])
+		document.querySelector('#thematiq-replay-walkthrough').closest('li').remove()
+		await new Promise((resolve) => setTimeout(resolve, 0))
+		expect(names()).toContain('Replay walkthrough')
+	})
+
+	it('draws no entry without the tour state (the classic style)', async () => {
+		document.body.innerHTML = MENU
+		menuState(undefined)
+		await loadScript()
+		expect(document.getElementById('thematiq-replay-walkthrough')).toBeNull()
+	})
+})

@@ -27,7 +27,7 @@
  * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-apps-menu-has-a-walkthrough-with-one-step-per-feature-req-tqwt-001
  */
 
-import { translate as t } from '@nextcloud/l10n'
+import { register, translate as t } from '@nextcloud/l10n'
 import { createApp, h } from 'vue'
 import CnWalkthrough from '@conduction/nextcloud-vue/dist/esm/components/CnWalkthrough/CnWalkthrough.vue.js'
 import {
@@ -44,6 +44,10 @@ export const TOUR_ID = 'apps-menu'
 export const SEEN_KEY = data.walkthrough.completionConfigKey
 export const HOST_CLASS = 'thematiq-menu-walkthrough'
 export const REDUCED_MOTION_CLASS = 'thematiq-menu-walkthrough--reduced-motion'
+
+// Runs on this page: the engine keeps one machine per app id, so each run
+// takes its own id.
+let runs = 0
 
 /**
  * The host's own rules. Inside the menu's popover, which is moved with a
@@ -173,6 +177,31 @@ export function labels() {
 }
 
 /**
+ * The engine's own strings (its counter and live region speak in the
+ * `nextcloud-vue` catalogue, which a Nextcloud page does not carry), filled
+ * from thematiq's catalogue: "Step 1 of 7" reads "Stap 1 van 7" in Dutch.
+ *
+ * @return {void}
+ * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-is-accessible-req-tqwt-007
+ */
+export function registerEngineStrings() {
+	const strings = {}
+	for (const key of ['Step {current} of {total}', 'Step {n} of {total}', 'Walkthrough']) {
+		const value = t(APP_ID, key)
+		if (value !== key) {
+			strings[key] = value
+		}
+	}
+	if (Object.keys(strings).length > 0 && typeof register === 'function') {
+		try {
+			register('nextcloud-vue', strings)
+		} catch {
+			/* the English source stays */
+		}
+	}
+}
+
+/**
  * Whether the person asked for less motion.
  *
  * @return {boolean}
@@ -262,8 +291,6 @@ export function createMenuWalkthrough(options = {}) {
 		: (ref) => (typeof parts[ref] === 'boolean'
 			? parts[ref]
 			: document.querySelector('[data-walkthrough-id="' + ref + '"]') !== null)
-	let runs = 0
-
 	/**
 	 * Mount a fresh engine for one run, over the steps whose part is drawn
 	 * now: an optional step whose part is absent is left out, so the counter
@@ -388,6 +415,7 @@ export function createMenuWalkthrough(options = {}) {
 }
 
 if (typeof window !== 'undefined' && !window.thematiqMenuWalkthrough) {
+	registerEngineStrings()
 	window.thematiqMenuWalkthrough = createMenuWalkthrough()
 	window.dispatchEvent(new CustomEvent('thematiq:menu-walkthrough-ready'))
 }
