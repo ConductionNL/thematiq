@@ -160,7 +160,7 @@ jobs:
       actions: write
       issues: write
       pull-requests: write
-    uses: ConductionNL/.github/.github/workflows/quality.yml@main
+    uses: ConductionNL/.github/.github/workflows/quality.yml@feat/quality-phpunit-shards
     with:
       app-name: thematiq
       php-version: "8.3"
@@ -250,7 +250,8 @@ jobs:
       # coverage leg, which runs the suite a second time for the merge base,
       # hit the 45-minute cap (PR #1960). Until the shared workflow can shard
       # PHPUnit, these jobs do what it did, split over shards.
-      enable-phpunit: false
+      enable-phpunit: true
+      phpunit-shards: 6
       # thematiq ships ZERO .vue files — nc-vue is a build-only devDependency
       # used for icon generation. That is precisely why this app NEEDS e2e
       # rather than being exempt from it: thematiq's entire product surface is
