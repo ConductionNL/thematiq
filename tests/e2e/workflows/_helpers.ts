@@ -116,39 +116,69 @@ export async function openTokenTab(page: Page, tab: string): Promise<void> {
 	).toHaveClass(/\bactive\b/)
 }
 
-/** Fetch the persisted custom token overrides from the backend (GET /settings/overrides). */
+/**
+ * The `?tokenSet=` query that names whose overrides a call reads or writes.
+ *
+ * Overrides are stored per design system, not per set: every nldesign set
+ * (Amsterdam, Zuiddrecht, ...) shares one file, the stock set has its own.
+ * Without a name the call follows the ACTIVE set, so a spec that switches sets
+ * and restores overrides afterwards must name the set it captured them for, or
+ * it restores the wrong file and leaves its writes in the other one.
+ */
+function overridesQuery(tokenSet?: string): string {
+	return tokenSet === undefined ? '' : '?tokenSet=' + encodeURIComponent(tokenSet)
+}
+
+/**
+ * Fetch the persisted custom token overrides from the backend (GET /settings/overrides).
+ *
+ * @param page The Playwright page.
+ * @param token The request token.
+ * @param tokenSet The set whose overrides to read; the active set when left out.
+ */
 export async function getOverrides(
 	page: Page,
 	token: string,
+	tokenSet?: string,
 ): Promise<Record<string, string>> {
-	return await page.evaluate(async (t) => {
-		const r = await fetch(OC.generateUrl('/apps/thematiq/settings/overrides'), {
+	return await page.evaluate(async ({ t, q }) => {
+		const r = await fetch(OC.generateUrl('/apps/thematiq/settings/overrides') + q, {
 			headers: { requesttoken: t },
 		})
 		const j = await r.json()
 		return j.overrides || {}
-	}, token)
+	}, { t: token, q: overridesQuery(tokenSet) })
 }
 
-/** Persist a full override map (POST /settings/overrides). Fully replaces the file. */
+/**
+ * Persist a full override map (POST /settings/overrides). Fully replaces the file.
+ *
+ * @param page The Playwright page.
+ * @param token The request token.
+ * @param overrides The complete map to store.
+ * @param tokenSet The set whose overrides to write; the active set when left out.
+ */
 export async function setOverrides(
 	page: Page,
 	token: string,
 	overrides: Record<string, string>,
+	tokenSet?: string,
 ): Promise<void> {
 	const res = await page.evaluate(
-		async ({ t, ov }) => {
+		async ({ t, ov, ts }) => {
 			const r = await fetch(
 				OC.generateUrl('/apps/thematiq/settings/overrides'),
 				{
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json', requesttoken: t },
-					body: JSON.stringify({ overrides: ov }),
+					body: JSON.stringify(
+						ts === null ? { overrides: ov } : { overrides: ov, tokenSet: ts },
+					),
 				},
 			)
 			return { status: r.status, body: await r.json() }
 		},
-		{ t: token, ov: overrides },
+		{ t: token, ov: overrides, ts: tokenSet ?? null },
 	)
 	expect(res.status, `setOverrides should 200, got ${res.status}`).toBe(200)
 	expect(res.body.status).toBe('ok')
