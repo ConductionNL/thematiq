@@ -31,7 +31,7 @@
 		"test:lasuite-override": "node scripts/generate-lasuite-tokens.mjs --override --check",
 		"test:lasuite-bridge-coverage": "node tests/css/check-lasuite-bridge-coverage.js",
 		"test:lasuite-dark-ramp": "node tests/css/check-lasuite-dark-ramp.js",
-		"build": "npm run build:fonts && npm run build:fonts:marianne && npm run build:icons && npm run build:code-editor && npm run build:menu-walkthrough",
+		"build": "npm run build:fonts && npm run build:fonts:marianne && npm run build:icons && npm run build:code-editor && npm run build:menu-walkthrough && npm run build:setup-wizard",
 		"build:fonts": "node scripts/build-fonts.js",
 		"test:fonts": "node scripts/build-fonts.js --check",
 		"build:fonts:marianne": "node scripts/build-fonts-marianne.js",
@@ -82,7 +82,7 @@
 	},
 	"devDependencies": {
 		"@axe-core/playwright": "4.14.0",
-		"@conduction/nextcloud-vue": "^2.235.0",
+		"@conduction/nextcloud-vue": "^2.236.0",
 		"@cyclonedx/cyclonedx-npm": "^7.0.1",
 		"@eslint/js": "^10.0.0",
 		"@nextcloud/prettier-config": "^1.2.0",

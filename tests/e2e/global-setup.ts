@@ -145,6 +145,27 @@ export default async function globalSetup(config: FullConfig): Promise<void> {
 	// The apps menu walkthrough would cover the menu in every spec that opens it.
 	await markMenuTourSeen(page)
 
+	// The first-time setup wizard (change first-time-setup) opens over every admin page of an
+	// instance nobody set up yet, which a fresh CI instance is. Record a skip, which stores only
+	// `setup.skipped` and changes nothing else; first-time-setup.spec.ts clears it where it tests
+	// the wizard itself.
+	await page
+		.evaluate(async () => {
+			const OC = (window as unknown as { OC?: { requestToken: string; generateUrl: (path: string) => string } }).OC
+			if (OC === undefined) return
+			const headers = { requesttoken: OC.requestToken, 'OCS-APIRequest': 'true' }
+			const status = await fetch(OC.generateUrl('/apps/thematiq/api/setup/status'), { headers })
+			if (!status.ok) return
+			const body = await status.json()
+			if (body.completed || body.skipped || body.configured) return
+			await fetch(OC.generateUrl('/apps/thematiq/api/setup/action/skip'), {
+				method: 'POST',
+				headers: { ...headers, 'Content-Type': 'application/json' },
+				body: '{}',
+			})
+		})
+		.catch(() => undefined)
+
 	await context.storageState({ path: STORAGE_STATE })
 	await browser.close()
 
