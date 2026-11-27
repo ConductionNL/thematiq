@@ -69,22 +69,38 @@ function url(path) {
  * @return {Promise<{ok: boolean, status: number, data: object}>}
  */
 export async function request(method, path, body) {
-	const headers = { requesttoken: (window.OC && window.OC.requestToken) || '', 'OCS-APIRequest': 'true' }
-	if (body !== undefined && !(body instanceof FormData)) {
+	const json = body !== undefined && !(body instanceof FormData)
+	const headers = { requesttoken: (window.OC || {}).requestToken || '', 'OCS-APIRequest': 'true' }
+	if (json) {
 		headers['Content-Type'] = 'application/json'
 	}
-	const response = await fetch(url(path), {
-		method,
-		headers,
-		body: body === undefined ? undefined : (body instanceof FormData ? body : JSON.stringify(body)),
-	})
-	let data = {}
+	const response = await fetch(url(path), { method, headers, body: json ? JSON.stringify(body) : body })
+	return { ok: response.ok, status: response.status, data: await jsonOf(response) }
+}
+
+/**
+ * The JSON an answer carries, or an empty object.
+ *
+ * @param {Response} response The answer.
+ * @return {Promise<object>}
+ */
+async function jsonOf(response) {
 	try {
-		data = await response.json()
+		return (await response.json()) || {}
 	} catch (e) {
-		data = {}
+		return {}
 	}
-	return { ok: response.ok, status: response.status, data: data || {} }
+}
+
+/**
+ * The reason a refused answer gives, else the fallback.
+ *
+ * @param {object} answer The answer of request().
+ * @param {string} fallback What to say otherwise.
+ * @return {string}
+ */
+function reasonOf(answer, fallback) {
+	return answer.data.message || answer.data.error || fallback
 }
 
 /**
@@ -229,20 +245,27 @@ export const SetupWizard = {
 			if (stepId === 'house-style' && !houseStyleReady(this.state.choices, this.state.licences)) {
 				return t(APP_ID, 'Confirm that you may use this house style first.')
 			}
-			if (stepId !== 'apps-menu') {
-				return true
-			}
+			return stepId === 'apps-menu' ? this.apply() : true
+		},
+
+		/**
+		 * Apply: send every choice once. A refusal, or a part that failed, keeps step 5 open with why.
+		 *
+		 * @return {Promise<true|string>} True when every part was applied, else the reason.
+		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
+		 */
+		async apply() {
 			const answer = await request('POST', '/api/setup/action/apply', applyRequest(this.state.choices, this.state.licences))
 			// A write that failed half-way answers with the parts (applied, failed) and an error status.
 			if (!answer.ok && !Array.isArray(answer.data.failed)) {
-				return answer.data.message || answer.data.error || t(APP_ID, 'Apply did not work: {status}', { status: answer.status })
+				return reasonOf(answer, t(APP_ID, 'Apply did not work: {status}', { status: answer.status }))
 			}
 			this.state.result = answer.data
-			if (answer.data.completed !== true) {
-				const failed = (answer.data.failed || []).map((id) => RAIL[id] ? RAIL[id]() : id).join(', ')
-				return t(APP_ID, 'Not applied: {parts}. Press Apply to try again.', { parts: failed })
+			if (answer.data.completed === true) {
+				return true
 			}
-			return true
+			const failed = partsOf(answer.data).filter((part) => !part.applied).map((part) => RAIL[part.id]()).join(', ')
+			return t(APP_ID, 'Not applied: {parts}. Press Apply to try again.', { parts: failed })
 		},
 
 		/**
@@ -271,16 +294,24 @@ export const SetupWizard = {
 			form.append('file', file)
 			const answer = await request('POST', '/settings/tokensets/upload', form)
 			if (!answer.ok) {
-				this.state.uploadMessage = answer.data.message || answer.data.error || t(APP_ID, 'The set could not be uploaded.')
+				this.state.uploadMessage = reasonOf(answer, t(APP_ID, 'The set could not be uploaded.'))
 				return
 			}
-			const sets = await request('GET', '/settings/tokensets')
-			this.state.sets = Array.isArray(sets.data.tokenSets) ? sets.data.tokenSets : this.state.sets
-			const id = answer.data.id || (answer.data.tokenSet && answer.data.tokenSet.id)
-			if (id) {
-				this.state.choices.tokenSet = id
-			}
+			await this.loadSets()
+			this.state.choices.tokenSet = answer.data.id || this.state.choices.tokenSet
 			this.state.uploadMessage = t(APP_ID, 'Uploaded. It is applied when you click Apply.')
+		},
+
+		/**
+		 * Read the selectable sets again.
+		 *
+		 * @return {Promise<void>}
+		 */
+		async loadSets() {
+			const sets = await request('GET', '/settings/tokensets')
+			if (Array.isArray(sets.data.tokenSets)) {
+				this.state.sets = sets.data.tokenSets
+			}
 		},
 
 		welcome() {
@@ -297,14 +328,14 @@ export const SetupWizard = {
 		},
 
 		licenceLine(set) {
-			const entry = this.state.licences.find((item) => item.id === set.id)
 			if (set.id === NEXTCLOUD_DEFAULT) {
 				return t(APP_ID, 'No house style, only the apps menu')
 			}
-			if (entry && entry.licence && entry.licence.restricted === true) {
-				return entry.confirmation ? t(APP_ID, 'Restricted licence, confirmed') : t(APP_ID, 'Restricted licence, confirmation needed')
+			const entry = this.state.licences.find((item) => item.id === set.id) || {}
+			if ((entry.licence || {}).restricted !== true) {
+				return t(APP_ID, 'Free to use')
 			}
-			return t(APP_ID, 'Free to use')
+			return entry.confirmation ? t(APP_ID, 'Restricted licence, confirmed') : t(APP_ID, 'Restricted licence, confirmation needed')
 		},
 
 		/**
@@ -379,7 +410,7 @@ export const SetupWizard = {
 			return h('div', { class: 'tq-setup__licence', role: 'group', 'aria-labelledby': 'tq-setup-licence-title' }, [
 				h('h3', { id: 'tq-setup-licence-title' }, t(APP_ID, 'This house style belongs to {holder}', { holder: licence.holder || entry.name })),
 				h('p', t(APP_ID, 'Its licence allows the logo and house style only for the holder or with its permission.')),
-				h('p', { class: 'tq-setup__hint' }, [licence.package || '', licence.version ? ' ' + licence.version : '', licence.id ? ' · ' + licence.id : ''].join('')),
+				h('p', { class: 'tq-setup__hint' }, [licence.package, licence.version, licence.id].filter(Boolean).join(' · ')),
 				h('div', { class: 'tq-setup__check' }, [
 					h('input', {
 						id: 'tq-setup-licence-statement',
@@ -439,12 +470,25 @@ export const SetupWizard = {
 					h('input', { id: 'tq-setup-slogan', type: 'checkbox', class: 'checkbox', checked: choices.hideSlogan, onChange: (event) => { choices.hideSlogan = event.target.checked === true } }),
 					h('label', { for: 'tq-setup-slogan' }, t(APP_ID, 'Hide the Nextcloud slogan')),
 				]),
-				h('div', { class: 'tq-setup__login-preview', 'aria-hidden': 'true', style: { borderTopColor: choices.loginStyle === 'house-style' ? ((this.chosenSet.theming || {}).primary_color || 'var(--color-primary-element)') : '#0082c9' } }, [
-					h('span', { class: 'tq-setup__login-name' }, choices.loginStyle === 'house-style' ? (this.chosenSet.name || '') : 'Nextcloud'),
-					choices.hideSlogan ? null : h('span', { class: 'tq-setup__hint' }, t(APP_ID, 'a safe home for all your data')),
-					h('span', { class: 'tq-setup__login-field' }),
-					h('span', { class: 'tq-setup__login-field' }),
-				]),
+				this.loginPreview(),
+			])
+		},
+
+		/**
+		 * A small login card in the chosen style.
+		 *
+		 * @return {object} The vnode.
+		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
+		 */
+		loginPreview() {
+			const choices = this.state.choices
+			const house = choices.loginStyle === 'house-style'
+			const colour = house ? (this.chosenSet.theming || {}).primary_color : 'var(--color-primary-element)'
+			return h('div', { class: 'tq-setup__login-preview', 'aria-hidden': 'true', style: { borderTopColor: colour || 'var(--color-primary-element)' } }, [
+				h('span', { class: 'tq-setup__login-name' }, house ? this.chosenSet.name : 'Nextcloud'),
+				choices.hideSlogan ? null : h('span', { class: 'tq-setup__hint' }, t(APP_ID, 'a safe home for all your data')),
+				h('span', { class: 'tq-setup__login-field' }),
+				h('span', { class: 'tq-setup__login-field' }),
 			])
 		},
 

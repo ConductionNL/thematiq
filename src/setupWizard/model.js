@@ -36,24 +36,35 @@ export const MENU_RANGES = { columns: [3, 5], rowsAboveFold: [1, 3] }
  * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
  */
 export function initialChoices(status) {
-	const current = (status && status.current) || {}
-	const set = (status && (status.completed || status.configured)) ? current : {}
-	const menu = current.menu || {}
+	const known = status || {}
+	const current = known.current || {}
+	const stored = (known.completed || known.configured) ? current : {}
 	return {
-		tokenSet: typeof current.tokenSet === 'string' && current.tokenSet !== '' ? current.tokenSet : NEXTCLOUD_DEFAULT,
+		tokenSet: current.tokenSet || NEXTCLOUD_DEFAULT,
 		confirmRestricted: false,
-		nextcloudThemeFollows: set.nextcloudThemeFollows === undefined ? true : set.nextcloudThemeFollows === true,
+		nextcloudThemeFollows: stored.nextcloudThemeFollows !== false,
 		loginStyle: current.loginStyle === 'nextcloud' ? 'nextcloud' : 'house-style',
 		hideSlogan: current.hideSlogan === true,
-		menu: {
-			enabled: menu.enabled !== false,
-			columns: clamp(menu.columns, MENU_RANGES.columns, 4),
-			rowsAboveFold: clamp(menu.rowsAboveFold, MENU_RANGES.rowsAboveFold, 2),
-			payoff: menu.payoff !== false,
-			// One "Show Create" switch on the board; it sets both create switches (quick-actions-toggles).
-			showCreate: menu.showCreateButton !== false || menu.showCreateRow !== false,
-			showExternalApps: menu.showExternalApps !== false,
-		},
+		menu: menuChoices(current.menu || {}),
+	}
+}
+
+/**
+ * The apps menu choices from the stored menu: on unless switched off, the defaults in range.
+ *
+ * @param {object} menu The stored menu choices.
+ * @return {object} The menu choices.
+ * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+ */
+export function menuChoices(menu) {
+	return {
+		enabled: menu.enabled !== false,
+		columns: clamp(menu.columns, MENU_RANGES.columns, 4),
+		rowsAboveFold: clamp(menu.rowsAboveFold, MENU_RANGES.rowsAboveFold, 2),
+		payoff: menu.payoff !== false,
+		// One "Show Create" switch on the board; it sets both create switches (quick-actions-toggles).
+		showCreate: menu.showCreateButton !== false || menu.showCreateRow !== false,
+		showExternalApps: menu.showExternalApps !== false,
 	}
 }
 

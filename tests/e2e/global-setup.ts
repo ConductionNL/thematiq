@@ -157,7 +157,7 @@ export default async function globalSetup(config: FullConfig): Promise<void> {
 			const status = await fetch(OC.generateUrl('/apps/thematiq/api/setup/status'), { headers })
 			if (!status.ok) return
 			const body = await status.json()
-			if (body.completed || body.skipped || body.configured) return
+			if ([body.completed, body.skipped, body.configured].some(Boolean)) return
 			await fetch(OC.generateUrl('/apps/thematiq/api/setup/action/skip'), {
 				method: 'POST',
 				headers: { ...headers, 'Content-Type': 'application/json' },
