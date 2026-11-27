@@ -3321,9 +3321,12 @@ html[data-thematiq-open-panel]
 	min-height: 38px;
 	margin: 0;
 	padding: 8px 12px;
-	border: 1px solid transparent;
+	/* TqTokenSet draws every tab with a light border and the inactive ones on
+	 * grey; the nldesign button layer painted them white without !important. */
+	border: 1px solid var(--color-border-dark) !important;
+	border-bottom: 0 !important;
 	border-radius: 8px 8px 0 0;
-	background: var(--color-background-dark);
+	background: var(--color-background-dark) !important;
 	color: var(--color-main-text);
 	font-size: 14px;
 	font-weight: 400;
@@ -3332,8 +3335,9 @@ html[data-thematiq-open-panel]
 
 #nldesign-settings .thematiq-panel .thematiq-set-panel__tab[aria-selected='true'] {
 	border-color: var(--color-border) var(--color-border)
-		var(--color-main-background);
-	background: var(--color-main-background);
+		var(--color-main-background) !important;
+	border-bottom: 1px solid var(--color-main-background) !important;
+	background: var(--color-main-background) !important;
 	font-weight: 700;
 }
 
@@ -3513,7 +3517,7 @@ html[data-thematiq-open-panel]
 }
 
 #thematiq-page-header .thematiq-set-panel__status--dark {
-	background: var(--nl-color-teal-light, var(--color-background-hover));
+	background: var(--nl-color-teal-light, var(--color-background-hover)) !important;
 	color: var(--nl-color-teal-text, var(--color-main-text));
 }
 
@@ -3526,7 +3530,8 @@ html[data-thematiq-open-panel]
 	.thematiq-panel
 	.thematiq-panel__aside
 	.thematiq-set-panel__aside-title {
-	color: var(--nl-color-grey-text, var(--color-text-maxcontrast));
+	/* TqTokenSet draws the aside titles muted (#5e6168), not in body text. */
+	color: var(--color-text-maxcontrast) !important;
 	font-size: 15px !important;
 	font-weight: 600 !important;
 }
