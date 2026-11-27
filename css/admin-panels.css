@@ -1614,10 +1614,20 @@ html[data-thematiq-open-panel]
 	align-items: flex-start;
 }
 
+/* TqAiAssistent "How an employee sees it": the assistant panel as the board
+ * draws it, 380px wide, a 15px head with the assistant mark and a close
+ * mark, 14px bubbles with 12px corners, a 40px ask field and the approval
+ * mark centred on the ground. */
+#nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-heading {
+	font-size: 20px !important;
+	line-height: 1.2;
+}
+
 #nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample {
 	display: flex;
-	flex: 0 1 382px;
+	flex: 0 1 380px;
 	flex-direction: column;
+	min-width: 0;
 	overflow: hidden;
 	border: 1px solid var(--color-border) !important;
 	border-radius: 12px;
@@ -1628,71 +1638,100 @@ html[data-thematiq-open-panel]
 #nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-head {
 	display: flex;
 	align-items: center;
-	height: 40px;
-	padding: 0 12px;
+	gap: 10px;
+	padding: 12px 14px;
 	border-bottom: 1px solid var(--color-border);
 	background: transparent !important;
-	font-size: 14px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-mark {
+	flex: none;
+	fill: var(--color-primary-element);
+}
+
+#nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-title {
+	flex: 1;
+	font-size: 15px;
 	font-weight: 700;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-close {
+	flex: none;
+	fill: var(--color-text-maxcontrast);
 }
 
 #nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-chat {
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
-	padding: 12px;
+	padding: 14px;
 	background: transparent !important;
 }
 
 #nldesign-settings .thematiq-panel .thematiq-assistant-panel__bubble {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-	padding: 8px 10px;
-	border-radius: 8px;
+	display: block;
+	align-self: flex-start;
+	box-sizing: border-box;
+	max-width: 80%;
+	padding: 10px 12px;
+	border-radius: 12px;
 	background: var(--color-background-hover) !important;
-	font-size: 13px;
+	color: var(--color-main-text);
+	font-size: 14px;
 	line-height: 1.45;
 }
 
 #nldesign-settings .thematiq-panel .thematiq-assistant-panel__bubble--user {
 	align-self: flex-end;
 	background: var(--color-primary-element-light) !important;
+	color: var(--color-primary-element-light-text);
 }
 
 #nldesign-settings .thematiq-panel .thematiq-assistant-panel__bubble span {
+	display: block;
+	margin-bottom: 2px;
 	font-size: 12px;
-	font-weight: 700;
+	font-weight: 600;
 }
 
 #nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-ask {
-	margin: 0 12px 12px;
-	padding: 8px 10px;
+	display: flex;
+	box-sizing: border-box;
+	align-items: center;
+	height: 40px;
+	margin: 0 14px 12px;
+	padding: 0 12px;
 	border: 1px solid var(--color-border-maxcontrast);
 	border-radius: 8px;
 	background: transparent !important;
 	color: var(--color-text-maxcontrast);
-	font-size: 13px;
+	font-size: 14px;
 }
 
 #nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-foot {
-	padding: 10px 12px;
+	display: flex;
+	justify-content: center;
+	padding: 10px 14px;
 	border-top: 1px solid var(--color-border);
-	background: transparent !important;
-	font-size: 12px;
+	background: var(
+		--nldesign-component-content-surface-background-color,
+		var(--color-background-hover)
+	) !important;
+	font-size: 13px;
 }
 
 #nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-text {
 	display: flex;
-	flex: 1 1 220px;
+	flex: 1 1 260px;
 	flex-direction: column;
-	gap: 8px;
+	gap: 10px;
+	min-width: 0;
 	background: transparent !important;
 }
 
 #nldesign-settings .thematiq-panel .thematiq-assistant-panel__sample-text p {
 	margin: 0;
-	font-size: 14px !important;
+	font-size: 15px !important;
 	line-height: 1.5 !important;
 	color: var(--nl-color-grey-text, var(--color-main-text));
 }

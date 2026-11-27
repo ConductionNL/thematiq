@@ -1060,12 +1060,16 @@ if ($_['mockUi'] === true) {
 				</section>
 				<section class="thematiq-card thematiq-panel__card thematiq-fonts-panel__card" aria-labelledby="thematiq-assistant-sample-title">
 					<div class="thematiq-css-panel__head">
-						<h2 id="thematiq-assistant-sample-title" class="thematiq-panel__card-title"><?php p($l->t('How an employee sees it')); ?></h2>
+						<h2 id="thematiq-assistant-sample-title" class="thematiq-panel__card-title thematiq-assistant-panel__sample-heading"><?php p($l->t('How an employee sees it')); ?></h2>
 						<span class="thematiq-panel__fact-hint"><?php p($l->t('The assistant panel of a Conduction app, with the mark at the bottom.')); ?></span>
 					</div>
 					<div class="thematiq-assistant-panel__sample-row">
 						<div class="thematiq-assistant-panel__sample" role="img" aria-label="<?php p($l->t('Preview of the assistant panel')); ?>">
-							<div class="thematiq-assistant-panel__sample-head"><?php p($l->t('Assistant')); ?></div>
+							<div class="thematiq-assistant-panel__sample-head">
+								<svg class="thematiq-assistant-panel__sample-mark" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4L11.5 9.5L17 12L11.5 14.5L9 20L6.5 14.5L1 12L6.5 9.5L9 4M9 8.83L8 11L5.83 12L8 13L9 15.17L10 13L12.17 12L10 11L9 8.83M19 9L17.74 6.26L15 5L17.74 3.75L19 1L20.25 3.75L23 5L20.25 6.26L19 9M19 23L17.74 20.26L15 19L17.74 17.75L19 15L20.25 17.75L23 19L20.25 20.26L19 23Z" /></svg>
+								<span class="thematiq-assistant-panel__sample-title"><?php p($l->t('Assistant')); ?></span>
+								<svg class="thematiq-assistant-panel__sample-close" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
+							</div>
 							<div class="thematiq-assistant-panel__sample-chat">
 								<div class="thematiq-assistant-panel__bubble thematiq-assistant-panel__bubble--user"><span><?php p($l->t('You')); ?></span><?php p($l->t('Summarise the advice on the lighting of the cycle path.')); ?></div>
 								<div class="thematiq-assistant-panel__bubble"><span><?php p($l->t('Assistant')); ?></span><?php p($l->t('The advice recommends 42 energy-saving street lights along the whole cycle path. The work takes about six weeks.')); ?></div>
