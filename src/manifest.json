@@ -24,5 +24,48 @@
         }
       ]
     }
+  },
+  "setup": {
+    "enabled": true,
+    "version": 1,
+    "completionConfigKey": "setup.completed",
+    "steps": [
+      {
+        "id": "welcome",
+        "type": "component",
+        "title": "Welcome",
+        "cancelLabel": "Later"
+      },
+      {
+        "id": "house-style",
+        "type": "component",
+        "title": "House style",
+        "cancelLabel": "Later"
+      },
+      {
+        "id": "nextcloud-theme",
+        "type": "component",
+        "title": "Nextcloud theme",
+        "cancelLabel": "Later"
+      },
+      {
+        "id": "login-page",
+        "type": "component",
+        "title": "Login page",
+        "cancelLabel": "Later"
+      },
+      {
+        "id": "apps-menu",
+        "type": "component",
+        "title": "Apps menu",
+        "cancelLabel": "Later"
+      },
+      {
+        "id": "done",
+        "type": "component",
+        "title": "Done",
+        "submitLabel": "Close"
+      }
+    ]
   }
 }

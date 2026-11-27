@@ -38,6 +38,7 @@
 		"build:icons": "node scripts/build-icons.js",
 		"build:code-editor": "webpack --config webpack.code-editor.config.js",
 		"build:menu-walkthrough": "webpack --config webpack.menu-walkthrough.config.js",
+		"build:setup-wizard": "webpack --config webpack.setup-wizard.config.js",
 		"lint": "eslint js src tests/vitest tests/css tests/l10n",
 		"lint:fix": "eslint --fix js src tests/vitest tests/css tests/l10n",
 		"stylelint": "stylelint \"css/**/*.{css,scss}\"",
