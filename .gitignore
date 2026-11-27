@@ -78,6 +78,7 @@
 !/js/environment-marker.js
 !/js/header-user.js
 !/js/header-brand.js
+!/js/setup-wizard-loader.js
 !/js/header-create.js
 !/js/workplace-apps.js
 !/js/app-menu.js
