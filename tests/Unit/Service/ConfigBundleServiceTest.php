@@ -832,7 +832,7 @@ class ConfigBundleServiceTest extends TestCase {
 		$this->assertSame(expected: $seededConfig['token_set'], actual: $this->appConfig['token_set']);
 		$this->assertSame(expected: $seededConfig['hide_slogan'], actual: $this->appConfig['hide_slogan']);
 		// The older menu labels option comes back as "Show titles in the top bar" (apps-menu-show-titles).
-		$this->assertSame(expected: ($seededConfig['show_menu_labels'] === '1' ? 'true' : 'false'), actual: $this->appConfig['menu.topBarTitles']);
+		$this->assertSame(expected: json_encode($seededConfig['show_menu_labels'] === '1'), actual: $this->appConfig['menu.topBarTitles']);
 		$this->assertArrayNotHasKey(key: 'show_menu_labels', array: $this->appConfig);
 		$this->assertSame(expected: $seededConfig['disabled_apps'], actual: $this->appConfig['disabled_apps']);
 		$this->assertSame(expected: $seededConfig['upstream_freshness_enabled'], actual: $this->appConfig['upstream_freshness_enabled']);

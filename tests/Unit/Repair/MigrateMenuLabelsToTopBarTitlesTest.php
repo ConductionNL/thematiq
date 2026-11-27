@@ -105,7 +105,8 @@ final class MigrateMenuLabelsToTopBarTitlesTest extends TestCase {
 	public function testNothingToMove(): void {
 		$this->runStep();
 		$this->assertSame(expected: [], actual: $this->app);
-		$this->assertSame(expected: 'Move the menu labels option into Show titles in the top bar', actual: (new MigrateMenuLabelsToTopBarTitles(config: $this->config(), logger: $this->createMock(originalClassName: LoggerInterface::class)))->getName());
+		$step = new MigrateMenuLabelsToTopBarTitles(config: $this->config(), logger: $this->createMock(originalClassName: LoggerInterface::class));
+		$this->assertSame(expected: 'Move the menu labels option into Show titles in the top bar', actual: $step->getName());
 	}//end testNothingToMove()
 
 	/**

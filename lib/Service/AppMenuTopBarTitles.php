@@ -42,11 +42,25 @@ class AppMenuTopBarTitles {
 	public const KEY = 'topBarTitles';
 
 	/**
+	 * The workplace bar's stylesheet (`LayoutOptionsService::HEADER_WORKPLACE_STYLESHEET`).
+	 *
+	 * @var string
+	 */
+	public const HEADER_WORKPLACE_STYLESHEET = 'header-workplace';
+
+	/**
 	 * The older app value it replaces.
 	 *
 	 * @var string
 	 */
 	public const LEGACY_KEY = 'show_menu_labels';
+
+	/**
+	 * The app value of the menu setting (`AppMenuSettings::PREFIX` and the key).
+	 *
+	 * @var string
+	 */
+	public const APP_KEY = 'menu.topBarTitles';
 
 	/**
 	 * Constructor.
@@ -84,25 +98,63 @@ class AppMenuTopBarTitles {
 	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 */
 	public function set(bool $on): void {
-		$this->config->setAppValue(Application::APP_ID, AppMenuSettings::PREFIX . self::KEY, ($on === true ? 'true' : 'false'));
+		$this->config->setAppValue(Application::APP_ID, self::APP_KEY, (string)json_encode($on));
 	}//end set()
 
 	/**
 	 * The value `menu.topBarTitles` holds, or null when it holds none.
 	 *
 	 * @return bool|null The stored value.
+	 *
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 */
 	public function stored(): ?bool {
-		$raw = (string)$this->config->getAppValue(Application::APP_ID, AppMenuSettings::PREFIX . self::KEY, '');
-		$value = json_decode($raw, true);
+		$value = json_decode((string)$this->config->getAppValue(Application::APP_ID, self::APP_KEY, ''), true);
+		if (is_bool($value) === false) {
+			return null;
+		}
 
-		return is_bool($value) === true ? $value : null;
+		return $value;
 	}//end stored()
+
+	/**
+	 * The administrator's value as the menu settings read it while `menu.topBarTitles` holds none:
+	 * the older option, or nothing.
+	 *
+	 * @return array<string, bool> `['topBarTitles' => bool]`, or empty.
+	 *
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 */
+	public function legacyDefault(): array {
+		$legacy = $this->legacy();
+		if ($legacy === null || $this->stored() !== null) {
+			return [];
+		}
+
+		return [self::KEY => $legacy];
+	}//end legacyDefault()
+
+	/**
+	 * Remove the older option once the administrator saved `topBarTitles`, so it never stands in again.
+	 *
+	 * @param array<mixed> $values The values the administrator saved.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 */
+	public function forgetLegacyOnceChosen(array $values): void {
+		if (array_key_exists(self::KEY, $values) === true) {
+			$this->config->deleteAppValue(Application::APP_ID, self::LEGACY_KEY);
+		}
+	}//end forgetLegacyOnceChosen()
 
 	/**
 	 * The older app value, or null when it holds none.
 	 *
 	 * @return bool|null True for '1', false for '0'.
+	 *
+	 * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
 	 */
 	public function legacy(): ?bool {
 		return match ((string)$this->config->getAppValue(Application::APP_ID, self::LEGACY_KEY, '')) {
@@ -123,11 +175,11 @@ class AppMenuTopBarTitles {
 	 * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
 	 */
 	public function workplaceMenu(array $sheets): bool {
-		if (in_array(LayoutOptionsService::HEADER_WORKPLACE_STYLESHEET, $sheets, true) === false) {
+		if (in_array(self::HEADER_WORKPLACE_STYLESHEET, $sheets, true) === false) {
 			return false;
 		}
 
-		$style = json_decode((string)$this->config->getAppValue(Application::APP_ID, AppMenuSettings::PREFIX . 'style', ''), true);
+		$style = json_decode((string)$this->config->getAppValue(Application::APP_ID, 'menu.style', ''), true);
 
 		return $style !== 'classic';
 	}//end workplaceMenu()
