@@ -113,6 +113,11 @@ async function appears(dialog: Locator): Promise<boolean> {
 test.describe('apply without a reload', () => {
 	let originalTokenSet = 'nextcloud'
 	let originalOverrides: Record<string, string> = {}
+	// The flow applies a shipped set and the stock set through the dialog, and
+	// each apply may write that set's overrides. Overrides live per design
+	// system (all nldesign sets share one file), so capture both files by name.
+	let shippedOverrides: Record<string, string> = {}
+	let stockOverrides: Record<string, string> = {}
 	let originalTheming: ThemingSnapshot = {
 		primary_color: '',
 		background_color: '',
@@ -124,7 +129,9 @@ test.describe('apply without a reload', () => {
 		await openTheming(page)
 		const token = await requestToken(page)
 		originalTokenSet = await getTokenSet(page, token)
-		originalOverrides = await getOverrides(page, token)
+		originalOverrides = await getOverrides(page, token, originalTokenSet)
+		shippedOverrides = await getOverrides(page, token, SHIPPED_SET)
+		stockOverrides = await getOverrides(page, token, 'nextcloud')
 		originalTheming = await getCoreTheming(page, token)
 		await setTokenSet(page, token, 'nextcloud')
 		// A shipped brand is only in the dropdown once something makes it
@@ -138,7 +145,11 @@ test.describe('apply without a reload', () => {
 		const page = await browser.newPage()
 		await openTheming(page)
 		const token = await requestToken(page)
-		await setOverrides(page, token, originalOverrides)
+		// By name, in this order: the shipped and stock files first, the
+		// original set's last, so where two share a file the original wins.
+		await setOverrides(page, token, shippedOverrides, SHIPPED_SET)
+		await setOverrides(page, token, stockOverrides, 'nextcloud')
+		await setOverrides(page, token, originalOverrides, originalTokenSet)
 		await setTokenSet(page, token, originalTokenSet)
 		await setCoreTheming(page, token, originalTheming)
 		if (offer !== null) {
