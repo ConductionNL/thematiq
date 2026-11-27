@@ -25,12 +25,12 @@ Alt+P on their own. Every other Conduction app teaches its screens with the next
   explains while it is open.
 - **It starts by itself the first time you open the menu.** Not on page load: the tour waits until you
   open the menu yourself, and then starts with the menu open.
-- **You can replay it.** From Menu settings ("Replay the tour") and from your user menu, next to
-  Nextcloud's Help entry.
+- **You can replay it.** From Menu settings ("Replay walkthrough"), from under Help in your account
+  menu, and for administrators from thematiq's version card.
 - **New features get their own step.** Every step names the thematiq version that brought it. After an
   upgrade that adds a menu feature, the next time you open the menu you get a short tour of only the new
   steps, not the whole tour again.
-- **Short copy in English and Dutch**, in the Conduction voice.
+- **Copy in English and Dutch** as the boards write it.
 - **The nextcloud-vue engine, not a hand-written one.** The tour is `CnWalkthrough` with
   `useWalkthrough`, built into one script bundle that loads only when a tour is due or asked for, so a
   page without a tour carries no Vue.
@@ -46,9 +46,10 @@ Alt+P on their own. Every other Conduction app teaches its screens with the next
 
 ## Boards
 
-The step boards are drawn by the design agent in ConductionNL/design-system, branch
-`design/thematiq-apps-menu-walkthrough`. Boards are canon: the copy and placement in `design.md` are a
-draft until those boards are merged, and then follow them. See `screens.md`.
+The boards are ConductionNL/design-system#1213: TqMenuRondleiding, TqMenuRondleidingApps,
+TqMenuRondleidingMeer, TqMenuRondleidingOrdenen, TqMenuRondleidingVastzetten, TqMenuRondleidingNieuw,
+TqMenuRondleidingInstellingen and TqMenuRondleidingOpnieuw, with the replay button added to
+AppMenuInstellingen. Boards are canon; `design.md` carries their copy. See `screens.md`.
 
 ## Impact
 
@@ -57,8 +58,8 @@ draft until those boards are merged, and then follow them. See `screens.md`.
 - new `src/walkthrough/apps-menu.json`: the tour as manifest data (ADR-043 `walkthrough` block)
 - `js/app-menu.js`: loads the bundle on the first open when a tour is due, the replay entry, the
   `data-walkthrough-id` hooks on the menu's parts, the menu held open while the tour runs
-- `js/dialogs/menu-settings-dialog.js`: the Replay the tour button
-- `js/header-user.js`: the user menu entry
+- `js/dialogs/menu-settings-dialog.js`: the Replay walkthrough button
+- `js/header-user.js`: the account menu entry under Help
 - new `lib/Service/WalkthroughPreferences.php`, `lib/Controller/PreferencesController.php`, routes
   `GET` / `PUT /api/preferences/{key}` (the nextcloud-vue preference contract, two keys only)
 - `lib/Service/AppMenuService.php`: the walkthrough preferences and the app version in the menu's
