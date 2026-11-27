@@ -27,8 +27,10 @@
  *   4. lets the tests decide. All candidates go in together and the gate
  *      (`scripts/token-set-gate.sh`: dark variants, contrast report, token
  *      reference, the shipped-set PHPUnit tests) runs once. When it fails, the
- *      sets are retried one at a time and a set that fails the gate on its own
- *      is put back exactly as it was and listed with the failing tests.
+ *      failing group is halved until the sets that fail are found; a set that
+ *      fails is put back exactly as it was and listed with the failing tests.
+ *      The retry has a time budget (--retry-budget); sets it could not judge in
+ *      time are put back unchanged too and named in the report.
  *
  * A set that cannot be converted cleanly is left unchanged and named in the
  * report, which the workflow uses as the PR body
@@ -37,6 +39,7 @@
  * Usage:
  *   node scripts/sync-upstream-tokens.mjs <themes-checkout> [themesCommitSha]
  *        [--report report.md] [--only a,b] [--gate "<command>"] [--no-gate]
+ *        [--retry-budget <minutes>]
  *        [--pin <slug>:--nldesign-<token>=<value>]...   (writes a pin into the set's local overrides)
  *
  * Exit codes: 0 done (with or without changes), 1 usage error, 2 the gate
@@ -99,6 +102,13 @@ const NOT_SYNCED = {
 
 /** The gate that accepts or rejects the converted sets. */
 const DEFAULT_GATE = 'bash scripts/token-set-gate.sh'
+
+/**
+ * Minutes the retry after a failed gate may spend before the sets it has not
+ * judged yet are put back unchanged. The nightly job has 60 minutes for two full
+ * gate runs and the retry, on a runner several times slower than a laptop.
+ */
+export const DEFAULT_RETRY_BUDGET_MINUTES = 25
 
 /** Paths a candidate can change, relative to the repo root. */
 const ALLOWLIST_PATH = 'tests/Unit/fixtures/token-set-vocabulary-allowlist.json'
@@ -417,6 +427,7 @@ function parseArgs(argv) {
 		only: null,
 		gate: DEFAULT_GATE,
 		runGate: true,
+		retryBudget: DEFAULT_RETRY_BUDGET_MINUTES,
 		pins: {},
 	}
 	const positional = []
@@ -431,6 +442,12 @@ function parseArgs(argv) {
 			}
 			options[arg.slice(2)] =
 				arg === '--only' ? value.split(',').map((id) => id.trim()) : value
+		} else if (arg === '--retry-budget') {
+			const minutes = Number(argv[++index])
+			if (Number.isFinite(minutes) === false || minutes < 0) {
+				throw new Error('--retry-budget needs a number of minutes.')
+			}
+			options.retryBudget = minutes
 		} else if (arg === '--pin') {
 			const pin = /^([a-z0-9-]+):(--nldesign-[\w-]+)=(.+)$/.exec(
 				argv[++index] ?? '',
@@ -791,7 +808,9 @@ function runGate(command, env = {}) {
 	const run = spawnSync('bash', ['-c', command], {
 		cwd: REPO_ROOT,
 		encoding: 'utf8',
-		env: { ...process.env, ...env },
+		// A runner PHP with Xdebug loaded runs the gate several times slower;
+		// the gate measures no coverage, so it is switched off unless asked for.
+		env: { XDEBUG_MODE: 'off', ...process.env, ...env },
 		maxBuffer: 256 * 1024 * 1024,
 	})
 	const output = `${run.stdout}\n${run.stderr}`
@@ -885,7 +904,7 @@ function readOptions(argv) {
 		|| existsSync(join(resolve(options.themes), 'proprietary')) === false
 	) {
 		console.error(
-			`[${LABEL}] usage: node scripts/sync-upstream-tokens.mjs <themes-checkout> [sha] [--report out.md] [--only a,b] [--no-gate]`,
+			`[${LABEL}] usage: node scripts/sync-upstream-tokens.mjs <themes-checkout> [sha] [--report out.md] [--only a,b] [--no-gate] [--retry-budget minutes]`,
 		)
 		return null
 	}
@@ -1105,9 +1124,69 @@ export function narrowGate(failures) {
 }
 
 /**
- * Run the gate with one more set in at a time, keeping each set it passes with.
- * With the default gate only the tests that failed run per set; the full gate
- * still runs once on the result.
+ * Find the candidates that pass the gate by halving the group that fails,
+ * instead of retrying every set on its own. A group that passes is kept whole;
+ * a group that fails is split and each half is tried on top of what is kept.
+ * When the left half passed whole, the right half is the configuration that
+ * just failed, so it is split without running the gate again. One failing set
+ * among n costs about log2(n) runs instead of n.
+ *
+ * Once the deadline has passed, a group that still needs a run is rejected
+ * untried (`timedOut`), so the caller can put it back unchanged and finish.
+ *
+ * @param {Array<Object>} candidates The candidates, in order.
+ * @param {Array<string>} failures The failures of the whole group, already known.
+ * @param {Function} attempt `(group, kept) => {ok, failures}`: runs the gate with kept and group in.
+ * @param {number} deadline Epoch milliseconds after which no more runs start.
+ * @param {Function} now Clock, `() => epoch milliseconds`.
+ * @return {Object} `{kept, rejected}`; each rejection is `{candidate, failures, timedOut}`.
+ *
+ * @spec openspec/specs/token-sync-workflow/spec.md#requirement-converted-and-gated-sync
+ */
+export function bisectCandidates(candidates, failures, attempt, deadline, now = Date.now) {
+	const kept = []
+	const rejected = []
+	const reject = (group, groupFailures, timedOut) => {
+		for (const candidate of group) {
+			rejected.push({ candidate, failures: groupFailures, timedOut })
+		}
+	}
+	const visit = (group, knownFailures) => {
+		if (group.length === 0) {
+			return
+		}
+		let groupFailures = knownFailures
+		if (groupFailures === null) {
+			if (now() > deadline) {
+				reject(group, [], true)
+				return
+			}
+			const result = attempt(group, [...kept])
+			if (result.ok === true) {
+				kept.push(...group)
+				return
+			}
+			groupFailures = result.failures
+		}
+		if (group.length === 1) {
+			reject(group, groupFailures, false)
+			return
+		}
+		const middle = Math.ceil(group.length / 2)
+		const left = group.slice(0, middle)
+		const keptBefore = kept.length
+		visit(left, null)
+		const leftKeptWhole = kept.length - keptBefore === left.length
+		visit(group.slice(middle), leftKeptWhole ? groupFailures : null)
+	}
+	visit(candidates, failures)
+	return { kept, rejected }
+}
+
+/**
+ * Retry the candidates after a failed gate and keep the ones that pass, by
+ * halving (bisectCandidates). With the default gate only the tests that failed
+ * run per attempt; the full gate still runs once on the result.
  *
  * @param {Object} baseline The baseline snapshot.
  * @param {Array<Object>} accepted The candidates to retry.
@@ -1115,34 +1194,39 @@ export function narrowGate(failures) {
  * @param {Object} summary Outcome lists; gains a rejection per failing set.
  * @param {Array<string>} failures The tests that failed with every candidate in.
  * @return {Array<Object>} The candidates kept.
+ *
+ * @spec openspec/specs/token-sync-workflow/spec.md#requirement-converted-and-gated-sync
  */
-function retryOneAtATime(baseline, accepted, options, summary, failures) {
+function retryByHalving(baseline, accepted, options, summary, failures) {
 	const narrowed = options.gate === DEFAULT_GATE ? narrowGate(failures) : null
-	const kept = []
-	for (const candidate of accepted) {
-		apply(baseline, [...kept, candidate], options.sha)
-		const single = runGate(options.gate, narrowed ?? {})
-		if (single.ok === true) {
-			kept.push(candidate)
-			console.log(`  OK   ${candidate.org.slug}`)
-		} else {
-			summary.rejected.push({
-				slug: candidate.org.slug,
-				reason: `fails the gate: ${single.failures.slice(0, 6).join(', ')}`,
-				shipped: candidate.org.kind !== 'new',
-			})
-			console.log(
-				`  FAIL ${candidate.org.slug}: ${single.failures.join(', ')}`,
-			)
-		}
+	const deadline = Date.now() + options.retryBudget * 60 * 1000
+	const attempt = (group, kept) => {
+		apply(baseline, [...kept, ...group], options.sha)
+		const result = runGate(options.gate, narrowed ?? {})
 		restore(baseline)
+		const slugs = group.map((candidate) => candidate.org.slug).join(', ')
+		console.log(`  ${result.ok ? 'OK  ' : 'FAIL'} ${slugs}`)
+		return result
 	}
-	return kept
+	const outcome = bisectCandidates(accepted, failures, attempt, deadline)
+	for (const { candidate, failures: setFailures, timedOut } of outcome.rejected) {
+		summary.rejected.push({
+			slug: candidate.org.slug,
+			reason: timedOut
+				? `not judged: the retry ran out of its ${options.retryBudget}-minute budget; left as it was`
+				: `fails the gate: ${setFailures.slice(0, 6).join(', ')}`,
+			shipped: candidate.org.kind !== 'new',
+		})
+		console.log(
+			`  ${timedOut ? 'LATE' : 'REJ '} ${candidate.org.slug}${timedOut ? '' : `: ${setFailures.join(', ')}`}`,
+		)
+	}
+	return outcome.kept
 }
 
 /**
- * Apply the candidates and let the gate decide; when it fails, retry the sets
- * one at a time and keep the ones that pass.
+ * Apply the candidates and let the gate decide; when it fails, find the sets
+ * that pass by halving the group and keep those.
  *
  * @param {Object} baseline The baseline snapshot.
  * @param {Array<Object>} accepted The candidates.
@@ -1155,10 +1239,10 @@ function gateCandidates(baseline, accepted, options, summary) {
 	let gate = runGate(options.gate)
 	if (gate.ok === false && accepted.length > 0) {
 		console.log(
-			`[${LABEL}] gate failed with every candidate in (${gate.failures.join(', ')}); retrying one set at a time`,
+			`[${LABEL}] gate failed with every candidate in (${gate.failures.join(', ')}); retrying by halving the group`,
 		)
 		restore(baseline)
-		accepted = retryOneAtATime(baseline, accepted, options, summary, gate.failures)
+		accepted = retryByHalving(baseline, accepted, options, summary, gate.failures)
 		apply(baseline, accepted, options.sha)
 		gate = runGate(options.gate)
 	}
