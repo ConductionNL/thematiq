@@ -799,8 +799,7 @@ html[data-thematiq-open-panel]
 	color: var(--nl-color-grey-text, var(--color-main-text));
 }
 
-#nldesign-settings .thematiq-panel .thematiq-dark-panel__pill--pass,
-#thematiq-page-header .thematiq-dark-panel__status--generated {
+#nldesign-settings .thematiq-panel .thematiq-dark-panel__pill--pass {
 	background: var(
 		--nldesign-component-status-badge-success-background-color,
 		color-mix(in srgb, var(--color-success) 12%, var(--color-main-background))
@@ -825,6 +824,12 @@ html[data-thematiq-open-panel]
 		--nldesign-component-status-badge-warning-color,
 		var(--color-warning-text, var(--color-warning))
 	);
+}
+
+/* TqDonker draws a generated dark variant in teal, as the set page's dark status. */
+#thematiq-page-header .thematiq-dark-panel__status--generated {
+	background: var(--nl-color-teal-light, var(--color-background-hover)) !important;
+	color: var(--nl-color-teal-text, var(--color-main-text));
 }
 
 #thematiq-page-header .thematiq-page-header__intro .thematiq-dark-panel__status {
