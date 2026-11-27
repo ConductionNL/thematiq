@@ -61,6 +61,8 @@ class SetupController extends Controller {
 	 *
 	 * @return JSONResponse `{version, completed, skipped, configured, steps, current}`.
 	 *
+	 * @auth admin-only the status names the stored house style choices, for administrators only
+	 *
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
 	public function status(): JSONResponse {
@@ -74,6 +76,8 @@ class SetupController extends Controller {
 	 *
 	 * @return JSONResponse The parts and the new status; 400 naming a wrong key, 403 for an unconfirmed
 	 *                      restricted set, 404 for an unknown action, 500 when a part failed.
+	 *
+	 * @auth admin-only applying or skipping the setup changes the whole instance's look, so administrators only
 	 *
 	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
