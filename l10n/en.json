@@ -2059,7 +2059,12 @@
         "Every transition of Nextcloud and the Conduction apps reads these three tokens: menus, dialogs, the sidebar, notifications and tabs.": "Every transition of Nextcloud and the Conduction apps reads these three tokens: menus, dialogs, the sidebar, notifications and tabs.",
         "Motion tokens have a fixed type: the server checks every value before it saves anything.": "Motion tokens have a fixed type: the server checks every value before it saves anything.",
         "Preview: {name}, visible to you only": "Preview: {name}, visible to you only",
-        "You see this block only because you are group admin of a group for which the administrator has released the house style.": "You see this block only because you are group admin of a group for which the administrator has released the house style."
+        "You see this block only because you are group admin of a group for which the administrator has released the house style.": "You see this block only because you are group admin of a group for which the administrator has released the house style.",
+        "Clear": "Clear",
+        "Contains": "Contains",
+        "Filter by {column}": "Filter by {column}",
+        "Filter by {column} (active)": "Filter by {column} (active)",
+        "No values to filter on": "No values to filter on"
     },
     "plurals": {}
 }

@@ -636,6 +636,32 @@ MUST be left out and named in the task of its board.
 - THEN the page MUST be drawn as TqTokenSet
 - AND compdiff MUST pair every component with no flag
 
+### Requirement: Table column headers sort and filter (REQ-ASET-104)
+Every data column header of the panel tables whose board draws header controls (TqLogboek,
+TqContrastrapport, TqWissels, TqEigenSets, TqMerkPerApp, TqOmgevingsmarkering and both tables of
+TqEigenTokens) MUST carry the label and a chevron as one sort button, followed by a 22px filter
+button with `aria-haspopup="dialog"` and the accessible name "Filter by <column>". An empty or
+visually hidden header (the Actions column) and a header that spans columns MUST get neither.
+Sorting MUST order the table's rows by that column's text, ascending first and descending on the
+next press, with `aria-sort` on the header. The filter button MUST open a dialog with a checkbox
+list of the column's values when there are at most twelve, else a "Contains" text box, with Clear
+and Apply; Escape MUST close it and return focus to the filter button. A set filter MUST show on
+its button (primary colour and a dot) and end its accessible name in "(active)". Sort and filter
+MUST hold when the panel reloads its rows, and a row with one cell spanning the table (an empty
+state) MUST never be sorted or hidden. TqGroepen draws no header controls and gets none.
+
+#### Scenario: Sorting the switches by token set
+- GIVEN an administrator on the Scheduled switches panel with two switches listed
+- WHEN they press the "Token set" header
+- THEN the rows MUST be ordered by token set, A to Z
+- AND the header MUST carry `aria-sort="ascending"`
+
+#### Scenario: Filtering the log by action
+- GIVEN an administrator on the Log panel
+- WHEN they press "Filter by Action", tick one action and press Apply
+- THEN only the rows with that action MUST stay visible
+- AND the filter button's name MUST be "Filter by Action (active)"
+
 ## Current Implementation Status
 
 **Fully implemented:**
