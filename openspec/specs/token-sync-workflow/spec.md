@@ -138,6 +138,14 @@ upstream, and MUST NOT open a PR unless the shipped token-set tests pass. The wo
 - AND the PR body MUST name it with the failing tests
 - AND a new organisation MUST only be added when its conversion is vocabulary complete
 
+#### Scenario: The retry after a failed gate stays inside the job's time
+
+- GIVEN the gate fails with every converted set in, because of one or a few sets
+- WHEN the sync looks for the sets that fail
+- THEN it MUST halve the failing group rather than run the gate once per set
+- AND it MUST stop starting gate runs once its retry budget (`--retry-budget`, minutes) is spent
+- AND every set it could not judge in time MUST be restored exactly as committed and named in the PR body
+
 #### Scenario: Upstream publishes a Tokens Studio export
 
 - GIVEN an organisation upstream has no `src/**/*.tokens.json` but has `figma/*.tokens.json`
