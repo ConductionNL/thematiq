@@ -424,9 +424,7 @@ class TokenSetService {
 	 * which for the whole catalogue took seconds on every request that lists
 	 * the sets (the admin page among them). Their result depends only on those
 	 * files and on the entry itself, so the key covers the app version (the
-	 * shipped files), the set's CSS file revision (size and modification time:
-	 * a synced or edited set; reading every set's CSS to hash it cost ~10 ms
-	 * per catalogue read), and the
+	 * shipped files), the set's CSS content (a synced or edited set), and the
 	 * entry's design system, theming and metadata (captured branding, manifest
 	 * changes). Local, not distributed: the inputs are this server's files.
 	 * Without a `memcache.local` Nextcloud hands out a NullCache, and the
@@ -439,12 +437,14 @@ class TokenSetService {
 	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
 	 */
 	private function cachedShippedWarnings(ListedTokenSet $set): array {
-		$revision = $this->setFiles->files->revision(appPath: $set->appPath, name: 'css/tokens/' . $set->id . '.css', store: $this->setFiles->store);
+		$css = $this->setFiles->files->read(appPath: $set->appPath, name: 'css/tokens/' . $set->id . '.css', store: $this->setFiles->store);
 		$key = $set->id . '-' . md5(
 			(string)json_encode(
 				[
 					$this->setFiles->appManager->getAppVersion('thematiq'),
-					$revision,
+					// xxh3, not md5: the key hashes every shipped set's CSS (~9 MB) on each
+					// catalogue read; md5 took ~8.7 ms of that, xxh3 ~0.3 ms.
+					hash('xxh3', (string)$css),
 					$set->entry['design_system'],
 					($set->entry['theming'] ?? []),
 					$set->meta,
