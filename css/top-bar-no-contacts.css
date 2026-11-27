@@ -1,0 +1,14 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Conduction B.V.
+ * SPDX-License-Identifier: EUPL-1.2
+ *
+ * The contacts menu switched off (menu setting showContactsMenu, REQ-TQCM-001). Loaded by
+ * AppMenuService only when the effective value is off, with the page, so the button never shows
+ * first. Nextcloud's core still mounts into #contactsmenu; display: none takes it out of the
+ * layout, the focus order and the accessibility tree at once. The Contacts app stays in the menu.
+ *
+ * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md
+ */
+body:not(#body-login) #header #contactsmenu {
+	display: none !important;
+}

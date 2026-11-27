@@ -26,6 +26,7 @@ const DEFAULTS = {
 	rowsAboveFold: 2,
 	showCreateButton: true,
 	showCreateRow: true,
+	showContactsMenu: true,
 	showExternalApps: true,
 	shape: 'round',
 	tiles: false,
@@ -299,6 +300,39 @@ describe('the Menu settings dialog', () => {
 			'launchpad',
 		])
 		expect(reload).toHaveBeenCalled()
+	})
+
+	it('the contacts menu switch is editable in Only for me and saved as a personal key', async () => {
+		const dialog = await openDialog(answer(false))
+		dialog.querySelector('#thematiq-menu-settings-tab-configuration').click()
+		const panel = dialog.querySelector('[role="tabpanel"]')
+		const toggle = panel.querySelector('#thematiq-menu-settings-switch-showContactsMenu')
+		expect(toggle).not.toBeNull()
+		expect(toggle.getAttribute('role')).toBe('switch')
+		expect(toggle.disabled === true || toggle.getAttribute('aria-disabled') === 'true').toBe(false)
+		expect(panel.textContent).toContain('showContactsMenuHelp')
+		// After the create switches, before the external apps.
+		const names = Array.from(panel.querySelectorAll('.thematiq-menu-settings__toggle-name')).map((el) => el.id)
+		expect(names.indexOf('thematiq-menu-settings-label-showContactsMenu')).toBe(
+			names.indexOf('thematiq-menu-settings-label-showCreateRow') + 1,
+		)
+
+		toggle.click()
+		dialog.querySelector('[data-part="save"]').click()
+		await flush()
+		const saved = requests.find((r) => r.method === 'POST')
+		expect(saved.url).toBe('/apps/thematiq/app-menu/settings')
+		expect(saved.body.settings).toEqual({ showContactsMenu: false })
+	})
+
+	it('saves a create switch a person turned off as their own key', async () => {
+		const dialog = await openDialog(answer(false))
+		dialog.querySelector('#thematiq-menu-settings-tab-configuration').click()
+		dialog.querySelector('#thematiq-menu-settings-switch-showCreateButton').click()
+		dialog.querySelector('[data-part="save"]').click()
+		await flush()
+		const saved = requests.find((r) => r.method === 'POST')
+		expect(saved.body.settings).toEqual({ showCreateButton: false })
 	})
 
 	it('pins at most five apps', async () => {

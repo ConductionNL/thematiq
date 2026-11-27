@@ -44,6 +44,7 @@
 	var CHECKS = [
 		'thematiq-showCreateButton',
 		'thematiq-showCreateRow',
+		'thematiq-showContactsMenu',
 		'nldesign-show-menu-labels',
 		'nldesign-hide-slogan',
 		'nldesign-primary-drives-components',
@@ -623,14 +624,16 @@
 	}
 
 	/**
-	 * The two create switches of the Menu card, the administrator's values
-	 * for everyone: a toggle saves only its own key at once through the menu
-	 * defaults, says Saved in the polite live region, and on a failure says
-	 * why in an alert and sets the switch back. The template disables both
-	 * with the classic menu.
+	 * The two create switches and the contacts menu switch of the Menu card,
+	 * the administrator's values for everyone: a toggle saves only its own
+	 * key at once through the menu defaults, says Saved in the polite live
+	 * region, and on a failure says why in an alert and sets the switch back.
+	 * The template disables the create switches with the classic menu; the
+	 * contacts menu switch works with both styles and stays enabled.
 	 *
 	 * @return {void}
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
+	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-contacts-menu-default-on-thematiqs-admin-page-req-tqcm-002
 	 */
 	function wireCreateSwitches() {
 		// The Menu card's switches: the two create switches, and Show titles in
