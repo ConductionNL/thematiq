@@ -130,8 +130,11 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
       follows (#004699) and `setup.completed`; non-admin sees nothing. Fixed there: the house style step
       offered no cards and "All 0 sets" while the cold catalogue loaded, and a pick left another set's
       radio checked. Still open: the comparison with the TqSetup boards.)
-- [ ] 6.2 On an instance configured by an earlier version, upgrade and confirm nothing opens and the
-      version card reads the earlier-version state.
+- [x] 6.2 On an instance configured by an earlier version, upgrade and confirm nothing opens and the
+      version card reads the earlier-version state. (live lane, NC 34 sandbox: thematiq 1.2.10 from main
+      with Gemeente Amsterdam set through its own settings API, upgraded in place to development by
+      `occ upgrade`: status configured, not completed; the dashboard opens nothing and requests no
+      wizard script; the version card reads "Set up by an earlier version", "Token set amsterdam".)
 - [x] 6.3 Speed: an admin page with setup done and a non-admin page carry no wizard script; record
       the bundle size in the PR. (live lane, fresh NC 34 sandbox: after setup, Files and Theming load 0
       wizard requests; a non-admin's dashboard 0; `js/vendor/setupWizard.js` 913,649 B, 218,026 B gzip.)
