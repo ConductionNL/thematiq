@@ -556,6 +556,35 @@ class LayoutOptionsServiceTest extends TestCase {
 	}//end testMailCalendarAndDeckGetTheirOwnStylesheet()
 
 	/**
+	 * The light layout's login sheet follows its layout sheet on every render that is not a user's page,
+	 * and never on a user's page or without the light layout.
+	 *
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#requirement-no-page-pays-more-layout-css-than-mail-paid-req-tqss-007
+	 *
+	 * @return void
+	 */
+	public function testTheLoginSheetLoadsOnlyOffAUsersPage(): void {
+		$sheets = new LayoutStylesheets();
+		$resolved = $this->service->resolved(tokenSet: 'zuiddrecht');
+		$files = $this->service->stylesheets(tokenSet: 'zuiddrecht');
+
+		$this->assertSame(expected: $files, actual: $sheets->withContext(files: $files, resolved: $resolved, context: 'user'));
+		foreach (['login', 'guest', 'error', 'public', 'blank'] as $context) {
+			$this->assertSame(
+				expected: ['workplace-layout', 'workplace-login'],
+				actual: array_slice($sheets->withContext(files: $files, resolved: $resolved, context: $context), 0, 2),
+				message: $context
+			);
+		}
+
+		$utrecht = $this->service->stylesheets(tokenSet: 'utrecht');
+		$this->assertSame(
+			expected: $utrecht,
+			actual: $sheets->withContext(files: $utrecht, resolved: $this->service->resolved(tokenSet: 'utrecht'), context: 'login')
+		);
+	}//end testTheLoginSheetLoadsOnlyOffAUsersPage()
+
+	/**
 	 * The app stylesheets a page of this app loads with this token set, as CssInjectionService picks them.
 	 *
 	 * @param string $tokenSet The token set.

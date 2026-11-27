@@ -195,21 +195,24 @@ describe('header brand', () => {
 		['no open app', { files: { active: false, name: 'Files' } }],
 		['an open app without a name', { mail: { active: true, name: '   ' } }],
 		['an open app whose name is not text', { mail: { active: true, name: 7 } }],
-	])('shows the emblem and the organisation alone, no name element, with %s', async (label, apps) => {
-		installState(apps, CAPABILITIES)
-		window.OC = { webroot: '/nc' }
-		await loadScript()
-		delete window.OC
-		const header = document.getElementById('header')
-		const link = header.querySelector('a.thematiq-brand')
-		expect(link.querySelector('.thematiq-brand__emblem')).not.toBeNull()
-		expect(link.querySelector('.thematiq-brand__caption').textContent).toBe(
-			'Zuiddrecht',
-		)
-		expect(link.querySelector('.thematiq-brand__name')).toBeNull()
-		expect(link.getAttribute('href')).toBe('/nc/')
-		expect(header.hasAttribute('data-thematiq-brand')).toBe(true)
-	})
+	])(
+		'shows the emblem and the organisation alone, no name element, with %s',
+		async (label, apps) => {
+			installState(apps, CAPABILITIES)
+			window.OC = { webroot: '/nc' }
+			await loadScript()
+			delete window.OC
+			const header = document.getElementById('header')
+			const link = header.querySelector('a.thematiq-brand')
+			expect(link.querySelector('.thematiq-brand__emblem')).not.toBeNull()
+			expect(link.querySelector('.thematiq-brand__caption').textContent).toBe(
+				'Zuiddrecht',
+			)
+			expect(link.querySelector('.thematiq-brand__name')).toBeNull()
+			expect(link.getAttribute('href')).toBe('/nc/')
+			expect(header.hasAttribute('data-thematiq-brand')).toBe(true)
+		},
+	)
 
 	it('draws nothing with nothing to show', async () => {
 		installState({ files: { active: false, name: 'Files' } }, null)

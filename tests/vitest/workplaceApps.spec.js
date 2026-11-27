@@ -374,7 +374,9 @@ describe('the app sheets show the words only once the script set them', () => {
 				new RegExp('--thematiq-app-layer: ' + app + ';'),
 			)
 		}
-		expect(read('js/workplace-apps.js')).not.toContain('--thematiq-workplace-apps')
+		expect(read('js/workplace-apps.js')).not.toContain(
+			'--thematiq-workplace-apps',
+		)
 	})
 })
 
@@ -712,9 +714,13 @@ describe('the app sheets hold no shared rule', () => {
 	)
 
 	it("Deck's card panel title has no size of its own", () => {
-		postcss.parse(read('css/workplace-apps/deck.css')).walkDecls('font-size', (decl) => {
-			expect(decl.parent.selector).not.toContain('.app-sidebar-header__mainname')
-		})
+		postcss
+			.parse(read('css/workplace-apps/deck.css'))
+			.walkDecls('font-size', (decl) => {
+				expect(decl.parent.selector).not.toContain(
+					'.app-sidebar-header__mainname',
+				)
+			})
 	})
 
 	it('Mail and Deck only switch the shared rail on, on their content element', () => {
@@ -723,13 +729,24 @@ describe('the app sheets hold no shared rule', () => {
 			['deck.css', 'deck'],
 		]) {
 			const sets = []
-			postcss.parse(read('css/workplace-apps/' + sheet)).walkDecls('--thematiq-rail', (decl) => {
-				sets.push([decl.parent.selector.replace(/\s+/g, ' '), decl.value])
-			})
+			postcss
+				.parse(read('css/workplace-apps/' + sheet))
+				.walkDecls('--thematiq-rail', (decl) => {
+					sets.push([
+						decl.parent.selector.replace(/\s+/g, ' '),
+						decl.value,
+					])
+				})
 			expect(sets).toHaveLength(1)
-			expect(sets[0][0]).toMatch(new RegExp('^:is\\(#content, #content-vue\\)\\.app-' + app + ':has\\('))
+			expect(sets[0][0]).toMatch(
+				new RegExp(
+					'^:is\\(#content, #content-vue\\)\\.app-' + app + ':has\\(',
+				),
+			)
 			expect(sets[0][1]).toBe('1')
 		}
-		expect(read('css/workplace-apps/calendar.css')).not.toContain('--thematiq-rail')
+		expect(read('css/workplace-apps/calendar.css')).not.toContain(
+			'--thematiq-rail',
+		)
 	})
 })

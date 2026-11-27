@@ -475,7 +475,7 @@ function withSelector(rules, needle) {
 
 describe('workplace layout: the login page and the guest pages', () => {
 	// @spec openspec/specs/workplace-layout/spec.md
-	const rules = rulesOf('css/workplace-layout.css')
+	const rules = rulesOf('css/workplace-login.css')
 
 	it("shows Nextcloud's own guest logo above the card, 56px high, with the set's logo in it", () => {
 		const [logo] = withSelector(rules, '#header.header-guest .logo')
@@ -709,7 +709,7 @@ describe("workplace layout: every app's standard structures", () => {
 	)
 	const section = postcss.parse(SOURCE.slice(SOURCE.lastIndexOf('/*', START), END))
 	const ROOT_START = ':where(body:not(#body-login)) :is(#content, #content-vue)'
-	const POINTER_START = ':root[data-thematiq-pointer] :is(#content, #content-vue)'
+	const POINTER_START = ':root[data-thematiq-pointer] ' + ROOT_START
 
 	const splitList = (selector) => {
 		const parts = []
@@ -729,13 +729,42 @@ describe("workplace layout: every app's standard structures", () => {
 		return parts.map((part) => part.replace(/\s+/g, ' '))
 	}
 
+	// A nested rule's selectors written out in full: `&` is its parent's selector (one each here).
+	const fullSelectors = (rule) => {
+		let parent = rule.parent
+		while (parent && parent.type !== 'rule' && parent.type !== 'root') {
+			parent = parent.parent
+		}
+		const own = splitList(rule.selector)
+		if (!parent || parent.type === 'root') {
+			return own
+		}
+		const outer = fullSelectors(parent)
+		return own.flatMap((selector) =>
+			outer.map((up) =>
+				selector.includes('&')
+					? selector.split('&').join(up)
+					: up + ' ' + selector,
+			),
+		)
+	}
+
 	const rules = []
 	section.walkRules((rule) => {
-		if (rule.parent && rule.parent.type === 'atrule' && /keyframes$/.test(rule.parent.name)) {
+		if (
+			rule.parent
+			&& rule.parent.type === 'atrule'
+			&& /keyframes$/.test(rule.parent.name)
+		) {
 			return
 		}
+		rule.full = fullSelectors(rule).map((selector) =>
+			selector.replace(/\s+/g, ' '),
+		)
 		rules.push(rule)
 	})
+	const leaf = (pattern) =>
+		rules.find((rule) => rule.full.some((selector) => pattern.test(selector)))
 
 	it('is there, between the top bar and the keyboard ring', () => {
 		expect(START).toBeGreaterThan(0)
@@ -749,11 +778,16 @@ describe("workplace layout: every app's standard structures", () => {
 			if (rule.selector.trim() === ':root') {
 				continue
 			}
-			for (const selector of splitList(rule.selector)) {
-				if (!selector.startsWith(ROOT_START) && !selector.startsWith(POINTER_START)) {
+			for (const selector of rule.full) {
+				if (
+					!selector.startsWith(ROOT_START)
+					&& !selector.startsWith(POINTER_START)
+				) {
 					strays.push(selector)
 				}
-				if (/\.app-(?!navigation|sidebar|content|menu)[a-z]/.test(selector)) {
+				if (
+					/\.app-(?!navigation|sidebar|content|menu)[a-z]/.test(selector)
+				) {
 					strays.push(selector)
 				}
 			}
@@ -764,7 +798,9 @@ describe("workplace layout: every app's standard structures", () => {
 	it('writes no colour literal', () => {
 		const literal = /#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(/i
 		section.walkDecls((decl) => {
-			expect(literal.test(decl.value), `${decl.prop}: ${decl.value}`).toBe(false)
+			expect(literal.test(decl.value), `${decl.prop}: ${decl.value}`).toBe(
+				false,
+			)
 		})
 	})
 
@@ -789,9 +825,12 @@ describe("workplace layout: every app's standard structures", () => {
 	})
 
 	it('draws 34px navigation rows and the 20px sidebar title, and leaves the legacy navigation alone', () => {
-		const text = section.toString()
-		expect(text).toMatch(/#app-navigation-vue\s+:is\(\.app-navigation-entry, \.app-navigation-entry-link\)\s*\{\s*min-height: 34px !important;/)
-		expect(text).toMatch(/\.app-sidebar-header__mainname \{\s*font-size: 20px !important;/)
+		const row = leaf(
+			/#content-vue\) #app-navigation-vue :is\(\.app-navigation-entry, \.app-navigation-entry-link\)$/,
+		)
+		expect(row.toString()).toMatch(/min-height: 34px !important;/)
+		const title = leaf(/#app-sidebar-vue \.app-sidebar-header__mainname$/)
+		expect(title.toString()).toMatch(/font-size: 20px !important;/)
 		for (const rule of rules) {
 			expect(rule.selector).not.toMatch(/#app-navigation(?![-\w])/)
 		}
@@ -799,14 +838,23 @@ describe("workplace layout: every app's standard structures", () => {
 
 	it('leaves the selected entry to the navigation entry style: no accent or navigation token redeclared', () => {
 		section.walkDecls((decl) => {
-			expect(decl.prop).not.toMatch(/^--nldesign-(color-accent|component-navigation)/)
+			expect(decl.prop).not.toMatch(
+				/^--nldesign-(color-accent|component-navigation)/,
+			)
 		})
 	})
 
 	it('drops the ring of a heading an app focuses itself under the pointer only', () => {
-		const pointer = rules.find((rule) => rule.selector.includes(':root[data-thematiq-pointer]'))
-		expect(pointer.selector).toContain('.app-sidebar-header__mainname:focus')
-		expect(pointer.selector).toContain(':focus:not(:focus-visible)')
+		const pointer = rules.find((rule) =>
+			rule.selector.includes(':root[data-thematiq-pointer]'),
+		)
+		expect(pointer.full).toContain(
+			POINTER_START + ' #app-sidebar-vue .app-sidebar-header__mainname:focus',
+		)
+		expect(pointer.full).toContain(
+			ROOT_START
+				+ ' #app-sidebar-vue .app-sidebar-header__mainname:focus:not(:focus-visible)',
+		)
 		expect(pointer.toString()).toMatch(/outline: none !important/)
 	})
 
@@ -815,7 +863,9 @@ describe("workplace layout: every app's standard structures", () => {
 		section.walkAtRules('property', (at) => properties.push(at.params))
 		expect(properties).toEqual(['--thematiq-rail'])
 		const queries = []
-		section.walkAtRules('container', (at) => queries.push(at.params.replace(/\s+/g, ' ')))
+		section.walkAtRules('container', (at) =>
+			queries.push(at.params.replace(/\s+/g, ' ')),
+		)
 		expect(queries).toContain('style(--thematiq-rail: 1)')
 		section.walkDecls('--thematiq-rail', (decl) => {
 			expect(decl.value.trim(), 'only the unfolding sets it, to 0').toBe('0')

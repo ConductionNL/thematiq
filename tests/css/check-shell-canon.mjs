@@ -31,12 +31,14 @@
  * The canon, in CSS pixels: `spike/OP-TWIN-canon.md` of the plugin, 14 October 2026, with the three
  * sizes Ruben decided on 15 October 2026. The canon had a 40 px primary button, a 48 px table row and
  * 14 px body text; Nextcloud draws 48, 44 and 15, and OpenProject follows Nextcloud. So these are the
- * canon now, and the plugin's canon file follows.
+ * canon now, and the plugin's canon file follows. On 27 November 2026 Ruben moved the navigation row
+ * from 42 to 34 px (openspec/changes/same-shell-every-page, decision 2): every app's navigation is
+ * drawn with the boards' 34 px rows; the plugin's canon file follows in a PR there.
  */
 export const CANON = {
 	topBarHeight: 68,
 	navigationWidth: 264,
-	navigationItemHeight: 42,
+	navigationItemHeight: 34,
 	primaryButtonHeight: 48,
 	tableHeaderRowHeight: 44,
 	tableRowHeight: 44,
@@ -55,7 +57,10 @@ const PARTS = {
 	topBarHeight: [['#header'], 'height'],
 	navigationWidth: [['#app-navigation', '.app-navigation'], 'width'],
 	navigationItemHeight: [['.app-navigation-entry'], 'height'],
-	primaryButtonHeight: [['.files-list__header .button-vue--vue-primary', '.button-vue--vue-primary'], 'height'],
+	primaryButtonHeight: [
+		['.files-list__header .button-vue--vue-primary', '.button-vue--vue-primary'],
+		'height',
+	],
 	tableHeaderRowHeight: [['.files-list__thead tr'], 'height'],
 	tableRowHeight: [['tr.files-list__row'], 'height'],
 }
@@ -76,7 +81,9 @@ export async function measure(page) {
 				const element = document.querySelector(selector)
 				if (element !== null) {
 					const box = element.getBoundingClientRect()
-					out[part] = Math.round((side === 'width' ? box.width : box.height) * 10) / 10
+					out[part] =
+						Math.round((side === 'width' ? box.width : box.height) * 10)
+						/ 10
 					break
 				}
 			}
@@ -102,11 +109,15 @@ export function judge(measured) {
 			failures.push(`${part}: not on the page`)
 		} else if (part in KNOWN) {
 			if (size === canon) {
-				failures.push(`${part}: now ${size}, the canon; remove it from KNOWN`)
+				failures.push(
+					`${part}: now ${size}, the canon; remove it from KNOWN`,
+				)
 			} else if (size === KNOWN[part]) {
 				gaps.push(`${part}: ${size} (canon ${canon})`)
 			} else {
-				failures.push(`${part}: ${size}, recorded ${KNOWN[part]}, canon ${canon}`)
+				failures.push(
+					`${part}: ${size}, recorded ${KNOWN[part]}, canon ${canon}`,
+				)
 			}
 		} else if (size === canon) {
 			matches.push(`${part}: ${size}`)
@@ -129,13 +140,17 @@ async function main() {
 	}
 	const url = arg('url')
 	if (!url) {
-		console.error('Usage: node tests/css/check-shell-canon.mjs --url <base> --user <name> --password <password>')
+		console.error(
+			'Usage: node tests/css/check-shell-canon.mjs --url <base> --user <name> --password <password>',
+		)
 		return 2
 	}
 	const { chromium } = await import('playwright-core')
 	const browser = await chromium.launch()
 	try {
-		const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } })
+		const page = await browser.newPage({
+			viewport: { width: 1440, height: 1000 },
+		})
 		await page.goto(url + '/login')
 		await page.fill('#user', arg('user') ?? 'admin')
 		await page.fill('#password', arg('password') ?? '')
