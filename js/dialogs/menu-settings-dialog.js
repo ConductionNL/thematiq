@@ -1857,7 +1857,7 @@
 		var replay = function () {
 			var changed =
 				Object.keys(touched).length > 0 || JSON.stringify(forms) !== initialForms
-			if (changed && !window.confirm(t('replayDiscard'))) {
+			if (changed && !window.confirm(tour.replayDiscard || '')) {
 				return
 			}
 			// After the dialog has closed and handed focus back, so the menu it
@@ -1871,10 +1871,11 @@
 			)
 			close()
 		}
+		var tour = (options.menu && options.menu.walkthrough) || {}
 		var canReplay =
 			typeof window.thematiqAppMenuReplay === 'function'
-			&& !!(options.menu && options.menu.walkthrough)
-			&& t('replay') !== ''
+			&& typeof tour.replayLabel === 'string'
+			&& tour.replayLabel !== ''
 
 		var reset = function () {
 			if (
@@ -1933,7 +1934,7 @@
 								type: 'button',
 								class: BLOCK + '__button',
 								'data-part': 'replay',
-								text: t('replay'),
+								text: tour.replayLabel,
 								on: { click: replay },
 							})
 						: null,

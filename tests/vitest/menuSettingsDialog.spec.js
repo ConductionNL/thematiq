@@ -534,6 +534,12 @@ describe('the Menu settings dialog', () => {
 })
 
 describe('replaying the apps menu walkthrough from Menu settings', () => {
+	const TOUR = {
+		seen: '1.2.49',
+		replayLabel: 'Replay walkthrough',
+		replayDiscard: 'Drop your unsaved changes and start the walkthrough?',
+	}
+
 	async function openWithTour(data, walkthrough) {
 		installFetch(data)
 		vi.resetModules()
@@ -572,10 +578,10 @@ describe('replaying the apps menu walkthrough from Menu settings', () => {
 	})
 
 	it('draws Replay walkthrough between Reset to default and Cancel, closes and starts the tour', async () => {
-		const dialog = await openWithTour(answer(false), { seen: '1.2.49' })
+		const dialog = await openWithTour(answer(false), TOUR)
 		const foot = Array.from(dialog.querySelectorAll('.thematiq-menu-settings__foot [data-part]')).map((el) => el.getAttribute('data-part'))
 		expect(foot).toEqual(['reset', 'replay', 'cancel', 'save'])
-		expect(dialog.querySelector('[data-part="replay"]').textContent).toBe('replay')
+		expect(dialog.querySelector('[data-part="replay"]').textContent).toBe('Replay walkthrough')
 		dialog.querySelector('[data-part="replay"]').click()
 		await new Promise((r) => setTimeout(r, 0))
 		await new Promise((r) => setTimeout(r, 0))
@@ -586,11 +592,11 @@ describe('replaying the apps menu walkthrough from Menu settings', () => {
 	})
 
 	it('asks before dropping unsaved changes, and stays when the answer is no', async () => {
-		const dialog = await openWithTour(answer(false), { seen: '1.2.49' })
+		const dialog = await openWithTour(answer(false), TOUR)
 		row(dialog, 'calendar').querySelector('[data-part="pin"]').click()
 		dialog.querySelector('[data-part="replay"]').click()
 		await new Promise((r) => setTimeout(r, 0))
-		expect(window.confirm).toHaveBeenCalledWith('replayDiscard')
+		expect(window.confirm).toHaveBeenCalledWith(TOUR.replayDiscard)
 		expect(document.querySelector('dialog.thematiq-menu-settings')).not.toBeNull()
 		expect(window.thematiqAppMenuReplay).not.toHaveBeenCalled()
 	})

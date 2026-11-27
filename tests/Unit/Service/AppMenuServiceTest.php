@@ -614,7 +614,13 @@ class AppMenuServiceTest extends TestCase {
 			}
 
 			$this->assertSame(
-				expected: ['seen' => '1.2.40', 'progress' => '', 'appVersion' => '1.2.49', 'replayLabel' => 'Replay walkthrough'],
+				expected: [
+					'seen' => '1.2.40',
+					'progress' => '',
+					'appVersion' => '1.2.49',
+					'replayLabel' => 'Replay walkthrough',
+					'replayDiscard' => 'Drop your unsaved changes and start the walkthrough?',
+				],
 				actual: $state['walkthrough']
 			);
 		}//end foreach

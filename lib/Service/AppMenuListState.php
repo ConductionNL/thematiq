@@ -142,7 +142,7 @@ class AppMenuListState {
 	 * @param string|null $userId The signed-in person.
 	 * @param IL10N $l The language of this request.
 	 *
-	 * @return array<string, string>|null `seen`, `progress`, `appVersion` and `replayLabel`, or null.
+	 * @return array<string, string>|null `seen`, `progress`, `appVersion`, `replayLabel` and `replayDiscard`, or null.
 	 *
 	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
 	 */
@@ -152,7 +152,13 @@ class AppMenuListState {
 			return null;
 		}
 
-		return array_merge($this->walkthrough->state(userId: $userId), ['replayLabel' => $l->t('Replay walkthrough')]);
+		return array_merge(
+			$this->walkthrough->state(userId: $userId),
+			[
+				'replayLabel' => $l->t('Replay walkthrough'),
+				'replayDiscard' => $l->t('Drop your unsaved changes and start the walkthrough?'),
+			]
+		);
 	}//end walkthroughState()
 
 	/**

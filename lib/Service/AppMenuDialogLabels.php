@@ -115,8 +115,6 @@ final class AppMenuDialogLabels {
 			'reset' => $l->t('Reset to default'),
 			'resetEveryone' => $l->t('Reset the menu for everyone to the shipped default?'),
 			'resetOnlyMe' => $l->t('Reset your menu items to the organisation\'s default?'),
-			'replay' => $l->t('Replay walkthrough'),
-			'replayDiscard' => $l->t('Drop your unsaved changes and start the walkthrough?'),
 			'cancel' => $l->t('Cancel'),
 			'save' => $l->t('Save'),
 			'saveFailed' => $l->t('The settings could not be saved.'),
