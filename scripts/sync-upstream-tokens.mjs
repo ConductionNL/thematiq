@@ -209,13 +209,35 @@ export function readUpstreamTokens(orgDir) {
 		if (Array.isArray(json.$metadata?.tokenSetOrder)) {
 			out.kind = 'tokens-studio'
 		}
-		if (out.kind === 'tokens-studio') {
+		if (
+			out.kind === 'tokens-studio'
+			|| (file === plain && excludesParentKeys(orgDir))
+		) {
 			json = tokensStudioTree(json)
 		}
 		mergeTokens(out.tokens, json)
 		out.rawTokens.push(...flattenTokens(json))
 	}
 	return out
+}
+
+/**
+ * Whether upstream builds the theme with Tokens Studio's `excludeParentKeys`,
+ * which drops each token set's name from the token paths. A plain
+ * `src/tokens.json` without `$metadata` is then still a Tokens Studio document
+ * (KVK's: one set, `common`), and reading it as style-dictionary would keep
+ * the set name and write `--{slug}-basis-*` instead of upstream's `--basis-*`.
+ *
+ * @param {string} orgDir The organisation's directory in the themes checkout.
+ * @return {boolean} True when the theme's style-dictionary.mjs sets it.
+ * @spec openspec/specs/token-sync-workflow/spec.md#requirement-converted-and-gated-sync
+ */
+export function excludesParentKeys(orgDir) {
+	const config = join(orgDir, 'style-dictionary.mjs')
+	return (
+		existsSync(config)
+		&& /excludeParentKeys\s*:\s*true/.test(readFileSync(config, 'utf8'))
+	)
 }
 
 /**
