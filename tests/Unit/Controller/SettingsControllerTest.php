@@ -43,10 +43,11 @@ class SettingsControllerTest extends TestCase {
 	 * for the other constructor dependencies (unused by these tests).
 	 *
 	 * @param EmailThemingService $emailThemingService The stubbed service.
+	 * @param ActiveTokenSetService|null $active The active set service, or an inert mock.
 	 *
 	 * @return SettingsController The controller under test.
 	 */
-	private function makeController(EmailThemingService $emailThemingService): SettingsController {
+	private function makeController(EmailThemingService $emailThemingService, ?ActiveTokenSetService $active = null): SettingsController {
 		return new SettingsController(
 			appName: 'nldesign',
 			request: $this->createMock(originalClassName: IRequest::class),
@@ -59,7 +60,7 @@ class SettingsControllerTest extends TestCase {
 			tokenSets: new SettingsTokenSetServices(
 				tokenSetService: $this->createMock(originalClassName: TokenSetService::class),
 				previewService: $this->createMock(originalClassName: TokenSetPreviewService::class),
-				activeTokenSet: $this->createMock(originalClassName: ActiveTokenSetService::class),
+				activeTokenSet: $active ?? $this->createMock(originalClassName: ActiveTokenSetService::class),
 				themingService: $this->createMock(originalClassName: ThemingService::class)
 			),
 			reports: new SettingsReportServices(
@@ -163,4 +164,53 @@ class SettingsControllerTest extends TestCase {
 		$this->assertSame(expected: 'ok', actual: $data['status']);
 		$this->assertSame(expected: 'enabled', actual: $data['state']['state']);
 	}//end testSetEmailThemingSucceeds()
+
+	/**
+	 * The switch stores through the active set service and answers what it applied; a non-boolean is refused.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
+	 */
+	public function testCoreThemingFollowsStoresAndApplies(): void {
+		$active = $this->createMock(originalClassName: ActiveTokenSetService::class);
+		$active->expects($this->once())->method('setNextcloudFollows')->with(true)->willReturn(['primary_color']);
+		$controller = $this->makeController(emailThemingService: $this->createMock(originalClassName: EmailThemingService::class), active: $active);
+
+		$response = $controller->setCoreThemingFollows(follows: true);
+		$this->assertSame(expected: 200, actual: $response->getStatus());
+		$this->assertSame(expected: ['status' => 'ok', 'follows' => true, 'applied' => ['primary_color']], actual: $response->getData());
+
+		$this->assertSame(expected: 400, actual: $controller->setCoreThemingFollows(follows: 'yes')->getStatus());
+	}//end testCoreThemingFollowsStoresAndApplies()
+
+	/**
+	 * The route is for administrators only: its one attribute is the admin setting, never NoAdminRequired.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
+	 */
+	public function testCoreThemingFollowsIsAdminOnly(): void {
+		$attributes = array_map(
+			static fn ($attribute) => $attribute->getName(),
+			(new \ReflectionMethod(SettingsController::class, 'setCoreThemingFollows'))->getAttributes()
+		);
+
+		$this->assertSame(expected: [\OCP\AppFramework\Http\Attribute\AuthorizedAdminSetting::class], actual: $attributes);
+	}//end testCoreThemingFollowsIsAdminOnly()
+
+	/**
+	 * Under a configuration source the lock middleware refuses the POST, as for every other setting.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
+	 */
+	public function testCoreThemingFollowsIsLockedUnderASource(): void {
+		$this->assertNotContains(
+			needle: 'SettingsController::setCoreThemingFollows',
+			haystack: \OCA\Thematiq\Middleware\ConfigSourceLockMiddleware::SESSION_ONLY
+		);
+	}//end testCoreThemingFollowsIsLockedUnderASource()
 }//end class

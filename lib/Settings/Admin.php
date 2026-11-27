@@ -174,6 +174,7 @@ class Admin implements IDelegatedSettings {
 			'confirmSaveTheme' => $this->isFlagOn(key: 'confirm_save_theme', fallback: '1'),
 			'darkVariantsEnabled' => $this->isFlagOn(key: 'dark_variants', fallback: '1'),
 			'marianneEnabled' => $this->isFlagOn(key: 'marianne_enabled'),
+			'coreThemingFollows' => $this->isFlagOn(key: 'core_theming_follows_set'),
 		];
 	}//end flagState()
 
@@ -213,7 +214,7 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/admin-settings/spec.md
 	 */
 	private function publishBootState(array $state): void {
-		foreach (['tokenSets', 'currentTokenSet', 'confirmSaveStock', 'confirmSaveTheme'] as $key) {
+		foreach (['tokenSets', 'currentTokenSet', 'confirmSaveStock', 'confirmSaveTheme', 'coreThemingFollows'] as $key) {
 			$this->page->initialState->provideInitialState($key, $state[$key]);
 		}
 

@@ -1441,6 +1441,81 @@
 			})
 		}
 
+		// Keep the Nextcloud theme in line with the set (openspec/changes/first-time-setup,
+		// REQ-TQFS-013): saved at once; on applies the active set to Nextcloud's theme now.
+		var coreFollowsSwitch = document.getElementById(
+			'thematiq-core-theming-follows',
+		)
+		var coreFollowsStatus = document.getElementById(
+			'thematiq-core-theming-follows-status',
+		)
+		if (coreFollowsSwitch !== null) {
+			coreFollowsSwitch.checked =
+				loadInitialState('coreThemingFollows', false) === true
+			coreFollowsSwitch.addEventListener('change', function () {
+				var follows = coreFollowsSwitch.checked === true
+				coreFollowsSwitch.disabled = true
+				fetch(
+					OC.generateUrl('/apps/thematiq/settings/core-theming-follows'),
+					{
+						method: 'POST',
+						headers: {
+							requesttoken: OC.requestToken,
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({ follows: follows }),
+					},
+				)
+					.then(function (response) {
+						return response.json().then(function (data) {
+							if (!response.ok || data.status !== 'ok') {
+								throw new Error(String(data.error || response.status))
+							}
+							return data
+						})
+					})
+					.then(function (data) {
+						setCoreFollowsStatus(
+							follows === true && data.applied && data.applied.length > 0
+								? t(
+										'thematiq',
+										'The Nextcloud theme now follows the set. The previous theme is kept as a version in the log.',
+									)
+								: follows === true
+									? t('thematiq', 'The Nextcloud theme follows the next change of set.')
+									: t('thematiq', 'Thematiq leaves the Nextcloud theme alone.'),
+						)
+					})
+					.catch(function () {
+						coreFollowsSwitch.checked = !follows
+						notify(t('thematiq', 'Could not save the setting.'))
+					})
+					.finally(function () {
+						coreFollowsSwitch.disabled = false
+					})
+			})
+		}
+
+		/**
+		 * Say in the card's status line what happened to the Nextcloud theme.
+		 *
+		 * @param {string} text The line.
+		 */
+		function setCoreFollowsStatus(text) {
+			if (coreFollowsStatus !== null) {
+				coreFollowsStatus.textContent = text
+			}
+		}
+
+		/**
+		 * Whether Nextcloud's theme follows every change of set.
+		 *
+		 * @return {boolean} True while the switch is on.
+		 */
+		function coreThemingFollows() {
+			return coreFollowsSwitch !== null && coreFollowsSwitch.checked === true
+		}
+
 		// Publish the active preview — runs the EXISTING apply dialog (and,
 		// when applicable, the theming-sync dialog) for the previewed set;
 		// only on confirmation does POST /settings/preview/publish fire
@@ -1537,6 +1612,14 @@
 						}
 
 						var tsData = tokenSetsData[tokenSet]
+						if (data.nextcloudFollowed === true || coreThemingFollows()) {
+							// The server already applied the set to Nextcloud's
+							// theme, so there is nothing to ask (REQ-TQFS-013).
+							setCoreFollowsStatus(
+								t('thematiq', 'The Nextcloud theme followed the set.'),
+							)
+							return
+						}
 						if (tsData && tsData.theming) {
 							checkAndShowThemingDialog(tsData)
 						}
@@ -5238,9 +5321,16 @@
 			Promise.all([preview, theming, saved])
 				.then(function (results) {
 					var data = results[0]
+					// While Nextcloud's theme follows the set the server applies it
+					// with the switch, so the dialog carries no sync section (REQ-TQFS-013).
+					var followsSwitch = document.getElementById(
+						'thematiq-core-theming-follows',
+					)
 					var themingPlan = window.NldesignThemingPlan.computeThemingPlan(
 						tokenSetsData[newTokenSetId],
-						results[1],
+						followsSwitch !== null && followsSwitch.checked === true
+							? null
+							: results[1],
 						t,
 					)
 					if (data.error !== undefined) {
@@ -5674,6 +5764,11 @@
 							}
 							if (tokenSetSelect !== null && publishMode !== true) {
 								tokenSetSelect.dataset.previousValue = newTokenSetId
+							}
+							if (tsData.nextcloudFollowed === true || coreThemingFollows()) {
+								setCoreFollowsStatus(
+									t('thematiq', 'The Nextcloud theme followed the set.'),
+								)
 							}
 
 							// The dialog stays open across this step: `swap()` only

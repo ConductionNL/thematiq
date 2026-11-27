@@ -204,6 +204,7 @@ class AdminInitialStateTest extends TestCase {
 				'currentTokenSet',
 				'confirmSaveStock',
 				'confirmSaveTheme',
+				'coreThemingFollows',
 				'activePreview',
 				'iconPackSource',
 				'playgroundInventory',

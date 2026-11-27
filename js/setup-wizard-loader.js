@@ -18,7 +18,11 @@
 	 * @return {boolean} True while it is open.
 	 */
 	function firstRunOpen() {
-		return doc.querySelector('#firstrunwizard, .first-run-wizard, [data-firstrunwizard]') !== null
+		return (
+			doc.querySelector(
+				'#firstrunwizard, .first-run-wizard, [data-firstrunwizard]',
+			) !== null
+		)
 	}
 
 	/**
@@ -31,7 +35,11 @@
 		if (win.OC && typeof win.OC.filePath === 'function') {
 			return win.OC.filePath('thematiq', 'js', file)
 		}
-		return (win.OC && win.OC.webroot ? win.OC.webroot : '') + '/apps/thematiq/js/' + file
+		return (
+			(win.OC && win.OC.webroot ? win.OC.webroot : '')
+			+ '/apps/thematiq/js/'
+			+ file
+		)
 	}
 
 	/**

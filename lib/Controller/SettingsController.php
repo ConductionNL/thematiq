@@ -126,8 +126,30 @@ class SettingsController extends Controller {
 			return new JSONResponse(['error' => 'Invalid token set'], 400);
 		}
 
-		return new JSONResponse(['status' => 'ok', 'tokenSet' => $tokenSet]);
+		return new JSONResponse(
+			['status' => 'ok', 'tokenSet' => $tokenSet, 'nextcloudFollowed' => $this->tokenSets->activeTokenSet->nextcloudFollows()]
+		);
 	}//end setTokenSet()
+
+	/**
+	 * Store whether Nextcloud's theme follows every change of set; on applies the active set to it now.
+	 *
+	 * @param mixed $follows Whether Nextcloud's theme follows.
+	 *
+	 * @return JSONResponse The stored value and the Nextcloud theming values applied now; 400 for a non-boolean.
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
+	 */
+	#[AuthorizedAdminSetting(Admin::class)]
+	public function setCoreThemingFollows(mixed $follows = null): JSONResponse {
+		if (is_bool($follows) === false) {
+			return new JSONResponse(['error' => 'invalid_value', 'key' => 'follows'], 400);
+		}
+
+		$applied = $this->tokenSets->activeTokenSet->setNextcloudFollows(follows: $follows);
+
+		return new JSONResponse(['status' => 'ok', 'follows' => $follows, 'applied' => $applied]);
+	}//end setCoreThemingFollows()
 
 	/**
 	 * Get all available token sets.

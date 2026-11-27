@@ -54,6 +54,8 @@ return \OCA\Thematiq\Middleware\Support\ApiPathAliases::withVersionedAliases([
 
 		['name' => 'settings#getAvailableTokenSets', 'url' => '/settings/tokensets', 'verb' => 'GET'],
 		['name' => 'settings#setTokenSet', 'url' => '/settings/tokenset', 'verb' => 'POST'],
+		// Nextcloud's theme follows every change of set (first-time-setup, REQ-TQFS-013), admin only.
+		['name' => 'settings#setCoreThemingFollows', 'url' => '/settings/core-theming-follows', 'verb' => 'POST'],
 		// Planned token set switches (openspec/specs/scheduled-switch).
 		['name' => 'scheduledSwitch#index', 'url' => '/settings/scheduled-switches', 'verb' => 'GET'],
 		['name' => 'scheduledSwitch#create', 'url' => '/settings/scheduled-switches', 'verb' => 'POST'],

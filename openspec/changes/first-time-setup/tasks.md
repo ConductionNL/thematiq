@@ -17,10 +17,10 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
       `POST /api/setup/action/{actionId}`; admin only (no `#[NoAdminRequired]`), CSRF on the POST; 400
       naming the key, 404 for an unknown action, 423 under a configuration source through the existing
       middleware. REQ-TQFS-005.
-- [ ] 1.4 `lib/Service/ActiveTokenSetService.php`: while `core_theming_follows_set` is `1`, every switch
+- [x] 1.4 `lib/Service/ActiveTokenSetService.php`: while `core_theming_follows_set` is `1`, every switch
       (settings page, occ, planned switch) also applies the set to Nextcloud's theme with the snapshot as
       a version. REQ-TQFS-008.
-- [ ] 1.5 (status, actions and controller tests in #2139; the `ActiveTokenSetServiceTest` case lands with 1.4) PHPUnit `tests/Unit/Service/SetupStatusServiceTest.php` (configured by an earlier version, an
+- [x] 1.5 PHPUnit `tests/Unit/Service/SetupStatusServiceTest.php` (configured by an earlier version, an
       upgrade with nothing stored is due, a configuration source counts as configured, each step's done),
       `tests/Unit/Service/SetupActionsTest.php` (the licence gate, a failed part is reported and
       completion waits, skip changes nothing, the Nextcloud login removes the login context, the menu
@@ -75,14 +75,14 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
 
 ## 4b. Keep the Nextcloud theme in line, on the settings page
 
-- [ ] 4b.1 `SettingsController::setCoreThemingFollows()` and the route
+- [x] 4b.1 `SettingsController::setCoreThemingFollows()` and the route
       `POST /settings/core-theming-follows`: admin only, audit entry, 423 under a configuration source;
       on applies the active set through the `--sync-core` path with the old theme as a version.
       REQ-TQFS-013.
-- [ ] 4b.2 `templates/settings/admin.php` and `js/admin.js`: the switch in the Active token set card
+- [x] 4b.2 `templates/settings/admin.php` and `js/admin.js`: the switch in the Active token set card
       with its hint and status line, filled from `core_theming_follows_set`; no theming sync dialog on a
       change of set while it is on; disabled under a configuration source. REQ-TQFS-013.
-- [ ] 4b.3 PHPUnit `tests/Unit/Controller/SettingsControllerTest.php` (on applies and stores `1`, off
+- [x] 4b.3 PHPUnit `tests/Unit/Controller/SettingsControllerTest.php` (on applies and stores `1`, off
       stores `0` and leaves core theming, 423 under a source, audit entry); vitest for the switch and
       the skipped dialog.
 - [ ] 4b.4 e2e in `tests/e2e/spec-coverage/first-time-setup.spec.ts`: turn the switch on, the core

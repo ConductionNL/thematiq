@@ -202,8 +202,14 @@ class ThemeSet extends Command {
 	 * @return void
 	 *
 	 * @spec openspec/specs/theme-cli/spec.md
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
 	 */
 	private function reportCore(InputInterface $input, OutputInterface $output): void {
+		if ((bool)$input->getOption('sync-core') === false && $this->active->nextcloudFollows() === true) {
+			$output->writeln('Nextcloud theming follows the set (core_theming_follows_set), so the set was applied to it too.');
+			return;
+		}
+
 		if ((bool)$input->getOption('sync-core') === false) {
 			$output->writeln('Nextcloud theming is unchanged. Pass --sync-core to apply the set\'s colours and logo.');
 			return;

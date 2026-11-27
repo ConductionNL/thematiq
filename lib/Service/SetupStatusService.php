@@ -52,7 +52,7 @@ class SetupStatusService {
 	 *
 	 * @var string
 	 */
-	public const FOLLOWS_KEY = 'core_theming_follows_set';
+	public const FOLLOWS_KEY = ActiveTokenSetService::FOLLOWS_KEY;
 
 	/**
 	 * The app values whose presence means an administrator configured thematiq.

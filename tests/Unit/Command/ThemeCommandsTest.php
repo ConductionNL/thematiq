@@ -273,4 +273,26 @@ class ThemeCommandsTest extends TestCase {
 		$tester->execute(['token-set' => 'rijkshuisstijl', '--sync-core' => true]);
 		$this->assertStringContainsString(needle: 'rijkshuisstijl has no theming values to apply', haystack: $tester->getDisplay());
 	}//end testSyncCoreSaysWhenTheValuesDidNotValidate()
+
+	/**
+	 * While Nextcloud's theme follows the set, a plain switch applies the set to it and says so.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+	 */
+	public function testAPlainSwitchFollowsInNextcloudWhenItFollows(): void {
+		$this->store['core_theming_follows_set'] = '1';
+		$this->coreSync->expects($this->once())->method('sync')->with('amsterdam')->willReturn(['primary_color']);
+		$active = new ActiveTokenSetService(
+			config: $this->config,
+			tokenSets: $this->tokenSets,
+			auditService: $this->audit,
+			follow: new \OCA\Thematiq\Service\CoreThemingFollow(config: $this->config, coreSync: $this->coreSync, auditService: $this->audit)
+		);
+		$tester = $this->tester(command: new ThemeSet(active: $active, tokenSets: $this->tokenSets, coreSync: $this->coreSync));
+
+		$this->assertSame(expected: Command::SUCCESS, actual: $tester->execute(['token-set' => 'amsterdam']));
+		$this->assertStringContainsString(needle: 'Nextcloud theming follows the set', haystack: $tester->getDisplay());
+	}//end testAPlainSwitchFollowsInNextcloudWhenItFollows()
 }//end class

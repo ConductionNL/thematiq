@@ -190,6 +190,18 @@ if ($_['mockUi'] === true) {
 		<!-- The preview tabs, swatches and samples; js/admin-active-set-preview.js draws them. -->
 		<div class="thematiq-active-set-preview" id="thematiq-active-set-preview"></div>
 		<p class="settings-hint" id="nldesign-token-set-switch-note" role="status" hidden></p>
+		<!-- Nextcloud's own theme follows every change of set (openspec/changes/first-time-setup,
+		     REQ-TQFS-013); js/admin.js saves it at once. Locked with the rest under a configuration source. -->
+		<div class="thematiq-core-follows">
+			<!-- Checked by js/admin.js from the coreThemingFollows initial state. -->
+			<input type="checkbox" class="checkbox" role="switch" id="thematiq-core-theming-follows"
+				   aria-describedby="thematiq-core-theming-follows-hint">
+			<label for="thematiq-core-theming-follows"><?php p($l->t('Keep the Nextcloud theme in line with the set')); ?></label>
+			<p class="settings-hint" id="thematiq-core-theming-follows-hint">
+				<?php p($l->t('Also on the next change of set. Off: thematiq leaves the Nextcloud theme alone.')); ?>
+			</p>
+			<p class="settings-hint" id="thematiq-core-theming-follows-status" role="status" aria-live="polite"></p>
+		</div>
 		<!-- The selected set is another organisation's house style and nobody
 		     confirmed it yet (openspec/changes/archive/2026-11-22-token-set-licence-gate/specs/token-set-licences/spec.md).
 		     Filled by js/admin-set-licence.js. -->

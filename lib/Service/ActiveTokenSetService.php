@@ -14,6 +14,7 @@
  * @link      https://github.com/ConductionNL/thematiq
  *
  * @spec openspec/specs/scheduled-switch/spec.md
+ * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
  */
 
 declare(strict_types=1);
@@ -48,16 +49,25 @@ class ActiveTokenSetService {
 	public const DEFAULT_SET = 'nextcloud';
 
 	/**
+	 * The app value that makes Nextcloud's own theme follow every change of set (`1`).
+	 *
+	 * @var string
+	 */
+	public const FOLLOWS_KEY = CoreThemingFollow::KEY;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IConfig $config The config service.
 	 * @param TokenSetService $tokenSets Validates that a set exists.
 	 * @param ThemingAuditService $auditService Records each switch.
+	 * @param CoreThemingFollow|null $follow Applies a new set to Nextcloud's theme while it follows the set.
 	 */
 	public function __construct(
 		private readonly IConfig $config,
 		private readonly TokenSetService $tokenSets,
 		private readonly ThemingAuditService $auditService,
+		private readonly ?CoreThemingFollow $follow = null,
 	) {
 	}//end __construct()
 
@@ -101,7 +111,32 @@ class ActiveTokenSetService {
 			action: $auditAction,
 			context: array_merge(['old' => $previous, 'new' => $tokenSet], $auditContext)
 		);
+		$this->follow?->afterSwitch(tokenSet: $tokenSet, auditContext: $auditContext);
 
 		return $previous;
 	}//end switchTo()
+
+	/**
+	 * Whether Nextcloud's theme follows every change of set.
+	 *
+	 * @return bool True while it follows.
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
+	 */
+	public function nextcloudFollows(): bool {
+		return $this->follow?->follows() === true;
+	}//end nextcloudFollows()
+
+	/**
+	 * Store whether Nextcloud's theme follows; on applies the active set to it now.
+	 *
+	 * @param bool $follows Whether Nextcloud's theme follows.
+	 *
+	 * @return array<int, string> The Nextcloud theming values applied now.
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
+	 */
+	public function setNextcloudFollows(bool $follows): array {
+		return ($this->follow?->setFollows(follows: $follows, activeSet: $this->getActive()) ?? []);
+	}//end setNextcloudFollows()
 }//end class
