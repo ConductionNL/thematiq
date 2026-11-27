@@ -136,6 +136,14 @@ describe('an action and a moment, as the log draws them', () => {
 		})
 	})
 
+	it('draws a scheduled switch in its own family and a group theme in another, as TqLogboek does', () => {
+		expect(format.formatAuditAction('scheduled_switch_applied').kind).toBe(
+			'scheduled',
+		)
+		expect(format.formatAuditAction('group_theming_changed').kind).toBe('group')
+		expect(format.formatAuditAction('token_set_changed').kind).toBe('switch')
+	})
+
 	it('keeps an unknown action as it is stored', () => {
 		expect(format.formatAuditAction('something_new')).toEqual({
 			label: 'something_new',

@@ -200,7 +200,11 @@
 
 	/**
 	 * What an entry's action did, in words, and the family its pill is drawn in.
+	 * TqLogboek draws six families: a switch in primary, a scheduled switch in
+	 * teal, a group theme in amber, tokens in purple, added in green and
+	 * removed in red.
 	 *
+	 * @spec openspec/specs/admin-settings/spec.md
 	 * @param {string} action The action as the log stores it.
 	 * @return {{label: string, kind: string}} The words and the family.
 	 */
@@ -209,7 +213,7 @@
 			token_set_changed: [t('thematiq', 'Token set switched'), 'switch'],
 			scheduled_switch_applied: [
 				t('thematiq', 'Scheduled switch applied'),
-				'switch',
+				'scheduled',
 			],
 			overrides_written: [t('thematiq', 'Tokens changed'), 'tokens'],
 			overrides_imported: [t('thematiq', 'Tokens imported'), 'tokens'],
@@ -227,7 +231,7 @@
 				t('thematiq', 'Custom token source updated'),
 				'added',
 			],
-			group_theming_changed: [t('thematiq', 'Group theme changed'), 'switch'],
+			group_theming_changed: [t('thematiq', 'Group theme changed'), 'group'],
 			app_exclusions_changed: [
 				t('thematiq', 'Theme per app changed'),
 				'switch',
