@@ -231,6 +231,9 @@ Doe een [featureverzoek](https://github.com/ConductionNL/thematiq/issues/new/cho
 	<repair-steps>
 		<post-migration>
 			<step>OCA\Thematiq\Repair\MigrateAppConfigKeys</step>
+			<!-- After MigrateAppConfigKeys, which moves show_menu_labels from the old app id first:
+			     the older menu labels option moves into menu.topBarTitles (apps-menu-show-titles). -->
+			<step>OCA\Thematiq\Repair\MigrateMenuLabelsToTopBarTitles</step>
 			<step>OCA\Thematiq\Repair\MigrateUserPreferences</step>
 			<step>OCA\Thematiq\Repair\MigrateStoredClassNames</step>
 			<!--

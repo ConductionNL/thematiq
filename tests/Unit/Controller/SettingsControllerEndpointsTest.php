@@ -256,7 +256,6 @@ class SettingsControllerEndpointsTest extends TestCase {
 	public static function toggleProvider(): array {
 		return [
 			'hide slogan' => ['setSloganSetting', 'hide_slogan', 'hideSlogan'],
-			'show menu labels' => ['setMenuLabelsSetting', 'show_menu_labels', 'showMenuLabels'],
 			'primary drives components' => [
 				'setPrimaryDrivesComponentsSetting',
 				'primary_drives_components',
@@ -386,4 +385,18 @@ class SettingsControllerEndpointsTest extends TestCase {
 		$this->assertSame(expected: ['key' => 'confirm_save_stock', 'old' => false, 'new' => true], actual: $this->audited[0][1]);
 		$this->assertSame(expected: ['key' => 'confirm_save_theme', 'old' => false, 'new' => true], actual: $this->audited[1][1]);
 	}//end testBothSaveConfirmationsCanBeTurnedBackOn()
+
+	/**
+	 * The older menu labels endpoint is gone: "Show titles in the top bar" saves through the menu
+	 * defaults (POST /apps/thematiq/app-menu/defaults).
+	 *
+	 * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
+	 *
+	 * @return void
+	 */
+	public function testTheMenuLabelsEndpointIsGone(): void {
+		$this->assertFalse(condition: method_exists(SettingsController::class, 'setMenuLabelsSetting'));
+		$routes = (string)file_get_contents(dirname(__DIR__, 3) . '/appinfo/routes.php');
+		$this->assertStringNotContainsString(needle: '/settings/menulabels', haystack: $routes);
+	}//end testTheMenuLabelsEndpointIsGone()
 }//end class

@@ -746,17 +746,16 @@
           }
         },
         {
-          "name": "Set menu-labels (200, status ok)",
+          "name": "Set Show titles in the top bar (200, menu defaults)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('menu labels set (200)', () => pm.response.to.have.status(200));",
+                  "pm.test('top bar titles set (200)', () => pm.response.to.have.status(200));",
                   "const b = pm.response.json();",
-                  "pm.test('status ok', () => pm.expect(b.status).to.eql('ok'));",
-                  "pm.test('echoes showMenuLabels true', () => pm.expect(b.showMenuLabels).to.eql(true));"
+                  "pm.test('the defaults hold topBarTitles true', () => pm.expect(b.defaults.topBarTitles).to.eql(true));"
                 ]
               }
             }
@@ -794,10 +793,10 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"showMenuLabels\": true\n}"
+              "raw": "{\n  \"settings\": {\n    \"topBarTitles\": true\n  }\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/index.php/apps/thematiq/settings/menulabels",
+              "raw": "{{baseUrl}}/index.php/apps/thematiq/app-menu/defaults",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -805,8 +804,8 @@
                 "index.php",
                 "apps",
                 "thematiq",
-                "settings",
-                "menulabels"
+                "app-menu",
+                "defaults"
               ]
             }
           }

@@ -340,26 +340,6 @@ class SettingsController extends Controller {
 	}//end saveConfirmation()
 
 	/**
-	 * Set the show menu labels setting.
-	 *
-	 * @param bool $showMenuLabels Whether to show text labels in app menu.
-	 *
-	 * @return JSONResponse The response with the status.
-	 *
-	 * @spec openspec/specs/menu-labels/spec.md
-	 * @spec openspec/specs/theming-audit/spec.md#requirement-complete-call-site-coverage
-	 */
-	#[AuthorizedAdminSetting(Admin::class)]
-	public function setMenuLabelsSetting(bool $showMenuLabels): JSONResponse {
-		$previous = ($this->settings->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1');
-		$this->saveBooleanSetting(key: 'show_menu_labels', value: $showMenuLabels);
-
-		$this->auditToggle(key: 'show_menu_labels', change: [$previous, $showMenuLabels]);
-
-		return new JSONResponse(['status' => 'ok', 'showMenuLabels' => $showMenuLabels]);
-	}//end setMenuLabelsSetting()
-
-	/**
 	 * Update Nextcloud theming values from NL Design tokens.
 	 *
 	 * @return JSONResponse The response with updated fields.

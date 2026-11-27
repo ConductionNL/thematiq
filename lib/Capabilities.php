@@ -37,6 +37,7 @@ use OCP\App\IAppManager;
 use OCP\Capabilities\IPublicCapability;
 use OCP\ICache;
 use OCP\ICacheFactory;
+use OCA\Thematiq\Service\AppMenuTopBarTitles;
 use OCP\IConfig;
 use OCP\IURLGenerator;
 use stdClass;
@@ -130,11 +131,14 @@ class Capabilities implements IPublicCapability {
 	 * The slogan and menu-label presentation toggles.
 	 *
 	 * @return array{hideSlogan: bool, showMenuLabels: bool} The toggles.
+	 *
+	 * @spec openspec/changes/apps-menu-show-titles/specs/theming-capability/spec.md
 	 */
 	private function toggles(): array {
 		return [
 			'hideSlogan' => $this->config->getAppValue(appName: Application::APP_ID, key: 'hide_slogan', default: '0') === '1',
-			'showMenuLabels' => $this->config->getAppValue(appName: Application::APP_ID, key: 'show_menu_labels', default: '0') === '1',
+			// The field keeps its name and carries "Show titles in the top bar" (apps-menu-show-titles).
+			'showMenuLabels' => (new AppMenuTopBarTitles(config: $this->config))->isOn(),
 		];
 	}//end toggles()
 

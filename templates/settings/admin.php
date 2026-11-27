@@ -510,16 +510,24 @@ if ($_['mockUi'] === true) {
 				</label>
 			</div>
 
-			<!-- Show Menu Labels Option -->
-			<div class="nldesign-option">
+			<!-- Show titles in the top bar (apps-menu-show-titles REQ-TQMT-005, board TqLayout): the
+			     administrator's menu setting topBarTitles, saved at once by js/admin-layout-panel.js
+			     through the menu defaults. It works with the workplace and the classic menu. -->
+			<div class="nldesign-option thematiq-menu-switch">
 				<input type="checkbox"
 					   name="nldesign-show-menu-labels"
 					   id="nldesign-show-menu-labels"
 					   class="checkbox"
+					   role="switch"
+					   data-menu-key="topBarTitles"
+					   aria-describedby="nldesign-show-menu-labels-help"
 					   <?php if ($_['showMenuLabels'] === true): ?>checked<?php endif; ?>>
 				<label for="nldesign-show-menu-labels">
-					<?php p($l->t('Show text labels in app menu (hide icons)')); ?>
+					<?php p($l->t('Show titles in the top bar')); ?>
 				</label>
+				<p class="settings-hint" id="nldesign-show-menu-labels-help"><?php p($l->t('The name next to the icon of every pinned app in the top bar. Off: icons only, the name appears as a tooltip.')); ?></p>
+				<p class="hidden-visually thematiq-create-switches__live" role="status" aria-live="polite"></p>
+				<p class="thematiq-create-switches__alert" role="alert" hidden></p>
 			</div>
 		</section>
 		<div class="thematiq-card-column">

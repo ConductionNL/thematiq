@@ -633,12 +633,31 @@
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
 	 */
 	function wireCreateSwitches() {
-		var box = document.querySelector('.thematiq-create-switches')
-		if (box === null) {
-			return
-		}
+		// The Menu card's switches: the two create switches, and Show titles in
+		// the top bar (apps-menu-show-titles REQ-TQMT-005) in its own box.
+		Array.prototype.forEach.call(
+			document.querySelectorAll(
+				'.thematiq-create-switches, .thematiq-menu-switch',
+			),
+			wireMenuSwitches,
+		)
+	}
+
+	/**
+	 * Save each menu switch of one box at once through the menu defaults,
+	 * with the box's own live region and alert.
+	 *
+	 * @param {HTMLElement} box The box holding the switches.
+	 * @return {void}
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
+	 * @spec openspec/changes/apps-menu-show-titles/specs/admin-settings/spec.md
+	 */
+	function wireMenuSwitches(box) {
 		var live = box.querySelector('.thematiq-create-switches__live')
 		var alertEl = box.querySelector('.thematiq-create-switches__alert')
+		if (live === null || alertEl === null) {
+			return
+		}
 		Array.prototype.forEach.call(
 			box.querySelectorAll('input[data-menu-key]'),
 			function (input) {
