@@ -39,6 +39,8 @@
 		showExternalApps: true,
 		shape: 'round',
 		tiles: false,
+		titles: true,
+		topBarTitles: false,
 		payoff: true,
 		iconSize: 'large',
 		iconColour: 'brand',
@@ -57,6 +59,12 @@
 	var TRIGGERS = '.app-menu__waffle, .app-menu__current-app'
 	var SVG_NS = 'http://www.w3.org/2000/svg'
 	var CREATE_ROW = 99900
+	// The shared name tooltip of icon-only entries and pins (apps-menu-show-titles):
+	// shown this long after the pointer rests, at once on keyboard focus.
+	var TIP_DELAY = 300
+	var TIP_HIDE = 120
+	var TIP = BLOCK + '__tooltip'
+	var TIP_TARGET = 'data-thematiq-tip'
 	var PINS_MAX = 5
 	var PINS = 'thematiq-app-pins'
 	var CREATE_MAX = 4
@@ -675,6 +683,25 @@
 			moreButton.setAttribute('aria-expanded', 'false')
 			moreButton.setAttribute('aria-controls', more.id)
 			bar.appendChild(moreButton)
+			createChipTitles(grid, !settingsOf(menu).titles)
+		})
+	}
+
+	/**
+	 * The Create row's chips icon only while titles are off; its More keeps
+	 * its text, it is not an app entry (apps-menu-show-titles).
+	 *
+	 * @param {Element} grid The grid.
+	 * @param {boolean} off Whether titles are off.
+	 * @return {void}
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+	 */
+	function createChipTitles(grid, off) {
+		grid.querySelectorAll(
+			':scope > [data-thematiq-row="create"] > .' + BLOCK + '__create:not([aria-controls])',
+		).forEach(function (button) {
+			var label = button.querySelector('.' + BLOCK + '__create-label')
+			iconOnly(button, label ? label.textContent.trim() : '', '', off)
 		})
 	}
 
@@ -776,7 +803,8 @@
 	 */
 	function collect(grid, menu) {
 		var settings = settingsOf(menu)
-		var payoff = settings.payoff
+		// A payoff without a title reads as a stray line (REQ-TQMT-002).
+		var payoff = settings.payoff && settings.titles
 		var place = {}
 		var groups = Array.isArray(menu.groups) ? menu.groups : []
 		var n = 0
@@ -837,6 +865,8 @@
 			} else {
 				tile.removeAttribute('data-thematiq-work')
 			}
+			var label = tile.querySelector('.app-item__label')
+			iconOnly(tile, label ? label.textContent.trim() : '', '', !settings.titles)
 			entries.push({
 				key: key,
 				el: tile,
@@ -863,6 +893,11 @@
 				}
 			})
 		}
+		var note = text(menu.external || {}, 'note')
+		external.forEach(function (a) {
+			var label = a.querySelector('.app-item__label')
+			iconOnly(a, label ? label.textContent.trim() : '', note, !settings.titles)
+		})
 		external.forEach(function (a, i) {
 			entries.push({
 				key: a.getAttribute('data-thematiq-external'),
@@ -920,8 +955,255 @@
 	 * @spec openspec/specs/apps-menu-order/spec.md#requirement-a-person-orders-the-apps-menu
 	 */
 	function nameOf(el) {
+		var named = el.getAttribute('data-thematiq-name')
+		if (named) {
+			return named
+		}
 		var label = el.querySelector('.app-item__label')
 		return (label ? label.textContent : el.textContent).trim()
+	}
+
+	/**
+	 * Draw an entry as its icon alone, or as before (apps-menu-show-titles).
+	 * Icon only: the name is the entry's `aria-label` (an external app's ends
+	 * in its note, "(opens in a new tab)") and the shared tooltip's text; the
+	 * drawn name is taken out of the layout and the accessibility tree by the
+	 * menu's `data-titles="false"`, so a screen reader reads the name once.
+	 * Nextcloud's own tiles are Vue's nodes, so their label is never removed
+	 * from the DOM. `data-thematiq-name` keeps the name for nameOf().
+	 *
+	 * @param {Element} el The entry.
+	 * @param {string} name Its name.
+	 * @param {string} note A note the accessible name ends in, or ''.
+	 * @param {boolean} on Whether titles are off for this menu.
+	 * @return {void}
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+	 */
+	function iconOnly(el, name, note, on) {
+		if (on && name !== '') {
+			el.setAttribute('aria-label', note !== '' ? name + ' (' + note + ')' : name)
+			el.setAttribute('data-thematiq-name', name)
+			el.setAttribute(TIP_TARGET, '')
+			return
+		}
+		if (el.hasAttribute(TIP_TARGET)) {
+			el.removeAttribute('aria-label')
+			el.removeAttribute('data-thematiq-name')
+			el.removeAttribute(TIP_TARGET)
+		}
+	}
+
+	/**
+	 * The one name tooltip of the page (apps-menu-show-titles): `role="tooltip"`,
+	 * never referenced with `aria-describedby` (it repeats the accessible
+	 * name, which a screen reader would then read twice). It lives on the
+	 * body, fixed, so it serves the open menu's entries and the top bar's
+	 * pins alike and stays inside the viewport.
+	 *
+	 * @return {HTMLElement} The tooltip.
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+	 */
+	function tipEl() {
+		var el = document.getElementById(TIP)
+		if (el === null) {
+			el = document.createElement('div')
+			el.id = TIP
+			el.className = TIP
+			el.setAttribute('role', 'tooltip')
+			el.hidden = true
+			document.body.appendChild(el)
+		}
+		return el
+	}
+
+	/**
+	 * The entry or pin a node belongs to, when it shows the name tooltip. A
+	 * pin with its name drawn shows it only when the name is cut off.
+	 *
+	 * @param {EventTarget|null} node The node.
+	 * @return {Element|null} The entry or pin.
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+	 */
+	function tipTarget(node) {
+		var el =
+			node && typeof node.closest === 'function'
+				? node.closest('[' + TIP_TARGET + ']')
+				: null
+		if (el === null) {
+			return null
+		}
+		var drawn = el.querySelector('.' + PINS + '__name')
+		if (drawn !== null && drawn.scrollWidth <= drawn.clientWidth) {
+			return null
+		}
+		return el
+	}
+
+	/**
+	 * Show the tooltip for an entry: below it, or above it when below would
+	 * leave the viewport, never over the entry and its focus ring.
+	 *
+	 * @param {Element} target The entry or pin.
+	 * @return {void}
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+	 */
+	function showTip(target) {
+		var state = window.thematiqAppMenuTip
+		clearTimeout(state.timer)
+		var name = target.getAttribute('data-thematiq-name') || ''
+		if (name === '' || !target.isConnected) {
+			return
+		}
+		var el = tipEl()
+		el.textContent = name
+		el.hidden = false
+		state.target = target
+		var box = target.getBoundingClientRect()
+		var width = el.offsetWidth
+		var height = el.offsetHeight
+		var viewWidth = window.innerWidth || document.documentElement.clientWidth
+		var viewHeight = window.innerHeight || document.documentElement.clientHeight
+		var top = box.bottom + 4
+		if (top + height > viewHeight - 4) {
+			top = Math.max(4, box.top - height - 4)
+		}
+		var left = box.left + box.width / 2 - width / 2
+		left = Math.max(4, Math.min(left, viewWidth - width - 4))
+		el.style.top = Math.round(top) + 'px'
+		el.style.left = Math.round(left) + 'px'
+	}
+
+	/**
+	 * Hide the tooltip and forget its entry.
+	 *
+	 * @return {void}
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+	 */
+	function hideTip() {
+		var state = window.thematiqAppMenuTip
+		if (!state) {
+			return
+		}
+		clearTimeout(state.timer)
+		state.target = null
+		var el = document.getElementById(TIP)
+		if (el !== null) {
+			el.hidden = true
+		}
+	}
+
+	/**
+	 * Whether a node has keyboard focus as the browser draws it.
+	 *
+	 * @param {Element} el The node.
+	 * @return {boolean} Whether it matches `:focus-visible`.
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+	 */
+	function focusVisible(el) {
+		try {
+			return el.matches(':focus-visible')
+		} catch (e) {
+			return true
+		}
+	}
+
+	/**
+	 * Wire the tooltip once per page: it shows 300 ms after the pointer rests
+	 * on an icon-only entry or pin and at once on keyboard focus; it stays
+	 * while the pointer is on the entry or on the tooltip, or the entry has
+	 * focus (WCAG 1.4.13); it hides on leave, on a drag and when its entry is
+	 * gone; Escape hides it without moving focus, after a running walkthrough
+	 * (whose own Escape handler runs first and stops the key) and before the
+	 * menu would close.
+	 *
+	 * @return {void}
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+	 */
+	function wireTips() {
+		var previous = window.thematiqAppMenuTip
+		if (previous && previous.off) {
+			previous.off()
+		}
+		var state = { timer: null, target: null, escape: false }
+		window.thematiqAppMenuTip = state
+		var later = function (fn, delay) {
+			clearTimeout(state.timer)
+			state.timer = setTimeout(fn, delay)
+		}
+		var onTip = function (node) {
+			var el = document.getElementById(TIP)
+			return el !== null && node instanceof Node && el.contains(node)
+		}
+		var keep = function (node) {
+			return (
+				onTip(node)
+				|| (state.target !== null && node instanceof Node && state.target.contains(node))
+			)
+		}
+		var handlers = {
+			mouseover: function (event) {
+				if (window.thematiqAppMenuDragging) {
+					return
+				}
+				var target = tipTarget(event.target)
+				if (target !== null && target !== state.target) {
+					later(function () {
+						showTip(target)
+					}, TIP_DELAY)
+				} else if (target !== null || onTip(event.target)) {
+					clearTimeout(state.timer)
+				}
+			},
+			mouseout: function (event) {
+				if (keep(event.relatedTarget) || (tipTarget(event.target) === null && !onTip(event.target))) {
+					return
+				}
+				later(function () {
+					if (state.target === null || document.activeElement !== state.target) {
+						hideTip()
+					}
+				}, TIP_HIDE)
+			},
+			focusin: function (event) {
+				var target = tipTarget(event.target)
+				if (target !== null && focusVisible(target)) {
+					showTip(target)
+				} else if (state.target !== null && target !== state.target) {
+					hideTip()
+				}
+			},
+			focusout: function (event) {
+				if (state.target !== null && event.target === state.target && !keep(event.relatedTarget)) {
+					hideTip()
+				}
+			},
+			keydown: function (event) {
+				var el = document.getElementById(TIP)
+				if (event.key !== 'Escape' || el === null || el.hidden) {
+					return
+				}
+				event.preventDefault()
+				event.stopImmediatePropagation()
+				state.escape = true
+				hideTip()
+			},
+			keyup: function (event) {
+				if (event.key === 'Escape' && state.escape) {
+					state.escape = false
+					event.preventDefault()
+					event.stopImmediatePropagation()
+				}
+			},
+			dragstart: hideTip,
+		}
+		Object.keys(handlers).forEach(function (type) {
+			window.addEventListener(type, handlers[type], true)
+		})
+		state.off = function () {
+			Object.keys(handlers).forEach(function (type) {
+				window.removeEventListener(type, handlers[type], true)
+			})
+		}
 	}
 
 	/**
@@ -944,6 +1226,7 @@
 		)
 		grid.style.setProperty('--thematiq-app-menu-rows', String(settings.rows))
 		grid.setAttribute('data-thematiq-shape', settings.shape)
+		grid.setAttribute('data-titles', settings.titles ? 'true' : 'false')
 		grid.setAttribute('data-thematiq-icon-size', settings.iconSize)
 		grid.setAttribute('data-thematiq-icon-colour', settings.iconColour)
 		if (settings.tiles) {
@@ -952,6 +1235,7 @@
 			grid.removeAttribute('data-thematiq-tiles')
 		}
 		var found = collect(grid, menu)
+		createChipTitles(grid, !settings.titles)
 		var list = sorted(found.entries, menu.order).filter(function (entry) {
 			var hidden = settings.hidden.indexOf(entry.key) !== -1
 			if (hidden) {
@@ -1402,6 +1686,7 @@
 				drag.moved = true
 				drag.el.setAttribute('data-thematiq-dragging', '')
 				window.thematiqAppMenuDragging = true
+				hideTip()
 			}
 			var bar = menu.pinBar
 			drag.overBar = !!bar && bar.over(event.clientX, event.clientY)
@@ -1698,7 +1983,11 @@
 					a.href = info.href
 					a.setAttribute('data-thematiq-pin', key)
 					a.setAttribute('aria-label', info.name)
-					a.title = info.name
+					// apps-menu-show-titles: the name next to the icon with
+					// topBarTitles on (the tooltip only when it is cut off),
+					// else the shared tooltip under the pin.
+					a.setAttribute('data-thematiq-name', info.name)
+					a.setAttribute(TIP_TARGET, '')
 					if (info.external) {
 						a.target = '_blank'
 						a.rel = 'noopener noreferrer'
@@ -1707,6 +1996,14 @@
 						a.setAttribute('aria-current', 'page')
 					}
 					a.appendChild(pinIcon(info))
+					if (settingsOf(menu).topBarTitles) {
+						var name = document.createElement('span')
+						name.className = PINS + '__name'
+						name.setAttribute('aria-hidden', 'true')
+						name.textContent = info.name
+						a.appendChild(name)
+						a.setAttribute('data-thematiq-titled', '')
+					}
 					el.insertBefore(a, drop && drop.parentNode === el ? drop : null)
 					if (key === focusKey) {
 						a.focus()
@@ -2692,6 +2989,8 @@
 		document.documentElement.setAttribute('data-thematiq-shape', settings.shape)
 		var save = saver(menu)
 		opening()
+		// After opening(): the walkthrough's Escape runs before the tooltip's.
+		wireTips()
 		menu.pinBar = pinBar(menu)
 		shareCreateActions(menu)
 		prepareWalkthrough(menu)
@@ -2710,6 +3009,10 @@
 						arrange(grid, menu, save)
 					})
 				walkthroughOnScan(menu)
+				var tip = window.thematiqAppMenuTip
+				if (tip && tip.target !== null && (!tip.target.isConnected || tip.target.closest('[data-thematiq-folded]') !== null)) {
+					hideTip()
+				}
 			} finally {
 				// The script's own changes are mutations too: drop them, or the
 				// watcher would call scan again for ever.

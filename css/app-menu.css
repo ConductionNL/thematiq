@@ -792,3 +792,79 @@ body:not(#body-login) .thematiq-app-pins__ghost > .thematiq-app-pins__hint[hidde
 	outline: none !important;
 	box-shadow: none !important;
 }
+
+/* apps-menu-show-titles, board AppMenuZonderTitels: with titles off every app
+ * entry is its icon alone, centred, 10px by 6px padding round a 44px minimum.
+ * The drawn name and payoff leave the layout and the accessibility tree; the
+ * entry's aria-label carries the name (js/app-menu.js iconOnly()). Headings,
+ * More, Fewer and the Create row's More keep their text. */
+body:not(#body-login)
+	.app-menu__popover-base
+	.app-menu__grid[data-thematiq-app-menu][data-titles='false']
+	> a.app-item[data-thematiq-tip] {
+	display: flex !important;
+	justify-content: center;
+	align-items: center;
+	min-height: 44px;
+	padding: 10px 6px !important;
+}
+
+body:not(#body-login)
+	.app-menu__popover-base
+	.app-menu__grid[data-thematiq-app-menu][data-titles='false']
+	> a.app-item[data-thematiq-tip]
+	> :is(.app-item__label, .thematiq-app-menu__description, .hidden-visually),
+body:not(#body-login)
+	.app-menu__popover-base
+	.app-menu__grid[data-thematiq-app-menu][data-titles='false']
+	button.thematiq-app-menu__create[data-thematiq-tip]
+	> .thematiq-app-menu__create-label {
+	display: none !important;
+}
+
+/* The shared name tooltip of icon-only entries and pins: under its entry (or
+ * above it on the last row), off the focus ring; Nextcloud's text colour as
+ * its ground, so light, dark and every house style keep their contrast. */
+.thematiq-app-menu__tooltip {
+	position: fixed;
+	z-index: 100000;
+	box-sizing: border-box;
+	max-width: min(320px, calc(100vw - 8px));
+	padding: 6px 10px;
+	border-radius: 6px;
+	background: var(--color-main-text, #1b1c1d);
+	color: var(--color-main-background, #ffffff);
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.2;
+	overflow-wrap: anywhere;
+	pointer-events: auto;
+}
+
+.thematiq-app-menu__tooltip[hidden] {
+	display: none;
+}
+
+/* Board AppMenuBalkTitels: with titles in the top bar a pin draws its name
+ * next to the icon, 14px semibold, cut off with an ellipsis. */
+body:not(#body-login) #header .thematiq-app-pins__pin[data-thematiq-titled] {
+	justify-content: flex-start;
+	width: auto;
+	max-width: 200px;
+	padding-inline-end: 12px;
+}
+
+body:not(#body-login) #header .thematiq-app-pins__pin[data-thematiq-titled] > .thematiq-app-pins__icon {
+	flex: none;
+	width: 40px;
+}
+
+body:not(#body-login) #header .thematiq-app-pins__name {
+	min-width: 0;
+	overflow: hidden;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.2;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
