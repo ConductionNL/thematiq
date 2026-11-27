@@ -26,7 +26,8 @@ use OCP\IConfig;
 
 /**
  * How the apps menu looks and what it holds. An administrator sets every key for everyone (app
- * values `menu.<key>`). A person overrides only the personal keys, `order`, `pinned`, `hidden`,
+ * values `menu.<key>`), the Theming keys `titles` and `topBarTitles` included. A person overrides
+ * only the personal keys, `order`, `pinned`, `hidden`,
  * their own `externalApps` and the two create switches `showCreateButton` and `showCreateRow`,
  * in user values with the same names; the override wins, and a
  * person's external apps follow the administrator's. Every value is checked before it is stored:
@@ -60,6 +61,8 @@ class AppMenuSettings {
 		'showExternalApps' => true,
 		'shape' => 'round',
 		'tiles' => false,
+		'titles' => true,
+		'topBarTitles' => false,
 		'payoff' => true,
 		'iconSize' => 'large',
 		'iconColour' => 'brand',
@@ -120,7 +123,7 @@ class AppMenuSettings {
 	 *
 	 * @var array<int, string>
 	 */
-	public const SWITCHES = ['showCreateButton', 'showCreateRow', 'showExternalApps', 'tiles', 'payoff'];
+	public const SWITCHES = ['showCreateButton', 'showCreateRow', 'showExternalApps', 'tiles', 'titles', 'topBarTitles', 'payoff'];
 
 	/**
 	 * The most pinned apps.
@@ -175,6 +178,7 @@ class AppMenuSettings {
 	 * @return array<string, mixed> The keys set.
 	 *
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 */
 	public function defaults(): array {
 		$values = [];
@@ -183,7 +187,8 @@ class AppMenuSettings {
 			$this->keep(values: $values, key: $key, stored: $stored);
 		}
 
-		return $values;
+		// Until the repair step moved it, the older menu labels option stands in.
+		return $values + (new AppMenuTopBarTitles(config: $this->config))->legacyDefault();
 	}//end defaults()
 
 	/**
@@ -272,6 +277,9 @@ class AppMenuSettings {
 			$this->config->deleteAppValue(Application::APP_ID, self::PREFIX . $key);
 		}
 
+		// The administrator chose: the older menu labels option no longer stands in.
+		(new AppMenuTopBarTitles(config: $this->config))->forgetLegacyOnceChosen(values: $values);
+
 		return $clean;
 	}//end saveDefaults()
 
@@ -331,6 +339,7 @@ class AppMenuSettings {
 		}
 
 		$this->config->deleteAppValue(Application::APP_ID, self::PREFIX . self::FORMER_CREATE_SWITCH);
+		$this->config->deleteAppValue(Application::APP_ID, AppMenuTopBarTitles::LEGACY_KEY);
 	}//end resetDefaults()
 
 	/**

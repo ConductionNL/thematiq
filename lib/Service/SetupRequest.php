@@ -51,7 +51,8 @@ class SetupRequest {
 	 *
 	 * @var array<int, string>
 	 */
-	public const MENU_KEYS = ['columns', 'rowsAboveFold', 'payoff', 'showCreateButton', 'showCreateRow', 'showExternalApps'];
+	// `titles` comes before `payoff` (apps-menu-show-titles REQ-TQMT-004).
+	public const MENU_KEYS = ['columns', 'rowsAboveFold', 'titles', 'payoff', 'showCreateButton', 'showCreateRow', 'showExternalApps'];
 
 	/**
 	 * Constructor.

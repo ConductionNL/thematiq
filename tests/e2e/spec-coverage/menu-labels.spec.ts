@@ -49,7 +49,9 @@ import {
 } from './_theme-state'
 import { openTheming } from '../workflows/_helpers'
 
-const LABELS_ENDPOINT = '/index.php/apps/thematiq/settings/menulabels'
+// "Show titles in the top bar" took over the older option (apps-menu-show-titles):
+// it is the menu setting topBarTitles, saved through the menu defaults.
+const LABELS_ENDPOINT = '/index.php/apps/thematiq/app-menu/defaults'
 
 const APPS = [
 	'Dashboard',
@@ -177,16 +179,15 @@ test.describe('menu-labels', () => {
 	test(
 		// @e2e openspec/specs/menu-labels/spec.md#setting-stored-as-enabled
 		// @e2e openspec/specs/menu-labels/spec.md#toggle-menu-labels-on
-		// @e2e openspec/specs/menu-labels/spec.md#route-registration
-		'POST /settings/menulabels with true answers ok and stores the string 1',
+		'the menu defaults store topBarTitles true and the capability says so',
 		async ({ browser, page }) => {
 			await withThemeState(browser, { showMenuLabels: false }, async () => {
 				await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
 				const res = await api(page, 'POST', LABELS_ENDPOINT, {
-					showMenuLabels: true,
+					settings: { topBarTitles: true },
 				})
 				expect(res.status).toBe(200)
-				expect(res.json).toEqual({ status: 'ok', showMenuLabels: true })
+				expect(res.json.defaults.topBarTitles).toBe(true)
 				expect((await readToggles(page)).showMenuLabels).toBe(true)
 			})
 		},
@@ -195,15 +196,15 @@ test.describe('menu-labels', () => {
 	test(
 		// @e2e openspec/specs/menu-labels/spec.md#setting-stored-as-disabled
 		// @e2e openspec/specs/menu-labels/spec.md#toggle-menu-labels-off
-		'POST /settings/menulabels with false answers ok and stores the string 0',
+		'the menu defaults store topBarTitles false and the capability says so',
 		async ({ browser, page }) => {
 			await withThemeState(browser, { showMenuLabels: true }, async () => {
 				await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
 				const res = await api(page, 'POST', LABELS_ENDPOINT, {
-					showMenuLabels: false,
+					settings: { topBarTitles: false },
 				})
 				expect(res.status).toBe(200)
-				expect(res.json).toEqual({ status: 'ok', showMenuLabels: false })
+				expect(res.json.defaults.topBarTitles).toBe(false)
 				expect((await readToggles(page)).showMenuLabels).toBe(false)
 			})
 		},
@@ -222,7 +223,7 @@ test.describe('menu-labels', () => {
 						waitUntil: 'domcontentloaded',
 					})
 					const res = await api(user.page, 'POST', LABELS_ENDPOINT, {
-						showMenuLabels: true,
+						settings: { topBarTitles: true },
 					})
 					expect(res.status).toBe(403)
 				} finally {
@@ -683,13 +684,13 @@ test.describe('menu-labels', () => {
 				const [response] = await Promise.all([
 					page.waitForResponse(
 						(r) =>
-							r.url().includes('/settings/menulabels')
+							r.url().includes('/app-menu/defaults')
 							&& r.request().method() === 'POST',
 					),
 					page.locator('label[for="nldesign-show-menu-labels"]').click(),
 				])
 				expect(response.request().postDataJSON()).toEqual({
-					showMenuLabels: true,
+					settings: { topBarTitles: true },
 				})
 				expect(response.status()).toBe(200)
 				expect((await readToggles(page)).showMenuLabels).toBe(true)
@@ -703,12 +704,10 @@ test.describe('menu-labels', () => {
 		async ({ page }) => {
 			await openTheming(page)
 			const label = page.locator('label[for="nldesign-show-menu-labels"]')
-			await expect(label).toHaveText(
-				'Show text labels in app menu (hide icons)',
-			)
+			await expect(label).toHaveText('Show titles in the top bar')
 			await expect(
 				page.locator('#nldesign-show-menu-labels'),
-			).toHaveAccessibleName('Show text labels in app menu (hide icons)')
+			).toHaveAccessibleName('Show titles in the top bar')
 		},
 	)
 

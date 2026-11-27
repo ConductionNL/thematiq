@@ -2167,7 +2167,13 @@
         "Drop your unsaved changes and start the walkthrough?": "Je niet-opgeslagen wijzigingen vervallen. De rondleiding starten?",
         "Step {current} of {total}": "Stap {current} van {total}",
         "Step {n} of {total}": "Stap {n} van {total}",
-        "Walkthrough": "Rondleiding"
+        "Walkthrough": "Rondleiding",
+        "Show titles": "Titels tonen",
+        "The name of the app under or next to the icon. Off: icons only, the name appears as a tooltip.": "De naam van de app onder of naast het pictogram. Uit: alleen pictogrammen, de naam verschijnt als tooltip.",
+        "Show titles in the top bar": "Titels in de bovenbalk tonen",
+        "The name next to the icon of every pinned app in the top bar. Off: icons only, the name appears as a tooltip.": "De naam naast het pictogram van elke vastgezette app in de bovenbalk. Uit: alleen pictogrammen, de naam verschijnt als tooltip.",
+        "Only with Show titles.": "Alleen met Titels tonen.",
+        "without titles": "zonder titels"
     },
     "plurals": {}
 }

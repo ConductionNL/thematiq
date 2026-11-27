@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Settings;
 
 use OCA\Thematiq\AppInfo\Application;
+use OCA\Thematiq\Service\AppMenuTopBarTitles;
 use OCA\Thematiq\Service\EmailThemingService;
 use OCA\Thematiq\Service\TokenSetSelectionPolicy;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -160,11 +161,13 @@ class Admin implements IDelegatedSettings {
 	 * @return array<string, bool>
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
+	 * @spec openspec/changes/apps-menu-show-titles/specs/admin-settings/spec.md
 	 */
 	private function flagState(): array {
 		return [
 			'hideSlogan' => $this->isFlagOn(key: 'hide_slogan'),
-			'showMenuLabels' => $this->isFlagOn(key: 'show_menu_labels'),
+			// "Show titles in the top bar" (apps-menu-show-titles REQ-TQMT-005), in the old checkbox's place.
+			'showMenuLabels' => (new AppMenuTopBarTitles(config: $this->config))->isOn(),
 			'primaryDrivesComponents' => $this->isFlagOn(key: 'primary_drives_components'),
 			'confirmSaveStock' => $this->isFlagOn(key: 'confirm_save_stock', fallback: '1'),
 			'confirmSaveTheme' => $this->isFlagOn(key: 'confirm_save_theme', fallback: '1'),

@@ -339,4 +339,73 @@ final class AppMenuSettingsTest extends TestCase {
 		$this->assertNull(actual: AppMenuExternalApp::cleanList(apps: [self::app(id: 'same'), self::app(id: 'same')]));
 		$this->assertSame(expected: 'external-ok', actual: AppMenuExternalApp::key(app: ['id' => 'ok']));
 	}//end testAnExternalAppIsChecked()
+
+	/**
+	 * Show titles ships on and Show titles in the top bar off; the administrator's value wins; both
+	 * are switches, and neither is a person's key.
+	 *
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-is-a-theming-choice-of-the-administrator-req-tqmt-001
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 *
+	 * @return void
+	 */
+	public function testTitlesAndTopBarTitlesAreTheAdministratorsSwitches(): void {
+		$shipped = $this->settings()->effective(userId: 'anna');
+		$this->assertTrue(condition: $shipped['titles']);
+		$this->assertFalse(condition: $shipped['topBarTitles']);
+
+		$this->settings()->saveDefaults(values: ['titles' => false, 'topBarTitles' => true], known: []);
+		$this->assertSame(expected: 'false', actual: $this->app['menu.titles']);
+		$this->assertSame(expected: 'true', actual: $this->app['menu.topBarTitles']);
+		$effective = $this->settings()->effective(userId: 'anna');
+		$this->assertFalse(condition: $effective['titles']);
+		$this->assertTrue(condition: $effective['topBarTitles']);
+
+		foreach (['titles', 'topBarTitles'] as $key) {
+			try {
+				$this->settings()->saveOverrides(userId: 'anna', values: [$key => true], known: []);
+				$this->fail(message: $key . ' is not a person\'s key');
+			} catch (InvalidArgumentException $e) {
+				$this->assertSame(expected: $key, actual: $e->getMessage());
+			}
+
+			try {
+				$this->settings()->saveDefaults(values: [$key => 'yes'], known: []);
+				$this->fail(message: $key . ' takes true or false only');
+			} catch (InvalidArgumentException $e) {
+				$this->assertStringContainsString(needle: $key, haystack: $e->getMessage());
+			}
+		}
+
+		$this->settings()->saveDefaults(values: ['titles' => null], known: []);
+		$this->assertArrayNotHasKey(key: 'menu.titles', array: $this->app);
+		$this->assertTrue(condition: $this->settings()->effective(userId: null)['titles']);
+	}//end testTitlesAndTopBarTitlesAreTheAdministratorsSwitches()
+
+	/**
+	 * Until the repair step moved it, the older `show_menu_labels` stands in for Show titles in the
+	 * top bar; a stored `menu.topBarTitles` wins; a save of the key and a reset for everyone remove
+	 * the older value.
+	 *
+	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 *
+	 * @return void
+	 */
+	public function testTheOlderMenuLabelsOptionStandsInForTopBarTitles(): void {
+		$this->app['show_menu_labels'] = '1';
+		$this->assertTrue(condition: $this->settings()->effective(userId: null)['topBarTitles']);
+		$this->assertSame(expected: ['topBarTitles' => true], actual: $this->settings()->defaults());
+
+		$this->app['menu.topBarTitles'] = 'false';
+		$this->assertFalse(condition: $this->settings()->effective(userId: null)['topBarTitles']);
+
+		$this->settings()->saveDefaults(values: ['topBarTitles' => true], known: []);
+		$this->assertArrayNotHasKey(key: 'show_menu_labels', array: $this->app);
+
+		$this->app['show_menu_labels'] = '1';
+		$this->settings()->resetDefaults();
+		$this->assertArrayNotHasKey(key: 'show_menu_labels', array: $this->app);
+		$this->assertArrayNotHasKey(key: 'menu.topBarTitles', array: $this->app);
+		$this->assertFalse(condition: $this->settings()->effective(userId: null)['topBarTitles']);
+	}//end testTheOlderMenuLabelsOptionStandsInForTopBarTitles()
 }//end class
