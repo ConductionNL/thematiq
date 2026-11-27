@@ -10,6 +10,7 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
  * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
+ * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-contacts-menu-default-on-thematiqs-admin-page-req-tqcm-002
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -33,6 +34,10 @@ function card(classic) {
 					<div class="nldesign-option">
 						<input type="checkbox" class="checkbox" role="switch" id="thematiq-showCreateRow" data-menu-key="showCreateRow" checked${off}>
 						<label for="thematiq-showCreateRow">Create row in the apps menu</label>
+					</div>
+					<div class="nldesign-option">
+						<input type="checkbox" class="checkbox" role="switch" id="thematiq-showContactsMenu" data-menu-key="showContactsMenu" data-any-menu-style checked>
+						<label for="thematiq-showContactsMenu">Contacts button in the top bar</label>
 					</div>
 					${classic ? '<p id="thematiq-create-switches-classic">Only with the workplace menu.</p>' : ''}
 					<p class="hidden-visually thematiq-create-switches__live" role="status" aria-live="polite"></p>
@@ -145,5 +150,19 @@ describe('the create switches of the Menu card', () => {
 		expect(document.getElementById('thematiq-create-switches-classic').textContent).toBe(
 			'Only with the workplace menu.',
 		)
+	})
+
+	it('keeps the contacts button switch enabled with the classic menu', async () => {
+		const fetch = vi.fn(() => Promise.resolve({ ok: true }))
+		vi.stubGlobal('fetch', fetch)
+		await load(true)
+
+		const input = document.getElementById('thematiq-showContactsMenu')
+		expect(input.disabled).toBe(false)
+		toggle('showContactsMenu')
+		await flush()
+		expect(JSON.parse(fetch.mock.calls[0][1].body)).toEqual({ settings: { showContactsMenu: false } })
+		expect(document.querySelector('.thematiq-create-switches__live').textContent).toBe('Saved')
+		expect(document.querySelector('.thematiq-layout-panel__changes').textContent).toContain('Contacts button in the top bar')
 	})
 })

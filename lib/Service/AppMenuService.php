@@ -258,6 +258,7 @@ class AppMenuService {
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
 	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
+	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
 	 */
 	public function inject(string $tokenSet, LayoutOptionsService $layoutOptions): void {
 		try {
@@ -270,6 +271,11 @@ class AppMenuService {
 			$menu = $this->resolveMenu(tokenSet: $tokenSet, language: $l10n->getLanguageCode());
 			if ($this->listState !== null) {
 				$menu = array_merge($menu, $this->listState->state(l: $l10n));
+			}
+
+			// Before the classic style's return, so both menu styles lose the button.
+			if (($menu['settings']['showContactsMenu'] ?? AppMenuSettings::DEFAULTS['showContactsMenu']) === false) {
+				$this->emitNoContactsStyle();
 			}
 
 			$workplace = ($menu['settings']['style'] ?? AppMenuSettings::DEFAULTS['style']) !== 'classic';
@@ -315,4 +321,17 @@ class AppMenuService {
 	protected function emitMenuStyle(): void {
 		\OCP\Util::addStyle(application: Application::APP_ID, file: self::SCRIPT);
 	}//end emitMenuStyle()
+
+	/**
+	 * Load css/top-bar-no-contacts.css, which leaves Nextcloud's contacts menu out of the top bar.
+	 * With the page, so the button never shows first. A seam, so unit tests need no Nextcloud
+	 * bootstrap.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
+	 */
+	protected function emitNoContactsStyle(): void {
+		\OCP\Util::addStyle(application: Application::APP_ID, file: 'top-bar-no-contacts');
+	}//end emitNoContactsStyle()
 }//end class

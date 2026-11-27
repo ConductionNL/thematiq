@@ -28,14 +28,15 @@ use OCP\IConfig;
  * How the apps menu looks and what it holds. An administrator sets every key for everyone (app
  * values `menu.<key>`), the Theming keys `titles` and `topBarTitles` included. A person overrides
  * only the personal keys, `order`, `pinned`, `hidden`,
- * their own `externalApps` and the two create switches `showCreateButton` and `showCreateRow`,
- * in user values with the same names; the override wins, and a
+ * their own `externalApps`, the two create switches `showCreateButton` and `showCreateRow`
+ * and the contacts menu switch `showContactsMenu`, in user values with the same names; the override wins, and a
  * person's external apps follow the administrator's. Every value is checked before it is stored:
  * one value that is not allowed refuses the whole save.
  *
  * @SuppressWarnings(PHPMD.StaticAccess) - AppMenuOrder::clean() and AppMenuExternalApp hold the shared value rules.
  *
  * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
+ * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
  */
 class AppMenuSettings {
 
@@ -58,6 +59,7 @@ class AppMenuSettings {
 		'rowsAboveFold' => 2,
 		'showCreateButton' => true,
 		'showCreateRow' => true,
+		'showContactsMenu' => true,
 		'showExternalApps' => true,
 		'shape' => 'round',
 		'tiles' => false,
@@ -77,7 +79,7 @@ class AppMenuSettings {
 	 *
 	 * @var array<int, string>
 	 */
-	public const PERSONAL = ['order', 'pinned', 'hidden', 'externalApps', 'showCreateButton', 'showCreateRow'];
+	public const PERSONAL = ['order', 'pinned', 'hidden', 'externalApps', 'showCreateButton', 'showCreateRow', 'showContactsMenu'];
 
 	/**
 	 * The former single switch of the Create button and the Create row, an administrator's key only.
@@ -123,7 +125,7 @@ class AppMenuSettings {
 	 *
 	 * @var array<int, string>
 	 */
-	public const SWITCHES = ['showCreateButton', 'showCreateRow', 'showExternalApps', 'tiles', 'titles', 'topBarTitles', 'payoff'];
+	public const SWITCHES = ['showCreateButton', 'showCreateRow', 'showContactsMenu', 'showExternalApps', 'tiles', 'titles', 'topBarTitles', 'payoff'];
 
 	/**
 	 * The most pinned apps.

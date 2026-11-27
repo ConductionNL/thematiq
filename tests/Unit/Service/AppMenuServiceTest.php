@@ -554,6 +554,78 @@ class AppMenuServiceTest extends TestCase {
 	}//end testTheClassicStyleLeavesTheMenuAlone()
 
 	/**
+	 * A service for a person who is not an administrator, over the given app values, with the
+	 * contacts stylesheet seam counted.
+	 *
+	 * @param array<string, string> $values The stored app values.
+	 *
+	 * @return AppMenuService&MockObject
+	 */
+	private function contactsService(array $values): AppMenuService {
+		$this->configure(block: ['hint' => 'Hint']);
+		$config = $this->createMock(originalClassName: IConfig::class);
+		$config->method('getAppValue')->willReturnCallback(
+			static fn (string $app, string $key, $default = '') => ($values[$key] ?? $default)
+		);
+		$l10n = $this->createMock(originalClassName: IL10N::class);
+		$l10n->method('getLanguageCode')->willReturn('en');
+		$l10n->method('t')->willReturnArgument(0);
+		$factory = $this->createMock(originalClassName: IFactory::class);
+		$factory->method('get')->willReturn($l10n);
+		$groups = $this->createMock(originalClassName: IGroupManager::class);
+		$groups->method('isAdmin')->willReturn(false);
+		$session = $this->createMock(originalClassName: IUserSession::class);
+		$user = $this->createMock(originalClassName: IUser::class);
+		$user->method('getUID')->willReturn('anna');
+		$session->method('getUser')->willReturn($user);
+		$listState = new AppMenuListState(
+			order: new AppMenuOrder(config: $config),
+			userSession: $session,
+			pins: new AppMenuPins(config: $config),
+			settings: new AppMenuSettings(config: $config),
+			groups: $groups
+		);
+
+		return $this->getMockBuilder(className: AppMenuService::class)
+			->setConstructorArgs([$this->config, $this->designSystemService, $this->initialState, $factory, $this->logger, $listState])
+			->onlyMethods(['emitScript', 'emitMenuStyle', 'emitNoContactsStyle'])
+			->getMock();
+	}//end contactsService()
+
+	/**
+	 * The contacts menu stylesheet loads only when the effective switch is off.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
+	 */
+	public function testTheContactsMenuStylesheetLoadsOnlyWhenSwitchedOff(): void {
+		$off = $this->contactsService(values: ['menu.showContactsMenu' => 'false']);
+		$off->expects($this->once())->method('emitNoContactsStyle');
+		$off->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
+
+		$on = $this->contactsService(values: []);
+		$on->expects($this->never())->method('emitNoContactsStyle');
+		$on->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
+	}//end testTheContactsMenuStylesheetLoadsOnlyWhenSwitchedOff()
+
+	/**
+	 * With the classic style a person loses the button too, while the apps menu script still does
+	 * not load.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
+	 */
+	public function testTheContactsMenuStylesheetLoadsWithTheClassicStyle(): void {
+		$service = $this->contactsService(values: ['menu.style' => '"classic"', 'menu.showContactsMenu' => 'false']);
+		$service->expects($this->once())->method('emitNoContactsStyle');
+		$service->expects($this->never())->method('emitScript');
+		$service->expects($this->never())->method('emitMenuStyle');
+		$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
+	}//end testTheContactsMenuStylesheetLoadsWithTheClassicStyle()
+
+	/**
 	 * The workplace menu carries the person's tour state and the installed version core; the
 	 * classic style carries none.
 	 *

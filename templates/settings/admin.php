@@ -600,7 +600,19 @@ if ($_['mockUi'] === true) {
 							<p class="settings-hint" id="thematiq-<?php p($menuKey); ?>-help"><?php p($menuText[1]); ?></p>
 						</div>
 						<?php endforeach; ?>
-						<p class="settings-hint thematiq-create-switches__note"><?php p($l->t('People can change both for themselves in Menu settings.')); ?></p>
+						<!-- The contacts menu for everyone (top-bar-contacts-switch REQ-TQCM-002, board TqLayout):
+						     works with the classic menu too, so it is never disabled. -->
+						<div class="nldesign-option">
+							<input type="checkbox" class="checkbox" role="switch"
+								   id="thematiq-showContactsMenu"
+								   data-menu-key="showContactsMenu"
+								   data-any-menu-style
+								   aria-describedby="thematiq-showContactsMenu-help"
+								   <?php if ($_['showContactsMenu'] === true): ?>checked<?php endif; ?>>
+							<label for="thematiq-showContactsMenu"><?php p($l->t('Contacts button in the top bar')); ?></label>
+							<p class="settings-hint" id="thematiq-showContactsMenu-help"><?php p($l->t('The address book next to the notifications. This is the default; off leaves the button out, the Contacts app stays in the apps menu.')); ?></p>
+						</div>
+						<p class="settings-hint thematiq-create-switches__note"><?php p($l->t('People can change these for themselves in Menu settings.')); ?></p>
 						<?php if ($classicMenu === true): ?>
 						<p class="settings-hint" id="thematiq-create-switches-classic"><?php p($l->t('Only with the workplace menu.')); ?></p>
 						<?php endif; ?>
