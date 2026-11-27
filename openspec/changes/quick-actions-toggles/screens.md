@@ -11,5 +11,5 @@ and a board differ, the change follows the board.
 
 ## Existing boards this change keeps
 
-- MlInbox, ClWeek and TbBoard: Quick add before the bell on Mail, Calendar and Deck (REQ-TQQA-001)
+- MlInbox, ClWeek and TbBoard: the look of the button before the bell, now on every page (REQ-TQQA-003)
 - werkplek/AppMenu https://identity.conduction.nl/screens/board?id=werkplek/AppMenu&ds=zuiddrecht: the Create row above the footer

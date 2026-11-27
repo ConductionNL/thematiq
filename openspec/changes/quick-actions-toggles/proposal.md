@@ -25,12 +25,15 @@ themselves, with the administrator setting the default for everyone.
   page, and in Menu settings with For everyone. A person's own value wins.
 - **`showCreateActions` goes.** An administrator who switched it off keeps both new switches off: the
   stored value moves once into both keys and is removed. A save that still sends the old key sets both.
-- **Where Quick add shows does not change.** It stays on Mail, Calendar and Deck, as the MlInbox,
-  ClWeek and TbBoard boards draw it.
+- **The Create button is on every page.** Like the apps menu button, the plus with the Create actions
+  stands before the bell on every Nextcloud page: Files, Settings, Mail and every other app. Mail,
+  Calendar and Deck no longer differ from the rest; they get the same button. Drawing it asks the
+  server nothing; the Create actions load on the first open.
 
 ## Not in this change
 
-- Quick add on other apps than Mail, Calendar and Deck.
+- Create entries of one app's own, such as a new message or event. The button and the row list the
+  shared Create actions only.
 - Changing what the Create actions do. The list, the order and the file they make stay as
   apps-menu-create and workplace-quick-add define them.
 - The walkthrough. Its create step is already optional and skipped when the Create row is not drawn.
@@ -47,7 +50,7 @@ thematiq/TqLayout and werkplek/AppMenuConfiguratie. Boards are canon. See `scree
 - `lib/Service/SetupRequest.php`: `MENU_KEYS` names the two new keys
 - `lib/Service/AppMenuDialogLabels.php`: labels and help texts in English and Dutch
 - `js/app-menu.js`: the row follows `showCreateRow`; the actions are shared while either switch is on
-- `js/header-create.js`: Quick add follows `showCreateButton`
+- `js/header-create.js`: Quick add on every page, following `showCreateButton`; the app list goes
 - `js/dialogs/menu-settings-dialog.js`: the two switches, editable in Only for me
 - `templates/settings/admin.php`, `js/admin-layout-panel.js`, `js/admin.js`: the switches in the Menu card
 - tests: PHPUnit `AppMenuSettingsTest`, `AppMenuSettingsControllerTest`, `SetupRequestTest`; vitest

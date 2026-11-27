@@ -94,32 +94,32 @@ the Quick add button with the plus before the bell in the top bar, and `showCrea
 at the bottom of the apps menu, above the footer. Neither MUST depend on the other, so a person can
 have both, either or neither. An administrator sets the default for everyone; a person MAY set either
 switch for themselves, and their value MUST win. `POST /apps/thematiq/app-menu/settings` MUST accept
-both as personal keys, true or false, and null MUST follow the administrator's value again. Where the
-Quick add button is drawn (Mail, Calendar and Deck) MUST NOT change.
+both as personal keys, true or false, and null MUST follow the administrator's value again. The Create
+button, when on, MUST be on every page with the workplace top bar, the same on every app.
 
 Boards: AppMenuSnelacties, AppMenuConfiguratie, MlInbox, ClWeek, TbBoard.
 
 #### Scenario: Both on
 - GIVEN `showCreateButton` and `showCreateRow` are on for Anna
-- WHEN Anna opens Mail and then the apps menu
+- WHEN Anna opens Files and then the apps menu
 - THEN "Quick add" MUST stand before the bell
 - AND the apps menu MUST show the Create row above its footer
 
 #### Scenario: Only the Create button
 - GIVEN `showCreateButton` is on and `showCreateRow` is off for Anna
-- WHEN Anna opens Mail and then the apps menu
+- WHEN Anna opens Files and then the apps menu
 - THEN "Quick add" MUST stand before the bell and list the Create actions
 - AND the apps menu MUST NOT show the Create row
 
 #### Scenario: Only the Create row
 - GIVEN `showCreateButton` is off and `showCreateRow` is on for Anna
-- WHEN Anna opens Mail and then the apps menu
+- WHEN Anna opens Files and then the apps menu
 - THEN no Quick add button MUST be drawn
 - AND the apps menu MUST show the Create row above its footer
 
 #### Scenario: Neither
 - GIVEN `showCreateButton` and `showCreateRow` are off for Anna
-- WHEN Anna opens Mail and then the apps menu
+- WHEN Anna opens Files and then the apps menu
 - THEN no Quick add button MUST be drawn and the apps menu MUST NOT show the Create row
 - AND the templates API MUST NOT be asked
 
@@ -127,7 +127,7 @@ Boards: AppMenuSnelacties, AppMenuConfiguratie, MlInbox, ClWeek, TbBoard.
 @e2e exclude Pure service logic: PHPUnit tests/Unit/Service/AppMenuSettingsTest.php (testAPersonsCreateSwitchesWinOverTheAdministrators)
 - GIVEN the administrator switched the Create button off for everyone
 - AND Anna switched it on for herself in Menu settings
-- THEN Anna MUST get the Quick add button on Mail and Bob MUST NOT
+- THEN Anna MUST get the Quick add button on every page and Bob MUST NOT
 
 ### Requirement: The former create switch moves into the two new switches (REQ-TQQT-002)
 `showCreateActions` MUST no longer be a menu setting. An administrator's stored app value

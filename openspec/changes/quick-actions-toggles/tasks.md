@@ -21,7 +21,9 @@ Copy and placement follow the boards.
 
 - [ ] 2.1 `js/app-menu.js`: the row follows `showCreateRow`; share the actions while either switch is
       on; no templates API call with both off. apps-menu-create.
-- [ ] 2.2 `js/header-create.js`: Quick add follows `showCreateButton`. REQ-TQQA-001.
+- [ ] 2.2 `js/header-create.js`: Quick add on every page with the workplace top bar, following
+      `showCreateButton`; remove `APPS` and the open-app check; no request until the first open.
+      REQ-TQQA-003.
 - [ ] 2.3 `js/dialogs/menu-settings-dialog.js`: the two switches in Sections, editable in Only for me
       and saved as personal keys; the rest of Configuration stays locked. apps-menu-settings.
 - [ ] 2.4 `templates/settings/admin.php`, `js/admin-layout-panel.js`, `js/admin.js`: the two switches
@@ -38,7 +40,7 @@ Copy and placement follow the boards.
 ## 4. End to end
 
 - [ ] 4.1 `tests/e2e/spec-coverage/quick-actions-toggles.spec.ts` with `@e2e` tags for "Both on", "Only
-      the Create button", "Only the Create row", "Neither" and "The administrator switches the Create
-      row off for everyone": set the person's own keys through `POST /apps/thematiq/app-menu/settings`,
-      open Mail, check Quick add before the bell and the Create row in the open apps menu; put every
+      the Create button", "Only the Create row", "Neither", "The administrator switches the Create
+      row off for everyone", "Files has the button" and "Settings has the button": set the person's own
+      keys through `POST /apps/thematiq/app-menu/settings`, open Files and Settings, check Quick add before the bell and the Create row in the open apps menu; put every
       value back in a `finally`.

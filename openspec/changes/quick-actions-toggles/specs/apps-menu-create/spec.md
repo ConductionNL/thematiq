@@ -31,6 +31,6 @@ MUST NOT ask the templates API.
 #### Scenario: The Create row switched off leaves Quick add working
 @e2e exclude covered by the e2e scenario "Only the Create button" of apps-menu-settings; the sharing is proven by tests/vitest/appMenuCreate.spec.js (shares the Create actions with the row switched off)
 - GIVEN `showCreateRow` is off and `showCreateButton` is on
-- WHEN the apps menu script runs on a Mail page
+- WHEN the apps menu script runs on a Files page
 - THEN the Create row MUST NOT be drawn
 - AND `window.thematiqCreateActions` MUST list the Create actions

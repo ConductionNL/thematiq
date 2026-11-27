@@ -33,8 +33,19 @@ On the person's endpoint the old key stays refused with 400, as it is today.
 - `js/app-menu.js` draws the Create row only with `showCreateRow` on. It shares the Create actions as
   `window.thematiqCreateActions` while either switch is on, because Quick add reads them from there.
   With both off it shares nothing and never asks the templates API.
-- `js/header-create.js` draws Quick add only with `showCreateButton` on and on Mail, Calendar and Deck,
-  as today.
+- `js/header-create.js` draws Quick add with `showCreateButton` on, on every page with the workplace
+  top bar. Its list of apps (`APPS`, Mail, Calendar and Deck) goes, with the check of the open app.
+  Mail, Calendar and Deck get exactly the button every other page gets.
+- Drawing the button costs no request. The Create actions are fetched on the first open of Quick add
+  or the apps menu, once per page, as `window.thematiqCreateActions.list()` already does.
+
+## What happens to app-specific create entries
+
+There are none to move. Quick add on Mail, Calendar and Deck never had entries of its own: it lists the
+shared Create actions (`window.thematiqCreateActions`), the same as the apps menu's Create row. Removing
+the app list therefore loses nothing. Should an app's own create action (a new message, event or card)
+be wanted later, it belongs in the shared Create actions, so it shows in the button and the row on every
+page alike, and never as an entry of one app's bar.
 - The walkthrough's create step is optional and is skipped when the Create row is not drawn, so it needs
   no change.
 
@@ -53,7 +64,7 @@ On the person's endpoint the old key stays refused with 400, as it is today.
 | key | English | Dutch |
 |---|---|---|
 | `showCreateButton` | Create button in the top bar | Knop Nieuw in de bovenbalk |
-| `showCreateButtonHelp` | The plus button before the notifications, on Mail, Calendar and Deck. | De plusknop voor de meldingen, in Mail, Agenda en Deck. |
+| `showCreateButtonHelp` | The plus button before the notifications, on every page. | De plusknop voor de meldingen, op elke pagina. |
 | `showCreateRow` | Create row in the apps menu | Rij Nieuw in het appmenu |
 | `showCreateRowHelp` | The Create row at the bottom of the menu. | De rij Nieuw onderaan het menu. |
 | `createSwitchesPersonal` | People can change both for themselves in Menu settings. | Iedereen kan beide zelf aanpassen in Menu-instellingen. |
