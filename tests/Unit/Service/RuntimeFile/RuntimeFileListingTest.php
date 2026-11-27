@@ -118,4 +118,33 @@ class RuntimeFileListingTest extends TestCase {
 		$this->assertNull(actual: $reader->read(appPath: $this->storeDir, name: 'css/tokens/absent.css', store: null));
 		$this->assertNull(actual: $reader->read(appPath: $this->storeDir, name: 'css/tokens/dark', store: null));
 	}//end testTheSetFileReaderReadsAReleaseFile()
+
+	/**
+	 * The revision of a release file changes when the file is rewritten, without reading it; a
+	 * missing file or a directory answers empty; an uploaded set answers the store's revision.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
+	 */
+	public function testTheSetFileReaderFingerprintsAFileWithoutReadingIt(): void {
+		$reader = new SetFileReader();
+		file_put_contents($this->storeDir . '/css/tokens/notes.txt', 'one');
+		touch($this->storeDir . '/css/tokens/notes.txt', 1700000000);
+		$before = $reader->revision(appPath: $this->storeDir, name: 'css/tokens/notes.txt', store: null);
+		$this->assertSame(expected: '3:1700000000', actual: $before);
+
+		file_put_contents($this->storeDir . '/css/tokens/notes.txt', 'three');
+		touch($this->storeDir . '/css/tokens/notes.txt', 1700000100);
+		$this->assertNotSame(expected: $before, actual: $reader->revision(appPath: $this->storeDir, name: 'css/tokens/notes.txt', store: null));
+
+		$this->assertSame(expected: '', actual: $reader->revision(appPath: $this->storeDir, name: 'css/tokens/absent.css', store: null));
+		$this->assertSame(expected: '', actual: $reader->revision(appPath: $this->storeDir, name: 'css/tokens/dark', store: null));
+
+		$store = new DirectoryRuntimeFileStore(root: $this->storeDir);
+		$this->assertSame(
+			expected: $store->revision(name: 'css/tokens/custom-alpha.css'),
+			actual: $reader->revision(appPath: '/nonexistent', name: 'css/tokens/custom-alpha.css', store: $store)
+		);
+	}//end testTheSetFileReaderFingerprintsAFileWithoutReadingIt()
 }//end class

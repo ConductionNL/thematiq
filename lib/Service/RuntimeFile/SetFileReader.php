@@ -64,6 +64,38 @@ class SetFileReader {
 	}//end read()
 
 	/**
+	 * A cheap fingerprint of a set file that changes whenever its content does.
+	 *
+	 * For keying caches without reading the file: a release file answers its
+	 * size and modification time (a sync, an edit or a new release rewrites
+	 * it), an uploaded file the store's own revision. Reading and hashing every
+	 * set's stylesheet only to build a cache key cost the admin page ~10 ms per
+	 * catalogue read (68 sets).
+	 *
+	 * @param string $appPath The app directory.
+	 * @param string $name The app-relative name, such as `css/tokens/utrecht.css`.
+	 * @param RuntimeFileStore|null $store The runtime store, or null for the release only.
+	 *
+	 * @return string The fingerprint; empty when the file does not exist.
+	 *
+	 * @spec openspec/specs/token-sets/spec.md#requirement-incomplete-sets-are-surfaced-in-the-admin-dropdown
+	 */
+	public function revision(string $appPath, string $name, ?RuntimeFileStore $store): string {
+		if ($store !== null && preg_match(self::UPLOADED, $name) === 1) {
+			return $store->revision(name: $name);
+		}
+
+		$path = (new AppFilePath())->join(root: $appPath, name: $name);
+		if ($path === null || is_file($path) === false) {
+			return '';
+		}
+
+		clearstatcache(true, $path);
+
+		return filesize($path) . ':' . filemtime($path);
+	}//end revision()
+
+	/**
 	 * Whether a set file exists.
 	 *
 	 * @param string $appPath The app directory.
