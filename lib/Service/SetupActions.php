@@ -326,7 +326,7 @@ class SetupActions {
 			$values = ['style' => 'workplace'] + array_intersect_key($menu, array_flip(self::MENU_KEYS));
 		}
 
-		$this->menu->saveDefaults(values: $values, known: null);
+		$this->menu->saveDefaults(values: $values, known: []);
 		$this->audit->log(action: 'toggle_changed', context: ['key' => 'menu.defaults', 'new' => (string)json_encode($values)]);
 
 		$headerKey = LayoutOptionValues::HEADER_STYLE_KEY;

@@ -83,7 +83,7 @@ class SetupWizardListenerTest extends TestCase {
 	 *
 	 * @return void
 	 */
-	private function run(string $renderAs, bool $isAdmin, bool $due, bool $loggedIn = true): void {
+	private function fire(string $renderAs, bool $isAdmin, bool $due, bool $loggedIn = true): void {
 		$status = $this->createMock(originalClassName: SetupStatusService::class);
 		$status->method('isDue')->willReturn($due);
 		$status->method('status')->willReturn(['completed' => false]);
@@ -129,7 +129,7 @@ class SetupWizardListenerTest extends TestCase {
 		};
 
 		$listener->handle(new BeforeTemplateRenderedEvent($loggedIn, new TemplateResponse('dashboard', 'index', [], $renderAs)));
-	}//end run()
+	}//end fire()
 
 	/**
 	 * Count one added loader.
@@ -146,7 +146,7 @@ class SetupWizardListenerTest extends TestCase {
 	 * @return void
 	 */
 	public function testAnAdminsUserPageGetsTheWizard(): void {
-		$this->run(renderAs: TemplateResponse::RENDER_AS_USER, isAdmin: true, due: true);
+		$this->fire(renderAs: TemplateResponse::RENDER_AS_USER, isAdmin: true, due: true);
 
 		$this->assertSame(expected: ['setup_status' => ['completed' => false]], actual: $this->states);
 		$this->assertSame(expected: 1, actual: $this->loaders);
@@ -158,7 +158,7 @@ class SetupWizardListenerTest extends TestCase {
 	 * @return void
 	 */
 	public function testNothingOnceSetUp(): void {
-		$this->run(renderAs: TemplateResponse::RENDER_AS_USER, isAdmin: true, due: false);
+		$this->fire(renderAs: TemplateResponse::RENDER_AS_USER, isAdmin: true, due: false);
 
 		$this->assertSame(expected: [], actual: $this->states);
 		$this->assertSame(expected: 0, actual: $this->loaders);
@@ -170,8 +170,8 @@ class SetupWizardListenerTest extends TestCase {
 	 * @return void
 	 */
 	public function testNothingForANonAdminOrAGuest(): void {
-		$this->run(renderAs: TemplateResponse::RENDER_AS_USER, isAdmin: false, due: true);
-		$this->run(renderAs: TemplateResponse::RENDER_AS_USER, isAdmin: true, due: true, loggedIn: false);
+		$this->fire(renderAs: TemplateResponse::RENDER_AS_USER, isAdmin: false, due: true);
+		$this->fire(renderAs: TemplateResponse::RENDER_AS_USER, isAdmin: true, due: true, loggedIn: false);
 
 		$this->assertSame(expected: [], actual: $this->states);
 		$this->assertSame(expected: 0, actual: $this->loaders);
@@ -184,7 +184,7 @@ class SetupWizardListenerTest extends TestCase {
 	 */
 	public function testNothingOnAPageThatIsNoUserPage(): void {
 		foreach ([TemplateResponse::RENDER_AS_GUEST, TemplateResponse::RENDER_AS_PUBLIC, TemplateResponse::RENDER_AS_ERROR, TemplateResponse::RENDER_AS_BLANK] as $renderAs) {
-			$this->run(renderAs: $renderAs, isAdmin: true, due: true);
+			$this->fire(renderAs: $renderAs, isAdmin: true, due: true);
 		}
 
 		$this->assertSame(expected: 0, actual: $this->loaders);
@@ -197,7 +197,7 @@ class SetupWizardListenerTest extends TestCase {
 	 */
 	public function testNothingWithoutABuiltBundle(): void {
 		unlink($this->root . '/' . SetupWizardListener::BUNDLE);
-		$this->run(renderAs: TemplateResponse::RENDER_AS_USER, isAdmin: true, due: true);
+		$this->fire(renderAs: TemplateResponse::RENDER_AS_USER, isAdmin: true, due: true);
 
 		$this->assertSame(expected: 0, actual: $this->loaders);
 	}//end testNothingWithoutABuiltBundle()
