@@ -284,7 +284,12 @@ class ThemeCommandsTest extends TestCase {
 	public function testAPlainSwitchFollowsInNextcloudWhenItFollows(): void {
 		$this->store['core_theming_follows_set'] = '1';
 		$this->coreSync->expects($this->once())->method('sync')->with('amsterdam')->willReturn(['primary_color']);
-		$active = new ActiveTokenSetService(config: $this->config, tokenSets: $this->tokenSets, auditService: $this->audit, coreSync: $this->coreSync);
+		$active = new ActiveTokenSetService(
+			config: $this->config,
+			tokenSets: $this->tokenSets,
+			auditService: $this->audit,
+			follow: new \OCA\Thematiq\Service\CoreThemingFollow(config: $this->config, coreSync: $this->coreSync, auditService: $this->audit)
+		);
 		$tester = $this->tester(command: new ThemeSet(active: $active, tokenSets: $this->tokenSets, coreSync: $this->coreSync));
 
 		$this->assertSame(expected: Command::SUCCESS, actual: $tester->execute(['token-set' => 'amsterdam']));

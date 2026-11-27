@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace OCA\Thematiq\Tests\Unit\Service;
 
 use OCA\Thematiq\Service\ActiveTokenSetService;
+use OCA\Thematiq\Service\CoreThemingFollow;
 use OCA\Thematiq\Service\ScheduledCoreThemingSync;
 use OCA\Thematiq\Service\ThemingAuditService;
 use OCA\Thematiq\Service\TokenSetService;
@@ -119,7 +120,12 @@ class ActiveTokenSetServiceTest extends TestCase {
 		$tokenSets = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSets->method('isValidTokenSet')->willReturn(true);
 
-		return new ActiveTokenSetService(config: $config, tokenSets: $tokenSets, auditService: $audit, coreSync: $coreSync);
+		return new ActiveTokenSetService(
+			config: $config,
+			tokenSets: $tokenSets,
+			auditService: $audit,
+			follow: new CoreThemingFollow(config: $config, coreSync: $coreSync, auditService: $audit)
+		);
 	}//end makeFollowing()
 
 	/**
