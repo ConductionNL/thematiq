@@ -1289,6 +1289,8 @@
 					labelId,
 					function () {
 						form[key] = !form[key]
+						// A person's save sends only the keys they touched.
+						touched[key] = true
 						render('#' + BLOCK + '-switch-' + key)
 					},
 					locked,

@@ -323,6 +323,16 @@ describe('the Menu settings dialog', () => {
 		expect(saved.body.settings).toEqual({ showContactsMenu: false })
 	})
 
+	it('saves a create switch a person turned off as their own key', async () => {
+		const dialog = await openDialog(answer(false))
+		dialog.querySelector('#thematiq-menu-settings-tab-configuration').click()
+		dialog.querySelector('#thematiq-menu-settings-switch-showCreateButton').click()
+		dialog.querySelector('[data-part="save"]').click()
+		await flush()
+		const saved = requests.find((r) => r.method === 'POST')
+		expect(saved.body.settings).toEqual({ showCreateButton: false })
+	})
+
 	it('pins at most five apps', async () => {
 		const data = answer(false)
 		data.effective.pinned = ['launchpad', 'dossiq', 'files', 'calendar', 'deck']
