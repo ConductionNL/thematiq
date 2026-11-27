@@ -15,6 +15,7 @@
 import { test, expect, type Locator, type Page } from '@playwright/test'
 
 import { adminContext, api } from './_fixtures'
+import { markMenuTourSeen } from '../menu-tour'
 import {
 	applyThemeState,
 	restoreThemeState,
@@ -129,10 +130,15 @@ test.describe('the apps menu walkthrough', () => {
 	})
 
 	test.afterAll(async ({ browser }) => {
-		if (snapshot === null) return
 		const ctx = await adminContext(browser)
 		try {
-			await restoreThemeState(await ctx.newPage(), snapshot)
+			const page = await ctx.newPage()
+			// Leave the tour seen, as global setup left it, so later specs meet the menu.
+			await page.goto('/index.php/settings/user', { waitUntil: 'domcontentloaded' })
+			await markMenuTourSeen(page)
+			if (snapshot !== null) {
+				await restoreThemeState(page, snapshot)
+			}
 		} finally {
 			await ctx.close()
 		}

@@ -13,6 +13,7 @@ import { expect, type Browser, type Page } from '@playwright/test'
 import * as path from 'path'
 
 import { confirmAdminPassword } from '../workflows/_helpers'
+import { markMenuTourSeen } from '../menu-tour'
 
 /**
  * The admin session saved by tests/e2e/global-setup.ts.
@@ -118,6 +119,7 @@ export async function loginAs(
 				+ 'The fixture user is created by ensureNonAdminUser(); if that ran, check the password policy.',
 		)
 	}
+	await markMenuTourSeen(page)
 
 	return {
 		page,
