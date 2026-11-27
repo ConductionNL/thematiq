@@ -40,7 +40,7 @@ final class AppMenuDialogLabels {
 	 * @SuppressWarnings(PHPMD.ExcessiveMethodLength) - a list of texts, one per line.
 	 *
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-create-button-and-the-create-row-switch-on-and-off-independently-req-tqqt-001
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-create-button-and-the-create-row-switch-on-and-off-independently-req-tqqt-001
 	 */
 	public static function labels(IL10N $l): array {
 		return self::createLabels(l: $l) + [
@@ -171,7 +171,7 @@ final class AppMenuDialogLabels {
 	 *
 	 * @return array<string, string> The labels, by key.
 	 *
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-create-button-and-the-create-row-switch-on-and-off-independently-req-tqqt-001
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-create-button-and-the-create-row-switch-on-and-off-independently-req-tqqt-001
 	 */
 	private static function createLabels(IL10N $l): array {
 		return [

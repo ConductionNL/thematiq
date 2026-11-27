@@ -9,7 +9,7 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
  * @spec openspec/changes/admin-pages-as-the-tq-boards/specs/admin-settings/spec.md
- * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
  */
 ;(function thematiqLayoutPanel() {
 	/**
@@ -630,7 +630,7 @@
 	 * with the classic menu.
 	 *
 	 * @return {void}
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
 	 */
 	function wireCreateSwitches() {
 		var box = document.querySelector('.thematiq-create-switches')

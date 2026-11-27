@@ -16,7 +16,6 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
  * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
- * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-menu-settings-dialog
  */
 ;(function thematiqMenuSettingsDialog() {
 	var SVG_NS = 'http://www.w3.org/2000/svg'

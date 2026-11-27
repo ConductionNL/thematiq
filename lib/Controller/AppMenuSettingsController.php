@@ -89,7 +89,7 @@ class AppMenuSettingsController extends Controller {
 	 *                      or 401 without a session.
 	 *
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
 	 */
 	#[NoAdminRequired]
 	public function show(): JSONResponse {

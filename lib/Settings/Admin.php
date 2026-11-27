@@ -14,8 +14,6 @@
  * @link      https://github.com/ConductionNL/thematiq
  *
  * @spec openspec/specs/admin-settings/spec.md
- * @spec openspec/specs/admin-settings/spec.md
- * @spec openspec/specs/admin-settings/spec.md
  * @spec openspec/specs/admin-settings/spec.md#requirement-session-preview-controls
  * @spec openspec/specs/icon-packs/spec.md
  */
@@ -38,8 +36,6 @@ use OCP\Settings\IDelegatedSettings;
  * Provides the configuration interface for selecting design token sets.
  * Implements IDelegatedSettings so AuthorizedAdminSetting can reference this class.
  *
- * @spec openspec/specs/admin-settings/spec.md
- * @spec openspec/specs/admin-settings/spec.md
  * @spec openspec/specs/admin-settings/spec.md
  */
 class Admin implements IDelegatedSettings {
@@ -293,7 +289,7 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
 	 * @spec openspec/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
 	 */
 	private function layoutParams(): array {
 		return [
@@ -319,7 +315,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return string The value.
 	 *
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
 	 */
 	private function menuValue(string $key, string $fallback): string {
 		$value = json_decode($this->config->getAppValue(Application::APP_ID, 'menu.' . $key, ''), true);
@@ -338,7 +334,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return bool Whether the switch is on for everyone.
 	 *
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
 	 */
 	private function createSwitch(string $key): bool {
 		foreach (['menu.' . $key, 'menu.showCreateActions'] as $stored) {

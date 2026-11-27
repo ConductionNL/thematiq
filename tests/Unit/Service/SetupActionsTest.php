@@ -208,7 +208,7 @@ class SetupActionsTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
 	 */
 	public function testTheMenuStepSendsTheCreateSwitches(): void {
 		$actions = $this->make();

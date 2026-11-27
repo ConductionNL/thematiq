@@ -15,7 +15,7 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
  * @spec openspec/specs/workplace-layout/spec.md
- * @spec openspec/changes/quick-actions-toggles/specs/workplace-quick-add/spec.md#requirement-every-page-shows-the-create-button-in-the-bar-req-tqqa-003
+ * @spec openspec/specs/workplace-quick-add/spec.md#requirement-every-page-shows-the-create-button-in-the-bar-req-tqqa-003
  */
 ;(function thematiqHeaderCreateInit() {
 	var BLOCK = 'thematiq-quick-add'
@@ -189,7 +189,7 @@
 	 * bar.
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md
-	 * @spec openspec/changes/quick-actions-toggles/specs/workplace-quick-add/spec.md#requirement-every-page-shows-the-create-button-in-the-bar-req-tqqa-003
+	 * @spec openspec/specs/workplace-quick-add/spec.md#requirement-every-page-shows-the-create-button-in-the-bar-req-tqqa-003
 	 */
 	function thematiqHeaderCreateMain() {
 		if (typeof t !== 'function') {

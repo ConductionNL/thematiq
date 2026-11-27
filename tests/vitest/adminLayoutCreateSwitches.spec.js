@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/quick-actions-toggles/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
