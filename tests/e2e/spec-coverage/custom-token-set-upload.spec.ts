@@ -38,8 +38,13 @@ async function deleteRow(page: Page, row: Locator): Promise<void> {
 	const dialog = page.locator('#thematiq-delete-custom-set-dialog')
 	await expect(dialog).toBeVisible({ timeout: 10000 })
 	await expect(dialog).toContainText('Own token sets')
-	await expect(dialog.getByRole('heading')).toContainText('Delete custom token set')
-	const confirmBtn = dialog.getByRole('button', { name: 'Delete token set', exact: true })
+	await expect(dialog.getByRole('heading')).toContainText(
+		'Delete custom token set',
+	)
+	const confirmBtn = dialog.getByRole('button', {
+		name: 'Delete token set',
+		exact: true,
+	})
 	await expect(confirmBtn).toBeVisible({ timeout: 10000 })
 	await confirmBtn.click()
 	await expect(row).toBeHidden({ timeout: 10000 })
