@@ -50,6 +50,8 @@ script('thematiq', 'lib/themingPlan');
 script('thematiq', 'lib/markupRender');
 // Sort and filter from the column headers of every table[data-column-controls].
 script('thematiq', 'lib/tableColumnControls');
+// The board-drawn icon inside every button that names one (data-thematiq-icon).
+script('thematiq', 'lib/buttonIcons');
 // The board-drawn dialog frame and the dialogs admin.js opens in it.
 script('thematiq', 'dialogs/admin-dialog');
 script('thematiq', 'dialogs/reset-theme-dialog');
@@ -245,7 +247,7 @@ if ($_['mockUi'] === true) {
 					<input type="search" id="thematiq-token-sets-search" class="thematiq-token-sets__search"
 						placeholder="<?php p($l->t('Search token sets')); ?>" autocomplete="off">
 				</span>
-				<button type="button" class="thematiq-token-sets__own"><?php p($l->t('Own token set')); ?></button>
+				<button type="button" class="thematiq-token-sets__own" data-thematiq-icon="plus"><?php p($l->t('Own token set')); ?></button>
 			</div>
 		</div>
 		<div class="thematiq-card thematiq-token-sets__card">
@@ -1450,7 +1452,7 @@ if ($_['mockUi'] === true) {
 						</table>
 					</div>
 					<div class="thematiq-css-panel__actions">
-						<button type="button" id="nldesign-group-theming-add" class="thematiq-groups-panel__add" disabled><?php p($l->t('Add connection')); ?></button>
+						<button type="button" id="nldesign-group-theming-add" class="thematiq-groups-panel__add" data-thematiq-icon="plus" disabled><?php p($l->t('Add connection')); ?></button>
 						<span id="nldesign-group-theming-feedback" class="thematiq-css-panel__feedback nldesign-group-theming-feedback" role="status" aria-live="polite"></span>
 						<span class="thematiq-preview__spacer"></span>
 						<button type="button" id="nldesign-group-theming-save" class="thematiq-css-panel__save"><?php p($l->t('Save group theme')); ?></button>
@@ -2192,7 +2194,7 @@ if ($_['mockUi'] === true) {
 			</div>
 			<div class="thematiq-admin-dialog__foot">
 				<button type="button" class="thematiq-admin-dialog__button thematiq-admin-dialog__button--secondary nldesign-dialog-cancel"><?php p($l->t('Cancel')); ?></button>
-				<button type="submit" class="thematiq-admin-dialog__button thematiq-admin-dialog__button--primary"><?php p($l->t('Save token')); ?></button>
+				<button type="submit" class="thematiq-admin-dialog__button thematiq-admin-dialog__button--primary" data-thematiq-icon="check"><?php p($l->t('Save token')); ?></button>
 			</div>
 		</form>
 	</dialog>
@@ -2241,7 +2243,7 @@ if ($_['mockUi'] === true) {
 			</div>
 			<div class="thematiq-admin-dialog__foot">
 				<button type="button" class="thematiq-admin-dialog__button thematiq-admin-dialog__button--secondary nldesign-dialog-cancel"><?php p($l->t('Cancel')); ?></button>
-				<button type="submit" class="thematiq-admin-dialog__button thematiq-admin-dialog__button--primary"><?php p($l->t('Save deprecation')); ?></button>
+				<button type="submit" class="thematiq-admin-dialog__button thematiq-admin-dialog__button--primary" data-thematiq-icon="check"><?php p($l->t('Save deprecation')); ?></button>
 			</div>
 		</form>
 	</dialog>

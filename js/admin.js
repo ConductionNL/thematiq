@@ -4975,10 +4975,11 @@
 		 * @param {Array<Node>}   body         What the action does.
 		 * @param {string}        confirmLabel The label of the button that goes ahead.
 		 * @param {Function}      proceed      Called when the admin confirms.
+		 * @param {string}        [confirmIcon] The board's icon on that button (MDI path).
 		 *
 		 * @return {void}
 		 */
-		function confirmOverridesAction(id, title, body, confirmLabel, proceed) {
+		function confirmOverridesAction(id, title, body, confirmLabel, proceed, confirmIcon) {
 			var frame = window.ThematiqAdminDialog
 			if (frame === undefined) {
 				return
@@ -4998,6 +4999,7 @@
 					{
 						label: confirmLabel,
 						variant: 'primary',
+						icon: confirmIcon,
 						className: 'nldesign-dialog-confirm',
 						onClick: function (dialog) {
 							dialog.close()
@@ -5072,6 +5074,7 @@
 							h('button', {
 								type: 'button',
 								class: 'thematiq-admin-dialog__button thematiq-admin-dialog__button--secondary',
+								'data-thematiq-icon': 'file',
 								text: t('thematiq', 'Choose file'),
 								on: { click: chooseFile },
 							}),
@@ -5105,6 +5108,8 @@
 				],
 				t('thematiq', 'Choose and upload file'),
 				chooseFile,
+				// The board's upload icon (TqOverridesUploaden).
+				'M9,10V16H15V10H19L12,3L5,10H9M12,5.8L14.2,8H13V14H11V8H9.8L12,5.8M19,18H5V20H19V18Z',
 			)
 		}
 
