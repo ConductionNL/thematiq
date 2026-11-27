@@ -2389,9 +2389,10 @@
 	outline-offset: 2px;
 }
 
-/* The column filter dialog, placed under its filter button on the page body. */
+/* The column filter dialog, fixed under its filter button (js/lib/tableColumnControls.js
+ * keeps it there while the page scrolls). */
 .thematiq-column-filter {
-	position: absolute;
+	position: fixed;
 	z-index: 10000;
 	display: flex;
 	flex-direction: column;

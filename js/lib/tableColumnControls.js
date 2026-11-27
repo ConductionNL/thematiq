@@ -115,6 +115,29 @@
 	}
 
 	/**
+	 * Put the filter dialog under its button, inside the viewport: above the
+	 * button when there is no room below, and never past the right edge.
+	 *
+	 * @param {HTMLElement} panel The dialog (position: fixed).
+	 * @param {HTMLElement} anchor The filter button.
+	 * @return {void}
+	 */
+	function place(panel, anchor) {
+		var rect = anchor.getBoundingClientRect()
+		var width = panel.offsetWidth
+		var height = panel.offsetHeight
+		var viewWidth = document.documentElement.clientWidth || window.innerWidth
+		var viewHeight = document.documentElement.clientHeight || window.innerHeight
+		var top = rect.bottom + 4
+		if (top + height > viewHeight - 8 && rect.top - 4 - height >= 8) {
+			top = rect.top - 4 - height
+		}
+		var left = Math.min(rect.left, viewWidth - width - 8)
+		panel.style.top = Math.max(8, top) + 'px'
+		panel.style.left = Math.max(8, left) + 'px'
+	}
+
+	/**
 	 * Wire one table.
 	 *
 	 * @param {HTMLTableElement} table The table.
@@ -244,6 +267,8 @@
 			current.panel.remove()
 			current.column.filter.setAttribute('aria-expanded', 'false')
 			document.removeEventListener('mousedown', current.outside, true)
+			document.removeEventListener('scroll', current.follow, true)
+			window.removeEventListener('resize', current.follow)
 			if (restoreFocus) {
 				current.column.filter.focus()
 			}
@@ -385,19 +410,25 @@
 				}
 			})
 
-			var rect = column.filter.getBoundingClientRect()
-			panel.style.top = rect.bottom + window.scrollY + 4 + 'px'
-			panel.style.left = rect.left + window.scrollX + 'px'
 			document.body.appendChild(panel)
+			place(panel, column.filter)
 			column.filter.setAttribute('aria-expanded', 'true')
 			var outside = function (event) {
-				if (!panel.contains(event.target) && event.target !== column.filter
-					&& !column.filter.contains(event.target)) {
+				if (
+					!panel.contains(event.target) &&
+					!column.filter.contains(event.target)
+				) {
 					close(false)
 				}
 			}
+			// Nextcloud scrolls an inner container, not the window: follow any scroll.
+			var follow = function () {
+				place(panel, column.filter)
+			}
 			document.addEventListener('mousedown', outside, true)
-			open = { panel: panel, column: column, outside: outside }
+			document.addEventListener('scroll', follow, true)
+			window.addEventListener('resize', follow)
+			open = { panel: panel, column: column, outside: outside, follow: follow }
 			var first = panel.querySelector('input')
 			;(first || confirm).focus()
 		}
