@@ -302,7 +302,10 @@ export async function setSlogan(
 	expect(res.body.status).toBe('ok')
 }
 
-/** Set the show-menu-labels boolean app setting (POST /settings/menulabels). */
+/**
+ * Set "Show titles in the top bar", the menu setting that took over the older
+ * show-menu-labels option (apps-menu-show-titles), through the menu defaults.
+ */
 export async function setMenuLabels(
 	page: Page,
 	token: string,
@@ -311,11 +314,11 @@ export async function setMenuLabels(
 	const res = await page.evaluate(
 		async ({ t, v }) => {
 			const r = await fetch(
-				OC.generateUrl('/apps/thematiq/settings/menulabels'),
+				OC.generateUrl('/apps/thematiq/app-menu/defaults'),
 				{
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json', requesttoken: t },
-					body: JSON.stringify({ showMenuLabels: v }),
+					body: JSON.stringify({ settings: { topBarTitles: v } }),
 				},
 			)
 			return { status: r.status, body: await r.json() }
@@ -323,7 +326,7 @@ export async function setMenuLabels(
 		{ t: token, v: show },
 	)
 	expect(res.status).toBe(200)
-	expect(res.body.status).toBe('ok')
+	expect(res.body.defaults.topBarTitles).toBe(show)
 }
 
 /** Read the live computed value of a CSS custom property on the document root. */
