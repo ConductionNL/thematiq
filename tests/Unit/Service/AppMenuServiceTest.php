@@ -24,6 +24,8 @@ use OCA\Thematiq\Service\DesignSystemService;
 use OCA\Thematiq\Service\ExternalApps;
 use OCA\Thematiq\Service\LayoutOptionsService;
 use OCA\Thematiq\Service\OpenProjectModules;
+use OCA\Thematiq\Service\WalkthroughPreferences;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
 use OCP\IGroupManager;
@@ -550,4 +552,81 @@ class AppMenuServiceTest extends TestCase {
 			$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
 		}
 	}//end testTheClassicStyleLeavesTheMenuAlone()
+
+	/**
+	 * The workplace menu carries the person's tour state and the installed version core; the
+	 * classic style carries none.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 */
+	public function testTheTourStateJoinsTheWorkplaceMenu(): void {
+		$this->configure(block: ['hint' => 'Hint']);
+		foreach (['"workplace"' => true, '"classic"' => false] as $style => $workplace) {
+			$config = $this->createMock(originalClassName: IConfig::class);
+			$config->method('getAppValue')->willReturnCallback(
+				static fn (string $app, string $key, $default = '') => (['menu.style' => $style][$key] ?? $default)
+			);
+			$config->method('getUserValue')->willReturnCallback(
+				static fn (string $uid, string $app, string $key, $default = '') => ([
+					'annaapps_menu_walkthrough_seen_version' => '1.2.40-unstable.20261101',
+				][$uid.$key] ?? $default)
+			);
+			$apps = $this->createMock(originalClassName: IAppManager::class);
+			$apps->method('getAppVersion')->willReturn('1.2.49-unstable.20261127113354');
+			$l10n = $this->createMock(originalClassName: IL10N::class);
+			$l10n->method('getLanguageCode')->willReturn('en');
+			$l10n->method('t')->willReturnArgument(0);
+			$factory = $this->createMock(originalClassName: IFactory::class);
+			$factory->method('get')->willReturn($l10n);
+			$groups = $this->createMock(originalClassName: IGroupManager::class);
+			$groups->method('isAdmin')->willReturn(true);
+			$session = $this->createMock(originalClassName: IUserSession::class);
+			$user = $this->createMock(originalClassName: IUser::class);
+			$user->method('getUID')->willReturn('anna');
+			$session->method('getUser')->willReturn($user);
+			$state = null;
+			$initialState = $this->createMock(originalClassName: IInitialState::class);
+			$initialState->method('provideInitialState')->willReturnCallback(
+				function (string $key, $value) use (&$state): void {
+					$state = $value;
+				}
+			);
+			$listState = new AppMenuListState(
+				order: new AppMenuOrder(config: $config),
+				userSession: $session,
+				pins: new AppMenuPins(config: $config),
+				settings: new AppMenuSettings(config: $config),
+				groups: $groups
+			);
+			$service = $this->getMockBuilder(className: AppMenuService::class)
+				->setConstructorArgs(
+					[
+						$this->config,
+						$this->designSystemService,
+						$initialState,
+						$factory,
+						$this->logger,
+						$listState,
+						new WalkthroughPreferences(config: $config, appManager: $apps),
+						$session,
+					]
+				)
+				->onlyMethods(['emitScript', 'emitMenuStyle'])
+				->getMock();
+
+			$service->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout(workplace: true));
+
+			if ($workplace === false) {
+				$this->assertArrayNotHasKey(key: 'walkthrough', array: $state);
+				continue;
+			}
+
+			$this->assertSame(
+				expected: ['seen' => '1.2.40', 'progress' => '', 'appVersion' => '1.2.49', 'replayLabel' => 'Replay walkthrough'],
+				actual: $state['walkthrough']
+			);
+		}//end foreach
+	}//end testTheTourStateJoinsTheWorkplaceMenu()
 }//end class

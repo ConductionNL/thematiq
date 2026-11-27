@@ -23,6 +23,7 @@ namespace OCA\Thematiq\Service;
 use OCA\Thematiq\AppInfo\Application;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\IConfig;
+use OCP\IUserSession;
 use OCP\L10N\IFactory;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -108,6 +109,8 @@ class AppMenuService {
 	 * @param IFactory $l10nFactory The language of this request.
 	 * @param LoggerInterface $logger Records a swallowed failure.
 	 * @param AppMenuListState|null $listState The external apps, the user's order and the list's texts.
+	 * @param WalkthroughPreferences|null $walkthrough The person's apps menu tour state.
+	 * @param IUserSession|null $userSession The signed-in person, for the tour state.
 	 */
 	public function __construct(
 		private readonly IConfig $config,
@@ -116,6 +119,8 @@ class AppMenuService {
 		private readonly IFactory $l10nFactory,
 		private readonly LoggerInterface $logger,
 		private readonly ?AppMenuListState $listState = null,
+		private readonly ?WalkthroughPreferences $walkthrough = null,
+		private readonly ?IUserSession $userSession = null,
 	) {
 	}//end __construct()
 
@@ -258,6 +263,7 @@ class AppMenuService {
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-header-draws-the-apps-menu-of-the-board
 	 * @spec openspec/specs/external-apps-in-the-app-menu/spec.md#requirement-the-apps-menu-lists-the-external-apps-from-menu-settings
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
 	 */
 	public function inject(string $tokenSet, LayoutOptionsService $layoutOptions): void {
 		try {
@@ -275,6 +281,11 @@ class AppMenuService {
 			$workplace = ($menu['settings']['style'] ?? AppMenuSettings::DEFAULTS['style']) !== 'classic';
 			if ($workplace === false && ($menu['admin'] ?? false) !== true) {
 				return;
+			}
+
+			if ($workplace === true && $this->walkthrough !== null) {
+				$menu['walkthrough'] = $this->walkthrough->state(userId: $this->userSession?->getUser()?->getUID());
+				$menu['walkthrough']['replayLabel'] = $l10n->t('Replay walkthrough');
 			}
 
 			$this->initialState->provideInitialState(self::STATE_KEY, $menu);
