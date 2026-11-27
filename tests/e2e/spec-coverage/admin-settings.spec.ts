@@ -62,7 +62,9 @@ test.describe('admin-settings', () => {
 		// @e2e openspec/specs/admin-settings/spec.md#settings-panel-appears-in-admin-area
 		'Settings panel appears in admin area',
 		async () => {
-			const heading = page.locator('h2:has-text("Thematiq")')
+			// The version card (first-time-setup) carries a second "Thematiq"
+			// heading; the settings panel's own is the first one on the page.
+			const heading = page.locator('h2:has-text("Thematiq")').first()
 			await expect(heading).toBeVisible()
 		},
 	)
@@ -265,7 +267,9 @@ test.describe('admin-settings', () => {
 			await expect(checkbox).toBeAttached()
 			const label = page.locator('label[for="nldesign-show-menu-labels"]')
 			await expect(label).toBeVisible()
-			await expect(label).toContainText('Show text labels in app menu')
+			// apps-menu-show-titles (#2187) replaced the old 'text labels' option
+			// with 'Show titles in the top bar' on the same switch.
+			await expect(label).toContainText('Show titles in the top bar')
 		},
 	)
 
@@ -278,9 +282,9 @@ test.describe('admin-settings', () => {
 		'Show menu labels checkbox label text and accessibility',
 		async () => {
 			const label = page.locator('label[for="nldesign-show-menu-labels"]')
-			await expect(label).toContainText(
-				'Show text labels in app menu (hide icons)',
-			)
+			await expect(label).toContainText('Show titles in the top bar')
+			await expect(page.locator('#nldesign-show-menu-labels'))
+				.toHaveAttribute('aria-describedby', 'nldesign-show-menu-labels-help')
 			const checkbox = page.locator('#nldesign-show-menu-labels')
 			await expect(checkbox).toBeAttached()
 		},
@@ -350,7 +354,7 @@ test.describe('admin-settings', () => {
 		'Admin with valid session can access settings page',
 		async () => {
 			await expect(page).not.toHaveURL(/login/)
-			await expect(page.locator('h2:has-text("Thematiq")')).toBeVisible()
+			await expect(page.locator('h2:has-text("Thematiq")').first()).toBeVisible()
 		},
 	)
 
