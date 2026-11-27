@@ -7,6 +7,7 @@
  */
 import { describe, expect, it } from 'vitest'
 import {
+	bisectCandidates,
 	buildThemeCss,
 	classifySet,
 	kebabName,
@@ -550,5 +551,61 @@ describe('narrowGate', () => {
 			]),
 		).toBeNull()
 		expect(narrowGate([])).toBeNull()
+	})
+})
+
+describe('bisectCandidates', () => {
+	const sets = (count) => Array.from({ length: count }, (_, index) => `set-${index}`)
+	// A gate that fails whenever one of the bad sets is in, and counts its runs.
+	const gateFailingOn = (bad) => {
+		const gate = (group, kept) => {
+			gate.runs++
+			const failing = [...kept, ...group].filter((set) => bad.includes(set))
+			return { ok: failing.length === 0, failures: failing.map((set) => `${set}Test::testIt`) }
+		}
+		gate.runs = 0
+		return gate
+	}
+	const never = Number.MAX_SAFE_INTEGER
+
+	it('finds the one failing set among 41 in far fewer runs than one per set', () => {
+		const gate = gateFailingOn(['set-21'])
+		const outcome = bisectCandidates(sets(41), ['set-21Test::testIt'], gate, never)
+		expect(outcome.rejected.map((row) => row.candidate)).toEqual(['set-21'])
+		expect(outcome.rejected[0].timedOut).toBe(false)
+		expect(outcome.rejected[0].failures).toEqual(['set-21Test::testIt'])
+		expect(outcome.kept).toHaveLength(40)
+		expect(outcome.kept).not.toContain('set-21')
+		expect(gate.runs).toBeLessThanOrEqual(12)
+	})
+
+	it('rejects every failing set and keeps all the others, in order', () => {
+		const gate = gateFailingOn(['set-0', 'set-7', 'set-8'])
+		const outcome = bisectCandidates(sets(10), ['x'], gate, never)
+		expect(outcome.rejected.map((row) => row.candidate).sort()).toEqual(['set-0', 'set-7', 'set-8'])
+		expect(outcome.kept).toEqual(['set-1', 'set-2', 'set-3', 'set-4', 'set-5', 'set-6', 'set-9'])
+	})
+
+	it('rejects a single known-failing set without running the gate', () => {
+		const gate = gateFailingOn(['set-0'])
+		const outcome = bisectCandidates(sets(1), ['set-0Test::testIt'], gate, never)
+		expect(outcome.rejected.map((row) => row.candidate)).toEqual(['set-0'])
+		expect(gate.runs).toBe(0)
+	})
+
+	it('puts back the sets it could not judge once the budget is spent', () => {
+		const gate = gateFailingOn(['set-5'])
+		let clock = 0
+		// Every gate run costs ten minutes of a fifteen-minute budget.
+		const timed = (group, kept) => {
+			clock += 10
+			return gate(group, kept)
+		}
+		const outcome = bisectCandidates(sets(8), ['set-5Test::testIt'], timed, 15, () => clock)
+		const late = outcome.rejected.filter((row) => row.timedOut).map((row) => row.candidate)
+		expect(gate.runs).toBe(2)
+		expect(late.length).toBeGreaterThan(0)
+		expect(outcome.kept).not.toContain('set-5')
+		expect([...outcome.kept, ...outcome.rejected.map((row) => row.candidate)].sort()).toEqual(sets(8).sort())
 	})
 })
