@@ -88,6 +88,51 @@
 	}
 
 	/**
+	 * The apps menu's tour state with its replay label, or null: only the
+	 * workplace apps menu carries it.
+	 *
+	 * @return {object|null} The `walkthrough` part of `thematiq/app-menu`.
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
+	 */
+	function tourState() {
+		var menu = null
+		try {
+			menu = window.OCP.InitialState.loadState('thematiq', 'app-menu', null)
+		} catch (e) {
+			return null
+		}
+		var tour = menu && menu.walkthrough
+		return tour
+			&& typeof tour.replayLabel === 'string'
+			&& tour.replayLabel !== ''
+			? tour
+			: null
+	}
+
+	/**
+	 * Put the entry under Help in the account menu's list, or last.
+	 *
+	 * @param {Element} list The account menu's list.
+	 * @param {string} label The entry's text.
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
+	 */
+	function placeReplayEntry(list, label) {
+		var help = list.querySelector('#help')
+		var after = help !== null ? help.closest('li') : null
+		var model =
+			after || list.querySelector('li.account-menu-entry') || list.querySelector('li')
+		if (model === null) {
+			return
+		}
+		var entry = buildReplayEntry(model, label)
+		if (after !== null && after.parentNode === list) {
+			list.insertBefore(entry, after.nextSibling)
+		} else {
+			list.appendChild(entry)
+		}
+	}
+
+	/**
 	 * Keep a "Replay walkthrough" entry in the account menu, directly under
 	 * Nextcloud's Help entry, or last when Help is not there. Only with the
 	 * workplace apps menu, whose state carries the tour.
@@ -95,25 +140,8 @@
 	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
 	 */
 	function thematiqReplayEntryMain() {
-		if (
-			typeof OCP === 'undefined'
-			|| !OCP.InitialState
-			|| typeof OCP.InitialState.loadState !== 'function'
-		) {
-			return
-		}
-		var menu = null
-		try {
-			menu = OCP.InitialState.loadState('thematiq', 'app-menu', null)
-		} catch (e) {
-			return
-		}
-		var tour = menu && menu.walkthrough
-		if (
-			!tour
-			|| typeof tour.replayLabel !== 'string'
-			|| tour.replayLabel === ''
-		) {
+		var tour = tourState()
+		if (tour === null) {
 			return
 		}
 		var header = document.getElementById('header')
@@ -124,21 +152,8 @@
 			var list = header.querySelector(
 				'#header-menu-user-menu ul, #user-menu ul',
 			)
-			if (list === null || list.querySelector('#' + REPLAY_ID) !== null) {
-				return
-			}
-			var help = list.querySelector('#help')
-			var after = help !== null ? help.closest('li') : null
-			var model = after || list.querySelector('li.account-menu-entry')
-				|| list.querySelector('li')
-			if (model === null) {
-				return
-			}
-			var entry = buildReplayEntry(model, tour.replayLabel)
-			if (after !== null && after.parentNode === list) {
-				list.insertBefore(entry, after.nextSibling)
-			} else {
-				list.appendChild(entry)
+			if (list !== null && list.querySelector('#' + REPLAY_ID) === null) {
+				placeReplayEntry(list, tour.replayLabel)
 			}
 		}
 		place()

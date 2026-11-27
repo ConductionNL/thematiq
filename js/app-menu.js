@@ -2281,6 +2281,50 @@
 	}
 
 	/**
+	 * Give the page the replay entry point, and note whether the first-time
+	 * setup asked for the tour at once ("Start the apps menu walkthrough"):
+	 * then the menu opens by itself once the page is drawn.
+	 *
+	 * @param {object} menu The menu.
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 */
+	function prepareWalkthrough(menu) {
+		if (!menu.walkthrough || typeof menu.walkthrough !== 'object') {
+			return
+		}
+		window.thematiqAppMenuReplay = function () {
+			replayWalkthrough(menu)
+		}
+		var progress = tourProgress(menu.walkthrough)
+		menu.walkthrough.immediate = !!(progress && progress.immediate === true)
+	}
+
+	/**
+	 * After each scan of the page: open the menu for an immediate tour, and
+	 * start a due tour on an open menu.
+	 *
+	 * @param {object} menu The menu.
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 */
+	function walkthroughOnScan(menu) {
+		var waffle = document.querySelector('.app-menu__waffle')
+		if (!menu.walkthrough || waffle === null) {
+			return
+		}
+		var open = waffle.getAttribute('aria-expanded') === 'true'
+		if (menu.walkthrough.immediate) {
+			menu.walkthrough.immediate = false
+			if (!open && document.querySelector(SETUP_WIZARD) === null) {
+				// Outside this scan, so the watcher sees the menu draw.
+				setTimeout(function () {
+					waffle.click()
+				}, 0)
+			}
+		}
+		maybeWalkthrough(menu, open && document.querySelector('.app-menu__grid') !== null)
+	}
+
+	/**
 	 * Hover to open, click to pin. Nextcloud 33 and 34 open the menu on a
 	 * click only; the fork's Nextcloud 35 opens it on hover itself
 	 * (`.app-menu__trigger` exists there) but closes a click-opened menu when
@@ -2613,15 +2657,7 @@
 		opening()
 		menu.pinBar = pinBar(menu)
 		shareCreateActions(menu)
-		if (menu.walkthrough && typeof menu.walkthrough === 'object') {
-			window.thematiqAppMenuReplay = function () {
-				replayWalkthrough(menu)
-			}
-			var progress = tourProgress(menu.walkthrough)
-			// The first-time setup's "Start the apps menu walkthrough": the menu
-			// opens by itself once the page is drawn, and the tour starts.
-			menu.walkthrough.immediate = !!(progress && progress.immediate === true)
-		}
+		prepareWalkthrough(menu)
 
 		var busy = false
 		var scan = function () {
@@ -2636,19 +2672,7 @@
 					.forEach(function (grid) {
 						arrange(grid, menu, save)
 					})
-				var waffle = document.querySelector('.app-menu__waffle')
-				var open =
-					waffle !== null && waffle.getAttribute('aria-expanded') === 'true'
-				if (menu.walkthrough && menu.walkthrough.immediate && waffle !== null) {
-					menu.walkthrough.immediate = false
-					if (!open && document.querySelector(SETUP_WIZARD) === null) {
-						// Outside this scan, so the watcher sees the menu draw.
-						setTimeout(function () {
-							waffle.click()
-						}, 0)
-					}
-				}
-				maybeWalkthrough(menu, open && document.querySelector('.app-menu__grid') !== null)
+				walkthroughOnScan(menu)
 			} finally {
 				// The script's own changes are mutations too: drop them, or the
 				// watcher would call scan again for ever.
