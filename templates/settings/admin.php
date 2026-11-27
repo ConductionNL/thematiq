@@ -166,12 +166,20 @@ if ($_['mockUi'] === true) {
 		</dl>
 		<div class="thematiq-version-card__actions">
 			<button type="button" class="button primary thematiq-version-card__setup"><?php p($l->t('Set up again')); ?></button>
-			<button type="button" class="button thematiq-version-card__walkthrough"><?php p($l->t('Apps menu walkthrough')); ?></button>
+			<button type="button" class="button thematiq-version-card__walkthrough">
+				<?php p($l->t('Apps menu walkthrough')); ?>
+			</button>
 			<a class="button thematiq-version-card__help" target="_blank" rel="noopener noreferrer"
-			   href="https://github.com/ConductionNL/thematiq/issues/new?template=feature-request.yml&amp;title=%5BFEATURE%5D+"><?php p($l->t('Help us: suggest an idea')); ?></a>
+			   href="https://github.com/ConductionNL/thematiq/issues/new?template=feature-request.yml&amp;title=%5BFEATURE%5D+">
+				<?php p($l->t('Help us: suggest an idea')); ?>
+			</a>
 		</div>
-		<p class="settings-hint thematiq-version-card__note"><?php p($l->t('Set up again opens the setup once more, with the current choices filled in. Nothing changes until you click Apply.')); ?></p>
-		<p class="settings-hint thematiq-version-card__locked" hidden><?php p($l->t('The house style of this environment comes from the deployment configuration, so it is set up there.')); ?></p>
+		<p class="settings-hint thematiq-version-card__note">
+			<?php p($l->t('Set up again opens the setup once more, with the current choices filled in. Nothing changes until you click Apply.')); ?>
+		</p>
+		<p class="settings-hint thematiq-version-card__locked" hidden>
+			<?php p($l->t('The house style of this environment comes from the deployment configuration, so it is set up there.')); ?>
+		</p>
 	</section>
 
 	<!-- The Active token set card TqTheming draws: the picker with its chips, then
