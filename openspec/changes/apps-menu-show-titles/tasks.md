@@ -56,7 +56,7 @@ ConductionNL/design-system#1220 and #1221; TqSetupAppmenu has a follow-up. Copy,
 
 ## 3. Menu settings and the setup wizard
 
-- [ ] 3.1 `js/dialogs/menu-settings-dialog.js`: "Show titles" after "Show items as tiles", "Show
+- [x] 3.1 `js/dialogs/menu-settings-dialog.js`: "Show titles" after "Show items as tiles", "Show
       titles in the top bar" directly under it, then "Show payoff"; `topBarTitles` saved with For
       everyone (REQ-TQMT-005); Show payoff disabled with "Only with Show titles." and its value kept; preview without
       names and payoff; sentence "without titles". REQ-TQMT-004.
@@ -103,4 +103,7 @@ ConductionNL/design-system#1220 and #1221; TqSetupAppmenu has a follow-up. Copy,
   `show_menu_labels`, so it never stands in again after the administrator chose.
 - The Newman request and the e2e specs that called `POST /settings/menulabels` now save through
   `POST /apps/thematiq/app-menu/defaults` (`menu-labels.spec.ts`, the workflow helpers).
+- 3.1 is built (Theming tab order, Show payoff disabled with its note and its value kept, the preview
+  without names, the sentence's "without titles"); 3.3's menuSettingsDialog.spec.js part is written,
+  its setupWizard.spec.js part waits for 3.2.
 - `npm run test:l10n` stays red on development for js/admin.js strings that are not this change's.
