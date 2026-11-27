@@ -261,6 +261,20 @@ describe('the apps menu walkthrough', { timeout: 60000 }, () => {
 		tour.close()
 	})
 
+	it('draws the card and its buttons as TqMenuRondleiding, whatever the set does to Nextcloud buttons', async () => {
+		page()
+		const tour = mod.createMenuWalkthrough({ http: http() })
+		tour.start({ mode: 'replay', state: { seen: '', progress: '', appVersion: STEPS[0].sinceVersion } })
+		await settle()
+		const css = document.querySelector('style[data-thematiq-menu-walkthrough-host]').textContent
+		expect(css).toContain(mod.ACTIONS_CSS)
+		expect(mod.ACTIONS_CSS).toContain('.' + mod.HOST_CLASS + ' .cn-walkthrough__actions .button-vue{min-height:36px;height:36px')
+		expect(mod.ACTIONS_CSS).toContain('font-size:14px;font-weight:600')
+		expect(mod.ACTIONS_CSS).toContain('.cn-walkthrough__card{box-sizing:border-box;width:320px}')
+		expect(mod.ACTIONS_CSS).toContain('.cn-walkthrough__close{width:36px')
+		tour.close()
+	})
+
 	it('passes the reduced-motion look to the engine', async () => {
 		const original = window.matchMedia
 		window.matchMedia = (q) => ({ matches: q.includes('reduce'), addEventListener() {}, removeEventListener() {} })
