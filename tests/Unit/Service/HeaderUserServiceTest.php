@@ -68,6 +68,13 @@ class HeaderUserServiceTest extends TestCase {
 	private int $scripts = 0;
 
 	/**
+	 * How often the light layout's script was loaded.
+	 *
+	 * @var integer
+	 */
+	private int $lightScripts = 0;
+
+	/**
 	 * Set up the mocks.
 	 *
 	 * @return void
@@ -79,6 +86,7 @@ class HeaderUserServiceTest extends TestCase {
 		$this->initialState = $this->createMock(originalClassName: IInitialState::class);
 		$this->logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$this->scripts = 0;
+		$this->lightScripts = 0;
 	}//end setUp()
 
 	/**
@@ -89,11 +97,16 @@ class HeaderUserServiceTest extends TestCase {
 	private function service(): HeaderUserService {
 		$service = $this->getMockBuilder(className: HeaderUserService::class)
 			->setConstructorArgs([$this->userSession, $this->accountManager, $this->initialState, $this->logger])
-			->onlyMethods(['emitScript'])
+			->onlyMethods(['emitScript', 'emitLightLayoutScript'])
 			->getMock();
 		$service->method('emitScript')->willReturnCallback(
 			function (): void {
 				$this->scripts++;
+			}
+		);
+		$service->method('emitLightLayoutScript')->willReturnCallback(
+			function (): void {
+				$this->lightScripts++;
 			}
 		);
 
@@ -219,4 +232,43 @@ class HeaderUserServiceTest extends TestCase {
 
 		$this->assertSame(expected: 0, actual: $this->scripts);
 	}//end testAFailureIsLoggedAndLeavesTheAvatar()
+	/**
+	 * The light layout's script is no longer the workplace header's: it goes with the light layout's
+	 * sheet (CssInjectionService), so the header names only its own three scripts.
+	 *
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#requirement-the-light-layouts-script-acts-on-every-page-req-tqss-005
+	 *
+	 * @return void
+	 */
+	public function testTheHeaderNoLongerLoadsTheLightLayoutScript(): void {
+		$this->assertFalse(condition: defined(HeaderUserService::class . '::APPS_SCRIPT'));
+		$this->assertSame(
+			expected: ['header-user', 'header-brand', 'header-create'],
+			actual: [HeaderUserService::SCRIPT, HeaderUserService::BRAND_SCRIPT, HeaderUserService::CREATE_SCRIPT]
+		);
+	}//end testTheHeaderNoLongerLoadsTheLightLayoutScript()
+
+	/**
+	 * The light layout's script loads with the light layout whatever the header style, even with nobody
+	 * signed in; the default layout loads it nowhere.
+	 *
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#requirement-the-light-layouts-script-acts-on-every-page-req-tqss-005
+	 *
+	 * @return void
+	 */
+	public function testTheLightLayoutScriptLoadsWhateverTheHeader(): void {
+		$this->userSession->method('getUser')->willReturn(null);
+
+		$this->service()->inject(tokenSet: 'utrecht', layoutOptions: $this->layout(sheets: ['workplace-layout']));
+		$this->assertSame(expected: 1, actual: $this->lightScripts);
+		$this->assertSame(expected: 0, actual: $this->scripts);
+
+		$this->lightScripts = 0;
+		$this->service()->inject(tokenSet: 'zuiddrecht', layoutOptions: $this->layout());
+		$this->assertSame(expected: 1, actual: $this->lightScripts);
+
+		$this->lightScripts = 0;
+		$this->service()->inject(tokenSet: 'utrecht', layoutOptions: $this->layout(sheets: ['brand-stripe']));
+		$this->assertSame(expected: 0, actual: $this->lightScripts);
+	}//end testTheLightLayoutScriptLoadsWhateverTheHeader()
 }//end class

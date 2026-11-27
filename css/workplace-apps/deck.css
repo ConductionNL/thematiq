@@ -4,7 +4,9 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * Loaded only on Deck's own pages, and only while the workplace layout is
+ * Loaded only on Deck's own pages, after css/workplace-layout.css, whose
+ * shared section draws what every app has (the navigation rows, the panel's
+ * title and tabs, the rail), and only while the workplace layout is
  * light (LayoutStylesheets::forApp()). Every rule starts at
  * `:is(#content, #content-vue).app-deck`, so no other page pays for it, and every colour is a
  * Nextcloud or NL Design variable, so the dark scheme follows by itself.
@@ -330,38 +332,8 @@
 	opacity: 1;
 }
 
-/* The navigation: 34px rows in 14px. */
-:is(#content, #content-vue).app-deck #app-navigation-vue .app-navigation-entry {
-	min-height: 34px;
-	height: 34px;
-	border-radius: var(--border-radius-element, 8px);
-}
-
-:is(#content, #content-vue).app-deck #app-navigation-vue .app-navigation-entry-link {
-	min-height: 34px;
-	height: 34px;
-	font-size: 14px;
-	font-weight: 400;
-	line-height: 21px;
-}
-
-:is(#content, #content-vue).app-deck
-	#app-navigation-vue
-	.app-navigation-entry
-	.button-vue {
-	min-height: 34px !important;
-	height: 34px !important;
-}
-
-:is(#content, #content-vue).app-deck
-	#app-navigation-vue
-	.app-navigation-entry-wrapper
-	+ .app-navigation-entry-wrapper {
-	margin-top: 1px;
-}
-
-/* The card panel (TbCard): 480px, the title in 18px without the focus ring
-   its opening puts on it, and the tabs as a strip of folder tabs in text. */
+/* The card panel (TbCard): 480px. Its title is the shared 20px and its tabs
+   the shared strip of folder tabs (css/workplace-layout.css). */
 :is(#content, #content-vue).app-deck #app-sidebar-vue {
 	--app-sidebar-width: 480px;
 
@@ -374,86 +346,9 @@
 	padding: 12px 76px 8px 16px !important;
 }
 
-:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-header__mainname {
-	font-size: 18px !important;
-	line-height: 24px !important;
-}
-
-:is(#content, #content-vue).app-deck
-	#app-sidebar-vue
-	.app-sidebar-header__mainname:focus:not(:focus-visible),
-:root[data-thematiq-pointer]
-	:is(#content, #content-vue).app-deck
-	#app-sidebar-vue
-	.app-sidebar-header__mainname:focus {
-	outline: none !important;
-	box-shadow: none !important;
-}
-
 :is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-header__subname {
 	font-size: 13px;
 	color: var(--color-text-maxcontrast);
-}
-
-:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-tabs__nav {
-	gap: 4px;
-	margin: 0 !important;
-	padding: 0 16px !important;
-	border-bottom: 1px solid var(--color-border-maxcontrast);
-}
-
-:is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar-tabs__tab {
-	flex: none !important;
-	height: 36px !important;
-	min-height: 36px !important;
-	margin: 0 0 -1px !important;
-	padding: 0 !important;
-	border: 1px solid var(--color-border-maxcontrast) !important;
-	border-bottom: 0 !important;
-	border-radius: var(--border-radius-element, 8px)
-		var(--border-radius-element, 8px) 0 0 !important;
-	background-color: color-mix(
-		in srgb,
-		var(--color-border) 60%,
-		var(--color-main-background)
-	) !important;
-}
-
-:is(#content, #content-vue).app-deck
-	#app-sidebar-vue
-	.app-sidebar-tabs__tab[aria-selected='true'],
-:is(#content, #content-vue).app-deck
-	#app-sidebar-vue
-	.app-sidebar-tabs__tab.checkbox-radio-switch--checked {
-	height: 37px !important;
-	background-color: var(--color-main-background) !important;
-}
-
-:is(#content, #content-vue).app-deck
-	#app-sidebar-vue
-	.app-sidebar-tabs__tab
-	.checkbox-content {
-	flex-direction: row !important;
-	height: 36px;
-	padding: 0 12px !important;
-	border: 0 !important;
-	background: none !important;
-	box-shadow: none !important;
-}
-
-:is(#content, #content-vue).app-deck
-	#app-sidebar-vue
-	.app-sidebar-tabs__tab
-	.checkbox-content__icon {
-	display: none !important;
-}
-
-:is(#content, #content-vue).app-deck
-	#app-sidebar-vue
-	.app-sidebar-tabs__tab-caption {
-	font-size: 14px;
-	font-weight: 500;
-	color: var(--color-main-text);
 }
 
 :is(#content, #content-vue).app-deck #app-sidebar-vue .app-sidebar__tab {
@@ -487,144 +382,12 @@
 }
 
 /*
- * With a card open the navigation folds to a 64px rail of icons with a small
- * label under each, as TbCard draws it; the board keeps the room. Keyboard
- * focus or an open menu unfolds the full column over the board at once, the
- * pointer after 200ms, as Mail's rail does (css/workplace-apps/mail.css).
- * The boards under All boards and rows without an icon have nothing to show
- * in the rail. Without style queries the column stays unfolded.
+ * With a card open the navigation folds to the shared 64px rail
+ * (css/workplace-layout.css), as TbCard draws it; the board keeps the room.
+ * This sheet only says when.
  */
-@property --thematiq-deck-rail {
-	syntax: '<integer>';
-	inherits: true;
-	initial-value: 0;
-}
-
-@keyframes thematiq-deck-rail-unfold {
-	from,
-	to {
-		--thematiq-deck-rail: 0;
-	}
-}
-
-@media (min-width: 1024px) {
-	:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) .app-navigation {
-		--thematiq-deck-rail: 1;
-
-		position: relative;
-		z-index: 2000;
-		flex: 0 0 64px !important;
-		width: 64px !important;
-		min-width: 64px !important;
-		max-width: 64px !important;
-	}
-
-	:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
-		.app-navigation:is(
-			:focus-within,
-			:has(#app-navigation-vue [aria-haspopup][aria-expanded='true'])
-		) {
-		--thematiq-deck-rail: 0;
-	}
-
-	@media (prefers-reduced-motion: no-preference) {
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
-			.app-navigation:hover {
-			animation: thematiq-deck-rail-unfold 1ms 200ms forwards;
-		}
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
-			.app-navigation:hover {
-			--thematiq-deck-rail: 0;
-		}
-	}
-
-	:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) #app-navigation-vue {
-		position: absolute;
-		inset-block: 0;
-		inset-inline-start: 0;
-		width: 264px;
-		border-inline-end: 1px solid var(--color-border);
-		background-color: var(--color-main-background);
-		box-shadow: 0 4px 16px var(--color-box-shadow);
-	}
-
-	@container style(--thematiq-deck-rail: 1) {
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
-			#app-navigation-vue {
-			width: 64px;
-			box-shadow: none;
-			padding-inline: 4px !important;
-			overflow: hidden;
-		}
-
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
-			#app-navigation-vue
-			:is(
-				.app-navigation-entry__children,
-				.app-navigation-entry__actions,
-				.app-navigation-entry__utils,
-				.app-navigation-caption,
-				.icon-collapse
-			) {
-			display: none !important;
-		}
-
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
-			#app-navigation-vue
-			.app-navigation-entry-wrapper:has(.app-navigation-entry-icon:empty) {
-			display: none !important;
-		}
-
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
-			#app-navigation-vue
-			.app-navigation-list {
-			padding-inline: 0 !important;
-		}
-
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
-			#app-navigation-vue
-			:is(.app-navigation-entry, .app-navigation-entry-link) {
-			height: auto !important;
-			min-height: 48px !important;
-		}
-
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
-			#app-navigation-vue
-			.app-navigation-entry-link {
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			width: 100% !important;
-			padding: 4px 0 !important;
-		}
-
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
-			#app-navigation-vue
-			.app-navigation-entry-icon {
-			width: 20px !important;
-			height: 22px !important;
-			min-height: 22px !important;
-			margin: 0 !important;
-		}
-
-		:is(#content, #content-vue).app-deck:has(#app-sidebar-vue)
-			#app-navigation-vue
-			.app-navigation-entry__name {
-			max-width: 56px;
-			height: auto !important;
-			min-height: 0 !important;
-			padding: 0 !important;
-			overflow: hidden;
-			font-size: 11px !important;
-			line-height: 14px !important;
-			text-align: center;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
-	}
+:is(#content, #content-vue).app-deck:has(#app-sidebar-vue) {
+	--thematiq-rail: 1;
 }
 
 /*
@@ -639,8 +402,10 @@
  * overdue. The number and the short date come from js/workplace-apps.js.
  */
 
-/* The status colours OpenProject gives its statuses, fill and ring. */
+/* The status colours OpenProject gives its statuses, fill and ring; and the
+ * mark js/workplace-apps.js waits for before it draws Deck's card faces. */
 :root {
+	--thematiq-app-layer: deck;
 	--thematiq-deck-status-new: #c3fae8;
 	--thematiq-deck-status-new-ring: #7bf4cc;
 	--thematiq-deck-status-progress: #66d9e8;

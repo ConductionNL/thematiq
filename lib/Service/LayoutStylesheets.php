@@ -29,37 +29,32 @@ namespace OCA\Thematiq\Service;
 final class LayoutStylesheets {
 
 	/**
-	 * The apps the light layout draws with a stylesheet of their own, under `css/workplace-apps/`.
+	 * The apps with content of their own that a board draws, under `css/workplace-apps/`: what every
+	 * app shares (the navigation rows, list rows, panels and the rail) is in `css/workplace-layout.css`,
+	 * and the top bar's brand fallback in `css/header-workplace.css`, so only these three pay a sheet more.
 	 *
 	 * @var string[]
 	 */
 	public const array APP_LAYERS = ['mail', 'calendar', 'deck'];
 
 	/**
-	 * The stylesheets the light layout adds for one app, only on that app's own pages: with the
-	 * workplace header first `workplace-apps/brand`, the organisation and the app name at the start
-	 * of the bar, then `workplace-apps/common`, what the three apps share, then the app's own sheet.
+	 * The stylesheet the light layout adds for one app, only on that app's own pages: the app's own
+	 * sheet under `css/workplace-apps/`, with what exists in that app alone.
 	 *
 	 * @param array<string, mixed> $resolved The resolved options.
 	 * @param string|null $appId The rendered app.
 	 *
-	 * @return array<int, string> No stylesheet, or two or three.
+	 * @return array<int, string> No stylesheet, or the app's own.
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-light-layout-draws-mail-calendar-and-deck-as-the-boards
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#requirement-what-stays-app-specific-is-listed-req-tqss-006
 	 */
 	public function forApp(array $resolved, ?string $appId): array {
 		if ($resolved['workplaceLayout'] !== LayoutOptionsService::LAYOUT_LIGHT || in_array($appId, self::APP_LAYERS, true) === false) {
 			return [];
 		}
 
-		$files = [];
-		if ($resolved['headerStyle'] === LayoutOptionValues::HEADER_STYLE_WORKPLACE) {
-			$files[] = 'workplace-apps/brand';
-		}
-
-		$files[] = 'workplace-apps/common';
-		$files[] = 'workplace-apps/' . $appId;
-		return $files;
+		return ['workplace-apps/' . $appId];
 	}//end forApp()
 
 	/**
@@ -91,7 +86,7 @@ final class LayoutStylesheets {
 			return [];
 		}
 
-		$files = ['workplace-layout'];
+		$files = [LayoutOptionsService::LIGHT_LAYOUT_STYLESHEET];
 		if ($resolved['loginWatermark'] === false) {
 			$files[] = 'login-watermark-off';
 		}

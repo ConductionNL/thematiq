@@ -46,6 +46,59 @@ body:not(#body-login) #header .header-start {
 	flex: 0 0 auto;
 }
 
+/* Until the brand block is drawn, on every page: Nextcloud's logo and the
+ * app's name in bold, a hairline, then the apps grid, as MlHeader, ClWeek,
+ * TbBoard and DqKop draw the bar's start. The name is Nextcloud's own, so it
+ * is translated and read out as before. The rules step back once
+ * js/header-brand.js put the block in the bar (`data-thematiq-brand`), and
+ * while the bar or the page's navigation holds an app's own brand (a
+ * Conduction app's `.cn-brand-bar-host` or `.cn-app-nav__brand`). A browser
+ * without `:has()` drops these rules and keeps the start hidden, so it never
+ * shows two brands. No colour is written. */
+body:not(#body-login):not(:has(.cn-app-nav__brand))
+	#header:not([data-thematiq-brand]):not(:has(> .cn-brand-bar-host))
+	#nextcloud {
+	display: flex !important;
+	height: 100% !important;
+	margin-inline-end: 4px;
+}
+
+body:not(#body-login):not(:has(.cn-app-nav__brand))
+	#header:not([data-thematiq-brand]):not(:has(> .cn-brand-bar-host))
+	nav.app-menu {
+	display: flex;
+	align-items: center;
+}
+
+body:not(#body-login):not(:has(.cn-app-nav__brand))
+	#header:not([data-thematiq-brand]):not(:has(> .cn-brand-bar-host))
+	.app-menu__current-app {
+	display: inline-flex !important;
+	order: -1;
+	height: 40px !important;
+	margin-inline: 0 12px !important;
+	padding-inline: 4px 16px !important;
+	border-inline-end: 1px solid var(--color-border) !important;
+	border-radius: 0 !important;
+	background-color: transparent !important;
+}
+
+body:not(#body-login):not(:has(.cn-app-nav__brand))
+	#header:not([data-thematiq-brand]):not(:has(> .cn-brand-bar-host))
+	:is(.app-menu__current-app-icon, .app-menu__current-app-cog) {
+	display: none !important;
+}
+
+body:not(#body-login):not(:has(.cn-app-nav__brand))
+	#header:not([data-thematiq-brand]):not(:has(> .cn-brand-bar-host))
+	.app-menu__current-app-name {
+	max-width: 200px;
+	font-size: 18px !important;
+	font-weight: 700 !important;
+	letter-spacing: 0 !important;
+	color: var(--color-main-text) !important;
+}
+
 body:not(#body-login) #header .app-menu,
 body:not(#body-login) #header .app-menu > div {
 	margin: 0 !important;

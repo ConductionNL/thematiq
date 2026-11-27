@@ -1014,6 +1014,566 @@ body:not(#body-login) {
 	font-weight: 600 !important;
 }
 
+/*
+ * EVERY APP'S STANDARD STRUCTURES
+ * (openspec/changes/same-shell-every-page, REQ-TQSS-001 to REQ-TQSS-005).
+ *
+ * No thematiq page differs from another: what the Mail, Calendar and Deck
+ * boards (MlNav, ClNav, TbNav, MlThreadList, TbCard, MlInbox) draw on the
+ * standard Nextcloud structures holds in every app, Conduction's own apps
+ * included. Every rule starts at the content element and names only
+ * Nextcloud's structural ids and @nextcloud/vue component classes, never an
+ * app's class; Nextcloud's legacy `#app-navigation` is left alone. What only
+ * one app has stays in its sheet under css/workplace-apps/, which sets
+ * `--thematiq-app-layer` to its app. No colour is written: every value is a
+ * Nextcloud or NL Design variable. The selected navigation entry is not drawn
+ * here: it follows the administrator's navigation entry style
+ * (navigation-active-soft.css) on every page.
+ */
+
+/* js/workplace-apps.js acts only while this sheet is on the page. */
+:root {
+	--thematiq-light-layout: 1;
+}
+
+/* The navigation: 34px rows in 14px regular text, the active label 600, a
+ * 16px icon, a 10px gap, the control radius, 1px between rows. */
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-navigation-vue
+	:is(.app-navigation-entry, .app-navigation-entry-link) {
+	min-height: 34px !important;
+	height: 34px;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-navigation-vue
+	.app-navigation-entry {
+	border-radius: var(--border-radius-element, 8px);
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-navigation-vue
+	.app-navigation-entry-link {
+	gap: 10px;
+	font-size: 14px;
+	font-weight: 400;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-navigation-vue
+	.app-navigation-entry-icon {
+	width: 16px;
+	min-width: 16px;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-navigation-vue
+	.app-navigation-entry__name {
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 34px;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-navigation-vue
+	.app-navigation-entry.active
+	.app-navigation-entry__name {
+	font-weight: 600;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-navigation-vue
+	.app-navigation-entry-wrapper
+	+ .app-navigation-entry-wrapper {
+	margin-top: 1px;
+}
+
+/* A row's and a caption's actions are 34px buttons; an icon-only one a square. */
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-navigation-vue
+	:is(.app-navigation-entry, .app-navigation-caption__actions)
+	.button-vue {
+	min-height: 34px !important;
+	height: 34px !important;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-navigation-vue
+	:is(.app-navigation-entry__utils, .app-navigation-caption__actions)
+	.button-vue--icon-only {
+	width: 34px !important;
+	min-width: 34px !important;
+	padding: 0 !important;
+}
+
+/* A caption on one line: its name in 12px semibold capitals in the muted
+ * text, cut with an ellipsis, its actions at the end. */
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-navigation-vue
+	.app-navigation-caption {
+	display: flex !important;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: 4px;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-navigation-vue
+	.app-navigation-caption__name {
+	flex: 1 1 auto;
+	width: auto;
+	min-width: 0;
+	overflow: hidden;
+	font-size: 12px !important;
+	font-weight: 600 !important;
+	letter-spacing: 0.02em;
+	text-overflow: ellipsis;
+	text-transform: uppercase;
+	white-space: nowrap;
+	color: var(--color-text-maxcontrast) !important;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-navigation-vue
+	.app-navigation-caption__actions {
+	flex: none;
+	width: auto;
+}
+
+/* The new-item button (NcAppNavigationNew) is the filled primary, 34px in
+ * 14px semibold. An app's own button maps to it in its sheet. */
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	.app-navigation-new
+	.button-vue {
+	min-height: 34px !important;
+	height: 34px !important;
+	padding-block: 0 !important;
+	border-color: var(
+		--nldesign-color-button-primary-border,
+		var(--nldesign-color-primary)
+	) !important;
+	background-color: var(
+		--nldesign-color-button-primary-background,
+		var(--nldesign-color-primary)
+	) !important;
+	color: var(
+		--nldesign-color-button-primary-text,
+		var(--nldesign-color-primary-text)
+	) !important;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	.app-navigation-new
+	.button-vue:hover {
+	background-color: var(
+		--nldesign-color-button-primary-hover,
+		var(--nldesign-color-primary-hover)
+	) !important;
+}
+
+/* Rows are links but not links in prose: a navigation entry, a list row, a
+ * table row and a card keep the text colour and no underline. Prose links
+ * (a settings help link, a README) keep theirs. Both go through the variables
+ * the link rules read, so nothing competes on specificity. */
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	:is(#app-navigation-vue .app-navigation-entry, .list-item, tr, .card) {
+	--nldesign-component-link-text-decoration: none;
+	--nldesign-color-on-surface: var(--color-main-text);
+}
+
+/* List rows (NcListItem): one column of rows with a hairline between them,
+ * not rounded tiles; the selected row in the primary's light tint with a 3px
+ * primary edge. Geometry and colour only. */
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	.list-item__wrapper {
+	padding: 0 !important;
+}
+
+:where(body:not(#body-login)) :is(#content, #content-vue) .list-item {
+	border-bottom: 1px solid var(--color-border);
+	border-radius: 0 !important;
+}
+
+:where(body:not(#body-login)) :is(#content, #content-vue) .list-item:hover {
+	background-color: var(--color-background-hover) !important;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	:is(.list-item__wrapper--active .list-item, .list-item--active) {
+	box-shadow: inset 3px 0 0 var(--color-primary-element);
+	background-color: var(--color-primary-element-light) !important;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	:is(.list-item__wrapper--active .list-item, .list-item--active)
+	:is(.list-item-content__name, .list-item-content__subname, .line-one, .line-two) {
+	color: var(--color-primary-element-light-text) !important;
+}
+
+/* An icon-only button is a square, not a padded text button: the design
+ * system's button padding made them 64px wide. */
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	.button-vue--icon-only:not(.button-vue--size-large) {
+	min-width: var(--default-clickable-area, 34px) !important;
+	padding: 0 !important;
+}
+
+/* The sidebar panel: the title 20px bold, its tabs a strip of folder tabs in
+ * text, the selected one joined to the panel. */
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-sidebar-vue
+	.app-sidebar-header__mainname {
+	font-size: 20px !important;
+	font-weight: 700 !important;
+	line-height: 26px !important;
+}
+
+/* A heading an app focuses itself shows no ring under the pointer; the
+ * keyboard keeps it. */
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-sidebar-vue
+	.app-sidebar-header__mainname:focus:not(:focus-visible),
+:root[data-thematiq-pointer]
+	:is(#content, #content-vue)
+	#app-sidebar-vue
+	.app-sidebar-header__mainname:focus {
+	outline: none !important;
+	box-shadow: none !important;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-sidebar-vue
+	.app-sidebar-tabs__nav {
+	gap: 4px;
+	margin: 0 !important;
+	padding: 0 16px !important;
+	border-bottom: 1px solid var(--color-border-maxcontrast);
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-sidebar-vue
+	.app-sidebar-tabs__tab {
+	flex: none !important;
+	height: 36px !important;
+	min-height: 36px !important;
+	margin: 0 0 -1px !important;
+	padding: 0 !important;
+	border: 1px solid var(--color-border-maxcontrast) !important;
+	border-bottom: 0 !important;
+	border-radius: var(--border-radius-element, 8px)
+		var(--border-radius-element, 8px) 0 0 !important;
+	background-color: color-mix(
+		in srgb,
+		var(--color-border) 60%,
+		var(--color-main-background)
+	) !important;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-sidebar-vue
+	:is(
+		.app-sidebar-tabs__tab[aria-selected='true'],
+		.app-sidebar-tabs__tab.checkbox-radio-switch--checked
+	) {
+	height: 37px !important;
+	background-color: var(--color-main-background) !important;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-sidebar-vue
+	.app-sidebar-tabs__tab
+	.checkbox-content {
+	flex-direction: row !important;
+	height: 36px;
+	padding: 0 12px !important;
+	border: 0 !important;
+	background: none !important;
+	box-shadow: none !important;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-sidebar-vue
+	.app-sidebar-tabs__tab
+	.checkbox-content__icon {
+	display: none !important;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	#app-sidebar-vue
+	.app-sidebar-tabs__tab-caption {
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--color-main-text);
+}
+
+/* An empty state (NcEmptyContent): the icon in a 64px circle of the main
+ * background with a hairline, over its title in 20px bold, centred. */
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	.empty-content
+	.empty-content__icon {
+	box-sizing: border-box;
+	width: 64px !important;
+	height: 64px !important;
+	min-width: 64px;
+	min-height: 64px;
+	border: 1px solid var(--color-border);
+	border-radius: 50%;
+	background-color: var(--color-main-background);
+	opacity: 1;
+}
+
+:where(body:not(#body-login))
+	:is(#content, #content-vue)
+	.empty-content
+	.empty-content__name {
+	font-size: 20px !important;
+	font-weight: 700 !important;
+	line-height: 26px !important;
+	text-align: center;
+}
+
+/*
+ * The navigation rail, one mechanism for every app (REQ-TQSS-004).
+ *
+ * An app's sheet sets `--thematiq-rail: 1` on its content element in the
+ * state its board folds the navigation (Mail: a conversation is open; Deck: a
+ * card is open); no other page ever sets it, so Files never folds. From
+ * 1024px the navigation then keeps a 64px column and its list lies over the
+ * content at full width, folded to 64px of icons with a small label under
+ * each. Keyboard focus in the column or an open menu unfolds it at once
+ * (the navigation sets the property back to 0 for what it holds); the pointer
+ * after 200ms, so crossing the rail does not flash it, and at once with
+ * reduced motion. The state is a registered property the folded rules query,
+ * because a hover delay cannot be written as a selector. Without style
+ * queries the column stays unfolded.
+ */
+@property --thematiq-rail {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 0;
+}
+
+@keyframes thematiq-rail-unfold {
+	from,
+	to {
+		--thematiq-rail: 0;
+	}
+}
+
+@media (min-width: 1024px) {
+	@container style(--thematiq-rail: 1) {
+		:where(body:not(#body-login)) :is(#content, #content-vue) .app-navigation {
+			/* The list below reads this: the rail is armed, folded or not. */
+			--thematiq-rail-armed: 1;
+
+			position: relative;
+			z-index: 2000;
+			flex: 0 0 64px !important;
+			width: 64px !important;
+			min-width: 64px !important;
+			max-width: 64px !important;
+		}
+
+		:where(body:not(#body-login))
+			:is(#content, #content-vue)
+			.app-navigation:is(
+				:focus-within,
+				:has(#app-navigation-vue [aria-haspopup][aria-expanded='true'])
+			) {
+			--thematiq-rail: 0;
+		}
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		@container style(--thematiq-rail: 1) {
+			:where(body:not(#body-login))
+				:is(#content, #content-vue)
+				.app-navigation:hover {
+				animation: thematiq-rail-unfold 1ms 200ms forwards;
+			}
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		@container style(--thematiq-rail: 1) {
+			:where(body:not(#body-login))
+				:is(#content, #content-vue)
+				.app-navigation:hover {
+				--thematiq-rail: 0;
+			}
+		}
+	}
+
+	@container style(--thematiq-rail-armed: 1) {
+		:where(body:not(#body-login)) :is(#content, #content-vue) #app-navigation-vue {
+			position: absolute;
+			inset-block: 0;
+			inset-inline-start: 0;
+			width: 264px;
+			border-inline-end: 1px solid var(--color-border);
+			background-color: var(--color-main-background);
+			box-shadow: 0 4px 16px var(--color-box-shadow);
+		}
+	}
+
+	@container style(--thematiq-rail: 1) {
+		:where(body:not(#body-login)) :is(#content, #content-vue) #app-navigation-vue {
+			width: 64px;
+			box-shadow: none;
+			padding-inline: 4px !important;
+			overflow: hidden;
+		}
+
+		:where(body:not(#body-login))
+			:is(#content, #content-vue)
+			#app-navigation-vue
+			:is(
+				.app-navigation-entry__children,
+				.app-navigation-entry__actions,
+				.app-navigation-caption__actions,
+				.app-navigation-caption__name,
+				.button-vue__text,
+				.icon-collapse
+			) {
+			display: none !important;
+		}
+
+		/* A row without an icon has nothing to show in the rail. */
+		:where(body:not(#body-login))
+			:is(#content, #content-vue)
+			#app-navigation-vue
+			.app-navigation-entry-wrapper:has(.app-navigation-entry-icon:empty) {
+			display: none !important;
+		}
+
+		:where(body:not(#body-login))
+			:is(#content, #content-vue)
+			#app-navigation-vue
+			.app-navigation-caption {
+			height: 1px;
+			margin: 8px 12px !important;
+			padding: 0 !important;
+			border-top: 1px solid var(--color-border);
+		}
+
+		:where(body:not(#body-login))
+			:is(#content, #content-vue)
+			#app-navigation-vue
+			.app-navigation-list {
+			padding-inline: 0 !important;
+		}
+
+		:where(body:not(#body-login))
+			:is(#content, #content-vue)
+			#app-navigation-vue
+			:is(.app-navigation-entry, .app-navigation-entry-link) {
+			height: auto !important;
+			min-height: 48px !important;
+		}
+
+		:where(body:not(#body-login))
+			:is(#content, #content-vue)
+			#app-navigation-vue
+			.app-navigation-entry-link {
+			position: relative;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			width: 100% !important;
+			padding: 4px 0 !important;
+		}
+
+		:where(body:not(#body-login))
+			:is(#content, #content-vue)
+			#app-navigation-vue
+			.app-navigation-entry-icon {
+			width: 20px !important;
+			height: 22px !important;
+			min-height: 22px !important;
+			margin: 0 !important;
+		}
+
+		/* A row's counter stays, small, at the icon's corner. */
+		:where(body:not(#body-login))
+			:is(#content, #content-vue)
+			#app-navigation-vue
+			.app-navigation-entry__utils {
+			position: absolute;
+			top: 2px;
+			inset-inline-end: 8px;
+			width: auto !important;
+			height: auto !important;
+			min-height: 0 !important;
+			padding: 0 !important;
+		}
+
+		:where(body:not(#body-login))
+			:is(#content, #content-vue)
+			#app-navigation-vue
+			.app-navigation-entry__counter-wrapper {
+			margin: 0 !important;
+		}
+
+		:where(body:not(#body-login))
+			:is(#content, #content-vue)
+			#app-navigation-vue
+			.app-navigation-entry__counter-wrapper
+			.counter-bubble__counter {
+			min-width: 16px !important;
+			height: 16px !important;
+			padding: 0 4px !important;
+			font-size: 10px !important;
+			line-height: 16px !important;
+		}
+
+		:where(body:not(#body-login))
+			:is(#content, #content-vue)
+			#app-navigation-vue
+			.app-navigation-entry__name {
+			max-width: 56px;
+			height: auto !important;
+			min-height: 0 !important;
+			padding: 0 !important;
+			overflow: hidden;
+			font-size: 11px !important;
+			line-height: 14px !important;
+			text-align: center;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+	}
+}
+
 /* The keyboard ring of the light workplace
  * (openspec/specs/zuiddrecht-token-set/spec.md).
  *
