@@ -525,7 +525,7 @@ class CssInjectionService {
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
 	 * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#requirement-no-page-pays-more-layout-css-than-mail-paid-req-tqss-007
 	 */
-	private function injectConditionalStyles(string $tokenSet, ?string $appId, string $context='user'): void {
+	private function injectConditionalStyles(string $tokenSet, ?string $appId, string $context): void {
 		// Headers, not addStyle(): Nextcloud prints every addStyle() stylesheet
 		// before every header, and the saved overrides are a header, so as
 		// addStyle() entries the toggles landed before custom-overrides. The
