@@ -109,6 +109,13 @@
 							? ''
 							: 'Cron'
 			mode.hidden = cron === ''
+			if (cron !== '') {
+				// The board's check (cron, webcron) or alert (AJAX) before the mode.
+				var mark = document.createElement('span')
+				mark.className = 'thematiq-contrast-panel__pill-icon'
+				mark.setAttribute('aria-hidden', 'true')
+				mode.insertBefore(mark, mode.firstChild)
+			}
 			mode.classList.toggle(
 				'thematiq-contrast-panel__pill--pass',
 				cron !== '' && cron !== 'ajax',
