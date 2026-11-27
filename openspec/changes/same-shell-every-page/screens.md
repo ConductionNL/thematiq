@@ -23,9 +23,11 @@ These boards must stay matched after the move; their shared parts become every a
 - TbBoard https://identity.conduction.nl/screens/board?id=tasks/TbBoard&ds=zuiddrecht: REQ-TQSS-001, 006
 - TbCard https://identity.conduction.nl/screens/board?id=tasks/TbCard&ds=zuiddrecht: REQ-TQSS-003, 004, 006
 
-## Boards to redraw, depending on Ruben's answers
+## Boards to redraw (Ruben's decisions, 27 November 2026)
 
-- MlNav, ClNav and TbNav draw the selected entry in the primary's tint, DqZijbalk in the accent (open
-  question 1). Whichever loses is redrawn in a design-system PR before step 3.2 is built.
+- MlNav, ClNav and TbNav, and MlInbox, ClWeek and TbBoard where they show the navigation: the selected
+  entry as the navigation entry style draws it (on Zuiddrecht the accent on its tint, as DqZijbalk):
+  REQ-TQSS-001.
+- TbCard: the card panel's title at 20 px, like every other sidebar title: REQ-TQSS-003.
 - Files, Talk, Contacts and Settings have no board of their own; they take the shared rules and are
   checked by the e2e smoke, not by compdiff.

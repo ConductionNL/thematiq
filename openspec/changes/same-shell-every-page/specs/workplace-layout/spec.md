@@ -48,9 +48,11 @@ entries, with 34 px action buttons; captions on one line with the name in 12 px 
 the muted text colour, cut with an ellipsis, and the caption's actions at the end; the new-item button
 of `NcAppNavigationNew` as the filled primary, 34 px high in 14 px semibold. The selected entry MUST be
 drawn the same in every app, by the navigation entry style the layout resolves
-(`navigation-active-soft` when it is `soft`); no app MUST redeclare the accent tokens for its own pages.
+(`navigation-active-soft` when it is `soft`), the administrator's option, in Mail, Calendar, Deck and
+Conduction's own apps alike; no app MUST redeclare the accent or navigation tokens for its own pages.
 The rules MUST start at `:where(body:not(#body-login)) :is(#content, #content-vue)` and MUST NOT name
-an app's class. Nextcloud's legacy navigation (`#app-navigation` without the Vue component) MUST be
+an app's class. The rules MUST apply to Conduction's own apps wherever they use these structures.
+Nextcloud's legacy navigation (`#app-navigation` without the Vue component) MUST be
 left alone.
 
 #### Scenario: Files has the boards' navigation
@@ -64,6 +66,18 @@ left alone.
 - GIVEN the light layout with the soft entry style
 - WHEN a Files page and a Mail page render
 - THEN the selected entry MUST carry the same background and text colour on both
+
+#### Scenario: Mail follows the administrator's entry style
+@e2e exclude Static file check: tests/vitest/workplaceApps.spec.js finds no `--nldesign-color-accent-*` or navigation-active token in the app sheets; compdiff MlInbox after the MlNav redraw
+- GIVEN the Zuiddrecht set, whose entry style is `soft`
+- WHEN a Mail page renders
+- THEN the selected folder MUST be the accent on its tint, as in Files and dossiq
+
+#### Scenario: dossiq takes the shared rows
+@e2e exclude compdiff dossiq/DqZaken; the shared rules carry no app class (tests/vitest/workplaceLayout.spec.js)
+- GIVEN the Zuiddrecht set and a dossiq page
+- WHEN its navigation renders
+- THEN its entries MUST be 34 px high in 14 px text
 
 #### Scenario: The shared rules name no app
 @e2e exclude Static file check: tests/vitest/workplaceLayout.spec.js reads the shared section
@@ -100,7 +114,8 @@ set size, border and colour only, never `display`, `overflow` or `visibility` of
 
 ### Requirement: Every app's panels, buttons and empty states are drawn as the boards draw them (REQ-TQSS-003)
 While the layout is `light`, in every app: the sidebar panel's title (`#app-sidebar-vue
-.app-sidebar-header__mainname`) MUST be 20 px bold on a 26 px line, and its tabs a strip of folder
+.app-sidebar-header__mainname`) MUST be 20 px bold on a 26 px line, Deck's card panel included, with no
+app drawing another size, and its tabs a strip of folder
 tabs in text, the selected one joined to the panel; an icon-only button that is not large MUST be a
 square of the default clickable area; a heading an app focuses itself (the sidebar title) MUST show no
 focus ring while the root carries `data-thematiq-pointer`, and MUST show it from the keyboard; an
@@ -111,6 +126,12 @@ a hairline, over its title in 20 px bold. Every colour MUST read a token.
 - GIVEN the Zuiddrecht set
 - WHEN the sidebar of a file is opened
 - THEN its title MUST be 20 px bold and its tabs a strip of folder tabs
+
+#### Scenario: Deck's card title is the shared 20 px
+@e2e exclude Static file check: tests/vitest/workplaceApps.spec.js finds no font-size on `.app-sidebar-header__mainname` in deck.css; compdiff TbCard after its redraw
+- GIVEN the Zuiddrecht set and an open Deck card
+- WHEN the card panel renders
+- THEN its title MUST be 20 px bold, as in the Files sidebar
 
 #### Scenario: The keyboard keeps the ring
 @e2e exclude Static file check: tests/vitest/workplaceLayout.spec.js reads the rule under `:root[data-thematiq-pointer]`
@@ -177,7 +198,8 @@ An app's sheet under `css/workplace-apps/` MUST hold only content that exists in
   "New event"; the event popover.
 - Deck: the board's canvas and title row; the columns and their headings; card faces with labels,
   number, initials, short due date, project and mail lines and the priority mark; the card mid-move;
-  the card panel's 480 px width and 18 px title; the rail's trigger.
+  the card panel's 480 px width; the rail's trigger. Deck's card panel title MUST NOT have a size
+  of its own: it is the shared 20 px of REQ-TQSS-003.
 Each sheet MUST set `--thematiq-app-layer` to its app on the root. The script MUST set an app's words
 and run an app's redraw only on that app's page (`#content.app-<app>` or `#content-vue.app-<app>`) while
 `--thematiq-app-layer` names it; the Deck API MUST be asked on a Deck page only.

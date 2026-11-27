@@ -1,6 +1,6 @@
 # Tasks: same-shell-every-page
 
-Nothing here is built until this change is merged and Ruben has answered the open questions of
+Nothing here is built until this change is merged. Ruben's decisions of 27 November 2026 are in
 `design.md` (the selected entry, the row height, the panel title, the Conduction apps). The top bar
 follows ConductionNL/design-system#1216 once it is merged. Before the first move, record the compdiff
 result of every board in `screens.md` on development, so "stays matched" has a baseline.
@@ -37,10 +37,10 @@ three apps before the next step.
 - [ ] 3.1 Navigation rows, captions and the new-item button (`NcAppNavigationNew`); Mail's and
       Calendar's own buttons keep only their mapping. REQ-TQSS-001.
 - [ ] 3.2 The selected entry: remove the accent redeclaration of `common.css`; every app follows the
-      navigation entry style. REQ-TQSS-001, open question 1.
+      navigation entry style. REQ-TQSS-001, decision 1.
 - [ ] 3.3 Links in rows, list rows, initials avatars in rows. REQ-TQSS-002.
 - [ ] 3.4 The sidebar title and tabs, icon-only buttons, the pointer-only focus rule, empty states.
-      Deck keeps its 480 px panel and 18 px title. REQ-TQSS-003.
+      Deck keeps its 480 px panel; its 18 px title rule goes, it takes the shared 20 px. REQ-TQSS-003.
 - [ ] 3.5 The rail: one `--thematiq-rail` and one set of folded rules; Mail and Deck keep only their
       trigger. REQ-TQSS-004.
 - [ ] 3.6 Remove `css/workplace-apps/common.css`; each app sheet sets `--thematiq-app-layer`;
@@ -66,8 +66,13 @@ three apps before the next step.
 
 ## 6. Verification
 
-- [ ] 6.1 `tests/css/check-shell-canon.mjs`: the navigation item height after open question 2 (the
-      canon to 34 px, with the OpenProject plugin's canon file following, or a KNOWN line).
+- [ ] 6.0 Board follow-ups in ConductionNL/design-system: MlNav, ClNav and TbNav (and the boards that
+      show them) with the selected entry of the navigation entry style (decision 1); TbCard with a
+      20 px title (decision 3). Compdiff in 6.3 runs against the redrawn boards.
+
+- [ ] 6.1 `tests/css/check-shell-canon.mjs`: `CANON.navigationItemHeight` from 42 to 34 (decision 2);
+      the OpenProject plugin's canon file (`spike/OP-TWIN-canon.md` in
+      ConductionNL/openproject-thematiq) follows in a PR there.
 - [ ] 6.2 New `tests/e2e/spec-coverage/same-shell-every-page.spec.ts` with `@e2e` tags for "Files has
       the boards' navigation", "Contacts' list rows", "A help link in Settings keeps its underline",
       "The Files sidebar", "Settings names its section" and "The four apps in the light layout"; an
