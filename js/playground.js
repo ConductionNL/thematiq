@@ -1515,6 +1515,7 @@
 			t('thematiq', 'Save component'),
 		)
 		saveButton.type = 'button'
+		saveButton.dataset.thematiqIcon = 'save'
 		save.appendChild(ownLabel('nldesign-own-name', t('thematiq', 'Name')))
 		save.appendChild(name)
 		save.appendChild(saveButton)

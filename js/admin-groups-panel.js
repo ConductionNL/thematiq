@@ -99,6 +99,7 @@
 		add.className =
 			'thematiq-page-header__action thematiq-page-header__action--primary'
 		add.textContent = tr('Add connection')
+		add.dataset.thematiqIcon = 'plus'
 		add.addEventListener('click', function () {
 			var own = document.getElementById('nldesign-group-theming-add')
 			if (own !== null) {
