@@ -38,6 +38,8 @@ use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\Files\SimpleFS\ISimpleFolder;
+use OCP\ICache;
+use OCP\ICacheFactory;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -62,6 +64,13 @@ final class WorkspaceIconServiceTest extends TestCase {
 	private array $files = [];
 
 	/**
+	 * How often a file was opened in the in-memory folder.
+	 *
+	 * @var int
+	 */
+	private int $opened = 0;
+
+	/**
 	 * A PNG header of the given size: enough for the type check and for getimagesizefromstring().
 	 *
 	 * @param int $width The width.
@@ -78,9 +87,11 @@ final class WorkspaceIconServiceTest extends TestCase {
 	/**
 	 * The service over the in-memory folder.
 	 *
+	 * @param ICacheFactory|null $caches The cache factory, or none.
+	 *
 	 * @return WorkspaceIconService
 	 */
-	private function service(): WorkspaceIconService {
+	private function service(?ICacheFactory $caches = null): WorkspaceIconService {
 		$folder = $this->createMock(originalClassName: ISimpleFolder::class);
 		$folder->method('fileExists')->willReturnCallback(fn (string $name): bool => isset($this->files[$name]));
 		$folder->method('newFile')->willReturnCallback(
@@ -92,6 +103,7 @@ final class WorkspaceIconServiceTest extends TestCase {
 		);
 		$folder->method('getFile')->willReturnCallback(
 			function (string $name): ISimpleFile {
+				$this->opened++;
 				if (isset($this->files[$name]) === false) {
 					throw new NotFoundException($name);
 				}
@@ -112,8 +124,75 @@ final class WorkspaceIconServiceTest extends TestCase {
 		$urls = $this->createMock(originalClassName: IURLGenerator::class);
 		$urls->method('linkToRoute')->willReturnCallback(static fn (string $route, array $args): string => '/apps/thematiq/api/workspace-icons/' . $args['kind']);
 
-		return new WorkspaceIconService(appData: $appData, sniffer: new ImageSniffer(), urls: $urls);
+		return new WorkspaceIconService(appData: $appData, sniffer: new ImageSniffer(), urls: $urls, caches: $caches);
 	}//end service()
+
+	/**
+	 * A cache factory whose distributed cache lives in the given array, shared by the "requests" of one test.
+	 *
+	 * @param array<string, mixed> $store The backing store, by reference.
+	 *
+	 * @return ICacheFactory The factory.
+	 */
+	private function memoryCaches(array &$store): ICacheFactory {
+		$cache = $this->createMock(originalClassName: ICache::class);
+		$cache->method('get')->willReturnCallback(
+			function (string $key) use (&$store): mixed {
+				return ($store[$key] ?? null);
+			}
+		);
+		$cache->method('set')->willReturnCallback(
+			function (string $key, mixed $value) use (&$store): bool {
+				$store[$key] = $value;
+				return true;
+			}
+		);
+		$cache->method('remove')->willReturnCallback(
+			function (string $key) use (&$store): bool {
+				unset($store[$key]);
+				return true;
+			}
+		);
+		$factory = $this->createMock(originalClassName: ICacheFactory::class);
+		$factory->method('createDistributed')->willReturn($cache);
+
+		return $factory;
+	}//end memoryCaches()
+
+	/**
+	 * A later page render takes the version stamps from the cache and opens no image file.
+	 *
+	 * @return void
+	 */
+	public function testALaterRenderOpensNoImageFile(): void {
+		$store = [];
+		$this->service(caches: $this->memoryCaches(store: $store))->store(kind: 'touch-icon', bytes: self::png(width: 180, height: 180));
+		$first = $this->service(caches: $this->memoryCaches(store: $store))->status();
+
+		$this->opened = 0;
+		$second = $this->service(caches: $this->memoryCaches(store: $store))->status();
+
+		$this->assertSame(expected: 0, actual: $this->opened);
+		$this->assertSame(expected: $first, actual: $second);
+		$this->assertNull(actual: $second['mobile-logo']);
+		$this->assertMatchesRegularExpression(pattern: '#touch-icon\?v=[0-9a-f]{8}$#', string: (string)$second['touch-icon']);
+	}//end testALaterRenderOpensNoImageFile()
+
+	/**
+	 * Storing or removing an image is visible on the next render at once.
+	 *
+	 * @return void
+	 */
+	public function testAStoreOrRemoveIsSeenAtOnce(): void {
+		$store = [];
+		$this->assertNull(actual: $this->service(caches: $this->memoryCaches(store: $store))->status()['mobile-logo']);
+
+		$this->service(caches: $this->memoryCaches(store: $store))->store(kind: 'mobile-logo', bytes: self::png(width: 400, height: 100));
+		$this->assertNotNull(actual: $this->service(caches: $this->memoryCaches(store: $store))->status()['mobile-logo']);
+
+		$this->service(caches: $this->memoryCaches(store: $store))->remove(kind: 'mobile-logo');
+		$this->assertNull(actual: $this->service(caches: $this->memoryCaches(store: $store))->status()['mobile-logo']);
+	}//end testAStoreOrRemoveIsSeenAtOnce()
 
 	/**
 	 * The reason a store is refused, or null when it is not.
