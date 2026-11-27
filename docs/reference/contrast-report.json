@@ -214,6 +214,13 @@
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },
+        "kvk": {
+            "verdict": "pass",
+            "textRatio": 5.46,
+            "uiRatio": 5.46,
+            "textThreshold": 4.5,
+            "uiThreshold": 3.0
+        },
         "lasuite": {
             "verdict": "pass",
             "textRatio": 7.76,
