@@ -1535,9 +1535,11 @@ html[data-thematiq-open-panel]
 	--thematiq-pill-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z'/%3E%3C/svg%3E");
 }
 
-/* A panel's main header action. */
+/* A panel's main header action: filled, no border line, 0 16px, as every
+ * Tq board draws its primary button. */
 #thematiq-page-header .thematiq-page-header__action--primary {
-	border-color: var(--color-primary-element) !important;
+	padding: 0 16px;
+	border: 0 !important;
 	background: var(--color-primary-element) !important;
 	color: var(--color-primary-element-text) !important;
 }
@@ -2577,11 +2579,21 @@ html[data-thematiq-open-panel]
 	color: var(--color-error-text, var(--color-error));
 }
 
+/* The secondary buttons inside a panel (Add token, Deprecate token, Add
+ * connection, Choose file, Choose image): white, a 1px line in the field
+ * colour, ink text at 14px/600, as the boards draw them. The NL Design layer
+ * colours every plain button primary-deep at 15px. */
 #nldesign-settings .thematiq-panel .thematiq-groups-panel__add {
 	min-height: 40px;
 	margin: 0;
-	border: 1px solid var(--color-border-dark) !important;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-groups-panel__add,
+#nldesign-settings .thematiq-panel button.button:not(.primary) {
+	border: 1px solid var(--nldesign-color-border-dark, var(--color-border-maxcontrast)) !important;
 	background: var(--color-main-background) !important;
+	color: var(--color-main-text) !important;
+	font-size: 14px !important;
 	font-weight: 600;
 }
 
