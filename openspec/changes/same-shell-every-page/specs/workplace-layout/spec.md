@@ -152,7 +152,7 @@ a hairline, over its title in 20 px bold. Every colour MUST read a token.
 focus in the column or an open menu MUST unfold it at once, the pointer after 200 ms; an entry without
 an icon MUST NOT show in the rail; with reduced motion the pointer MUST unfold it at once; a browser
 without style queries MUST keep the column unfolded. An app's sheet MUST only set `--thematiq-rail: 1`
-on its navigation in the state its board folds it (Mail: a conversation is open; Deck: a card is open)
+on its content element, the navigation's ancestor the shared rules read, in the state its board folds it (Mail: a conversation is open; Deck: a card is open)
 and MUST NOT declare a rail property or the folded rules of its own.
 
 #### Scenario: Mail folds through the shared rail
