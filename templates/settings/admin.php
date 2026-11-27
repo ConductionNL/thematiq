@@ -753,7 +753,7 @@ if ($_['mockUi'] === true) {
 						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Free CSS for what the tokens cannot express. Use a token where you can, then your CSS follows the house style.')); ?></span>
 					</div>
 					<div class="thematiq-css-panel__check">
-						<input type="checkbox" id="nldesign-custom-css-enabled" class="checkbox" aria-describedby="thematiq-css-enabled-hint">
+						<input type="checkbox" id="nldesign-custom-css-enabled" aria-describedby="thematiq-css-enabled-hint">
 						<label for="nldesign-custom-css-enabled"><?php p($l->t('Enable custom CSS')); ?></label>
 						<span id="thematiq-css-enabled-hint" class="thematiq-panel__fact-hint"><?php p($l->t('Off: the CSS is not loaded.')); ?></span>
 					</div>
@@ -791,6 +791,7 @@ if ($_['mockUi'] === true) {
 				<section class="thematiq-card thematiq-panel__card thematiq-css-panel__aside-card" aria-labelledby="thematiq-css-log-title">
 					<h2 id="thematiq-css-log-title" class="thematiq-panel__card-title"><?php p($l->t('In the log')); ?></h2>
 					<p class="thematiq-panel__fact-hint"><?php p($l->t('Every save goes in the log, with who and when.')); ?></p>
+					<a href="#log" class="thematiq-bundle-panel__link"><?php p($l->t('Open log')); ?></a>
 				</section>
 			</aside>
 		</div>
@@ -1030,7 +1031,7 @@ if ($_['mockUi'] === true) {
 					<h2 id="thematiq-assistant-title" class="thematiq-panel__card-title thematiq-css-panel__title"><?php p($l->t('AI assistant')); ?></h2>
 					<p class="thematiq-bundle-panel__text"><?php p($l->t('Show users which AI assistant your organisation has approved. The mark sits at the bottom of the assistant panel in Conduction apps. The mark informs honest users. It is not a security measure.')); ?></p>
 					<div class="thematiq-css-panel__check">
-						<input type="checkbox" id="nldesign-assistant-mark-enabled" class="checkbox">
+						<input type="checkbox" id="nldesign-assistant-mark-enabled">
 						<label for="nldesign-assistant-mark-enabled"><?php p($l->t('Show the approval mark')); ?></label>
 					</div>
 					<div class="thematiq-fonts-panel__field">
@@ -1197,7 +1198,7 @@ if ($_['mockUi'] === true) {
 						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Install a house style another organisation made. Every package has an open licence and a fixed checksum.')); ?></span>
 					</div>
 					<div class="thematiq-css-panel__check">
-						<input type="checkbox" id="nldesign-gallery-toggle" class="checkbox" aria-describedby="nldesign-gallery-toggle-hint">
+						<input type="checkbox" id="nldesign-gallery-toggle" aria-describedby="nldesign-gallery-toggle-hint">
 						<label for="nldesign-gallery-toggle"><?php p($l->t('Show the theme gallery')); ?></label>
 						<span id="nldesign-gallery-toggle-hint" class="thematiq-panel__fact-hint"><?php p($l->t('Reads the gallery index while you have this page open. Off by default.')); ?></span>
 					</div>
@@ -1212,7 +1213,7 @@ if ($_['mockUi'] === true) {
 						<span class="thematiq-panel__fact-hint thematiq-css-panel__lead"><?php p($l->t('Check once a day whether the NL Design System themes have new tokens.')); ?></span>
 					</div>
 					<div class="thematiq-css-panel__check">
-						<input type="checkbox" id="nldesign-upstream-freshness-toggle" class="checkbox" aria-describedby="thematiq-upstream-hint">
+						<input type="checkbox" id="nldesign-upstream-freshness-toggle" aria-describedby="thematiq-upstream-hint">
 						<label for="nldesign-upstream-freshness-toggle"><?php p($l->t('Check daily for new tokens (via api.github.com)')); ?></label>
 						<span id="thematiq-upstream-hint" class="thematiq-panel__fact-hint"><?php p($l->t('Off by default. It never applies anything: you review and apply updates yourself.')); ?></span>
 					</div>
@@ -1588,7 +1589,7 @@ if ($_['mockUi'] === true) {
 						<p class="thematiq-fonts-panel__notice nldesign-email-foreign-note" role="alert"><?php p($l->t('A different mail template class is already configured ({class}); nldesign will not overwrite it.', ['class' => $_['emailThemingState']['foreignClass']])); ?></p>
 					<?php endif; ?>
 					<div class="thematiq-css-panel__check">
-						<input type="checkbox" name="nldesign-email-theming-enabled" id="nldesign-email-theming-enabled" class="checkbox" aria-describedby="thematiq-email-enabled-hint"
+						<input type="checkbox" name="nldesign-email-theming-enabled" id="nldesign-email-theming-enabled" aria-describedby="thematiq-email-enabled-hint"
 							<?php if ($_['emailThemingState']['state'] === 'enabled'): ?>checked<?php endif; ?>
 							<?php if ($_['emailThemingState']['state'] === 'foreign'): ?>disabled<?php endif; ?>>
 						<label for="nldesign-email-theming-enabled"><?php p($l->t('Use NL Design email template')); ?></label>
