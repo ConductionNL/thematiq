@@ -48,6 +48,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | hoog-contrast | 21.00:1 | 7.0:1 | 21.00:1 | 4.5:1 | pass |
 | hoorn | 11.96:1 | 4.5:1 | 11.96:1 | 3.0:1 | pass |
 | horstaandemaas | 6.64:1 | 4.5:1 | 6.64:1 | 3.0:1 | pass |
+| kvk | 5.46:1 | 4.5:1 | 5.46:1 | 3.0:1 | pass |
 | lasuite | 7.76:1 | 4.5:1 | 7.76:1 | 3.0:1 | pass |
 | leiden | 5.10:1 | 4.5:1 | 5.10:1 | 3.0:1 | pass |
 | leidschendam-voorburg | 15.67:1 | 4.5:1 | 15.67:1 | 3.0:1 | pass |
@@ -127,6 +128,7 @@ Pairs: step-current, step-checked, step-not-checked, case-title, case-subtitle, 
 | hoog-contrast | 15 | 0 | 0 |  |
 | hoorn | 15 | 0 | 0 |  |
 | horstaandemaas | 15 | 0 | 0 |  |
+| kvk | 15 | 0 | 0 |  |
 | lasuite | 15 | 0 | 0 |  |
 | leiden | 15 | 0 | 0 |  |
 | leidschendam-voorburg | 15 | 0 | 0 |  |

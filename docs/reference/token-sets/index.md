@@ -33,6 +33,7 @@ The tokens of every shipped token set: the value, the dark-mode value, whether i
 - [Hoog contrast (WCAG AAA)](./hoog-contrast.md) `hoog-contrast`
 - [Gemeente Hoorn](./hoorn.md) `hoorn`
 - [Gemeente Horst aan de Maas](./horstaandemaas.md) `horstaandemaas`
+- [KVK](./kvk.md) `kvk`
 - [La Suite numérique](./lasuite.md) `lasuite`
 - [Gemeente Leiden](./leiden.md) `leiden`
 - [Gemeente Leidschendam Voorburg](./leidschendam-voorburg.md) `leidschendam-voorburg`

@@ -1659,5 +1659,24 @@
 			"action": "upload",
 			"note": "A retail typeface with no libre release on the @fontsource registry (checked 2026-11-17). An administrator uploads the organisation's licensed webfont under Thematiq's custom fonts; until then the page renders the next family in the stack, Inter where the browser has it, else a sans-serif."
 		}
+	},
+	{
+		"id": "kvk",
+		"name": "KVK",
+		"description": "The house style of the Kamer van Koophandel (KVK): magenta actions on white under a petrol header, converted from nl-design-system/themes.",
+		"design_system": "nldesign",
+		"theming": {
+			"primary_color": "#aa418c"
+		},
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
+		"upstreamVersion": "1.0.0",
+		"note": "Converted from @nl-design-system-community/kvk-design-tokens 1.0.0. Upstream ships only the NL Design System basis tokens, so three colours are pinned to KVK's own basis values in the set's local overrides: the primary is action-1 (#aa418c, the colour of KVK's primary buttons), the header background is accent-1 (#00526e) and info is info (#0070b9). The body font is Roboto, which Thematiq self-hosts; KVK's heading face Ciutadella is a retail typeface and is not shipped.",
+		"licence": {
+			"id": "LicenseRef-kvk-house-style",
+			"package": "@nl-design-system-community/kvk-design-tokens",
+			"version": "1.0.0",
+			"holder": "KVK",
+			"restricted": true
+		}
 	}
 ]
