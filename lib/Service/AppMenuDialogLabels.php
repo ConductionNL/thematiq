@@ -165,13 +165,15 @@ final class AppMenuDialogLabels {
 	}//end labels()
 
 	/**
-	 * The labels and notes of the two create switches in Configuration, Sections.
+	 * The labels and notes of the two create switches and the contacts menu switch in
+	 * Configuration, Sections.
 	 *
 	 * @param IL10N $l The language of this request.
 	 *
 	 * @return array<string, string> The labels, by key.
 	 *
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-create-button-and-the-create-row-switch-on-and-off-independently-req-tqqt-001
+	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
 	 */
 	private static function createLabels(IL10N $l): array {
 		return [
@@ -179,7 +181,9 @@ final class AppMenuDialogLabels {
 			'showCreateButtonHelp' => $l->t('The plus button before the notifications, on every page.'),
 			'showCreateRow' => $l->t('Create row in the apps menu'),
 			'showCreateRowHelp' => $l->t('The Create row at the bottom of the menu.'),
-			'createSwitchesPersonal' => $l->t('People can change both for themselves in Menu settings.'),
+			'showContactsMenu' => $l->t('Contacts button in the top bar'),
+			'showContactsMenuHelp' => $l->t('The address book next to the notifications. Off: the button disappears, the Contacts app stays in the menu.'),
+			'createSwitchesPersonal' => $l->t('People can change these for themselves in Menu settings.'),
 		];
 	}//end createLabels()
 }//end class

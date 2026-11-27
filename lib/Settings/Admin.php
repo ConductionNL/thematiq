@@ -283,13 +283,15 @@ class Admin implements IDelegatedSettings {
 	 *     headerStyle: string,
 	 *     menuStyle: string,
 	 *     showCreateButton: bool,
-	 *     showCreateRow: bool
+	 *     showCreateRow: bool,
+	 *     showContactsMenu: bool
 	 * } The template parameters.
 	 *
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-workplace-layout-is-an-admin-option
 	 * @spec openspec/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
+	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-contacts-menu-default-on-thematiqs-admin-page-req-tqcm-002
 	 */
 	private function layoutParams(): array {
 		return [
@@ -303,6 +305,7 @@ class Admin implements IDelegatedSettings {
 			'menuStyle' => $this->menuValue(key: 'style', fallback: 'workplace'),
 			'showCreateButton' => $this->createSwitch(key: 'showCreateButton'),
 			'showCreateRow' => $this->createSwitch(key: 'showCreateRow'),
+			'showContactsMenu' => $this->menuSwitch(key: 'showContactsMenu'),
 		];
 	}//end layoutParams()
 
@@ -346,6 +349,25 @@ class Admin implements IDelegatedSettings {
 
 		return true;
 	}//end createSwitch()
+
+	/**
+	 * The administrator's value of one apps menu switch (app value `menu.<key>`, JSON), on when
+	 * absent or unreadable.
+	 *
+	 * @param string $key The switch, such as `showContactsMenu`.
+	 *
+	 * @return bool Whether the switch is on for everyone.
+	 *
+	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-contacts-menu-default-on-thematiqs-admin-page-req-tqcm-002
+	 */
+	private function menuSwitch(string $key): bool {
+		$value = json_decode($this->config->getAppValue(Application::APP_ID, 'menu.' . $key, ''), true);
+		if (is_bool($value) === true) {
+			return $value;
+		}
+
+		return true;
+	}//end menuSwitch()
 
 	/**
 	 * The environment config.php declares, shown read-only, and the command
