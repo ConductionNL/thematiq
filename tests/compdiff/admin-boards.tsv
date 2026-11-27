@@ -8,13 +8,13 @@ TqLayout	/settings/admin/theming#layout	--lang	en	--ds	zuiddrecht
 TqDonker	/settings/admin/theming#dark	--lang	en	--ds	zuiddrecht
 TqEigenCss	/settings/admin/theming#css	--lang	en	--ds	zuiddrecht
 TqLogboek	/settings/admin/theming#log	--lang	en	--ds	zuiddrecht
-TqLettertypen	/settings/admin/theming#fonts	--lang	en	--ds	zuiddrecht
+TqLettertypen	/settings/admin/theming#fonts	--lang	en	--ds	zuiddrecht	--steps	[{"click":".thematiq-font-row__button:text-is(\"Delete\")"},{"waitFor":"#thematiq-delete-font-dialog"},{"wait":800}]
 TqContrastrapport	/settings/admin/theming#contrast	--lang	en	--ds	zuiddrecht
 TqBundel	/settings/admin/theming#bundle	--lang	en	--ds	zuiddrecht
 TqAiAssistent	/settings/admin/theming#assistant	--lang	en	--ds	zuiddrecht
 TqWissels	/settings/admin/theming#switches	--lang	en	--ds	zuiddrecht
 TqGalerij	/settings/admin/theming#gallery	--lang	en	--ds	zuiddrecht
-TqEigenSets	/settings/admin/theming#own-sets	--lang	en	--ds	zuiddrecht
+TqEigenSets	/settings/admin/theming#own-sets	--lang	en	--ds	zuiddrecht	--steps	[{"click":"button[aria-label^=\"Actions for Zuiddrecht koningsdag\"]"},{"click":".nldesign-custom-set-menu button.nldesign-btn--danger"},{"waitFor":"#thematiq-delete-custom-set-dialog"},{"wait":800}]
 TqGroepen	/settings/admin/theming#groups	--lang	en	--ds	zuiddrecht
 TqMerkPerApp	/settings/admin/theming#brands	--lang	en	--ds	zuiddrecht
 TqEmailDocumenten	/settings/admin/theming#email	--lang	en	--ds	zuiddrecht

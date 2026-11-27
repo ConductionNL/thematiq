@@ -23,13 +23,6 @@ module.exports = {
 		path: path.join(__dirname, 'js', 'vendor'),
 		filename: 'codeEditor.js',
 	},
-	resolve: {
-		alias: {
-			// CnJsonViewer needs NcButton only; the package index brings all of
-			// @nextcloud/vue. See src/nextcloudVue.js.
-			'@nextcloud/vue$': path.join(__dirname, 'src', 'nextcloudVue.js'),
-		},
-	},
 	module: {
 		rules: [
 			{

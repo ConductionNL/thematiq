@@ -8345,85 +8345,115 @@
 				})
 		}
 
+		// As TqEigenSets draws it: the admin dialog with the panel as eyebrow,
+		// the set in the title and a red Delete token set, like Delete font.
 		function deleteCustomSet(id, name) {
-			OC.dialogs.confirm(
-				t(
+			var frame = window.ThematiqAdminDialog
+			if (frame === undefined) {
+				return
+			}
+			frame.open({
+				id: 'thematiq-delete-custom-set-dialog',
+				width: 560,
+				eyebrow: t('thematiq', 'Own token sets'),
+				title: t(
 					'thematiq',
-					'Delete the custom token set "{name}"? If it is currently active, the theme will fall back to Nextcloud.',
-				).replace('{name}', name),
-				t('thematiq', 'Delete custom token set'),
-				function (confirmed) {
-					if (confirmed !== true) {
-						return
-					}
-					fetch(
-						OC.generateUrl(
-							'/apps/thematiq/settings/tokensets/custom/'
-								+ encodeURIComponent(id),
+					'Delete custom token set {name}?',
+					{ name: name },
+					undefined,
+					{ escape: false },
+				),
+				body: [
+					frame.h('p', {
+						class: 'thematiq-admin-dialog__lead',
+						text: t(
+							'thematiq',
+							'If it is active at that moment, the theme falls back to Nextcloud.',
 						),
-						{
-							method: 'DELETE',
-							headers: { requesttoken: OC.requestToken },
-						},
-					)
-						.then(function (r) {
-							return r.json()
-						})
-						.then(function (data) {
-							if (data && data.status === 'ok') {
-								loadCustomTokenSets()
-								var wasOnPage = pageTokenSetId === id
-								var wasSelected =
-									tokenSetSelect !== null
-									&& tokenSetSelect.value === id
-								removeTokenSetOption(id)
-								// The server reset the active set to `nextcloud` when the
-								// deleted one was active; mirror that on this page.
-								var restore =
-									wasOnPage === true
-										? applyLayersFor('nextcloud')
-										: Promise.resolve(true)
-								restore.then(function () {
-									if (wasSelected === true || wasOnPage === true) {
-										reflectSelection('nextcloud')
-									}
+					}),
+				],
+				actions: [
+					{
+						label: t('thematiq', 'Cancel'),
+						cancel: true,
+						className: 'nldesign-dialog-cancel',
+					},
+					{
+						label: t('thematiq', 'Delete token set'),
+						variant: 'danger',
+						icon: 'M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z',
+						className: 'nldesign-dialog-confirm',
+						onClick: function (dialog) {
+							dialog.close()
+							fetch(
+								OC.generateUrl(
+									'/apps/thematiq/settings/tokensets/custom/'
+										+ encodeURIComponent(id),
+								),
+								{
+									method: 'DELETE',
+									headers: { requesttoken: OC.requestToken },
+								},
+							)
+								.then(function (r) {
+									return r.json()
+								})
+								.then(function (data) {
+									if (data && data.status === 'ok') {
+										loadCustomTokenSets()
+										var wasOnPage = pageTokenSetId === id
+										var wasSelected =
+											tokenSetSelect !== null
+											&& tokenSetSelect.value === id
+										removeTokenSetOption(id)
+										// The server reset the active set to `nextcloud` when the
+										// deleted one was active; mirror that on this page.
+										var restore =
+											wasOnPage === true
+												? applyLayersFor('nextcloud')
+												: Promise.resolve(true)
+										restore.then(function () {
+											if (wasSelected === true || wasOnPage === true) {
+												reflectSelection('nextcloud')
+											}
 
-									// Deleting the ACTIVE set made the server undo
-									// what that set had pushed into core theming, so
-									// the panel further up this page is now stale:
-									// re-read it rather than leave the deleted set's
-									// colour and logo showing.
-									if (wasOnPage === true) {
-										refreshCoreTheming().catch(function (error) {
-											console.error(
-												'Error refreshing Nextcloud theming after a delete:',
-												error,
+											// Deleting the ACTIVE set made the server undo
+											// what that set had pushed into core theming, so
+											// the panel further up this page is now stale:
+											// re-read it rather than leave the deleted set's
+											// colour and logo showing.
+											if (wasOnPage === true) {
+												refreshCoreTheming().catch(function (error) {
+													console.error(
+														'Error refreshing Nextcloud theming after a delete:',
+														error,
+													)
+												})
+											}
+
+											notify(
+												t('thematiq', 'Custom token set deleted.'),
 											)
 										})
+									} else {
+										notify(
+											t(
+												'thematiq',
+												'Failed to delete custom token set.',
+											),
+										)
 									}
-
+								})
+								.catch(function (err) {
+									console.error('Error deleting custom token set:', err)
 									notify(
-										t('thematiq', 'Custom token set deleted.'),
+										t('thematiq', 'Failed to delete custom token set.'),
 									)
 								})
-							} else {
-								notify(
-									t(
-										'thematiq',
-										'Failed to delete custom token set.',
-									),
-								)
-							}
-						})
-						.catch(function (err) {
-							console.error('Error deleting custom token set:', err)
-							notify(
-								t('thematiq', 'Failed to delete custom token set.'),
-							)
-						})
-				},
-				true,
-			)
+						},
+					},
+				],
+			})
 		}
 
 		/**

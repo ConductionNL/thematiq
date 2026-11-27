@@ -22,6 +22,8 @@ use OCA\Thematiq\Service\Exception\AppBrandException;
 use OCP\Files\IAppData;
 use OCP\Files\NotFoundException;
 use OCP\Files\SimpleFS\ISimpleFolder;
+use OCP\ICache;
+use OCP\ICacheFactory;
 use OCP\IURLGenerator;
 
 /**
@@ -88,16 +90,40 @@ class WorkspaceIconService {
 	private const EXTENSIONS = ['image/png' => 'png', 'image/jpeg' => 'jpg', 'image/webp' => 'webp', 'image/svg+xml' => 'svg'];
 
 	/**
+	 * Cache key of the stored images' version stamps.
+	 *
+	 * @var string
+	 */
+	private const STAMPS_KEY = 'stamps';
+
+	/**
+	 * How long the version stamps are kept, in seconds. store() and remove() empty them at once;
+	 * the lifetime only bounds a change made outside this service (another tool writing app data).
+	 *
+	 * @var int
+	 */
+	private const STAMPS_TTL = 600;
+
+	/**
+	 * The stamps cache, created on first use; null when no cache factory was given.
+	 *
+	 * @var ICache|null
+	 */
+	private ?ICache $stampCache = null;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param IAppData $appData The app's data store.
 	 * @param ImageSniffer $sniffer The image checks.
 	 * @param IURLGenerator $urls Builds the image's address.
+	 * @param ICacheFactory|null $caches Keeps the images' version stamps between page renders; null reads the files every time.
 	 */
 	public function __construct(
 		private readonly IAppData $appData,
 		private readonly ImageSniffer $sniffer,
 		private readonly IURLGenerator $urls,
+		private readonly ?ICacheFactory $caches = null,
 	) {
 	}//end __construct()
 
@@ -129,6 +155,7 @@ class WorkspaceIconService {
 
 		$this->remove(kind: $kind);
 		$this->folder()->newFile($kind . '.' . self::EXTENSIONS[$mime], $bytes);
+		$this->stamps()?->remove(self::STAMPS_KEY);
 
 		return ['kind' => $kind, 'mime' => $mime, 'size' => strlen($bytes)];
 	}//end store()
@@ -178,6 +205,8 @@ class WorkspaceIconService {
 				$folder->getFile($kind . '.' . $extension)->delete();
 			}
 		}
+
+		$this->stamps()?->remove(self::STAMPS_KEY);
 	}//end remove()
 
 	/**
@@ -189,16 +218,57 @@ class WorkspaceIconService {
 	 */
 	public function status(): array {
 		$out = [];
-		foreach (array_keys(self::KINDS) as $kind) {
-			$image = $this->read(kind: $kind);
+		foreach ($this->versionStamps() as $kind => $stamp) {
 			$out[$kind] = null;
-			if ($image !== null) {
-				$out[$kind] = $this->urls->linkToRoute('thematiq.workspaceIcon.show', ['kind' => $kind]) . '?v=' . substr(hash('sha256', $image['bytes']), 0, 8);
+			if ($stamp !== '') {
+				$out[$kind] = $this->urls->linkToRoute('thematiq.workspaceIcon.show', ['kind' => $kind]) . '?v=' . $stamp;
 			}
 		}
 
 		return $out;
 	}//end status()
+
+	/**
+	 * The version stamp of each kind's stored image, '' when none is stored.
+	 *
+	 * Every page render asks (WorkspaceIconListener), so the stamps are kept in the
+	 * distributed cache instead of opening and hashing the app data files each time.
+	 *
+	 * @return array<string, string> Kind to stamp.
+	 *
+	 * @spec openspec/specs/mobile-logo-and-touch-icon/spec.md#requirement-the-mobile-logo-and-the-touch-icon-reach-every-page
+	 */
+	private function versionStamps(): array {
+		$kept = $this->stamps()?->get(self::STAMPS_KEY);
+		if (is_array($kept) === true && array_keys($kept) === array_keys(self::KINDS)) {
+			return $kept;
+		}
+
+		$stamps = [];
+		foreach (array_keys(self::KINDS) as $kind) {
+			$image = $this->read(kind: $kind);
+			$stamps[$kind] = '';
+			if ($image !== null) {
+				$stamps[$kind] = substr(hash('sha256', $image['bytes']), 0, 8);
+			}
+		}
+
+		$this->stamps()?->set(self::STAMPS_KEY, $stamps, self::STAMPS_TTL);
+		return $stamps;
+	}//end versionStamps()
+
+	/**
+	 * The distributed cache for the version stamps, or null without a cache factory.
+	 *
+	 * @return ICache|null The cache.
+	 */
+	private function stamps(): ?ICache {
+		if ($this->stampCache === null && $this->caches !== null) {
+			$this->stampCache = $this->caches->createDistributed('thematiq-workspace-icons');
+		}
+
+		return $this->stampCache;
+	}//end stamps()
 
 	/**
 	 * The stylesheet that draws the mobile logo below 1024 px.
