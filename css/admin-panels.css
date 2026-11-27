@@ -39,6 +39,12 @@ html[data-thematiq-open-panel]
 	color: var(--color-text-maxcontrast);
 }
 
+/* The boards set their text at the browser's normal line height; Nextcloud's
+   body sets 1.5. A rule that wants another height still sets its own. */
+#nldesign-settings section.thematiq-panel {
+	line-height: normal;
+}
+
 #nldesign-settings .thematiq-panel .thematiq-panel__columns {
 	display: flex;
 	flex-wrap: wrap;
@@ -920,22 +926,39 @@ html[data-thematiq-open-panel]
 	font-size: 14px;
 }
 
+/* A switch as the boards draw it: a native 18px checkbox in the primary
+   colour, its label beside it and the hint under the label. The input carries
+   no Nextcloud `.checkbox` class, so core draws no box of its own on the label. */
 #nldesign-settings .thematiq-panel .thematiq-css-panel__check {
-	display: flex;
-	flex-direction: column;
-	gap: 3px;
+	display: grid;
+	grid-template-columns: 18px minmax(0, 1fr);
+	align-items: start;
+	gap: 3px 10px;
+}
+
+#nldesign-settings .thematiq-panel .thematiq-css-panel__check > input[type="checkbox"] {
+	grid-row: 1;
+	grid-column: 1;
+	width: 18px;
+	height: 18px;
+	min-height: 0;
+	margin: 2px 0 0;
+	accent-color: var(--color-primary-element);
+	cursor: pointer;
 }
 
 #nldesign-settings .thematiq-panel .thematiq-css-panel__check label {
+	grid-column: 2;
 	font-size: 15px;
 	font-weight: 600 !important;
+	cursor: pointer;
 }
 
 #nldesign-settings
 	.thematiq-panel
 	.thematiq-css-panel__check
 	.thematiq-panel__fact-hint {
-	padding-inline-start: 34px;
+	grid-column: 2;
 }
 
 #nldesign-settings .thematiq-panel .thematiq-css-panel__field {
@@ -1945,13 +1968,6 @@ html[data-thematiq-open-panel]
 	font-size: 13px !important;
 	line-height: 1.5 !important;
 	color: var(--color-text-maxcontrast) !important;
-}
-
-#nldesign-settings
-	.thematiq-gallery-panel
-	.thematiq-css-panel__check
-	.thematiq-panel__fact-hint {
-	padding-inline-start: 25px;
 }
 
 /* The upload result (TqSetUploaden). */
