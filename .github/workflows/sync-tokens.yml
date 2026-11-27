@@ -97,7 +97,9 @@ jobs:
     # retrying the ~40 converted sets one at a time ran past this limit every
     # night. The failing group is now halved (about log2(n) narrowed runs per
     # failing set) and the retry stops after --retry-budget minutes (default
-    # 25), so two full gates and the retry fit.
+    # 25), or sooner when the closing full gate would end past --time-budget
+    # (default 45 min from the script's start), so two full gates and the
+    # retry fit.
     timeout-minutes: 60
     steps:
       - name: Checkout repository
