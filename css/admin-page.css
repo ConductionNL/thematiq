@@ -156,43 +156,22 @@ html[data-thematiq-open-panel]:not([data-thematiq-open-panel='layout'])
 /* Status pills lead the line. TqDonker, TqTokenSet and the Components boards
  * (TqBasistokens, TqBeweging, TqEigenComponent, TqOverridesUploaden) draw the
  * panel's status pills first, then the breadcrumb, then the facts after the
- * middle dot, all on one line with an 8px gap. The panels write the pills into
- * the intro with the facts, so the intro steps aside (display: contents) and
- * the pills move to the front of the line. */
+ * middle dot, all on one line with an 8px gap. admin-panels.js moves the pills
+ * a panel writes into the intro to this slot before the breadcrumb. */
 html[data-thematiq-open-panel]:not([data-thematiq-open-panel='layout'])
 	.thematiq-page-header__meta {
 	column-gap: 8px;
 }
 
-html[data-thematiq-open-panel]:not([data-thematiq-open-panel='layout'])
-	.thematiq-page-header__meta:has(
-		.thematiq-dark-panel__status,
-		.thematiq-set-panel__status
-	)
-	.thematiq-page-header__intro {
-	display: contents;
+.thematiq-page-header__pills {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	line-height: normal;
 }
 
-html[data-thematiq-open-panel]:not([data-thematiq-open-panel='layout'])
-	#thematiq-page-header
-	.thematiq-page-header__intro
-	:is(.thematiq-dark-panel__status, .thematiq-set-panel__status) {
-	order: -1;
-	margin-inline-end: 0;
-}
-
-/* With only pills in the intro there are no facts to follow the dot. */
-html[data-thematiq-open-panel]:not([data-thematiq-open-panel='layout'])
-	.thematiq-page-header__meta:has(
-		.thematiq-dark-panel__status,
-		.thematiq-set-panel__status
-	):not(
-		:has(
-			.thematiq-page-header__intro
-				> :not(.thematiq-dark-panel__status, .thematiq-set-panel__status)
-		)
-	)
-	.thematiq-page-header__dot {
+.thematiq-page-header__pills:empty {
 	display: none;
 }
 
