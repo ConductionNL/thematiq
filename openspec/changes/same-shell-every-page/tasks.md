@@ -74,11 +74,16 @@ three apps before the next step.
       the OpenProject plugin's canon file (`spike/OP-TWIN-canon.md` in
       ConductionNL/openproject-thematiq) follows in a PR there. (thematiq's canon moved to 34 in
       the build PR; the plugin's canon file is still to follow.)
-- [ ] 6.2 (written, runs in nightly) New `tests/e2e/spec-coverage/same-shell-every-page.spec.ts` with `@e2e` tags for "Files has
+- [x] 6.2 New `tests/e2e/spec-coverage/same-shell-every-page.spec.ts` with `@e2e` tags for "Files has
       the boards' navigation", "Contacts' list rows", "A help link in Settings keeps its underline",
       "The Files sidebar", "Settings names its section" and "The four apps in the light layout"; an
       app the instance lacks is skipped with its name; every theme change is put back through
       `withThemeState()`.
+      (Run live by the live lane on a Nextcloud 34 sandbox, sqlite + php -S: Files navigation, the
+      Files sidebar, "Settings names its section" and the four apps in the light layout pass; Contacts
+      and the Settings help link skip, because this instance has no Contacts app and no external help
+      link. "Settings names its section" was red: Nextcloud 34 marks no settings entry active on
+      Personal or Administration settings, fixed in js/header-brand.js.)
 - [ ] 6.3 Compdiff on the demo stack under Zuiddrecht: MlInbox, MlThreadList, MlThread, ClWeek,
       ClMonth, ClEventPopover, TbBoard and TbCard against the baseline; DqKop and the #1216 top bars
       on Files and Settings; dossiq/DqZaken. Write each result in this task.

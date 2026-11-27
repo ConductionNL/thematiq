@@ -88,6 +88,57 @@
 	}
 
 	/**
+	 * The path of a navigation href without its query, its front controller and a trailing slash.
+	 *
+	 * @param {string} href The href or the page path.
+	 * @return {string} The path, such as `/settings/user/personal-info`.
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-header-brand/spec.md#requirement-every-app-gets-the-brand-block-in-the-workplace-bar-req-tqwh-001
+	 */
+	function routeOf(href) {
+		return String(href).split('?')[0].split('#')[0].replace(/^.*?\/index\.php(?=\/)/, '').replace(/\/+$/, '')
+	}
+
+	/**
+	 * The settings entry the page belongs to when Nextcloud marks none active. Nextcloud 34 marks
+	 * the Apps entry active but not Personal or Administration settings, so their pages would name no
+	 * section. The entry whose href is the longest prefix of the page path wins; else the entry that
+	 * shares the page's first two path parts (`/settings/admin/overview` for `/settings/admin/theming`).
+	 *
+	 * @param {*} entries The `core/settingsNavEntries` state (an object keyed by id, or a list).
+	 * @param {string} pathname The page path.
+	 * @return {object|null} The entry with a name, or null.
+	 * @spec openspec/changes/same-shell-every-page/specs/workplace-header-brand/spec.md#requirement-every-app-gets-the-brand-block-in-the-workplace-bar-req-tqwh-001
+	 */
+	function routeEntry(entries, pathname) {
+		if (entries === null || typeof entries !== 'object' || typeof pathname !== 'string') {
+			return null
+		}
+		var page = routeOf(pathname)
+		var section = page.split('/').slice(0, 3).join('/')
+		var best = null
+		var bestLength = -1
+		var sibling = null
+		Object.keys(entries).forEach(function (key) {
+			var entry = entries[key]
+			if (!entry || typeof entry.name !== 'string' || entry.name.trim() === '' || typeof entry.href !== 'string' || entry.href === '') {
+				return
+			}
+			var route = routeOf(entry.href)
+			if (route === '') {
+				return
+			}
+			if ((page === route || page.indexOf(route + '/') === 0) && route.length > bestLength) {
+				best = entry
+				bestLength = route.length
+			}
+			if (sibling === null && section.split('/').length === 3 && route.split('/').slice(0, 3).join('/') === section) {
+				sibling = entry
+			}
+		})
+		return best || sibling
+	}
+
+	/**
 	 * What the block shows: the emblem, the organisation and the page's name:
 	 * the open app's, else the active settings section's, else none.
 	 *
@@ -96,9 +147,11 @@
 	 * @spec openspec/changes/same-shell-every-page/specs/workplace-header-brand/spec.md#requirement-every-app-gets-the-brand-block-in-the-workplace-bar-req-tqwh-001
 	 */
 	function resolveBrand() {
+		var settings = readState('core', 'settingsNavEntries', null)
 		var open =
 			activeEntry(readState('core', 'apps', null))
-			|| activeEntry(readState('core', 'settingsNavEntries', null))
+			|| activeEntry(settings)
+			|| routeEntry(settings, window.location ? window.location.pathname : '')
 
 		var capabilities = readState('core', 'capabilities', {}) || {}
 		var logos = (capabilities.nldesign && capabilities.nldesign.logos) || {}
