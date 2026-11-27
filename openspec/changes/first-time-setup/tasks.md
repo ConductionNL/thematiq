@@ -85,7 +85,7 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
 - [x] 4b.3 PHPUnit `tests/Unit/Controller/SettingsControllerTest.php` (on applies and stores `1`, off
       stores `0` and leaves core theming, 423 under a source, audit entry); vitest for the switch and
       the skipped dialog.
-- [ ] 4b.4 e2e in `tests/e2e/spec-coverage/first-time-setup.spec.ts`: turn the switch on, the core
+- [x] 4b.4 e2e in `tests/e2e/spec-coverage/first-time-setup.spec.ts`: turn the switch on, the core
       primary colour is the set's; choose another set, no dialog and the core colour follows; turn it
       off, choose a set, the dialog asks; restore core theming and the set in a `finally`.
 
