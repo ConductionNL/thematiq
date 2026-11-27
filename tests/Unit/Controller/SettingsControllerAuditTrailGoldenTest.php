@@ -181,7 +181,6 @@ final class SettingsControllerAuditTrailGoldenTest extends TestCase {
 		$responses = [
 			$this->controller->setSloganSetting(hideSlogan: false)->getData(),
 			$this->controller->setPrimaryDrivesComponentsSetting(primaryDrivesComponents: true)->getData(),
-			$this->controller->setMenuLabelsSetting(showMenuLabels: true)->getData(),
 			$this->controller->setDarkVariants(enabled: false)->getData(),
 			$this->controller->setMarianneEnabled(enabled: true)->getData(),
 		];
@@ -190,7 +189,6 @@ final class SettingsControllerAuditTrailGoldenTest extends TestCase {
 			expected: [
 				['status' => 'ok', 'hideSlogan' => false],
 				['status' => 'ok', 'primaryDrivesComponents' => true],
-				['status' => 'ok', 'showMenuLabels' => true],
 				['status' => 'ok', 'enabled' => false],
 				['status' => 'ok', 'enabled' => true],
 			],
@@ -200,7 +198,6 @@ final class SettingsControllerAuditTrailGoldenTest extends TestCase {
 			expected: [
 				['toggle_changed', ['key' => 'hide_slogan', 'old' => true, 'new' => false]],
 				['toggle_changed', ['key' => 'primary_drives_components', 'old' => false, 'new' => true]],
-				['toggle_changed', ['key' => 'show_menu_labels', 'old' => false, 'new' => true]],
 				['toggle_changed', ['key' => 'dark_variants', 'old' => true, 'new' => false]],
 				['toggle_changed', ['key' => 'marianne_enabled', 'old' => false, 'new' => true]],
 			],
@@ -208,7 +205,6 @@ final class SettingsControllerAuditTrailGoldenTest extends TestCase {
 		);
 		$this->assertSame(expected: '0', actual: $this->appConfig['thematiq|hide_slogan']);
 		$this->assertSame(expected: '1', actual: $this->appConfig['thematiq|primary_drives_components']);
-		$this->assertSame(expected: '1', actual: $this->appConfig['thematiq|show_menu_labels']);
 		$this->assertSame(expected: '0', actual: $this->appConfig['thematiq|dark_variants']);
 		$this->assertSame(expected: '1', actual: $this->appConfig['thematiq|marianne_enabled']);
 	}//end testEachToggleAuditsItsOldAndNewState()

@@ -2166,7 +2166,13 @@
         "Drop your unsaved changes and start the walkthrough?": "Drop your unsaved changes and start the walkthrough?",
         "Step {current} of {total}": "Step {current} of {total}",
         "Step {n} of {total}": "Step {n} of {total}",
-        "Walkthrough": "Walkthrough"
+        "Walkthrough": "Walkthrough",
+        "Show titles": "Show titles",
+        "The name of the app under or next to the icon. Off: icons only, the name appears as a tooltip.": "The name of the app under or next to the icon. Off: icons only, the name appears as a tooltip.",
+        "Show titles in the top bar": "Show titles in the top bar",
+        "The name next to the icon of every pinned app in the top bar. Off: icons only, the name appears as a tooltip.": "The name next to the icon of every pinned app in the top bar. Off: icons only, the name appears as a tooltip.",
+        "Only with Show titles.": "Only with Show titles.",
+        "without titles": "without titles"
     },
     "plurals": {}
 }

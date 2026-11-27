@@ -112,6 +112,29 @@ class CapabilitiesTest extends TestCase {
 	}//end configWith()
 
 	/**
+	 * `showMenuLabels` keeps its name and carries Show titles in the top bar: the stored
+	 * `menu.topBarTitles`, else the older `show_menu_labels`.
+	 *
+	 * @spec openspec/changes/apps-menu-show-titles/specs/theming-capability/spec.md
+	 *
+	 * @return void
+	 */
+	public function testShowMenuLabelsCarriesTopBarTitles(): void {
+		foreach ([
+			[['show_menu_labels' => '1'], true],
+			[['menu.topBarTitles' => 'true'], true],
+			[['menu.topBarTitles' => 'false', 'show_menu_labels' => '1'], false],
+			[[], false],
+		] as [$values, $expected]) {
+			$capabilities = new \ReflectionMethod(Capabilities::class, 'toggles');
+			$instance = (new \ReflectionClass(Capabilities::class))->newInstanceWithoutConstructor();
+			$property = new \ReflectionProperty(Capabilities::class, 'config');
+			$property->setValue($instance, $this->configWith(values: $values));
+			$this->assertSame(expected: $expected, actual: $capabilities->invoke($instance)['showMenuLabels'], message: json_encode($values));
+		}
+	}//end testShowMenuLabelsCarriesTopBarTitles()
+
+	/**
 	 * Full payload shape + key allowlist for an active shipped set.
 	 *
 	 * @return void

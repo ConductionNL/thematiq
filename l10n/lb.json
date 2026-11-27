@@ -2099,13 +2099,6 @@
         "All values together as a new, complete set": "All values together as a new, complete set",
         "Own component": "Own component",
         "Preview HTML and CSS safely": "Preview HTML and CSS safely",
-        "Rows above More": "Rows above More",
-        "Fewer rows above More": "Fewer rows above More",
-        "More rows above More": "More rows above More",
-        "Preview: {columns} columns, {fold} rows above More, {rows} rows in total. More scrolls.": "Preview: {columns} columns, {fold} rows above More, {rows} rows in total. More scrolls.",
-        "Fewer": "Fewer",
-        "From mail: {sender}": "From mail: {sender}",
-        "Priority high": "Priority high",
         "\"{name}\" is saved and is now in the list. Choose it there to apply it.": "\"{name}\" is saved and is now in the list. Choose it there to apply it.",
         "{count} contrast warning": "{count} contrast warning",
         "{count} dark values from the file are kept for dark mode and win over the derived dark variant.": "{count} dark values from the file are kept for dark mode and win over the derived dark variant.",
@@ -2178,7 +2171,13 @@
         "Drop your unsaved changes and start the walkthrough?": "Drop your unsaved changes and start the walkthrough?",
         "Step {current} of {total}": "Step {current} of {total}",
         "Step {n} of {total}": "Step {n} of {total}",
-        "Walkthrough": "Walkthrough"
+        "Walkthrough": "Walkthrough",
+        "Show titles": "Show titles",
+        "The name of the app under or next to the icon. Off: icons only, the name appears as a tooltip.": "The name of the app under or next to the icon. Off: icons only, the name appears as a tooltip.",
+        "Show titles in the top bar": "Show titles in the top bar",
+        "The name next to the icon of every pinned app in the top bar. Off: icons only, the name appears as a tooltip.": "The name next to the icon of every pinned app in the top bar. Off: icons only, the name appears as a tooltip.",
+        "Only with Show titles.": "Only with Show titles.",
+        "without titles": "without titles"
     },
     "plurals": {}
 }

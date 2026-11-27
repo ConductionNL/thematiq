@@ -524,6 +524,7 @@ class CssInjectionService {
 	 * @spec openspec/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
 	 * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#requirement-no-page-pays-more-layout-css-than-mail-paid-req-tqss-007
+	 * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
 	 */
 	private function injectConditionalStyles(string $tokenSet, ?string $appId, string $context): void {
 		// Headers, not addStyle(): Nextcloud prints every addStyle() stylesheet
@@ -535,7 +536,10 @@ class CssInjectionService {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'hide-slogan'));
 		}
 
-		if ($this->context->config->getAppValue(Application::APP_ID, 'show_menu_labels', '0') === '1') {
+		// Nextcloud's own menu labels, with Show titles in the top bar on and no workplace apps
+		// menu on the page: its .app-item__label rules would reach the workplace menu too.
+		$topBarTitles = new AppMenuTopBarTitles(config: $this->context->config);
+		if ($topBarTitles->isOn() === true && $topBarTitles->workplaceMenu(sheets: $this->layoutOptions->stylesheets(tokenSet: $tokenSet)) === false) {
 			$this->emitStylesheetLink(url: $this->staticLayerUrl(file: 'show-menu-labels'));
 		}
 
