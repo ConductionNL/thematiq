@@ -15,7 +15,9 @@ import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 
 // CnJsonViewer only draws NcButton for JSON, which the playground never edits;
 // it imports NcButton alone (@nextcloud/vue/components/NcButton), the test none of it.
-vi.mock('@nextcloud/vue/components/NcButton', () => ({ default: { render: () => null } }))
+vi.mock('@nextcloud/vue/components/NcButton', () => ({
+	default: { render: () => null },
+}))
 
 describe('the playground code editor', { timeout: 60000 }, () => {
 	beforeAll(async () => {
