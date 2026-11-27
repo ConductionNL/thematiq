@@ -532,3 +532,77 @@ describe('the Menu settings dialog', () => {
 		)
 	})
 })
+
+describe('replaying the apps menu walkthrough from Menu settings', () => {
+	const TOUR = {
+		seen: '1.2.49',
+		replayLabel: 'Replay walkthrough',
+		replayDiscard: 'Drop your unsaved changes and start the walkthrough?',
+	}
+
+	async function openWithTour(data, walkthrough) {
+		installFetch(data)
+		vi.resetModules()
+		await import('../../js/dialogs/menu-settings-dialog.js?t=' + Math.random())
+		await window.ThematiqMenuSettingsDialog.open({
+			menu: { labels: LABELS, walkthrough },
+			entries: ENTRIES,
+		})
+		await flush()
+		return document.querySelector('dialog.thematiq-menu-settings')
+	}
+
+	beforeEach(() => {
+		global.OC = { generateUrl: (url) => url, requestToken: 'token' }
+		window.thematiqAppMenuReplay = vi.fn()
+		window.confirm = vi.fn(() => false)
+		if (!HTMLDialogElement.prototype.showModal) {
+			HTMLDialogElement.prototype.showModal = function () {
+				this.setAttribute('open', '')
+			}
+		}
+		if (!HTMLDialogElement.prototype.close) {
+			HTMLDialogElement.prototype.close = function () {
+				this.removeAttribute('open')
+				this.dispatchEvent(new Event('close'))
+			}
+		}
+	})
+
+	afterEach(() => {
+		document.body.innerHTML = ''
+		delete window.thematiqAppMenuReplay
+		delete window.ThematiqMenuSettingsDialog
+		delete global.OC
+		delete global.fetch
+	})
+
+	it('draws Replay walkthrough between Reset to default and Cancel, closes and starts the tour', async () => {
+		const dialog = await openWithTour(answer(false), TOUR)
+		const foot = Array.from(dialog.querySelectorAll('.thematiq-menu-settings__foot [data-part]')).map((el) => el.getAttribute('data-part'))
+		expect(foot).toEqual(['reset', 'replay', 'cancel', 'save'])
+		expect(dialog.querySelector('[data-part="replay"]').textContent).toBe('Replay walkthrough')
+		dialog.querySelector('[data-part="replay"]').click()
+		await new Promise((r) => setTimeout(r, 0))
+		await new Promise((r) => setTimeout(r, 0))
+		expect(document.querySelector('dialog.thematiq-menu-settings')).toBeNull()
+		expect(window.confirm).not.toHaveBeenCalled()
+		expect(window.thematiqAppMenuReplay).toHaveBeenCalledTimes(1)
+		expect(requests.filter((r) => r.method !== 'GET')).toHaveLength(0)
+	})
+
+	it('asks before dropping unsaved changes, and stays when the answer is no', async () => {
+		const dialog = await openWithTour(answer(false), TOUR)
+		row(dialog, 'calendar').querySelector('[data-part="pin"]').click()
+		dialog.querySelector('[data-part="replay"]').click()
+		await new Promise((r) => setTimeout(r, 0))
+		expect(window.confirm).toHaveBeenCalledWith(TOUR.replayDiscard)
+		expect(document.querySelector('dialog.thematiq-menu-settings')).not.toBeNull()
+		expect(window.thematiqAppMenuReplay).not.toHaveBeenCalled()
+	})
+
+	it('has no replay without the tour, as with the classic style', async () => {
+		const dialog = await openWithTour(answer(true), undefined)
+		expect(dialog.querySelector('[data-part="replay"]')).toBeNull()
+	})
+})

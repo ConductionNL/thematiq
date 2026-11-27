@@ -61,6 +61,15 @@
 	var CREATE_MAX = 4
 	var CREATE_TRIES = 20
 	var TEMPLATES_URL = '/ocs/v2.php/apps/files/api/v1/templates'
+	// The apps menu walkthrough (apps-menu-walkthrough): its bundle under js/,
+	// the newest step's sinceVersion in src/walkthrough/apps-menu.json (a test
+	// keeps the two equal), the tour's id and the first-time setup wizard,
+	// while which no tour starts.
+	var TOUR_SCRIPT = 'vendor/menuWalkthrough.js'
+	var TOUR_LATEST = '1.2.49'
+	var TOUR_ID = 'apps-menu'
+	var TOUR_HOST = 'thematiq-menu-walkthrough'
+	var SETUP_WIZARD = '[data-thematiq-setup-wizard]'
 	var CHEVRON_DOWN = 'M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z'
 	var CHEVRON_UP = 'M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z'
 	// The kinds of the Create row, in the row's order: the label key, the
@@ -1035,6 +1044,7 @@
 		createRow(grid, menu)
 		footer(grid, menu, found.manage)
 		wire(grid, menu, save)
+		hooks(grid, menu)
 	}
 
 	/**
@@ -1995,6 +2005,351 @@
 	}
 
 	/**
+	 * Mark the parts the walkthrough spotlights with `data-walkthrough-id`:
+	 * the grid button, the list, the More toggle when it shows, the first
+	 * entry, the pinned apps (the menu's corner of the bar when none is
+	 * pinned), the Create row when it shows and the Menu settings gear. A part
+	 * that is not drawn carries no id, so its optional step is skipped.
+	 *
+	 * @param {Element} grid The grid.
+	 * @param {object} menu The menu.
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-apps-menu-has-a-walkthrough-with-one-step-per-feature-req-tqwt-001
+	 */
+	function hooks(grid, menu) {
+		if (!menu.walkthrough) {
+			return
+		}
+		var mark = function (id, el) {
+			document
+				.querySelectorAll('[data-walkthrough-id="' + id + '"]')
+				.forEach(function (other) {
+					if (other !== el) {
+						other.removeAttribute('data-walkthrough-id')
+					}
+				})
+			if (el && el.getAttribute('data-walkthrough-id') !== id) {
+				el.setAttribute('data-walkthrough-id', id)
+			}
+		}
+		var shown = function (el) {
+			return el !== null && !el.hasAttribute('data-thematiq-folded') ? el : null
+		}
+		mark('apps-menu-button', document.querySelector('.app-menu__waffle'))
+		mark('apps-menu-list', grid)
+		var toggle = grid.querySelector(':scope > [data-thematiq-row="toggle"]')
+		mark('apps-menu-more', shown(toggle))
+		var first = null
+		Array.prototype.forEach.call(grid.children, function (el) {
+			if (el.style && el.style.order === '100') {
+				first = el
+			}
+		})
+		mark('apps-menu-first-entry', first)
+		mark('apps-menu-pins', pinsOrCorner())
+		var create = grid.querySelector(':scope > [data-thematiq-row="create"]')
+		mark('apps-menu-create', shown(create))
+		mark('apps-menu-settings', grid.querySelector('.' + BLOCK + '__settings'))
+	}
+
+	/**
+	 * The pinned apps in the top bar, or the menu's corner of the bar when
+	 * none is pinned, where a pin lands.
+	 *
+	 * @return {Element|null}
+	 */
+	function pinsOrCorner() {
+		var pins = document.querySelector('nav.' + PINS)
+		return pins !== null && !pins.hidden
+			? pins
+			: document.querySelector('#header .app-menu, .header-start .app-menu')
+	}
+
+	/**
+	 * The version core of a version: `major.minor.patch`, '' for none.
+	 *
+	 * @param {string} version The version.
+	 * @return {string}
+	 */
+	function versionCore(version) {
+		var match = /^\s*v?(\d+)(?:\.(\d+))?(?:\.(\d+))?/.exec(String(version || ''))
+		return match ? [match[1], match[2] || '0', match[3] || '0'].join('.') : ''
+	}
+
+	/**
+	 * Whether version a is newer than version b.
+	 *
+	 * @param {string} a A version core.
+	 * @param {string} b A version core.
+	 * @return {boolean}
+	 */
+	function newer(a, b) {
+		var pa = a.split('.').map(Number)
+		var pb = b.split('.').map(Number)
+		for (var i = 0; i < 3; i++) {
+			if ((pa[i] || 0) !== (pb[i] || 0)) {
+				return (pa[i] || 0) > (pb[i] || 0)
+			}
+		}
+		return false
+	}
+
+	/**
+	 * The stored tour progress of this tour, or null.
+	 *
+	 * @param {object} state The menu's `walkthrough` state.
+	 * @return {object|null} `{tourId, stepId, index, immediate?}`.
+	 */
+	function tourProgress(state) {
+		var progress = null
+		try {
+			progress = JSON.parse(String(state.progress || 'null'))
+		} catch (e) {
+			return null
+		}
+		return progress && progress.tourId === TOUR_ID ? progress : null
+	}
+
+	/**
+	 * Whether a tour is due for this person, from the menu's initial state
+	 * alone: never seen, a step newer than the seen version and not newer
+	 * than the installed version, or progress left part-way.
+	 *
+	 * @param {object} state The menu's `walkthrough` state.
+	 * @return {boolean}
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 */
+	function tourDue(state) {
+		if (tourProgress(state) !== null) {
+			return true
+		}
+		var seen = versionCore(state.seen)
+		var installed = versionCore(state.appVersion) || TOUR_LATEST
+		var latest = newer(TOUR_LATEST, installed) ? installed : TOUR_LATEST
+		return seen === '' || newer(latest, seen)
+	}
+
+	/**
+	 * The running walkthrough, or null.
+	 *
+	 * @return {object|null} window.thematiqMenuWalkthrough.
+	 */
+	function walkthrough() {
+		var w = window.thematiqMenuWalkthrough
+		return w && typeof w.start === 'function' ? w : null
+	}
+
+	/**
+	 * Whether the walkthrough runs on this page.
+	 *
+	 * @return {boolean}
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-menu-keeps-working-while-the-tour-runs-req-tqwt-003
+	 */
+	function touring() {
+		var w = walkthrough()
+		return !!(w && typeof w.isRunning === 'function' && w.isRunning())
+	}
+
+	/**
+	 * Add the walkthrough's bundle to the page, once.
+	 *
+	 * @param {Function} done Called when it is there.
+	 */
+	function loadWalkthrough(done) {
+		if (walkthrough() !== null) {
+			done()
+			return
+		}
+		window.addEventListener('thematiq:menu-walkthrough-ready', function ready() {
+			window.removeEventListener('thematiq:menu-walkthrough-ready', ready)
+			done()
+		})
+		if (document.querySelector('script[data-thematiq-menu-walkthrough]') !== null) {
+			return
+		}
+		var script = document.createElement('script')
+		script.src = walkthroughSrc()
+		script.setAttribute('data-thematiq-menu-walkthrough', '')
+		var trusted = document.querySelector('script[nonce]')
+		script.nonce = trusted !== null ? trusted.nonce || '' : ''
+		document.head.appendChild(script)
+	}
+
+	/**
+	 * The address of the walkthrough's bundle.
+	 *
+	 * @return {string}
+	 */
+	function walkthroughSrc() {
+		return typeof OC !== 'undefined' && typeof OC.filePath === 'function'
+			? OC.filePath('thematiq', 'js', TOUR_SCRIPT)
+			: '/apps/thematiq/js/' + TOUR_SCRIPT
+	}
+
+	/**
+	 * Start the walkthrough over the open menu, inside the menu's popover, so
+	 * a press on the tour's card is a press inside the menu and never closes it.
+	 *
+	 * @param {object} menu The menu.
+	 * @param {string} mode `auto` or `replay`.
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 */
+	function startWalkthrough(menu, mode) {
+		var state = menu.walkthrough
+		state.requested = true
+		loadWalkthrough(function () {
+			var w = walkthrough()
+			var grid = document.querySelector('.app-menu__grid')
+			if (w === null || grid === null) {
+				state.requested = false
+				return
+			}
+			if (typeof window.thematiqAppMenuHold === 'function') {
+				window.thematiqAppMenuHold()
+			}
+			var container =
+				grid.closest('.v-popper__popper')
+				|| grid.closest('.app-menu__popover')
+				|| document.body
+			var started = w.start({
+				mode: mode,
+				state: state,
+				container: container,
+				// The Create row draws once Nextcloud's templates have answered,
+				// often after the tour starts: it counts when the menu has it on.
+				parts: {
+					'apps-menu-create': settingsOf(menu).showCreateActions === true,
+				},
+				onEnd: function () {
+					state.seen = versionCore(state.appVersion) || TOUR_LATEST
+					state.progress = ''
+				},
+			})
+			if (!started) {
+				state.requested = false
+			}
+		})
+	}
+
+	/**
+	 * On the first open of the menu with a tour due, start it: never on page
+	 * load, never twice on one page, never while the first-time setup wizard
+	 * is open.
+	 *
+	 * @param {object} menu The menu.
+	 * @param {boolean} open Whether the menu is open.
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 */
+	function maybeWalkthrough(menu, open) {
+		if (open && mayStart(menu.walkthrough)) {
+			startWalkthrough(menu, 'auto')
+		}
+	}
+
+	/**
+	 * Whether a tour may start on its own now.
+	 *
+	 * @param {object} state The menu's `walkthrough` state.
+	 * @return {boolean}
+	 */
+	function mayStart(state) {
+		return !state.requested && !touring() && tourDue(state) && !wizardOpen()
+	}
+
+	/**
+	 * Whether the first-time setup wizard is open on the page.
+	 *
+	 * @return {boolean}
+	 */
+	function wizardOpen() {
+		return document.querySelector(SETUP_WIZARD) !== null
+	}
+
+	/**
+	 * Replay the whole tour: open the menu, then start at the first step.
+	 * Called from Menu settings and from the account menu.
+	 *
+	 * @param {object} menu The menu.
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
+	 */
+	function replayWalkthrough(menu) {
+		if (touring()) {
+			return
+		}
+		var tries = 0
+		var begin = function () {
+			var button = document.querySelector('.app-menu__waffle')
+			if (button === null || tries++ > 10) {
+				return
+			}
+			if (menuDrawn(button)) {
+				startWalkthrough(menu, 'replay')
+				return
+			}
+			if (button.getAttribute('aria-expanded') !== 'true') {
+				button.click()
+			}
+			// The menu draws a frame after the click.
+			setTimeout(begin, 100)
+		}
+		begin()
+	}
+
+	/**
+	 * Give the page the replay entry point, and note whether the first-time
+	 * setup asked for the tour at once ("Start the apps menu walkthrough"):
+	 * then the menu opens by itself once the page is drawn.
+	 *
+	 * @param {object} menu The menu.
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 */
+	function prepareWalkthrough(menu) {
+		if (!menu.walkthrough || typeof menu.walkthrough !== 'object') {
+			return
+		}
+		window.thematiqAppMenuReplay = function () {
+			replayWalkthrough(menu)
+		}
+		var progress = tourProgress(menu.walkthrough)
+		menu.walkthrough.immediate = !!(progress && progress.immediate === true)
+	}
+
+	/**
+	 * Whether the menu is open and drawn.
+	 *
+	 * @param {Element} button The grid button.
+	 * @return {boolean}
+	 */
+	function menuDrawn(button) {
+		return (
+			button.getAttribute('aria-expanded') === 'true'
+			&& document.querySelector('.app-menu__grid') !== null
+		)
+	}
+
+	/**
+	 * After each scan of the page: open the menu for an immediate tour, and
+	 * start a due tour on an open menu.
+	 *
+	 * @param {object} menu The menu.
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-starts-on-the-first-open-of-the-apps-menu-req-tqwt-002
+	 */
+	function walkthroughOnScan(menu) {
+		var waffle = document.querySelector('.app-menu__waffle')
+		if (!menu.walkthrough || waffle === null) {
+			return
+		}
+		var open = waffle.getAttribute('aria-expanded') === 'true'
+		if (menu.walkthrough.immediate && !open && !wizardOpen()) {
+			// Outside this scan, so the watcher sees the menu draw.
+			setTimeout(function () {
+				waffle.click()
+			}, 0)
+		}
+		menu.walkthrough.immediate = false
+		maybeWalkthrough(menu, menuDrawn(waffle))
+	}
+
+	/**
 	 * Hover to open, click to pin. Nextcloud 33 and 34 open the menu on a
 	 * click only; the fork's Nextcloud 35 opens it on hover itself
 	 * (`.app-menu__trigger` exists there) but closes a click-opened menu when
@@ -2039,6 +2394,15 @@
 			TRIGGERS
 			+ ', .app-menu, .app-menu__popover, .app-menu__trigger, .'
 			+ PINS
+			+ ', .'
+			+ TOUR_HOST
+		// The walkthrough holds the menu open: as if the person clicked it.
+		window.thematiqAppMenuHold = function () {
+			clearTimeout(closeTimer)
+			peek = false
+			pinned = true
+			document.documentElement.removeAttribute(PEEK)
+		}
 
 		var waffle = function () {
 			return document.querySelector('.app-menu__waffle')
@@ -2116,12 +2480,53 @@
 			}
 			clearTimeout(closeTimer)
 			closeTimer = setTimeout(function () {
-				if (peek && !pinned && isOpen() && !window.thematiqAppMenuDragging) {
+				if (
+					peek
+					&& !pinned
+					&& isOpen()
+					&& !window.thematiqAppMenuDragging
+					&& !touring()
+				) {
 					toggle()
 				}
 				peek = false
 			}, HOVER_CLOSE)
 		})
+		// While the walkthrough runs, Escape closes the tour first and leaves
+		// the menu open; the popover would otherwise close on the same key.
+		var escapeTaken = false
+		window.addEventListener(
+			'keyup',
+			function (event) {
+				if (event.key === 'Escape' && escapeTaken) {
+					escapeTaken = false
+					event.preventDefault()
+					event.stopImmediatePropagation()
+				}
+			},
+			true,
+		)
+		window.addEventListener(
+			'keydown',
+			function (event) {
+				if (event.key !== 'Escape' || !touring()) {
+					return
+				}
+				event.preventDefault()
+				event.stopImmediatePropagation()
+				escapeTaken = true
+				walkthrough().close()
+				var grid = document.querySelector('.app-menu__grid')
+				var focusable =
+					grid !== null
+						? grid.querySelector('[data-walkthrough-id="apps-menu-first-entry"]')
+						: null
+				if (focusable !== null && typeof focusable.focus === 'function') {
+					focusable.focus()
+				}
+			},
+			true,
+		)
 		window.addEventListener(
 			'click',
 			function (event) {
@@ -2130,6 +2535,12 @@
 					|| !event.target.closest
 					|| event.target.closest(TRIGGERS) === null
 				) {
+					return
+				}
+				// The grid button does not close the menu under the tour.
+				if (touring() && isOpen()) {
+					event.preventDefault()
+					event.stopImmediatePropagation()
 					return
 				}
 				clearTimeout(openTimer)
@@ -2271,6 +2682,7 @@
 		opening()
 		menu.pinBar = pinBar(menu)
 		shareCreateActions(menu)
+		prepareWalkthrough(menu)
 
 		var busy = false
 		var scan = function () {
@@ -2285,6 +2697,7 @@
 					.forEach(function (grid) {
 						arrange(grid, menu, save)
 					})
+				walkthroughOnScan(menu)
 			} finally {
 				// The script's own changes are mutations too: drop them, or the
 				// watcher would call scan again for ever.
