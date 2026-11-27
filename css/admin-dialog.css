@@ -672,3 +672,17 @@ dialog.thematiq-admin-dialog::backdrop {
 .thematiq-admin-dialog .thematiq-admin-dialog__aside--muted {
 	color: var(--color-text-maxcontrast);
 }
+
+/* The delete confirmations TqEigenSets and TqLettertypen draw: the red button
+ * with the bin sits at 18 px inline padding with an 18 px icon, like the
+ * primary button; the reset of TqTerugNaarNextcloud keeps 14 px and 16 px. */
+#thematiq-delete-custom-set-dialog .thematiq-admin-dialog__button--danger,
+#thematiq-delete-font-dialog .thematiq-admin-dialog__button--danger {
+	padding: 0 18px !important;
+}
+
+#thematiq-delete-custom-set-dialog .thematiq-admin-dialog__button--danger svg,
+#thematiq-delete-font-dialog .thematiq-admin-dialog__button--danger svg {
+	width: 18px;
+	height: 18px;
+}
