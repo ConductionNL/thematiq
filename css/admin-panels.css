@@ -1779,7 +1779,11 @@ html[data-thematiq-open-panel]
 #nldesign-settings .thematiq-panel .thematiq-switches-panel__status--running {
 	background: var(
 		--nldesign-component-status-badge-info-background-color,
-		color-mix(in srgb, var(--color-primary-element) 12%, var(--color-main-background))
+		color-mix(
+			in srgb,
+			var(--color-primary-element) 12%,
+			var(--color-main-background)
+		)
 	) !important;
 	color: var(
 		--nldesign-component-status-badge-info-color,
