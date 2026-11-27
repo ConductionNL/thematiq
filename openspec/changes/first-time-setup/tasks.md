@@ -42,28 +42,32 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
 
 ## 3. The wizard
 
-- [ ] 3.1 `src/manifest.json`: the ADR-042 `setup` block with the steps welcome, house-style,
+- [x] 3.1 `src/manifest.json`: the ADR-042 `setup` block with the steps welcome, house-style,
       nextcloud-theme, login-page, apps-menu, done.
-- [ ] 3.2 `src/setupWizard.js` and `webpack.setup-wizard.config.js` building `js/vendor/setupWizard.js`
+- [x] 3.2 `src/setupWizard.js` and `webpack.setup-wizard.config.js` building `js/vendor/setupWizard.js`
       (gitignored, run by `npm run build`): mount `CnSetupWizard` in its own container; the counter and
       rail; Skip and Later on steps 1 to 5, the close button "Later, continue on the next page"; nothing
       written before Apply. TqSetupWelkom. REQ-TQFS-003, REQ-TQFS-004, REQ-TQFS-006.
-- [ ] 3.3 The house style step: the radio cards, the summary line, the gallery link, Upload your own set
+- [x] 3.3 The house style step: the radio cards, the summary line, the gallery link, Upload your own set
       through the existing upload route, the licence block with the statement and Next held until it is
       ticked. TqSetupHuisstijl, TqSetupHuisstijlLicentie. REQ-TQFS-007.
-- [ ] 3.4 The Nextcloud theme step: the switch, the four cells with now and new, the version note;
+- [x] 3.4 The Nextcloud theme step: the switch, the four cells with now and new, the version note;
       skipped for Nextcloud default. TqSetupTheming. REQ-TQFS-008.
-- [ ] 3.5 The login page step: the two styles, the slogan checkbox, the login card preview.
+- [x] 3.5 The login page step: the two styles, the slogan checkbox, the login card preview.
       TqSetupInlogpagina. REQ-TQFS-009.
-- [ ] 3.6 The apps menu step: the one switch (on is workplace, off is classic, no Style choice), and
+- [x] 3.6 The apps menu step: the one switch (on is workplace, off is classic, no Style choice), and
       while it is on the columns, rows above More apps and the three switches; Apply with the parts
       reported on a failure. TqSetupAppmenu, without its Style row. REQ-TQFS-003, REQ-TQFS-010.
-- [ ] 3.7 The done step: the summary rows, Close, Start the apps menu walkthrough (stores the immediate
+- [x] 3.7 The done step: the summary rows, Close, Start the apps menu walkthrough (stores the immediate
       start, reloads). TqSetupKlaar. REQ-TQFS-011.
-- [ ] 3.8 vitest `tests/vitest/setupWizard.spec.js`: Later and the steps store nothing, Skip runs `skip`
+- [x] 3.8 vitest `tests/vitest/setupWizard.spec.js`: Later and the steps store nothing, Skip runs `skip`
       and an uploaded set stays, the restricted set flow and a refusal on Apply, the parts on a failure,
       the walkthrough handoff.
-- [ ] 3.9 l10n: the boards' copy in English and Dutch; `npm run test:l10n` green.
+- [x] 3.9 l10n: the boards' copy in English and Dutch; `npm run test:l10n` green. (#2166: the wizard over
+      CnWizardDialog with nextcloud-vue 2.236.0's `#actions-start` for Skip; live on a sandbox NC34 +
+      MariaDB: Welcome to Done with Gemeente Amsterdam, licence statement gating Next, four parts
+      applied, setup.completed stored; a half-failed Apply names the parts; vitest 12. The
+      extraction check reads js/ only, so the src/ strings were added to every locale by hand.)
 
 ## 4. The version card
 
