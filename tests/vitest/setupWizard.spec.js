@@ -179,6 +179,32 @@ describe('the wizard', () => {
 		expect(await vm.validate('apps-menu')).toBe('Not applied: House style. Press Apply to try again.')
 	})
 
+	it('says the house styles are loading until the sets arrive, and offers the cards after', async () => {
+		const vm = await wizard()
+		const texts = (node) => (node == null ? [] : typeof node === 'string' ? [node] : [].concat(...[].concat(node.children || []).map(texts)))
+		const loading = vm.houseStyle()
+		expect(vm.state.setsLoaded).toBe(false)
+		expect(texts(loading)).toContain('Loading the house styles…')
+		expect(texts(loading).some((line) => line.startsWith('All '))).toBe(false)
+
+		answers['/index.php/apps/thematiq/settings/tokensets'] = { ok: true, status: 200, data: { tokenSets: [{ id: 'nextcloud', name: 'Nextcloud' }, { id: 'zuiddrecht', name: 'Zuiddrecht' }] } }
+		answers['/index.php/apps/thematiq/settings/tokensets/licences'] = { ok: true, status: 200, data: { sets: LICENCES } }
+		await vm.loadSets()
+		expect(vm.state.setsLoaded).toBe(true)
+		expect(vm.state.sets).toHaveLength(2)
+		const loaded = texts(vm.houseStyle())
+		expect(loaded).not.toContain('Loading the house styles…')
+		expect(loaded).toContain('All 2 sets in the gallery')
+		expect(loaded).toContain('Nextcloud default')
+	})
+
+	it('stops saying loading when reading the sets fails', async () => {
+		const vm = await wizard()
+		vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('offline'))))
+		await expect(vm.loadSets()).rejects.toThrow('offline')
+		expect(vm.state.setsLoaded).toBe(true)
+	})
+
 	it('Upload your own set stores the set among the own sets and chooses it, without applying it', async () => {
 		const vm = await wizard()
 		answers['/index.php/apps/thematiq/settings/tokensets/upload'] = { ok: true, status: 200, data: { id: 'custom-ours' } }

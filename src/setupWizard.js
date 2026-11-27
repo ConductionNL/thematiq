@@ -176,6 +176,7 @@ export const SetupWizard = {
 		const state = reactive({
 			choices: initialChoices(props.status),
 			sets: [],
+			setsLoaded: false,
 			licences: [],
 			showAll: false,
 			stepId: 'welcome',
@@ -185,12 +186,7 @@ export const SetupWizard = {
 		return { state }
 	},
 	async mounted() {
-		const [sets, licences] = await Promise.all([
-			request('GET', '/settings/tokensets'),
-			request('GET', '/settings/tokensets/licences'),
-		])
-		this.state.sets = Array.isArray(sets.data.tokenSets) ? sets.data.tokenSets : []
-		this.state.licences = Array.isArray(licences.data.sets) ? licences.data.sets : []
+		await this.loadSets()
 	},
 	computed: {
 		steps() {
@@ -339,6 +335,27 @@ export const SetupWizard = {
 		},
 
 		/**
+		 * Read the selectable sets and their licences once, and mark the step as loaded either way.
+		 * On a fresh install the set catalogue is audited cold, which can take seconds; until then
+		 * the house style step says it is loading instead of offering no cards and "All 0 sets".
+		 *
+		 * @return {Promise<void>}
+		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
+		 */
+		async loadSets() {
+			try {
+				const [sets, licences] = await Promise.all([
+					request('GET', '/settings/tokensets'),
+					request('GET', '/settings/tokensets/licences'),
+				])
+				this.state.sets = Array.isArray(sets.data.tokenSets) ? sets.data.tokenSets : []
+				this.state.licences = Array.isArray(licences.data.sets) ? licences.data.sets : []
+			} finally {
+				this.state.setsLoaded = true
+			}
+		},
+
+		/**
 		 * The house style cards: the chosen set and Nextcloud default first, then four more or all.
 		 *
 		 * @return {object} The vnode.
@@ -390,9 +407,11 @@ export const SetupWizard = {
 			return h('div', { class: 'tq-setup__step' }, [
 				h('h2', t(APP_ID, 'Choose the house style')),
 				h('p', t(APP_ID, 'A house style is a token set: colours, fonts, corners and spacing in one file. Choose your organisation\'s set. You use another government\'s set only with its permission; thematiq asks for it in the next step.')),
-				this.setCards(),
+				this.state.setsLoaded
+					? this.setCards()
+					: h('p', { class: 'tq-setup__hint', role: 'status', 'data-testid': 'tq-setup-sets-loading' }, t(APP_ID, 'Loading the house styles…')),
 				h('p', { class: 'tq-setup__summary', 'aria-live': 'polite' }, this.setSummary()),
-				this.state.showAll
+				this.state.showAll || !this.state.setsLoaded
 					? null
 					: h('button', { type: 'button', class: 'tq-setup__link', onClick: () => { this.state.showAll = true } }, t(APP_ID, 'All {count} sets in the gallery', { count: this.state.sets.length })),
 				h('label', { class: 'tq-setup__upload' }, [

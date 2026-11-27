@@ -24,6 +24,7 @@ OC.L10N.register(
         "Nextcloud keeps its own look; thematiq adds only the apps menu.": "Nextcloud keeps its own look; thematiq adds only the apps menu.",
         "{name}: primary {primary}, background {background}.": "{name}: primary {primary}, background {background}.",
         "All {count} sets in the gallery": "All {count} sets in the gallery",
+        "Loading the house styles…": "Loading the house styles…",
         "Upload your own set": "Upload your own set",
         "This house style belongs to {holder}": "This house style belongs to {holder}",
         "Its licence allows the logo and house style only for the holder or with its permission.": "Its licence allows the logo and house style only for the holder or with its permission.",
