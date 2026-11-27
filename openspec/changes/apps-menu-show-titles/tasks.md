@@ -33,26 +33,32 @@ ConductionNL/design-system#1220 and #1221; TqSetupAppmenu has a follow-up. Copy,
 
 ## 2. The menu
 
-- [ ] 2.1 `js/app-menu.js`: with `titles` off, `data-titles="false"` on the menu; Nextcloud apps,
+- [x] 2.1 `js/app-menu.js`: with `titles` off, `data-titles="false"` on the menu; Nextcloud apps,
       create chips and external apps drawn as the icon with the name as `aria-label` (an external app's
       ending in "(opens in a new tab)"); no payoff; headings, More and Fewer keep their text; pins
       untouched. REQ-TQMT-002.
-- [ ] 2.2 `js/app-menu.js`: `nameOf()` reads the `aria-label` when no label text is drawn, so drag,
+- [x] 2.2 `js/app-menu.js`: `nameOf()` reads the `aria-label` when no label text is drawn, so drag,
       Alt with an arrow key and Alt+P still name the app. REQ-TQMT-002.
-- [ ] 2.3 `js/app-menu.js`: one `role="tooltip"` per menu, not referenced by `aria-describedby`; shown
+- [x] 2.3 `js/app-menu.js`: one `role="tooltip"` per menu, not referenced by `aria-describedby`; shown
       on hover after 300 ms and at once on `:focus-visible`; kept while the pointer is on the entry or
       the tooltip or the entry has focus; hidden on leave, drag start and close; Escape hides it before
       the menu closes, after a running walkthrough. REQ-TQMT-003.
-- [ ] 2.4 `css/app-menu.css`: the icon-only entry as AppMenuZonderTitels draws it, the tooltip in
+- [x] 2.4 `css/app-menu.css`: the icon-only entry as AppMenuZonderTitels draws it, the tooltip in
       Nextcloud tokens (light and dark, contrast at least 4.5:1), placed off the focus ring, and the
       focus ring kept. REQ-TQMT-003.
-- [ ] 2.5 `js/app-menu.js`: pins draw the name next to the icon with `topBarTitles` on (ellipsis, the
+- [x] 2.5 `js/app-menu.js`: pins draw the name next to the icon with `topBarTitles` on (ellipsis, the
       tooltip only when cut off), and the shared tooltip under the pin with it off. REQ-TQMT-003,
       REQ-TQMT-006.
-- [ ] 2.6 vitest new `appMenuTitles.spec.js` (icon only per section, names and the new tab note,
+- [x] 2.6 vitest new `appMenuTitles.spec.js` (icon only per section, names and the new tab note,
       Alt+P announces, tooltip on focus and hover, hoverable, Escape order); `appMenuSettings.spec.js`
       (titles on draws as before); `appMenuPins.spec.js` (pins with names, pins with the tooltip, drag and
       Alt+P unchanged); new `adminLayoutTopBarTitles.spec.js`.
+
+      (2.x built in cloud/b-thematiq-apps-menu-show-titles-menu. Nextcloud's own tiles are Vue's
+      nodes, so their label is not removed from the DOM: `data-titles="false"` takes it out of the
+      layout and the accessibility tree with `display: none`, which a screen reader does not read either.
+      The tooltip follows board AppMenuZonderTitels: dark ground (`--color-main-text`) with
+      `--color-main-background` text, under the entry. It sits on the body, fixed, so pins share it.)
 
 ## 3. Menu settings and the setup wizard
 
@@ -80,7 +86,7 @@ ConductionNL/design-system#1220 and #1221; TqSetupAppmenu has a follow-up. Copy,
       store `{titles: false}` through `POST /apps/thematiq/app-menu/defaults`, open Files and the apps
       menu, check the accessible names, the missing text, the tooltip on focus, its Escape and the
       focus ring; then the Theming tab with payoff disabled; then `topBarTitles` on and off with two
-      pins; put every value back in a `finally`.
+      pins; put every value back in a `finally`. (written: `tests/e2e/spec-coverage/apps-menu-show-titles.spec.ts`, runs in nightly)
 
 ## 6. Verification
 
