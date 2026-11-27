@@ -40,6 +40,7 @@ describe('the setup model', () => {
 		expect(fresh.nextcloudThemeFollows).toBe(true)
 		expect(fresh.menu.enabled).toBe(true)
 		expect(fresh.menu.showCreate).toBe(true)
+		expect(fresh.menu.titles).toBe(true)
 
 		const again = initialChoices({
 			completed: { by: 'admin' },
@@ -75,7 +76,7 @@ describe('the setup model', () => {
 			nextcloudThemeFollows: true,
 			loginStyle: 'house-style',
 			hideSlogan: false,
-			menu: { enabled: true, columns: 5, rowsAboveFold: 2, payoff: true, showCreateButton: false, showCreateRow: false, showExternalApps: true },
+			menu: { enabled: true, columns: 5, rowsAboveFold: 2, titles: true, payoff: true, showCreateButton: false, showCreateRow: false, showExternalApps: true },
 		})
 
 		choices.menu.enabled = false
@@ -171,6 +172,29 @@ describe('the wizard', () => {
 		expect(await vm.validate('apps-menu')).toBe(true)
 		expect(calls.filter((call) => call.url === apply)).toHaveLength(2)
 		expect(vm.state.result.completed).toBe(true)
+	})
+
+	it('offers Show titles before Show payoff; payoff is disabled while titles are off and keeps its value', async () => {
+		const vm = await wizard()
+		const inputs = (node, out = []) => {
+			if (Array.isArray(node)) {
+				node.forEach((child) => inputs(child, out))
+			} else if (node && typeof node === 'object') {
+				if (node.type === 'input' && node.props && node.props.role === 'switch') {
+					out.push(node.props)
+				}
+				inputs(node.children, out)
+			}
+			return out
+		}
+		const switches = () => inputs(vm.appsMenu()).map((props) => [props.id, props.disabled])
+		expect(switches().map(([id]) => id)).toEqual(['tq-setup-menu', 'tq-setup-titles', 'tq-setup-payoff', 'tq-setup-showCreate', 'tq-setup-showExternalApps'])
+		expect(switches()).toContainEqual(['tq-setup-payoff', false])
+
+		vm.state.choices.menu.titles = false
+		expect(switches()).toContainEqual(['tq-setup-payoff', true])
+		expect(vm.state.choices.menu.payoff).toBe(true)
+		expect(applyRequest(vm.state.choices, LICENCES).menu).toMatchObject({ titles: false, payoff: true })
 	})
 
 	it('names the parts that were not applied and keeps Apply open', async () => {
