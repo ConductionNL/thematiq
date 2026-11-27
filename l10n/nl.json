@@ -38,6 +38,7 @@
         "Nextcloud keeps its own look; thematiq adds only the apps menu.": "Nextcloud houdt zijn eigen uiterlijk; thematiq voegt alleen het appmenu toe.",
         "{name}: primary {primary}, background {background}.": "{name}: primair {primary}, achtergrond {background}.",
         "All {count} sets in the gallery": "Alle {count} sets in de galerij",
+        "Loading the house styles…": "De huisstijlen worden geladen…",
         "Upload your own set": "Je eigen set uploaden",
         "This house style belongs to {holder}": "Deze huisstijl is van {holder}",
         "Its licence allows the logo and house style only for the holder or with its permission.": "De licentie staat logo en huisstijl alleen toe voor de eigenaar of met diens toestemming.",
