@@ -15,6 +15,9 @@
  * keeps Nextcloud's avatar. When the account menu re-renders and drops the
  * label, the label is put back.
  *
+ * With the workplace apps menu, the account menu also gets a "Replay
+ * walkthrough" entry under Help, which starts the apps menu walkthrough.
+ *
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
@@ -24,10 +27,136 @@
 	var CHIP_CLASS = 'thematiq-user-chip'
 	var SVG_NS = 'http://www.w3.org/2000/svg'
 
+	var REPLAY_ID = 'thematiq-replay-walkthrough'
+
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', thematiqHeaderUserMain)
+		document.addEventListener('DOMContentLoaded', thematiqReplayEntryMain)
 	} else {
 		thematiqHeaderUserMain()
+		thematiqReplayEntryMain()
+	}
+
+	/**
+	 * Build the "Replay walkthrough" entry as a copy of an entry of the
+	 * account menu, so it looks like its neighbours.
+	 *
+	 * @param {Element} model The entry to copy (`li`).
+	 * @param {string} label The entry's text.
+	 * @return {Element} The entry.
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
+	 */
+	function buildReplayEntry(model, label) {
+		var entry = model.cloneNode(true)
+		entry.setAttribute('data-thematiq-replay', '')
+		var link = entry.querySelector('a')
+		if (link === null) {
+			link = document.createElement('a')
+			entry.textContent = ''
+			entry.appendChild(link)
+		}
+		link.id = REPLAY_ID
+		link.setAttribute('href', '#')
+		link.removeAttribute('target')
+		var icon = link.querySelector('img')
+		if (icon !== null) {
+			icon.remove()
+		}
+		var name = link.querySelector('.list-item-content__name')
+		if (name !== null) {
+			name.textContent = label
+			var sub = link.querySelector('.list-item-content__subname')
+			if (sub !== null) {
+				sub.remove()
+			}
+		} else {
+			link.textContent = label
+		}
+		link.addEventListener('click', function (event) {
+			event.preventDefault()
+			var trigger = document.querySelector(
+				'#user-menu [aria-expanded="true"]',
+			)
+			if (trigger !== null) {
+				trigger.click()
+			}
+			if (typeof window.thematiqAppMenuReplay === 'function') {
+				window.thematiqAppMenuReplay()
+			}
+		})
+		return entry
+	}
+
+	/**
+	 * The apps menu's tour state with its replay label, or null: only the
+	 * workplace apps menu carries it.
+	 *
+	 * @return {object|null} The `walkthrough` part of `thematiq/app-menu`.
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
+	 */
+	function tourState() {
+		var tour = null
+		try {
+			tour = window.OCP.InitialState.loadState('thematiq', 'app-menu', {}).walkthrough
+		} catch (e) {
+			return null
+		}
+		return tour && typeof tour.replayLabel === 'string' && tour.replayLabel !== ''
+			? tour
+			: null
+	}
+
+	/**
+	 * Put the entry under Help in the account menu's list, or last.
+	 *
+	 * @param {Element} list The account menu's list.
+	 * @param {string} label The entry's text.
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
+	 */
+	function placeReplayEntry(list, label) {
+		var help = list.querySelector(':scope > li #help')
+		var after = help !== null ? help.closest('li') : null
+		var model = after || list.querySelector('li.account-menu-entry, li')
+		if (model === null) {
+			return
+		}
+		list.insertBefore(
+			buildReplayEntry(model, label),
+			after !== null ? after.nextSibling : null,
+		)
+	}
+
+	/**
+	 * Keep a "Replay walkthrough" entry in the account menu, directly under
+	 * Nextcloud's Help entry, or last when Help is not there. Only with the
+	 * workplace apps menu, whose state carries the tour.
+	 *
+	 * @spec openspec/changes/apps-menu-walkthrough/specs/apps-menu-walkthrough/spec.md#requirement-the-tour-can-be-replayed-req-tqwt-006
+	 */
+	function thematiqReplayEntryMain() {
+		var tour = tourState()
+		if (tour === null) {
+			return
+		}
+		var header = document.getElementById('header')
+		if (header === null) {
+			return
+		}
+		var place = function () {
+			var list = header.querySelector(
+				'#header-menu-user-menu ul, #user-menu ul',
+			)
+			if (list !== null && list.querySelector('#' + REPLAY_ID) === null) {
+				placeReplayEntry(list, tour.replayLabel)
+			}
+		}
+		place()
+		if (typeof MutationObserver === 'function') {
+			new MutationObserver(place).observe(header, {
+				childList: true,
+				subtree: true,
+			})
+		}
 	}
 
 	/**

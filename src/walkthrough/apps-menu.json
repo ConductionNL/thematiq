@@ -1,0 +1,119 @@
+{
+	"walkthrough": {
+		"enabled": true,
+		"completionConfigKey": "apps_menu_walkthrough_seen_version",
+		"tours": [
+			{
+				"id": "apps-menu",
+				"trigger": "first-visit",
+				"steps": [
+					{
+						"id": "open",
+						"title": "Open the apps menu",
+						"body": "This walkthrough starts the first time you open the menu. Click the button with the nine dots, or rest the pointer on it for a moment. A click keeps the menu open.",
+						"task": "Keys: Enter opens the menu with focus inside it, Escape closes it and puts focus back on the button.",
+						"target": {
+							"kind": "element",
+							"ref": "apps-menu-button"
+						},
+						"placement": "bottom",
+						"advanceOn": {
+							"type": "manual"
+						},
+						"sinceVersion": "1.2.49"
+					},
+					{
+						"id": "apps",
+						"title": "Your apps in a row",
+						"body": "The apps you use most are at the top: icon, name and one line on what the app does. The app you are working in is marked. Tab and the arrow keys move you through the list.",
+						"target": {
+							"kind": "element",
+							"ref": "apps-menu-list"
+						},
+						"placement": "right",
+						"advanceOn": {
+							"type": "manual"
+						},
+						"sinceVersion": "1.2.49"
+					},
+					{
+						"id": "more",
+						"title": "More and fewer",
+						"body": "More apps unfolds the rest of your apps, Fewer apps folds them away. The line is the border: drag an app from below the line to above it and it stays with your first apps. Drag one down and it goes to More.",
+						"task": "Keys: Alt with Arrow up moves the focused app up across the line, Arrow down puts it below.",
+						"target": {
+							"kind": "element",
+							"ref": "apps-menu-more"
+						},
+						"placement": "right",
+						"optional": true,
+						"advanceOn": {
+							"type": "manual"
+						},
+						"sinceVersion": "1.2.49"
+					},
+					{
+						"id": "reorder",
+						"title": "Put them in your order",
+						"body": "Pick an app up and drop it where you want it. Your order is saved and follows you to every browser you sign in to. After a move you hear the new place, for example Portaliq moved to place 4 of 14.",
+						"task": "Keys: Alt with Arrow left or up, one place earlier; Arrow right or down, one place later.",
+						"target": {
+							"kind": "element",
+							"ref": "apps-menu-first-entry"
+						},
+						"placement": "right",
+						"advanceOn": {
+							"type": "manual"
+						},
+						"sinceVersion": "1.2.49"
+					},
+					{
+						"id": "pin",
+						"title": "Pin an app to the top bar",
+						"body": "Drag an app from the menu to the top bar and drop it on the dashed slot. It is then always one click away. Drag a pinned app off the bar to unpin it. You can pin five.",
+						"task": "Keys: Alt+P pins the focused app, or unpins it.",
+						"target": {
+							"kind": "element",
+							"ref": "apps-menu-pins"
+						},
+						"placement": "bottom",
+						"advanceOn": {
+							"type": "manual"
+						},
+						"sinceVersion": "1.2.49"
+					},
+					{
+						"id": "create",
+						"title": "Create",
+						"body": "Start a new document, spreadsheet, presentation or whiteboard here. The file lands in your own folder and opens at once. More shows everything else Nextcloud can create.",
+						"target": {
+							"kind": "element",
+							"ref": "apps-menu-create"
+						},
+						"placement": "right",
+						"optional": true,
+						"advanceOn": {
+							"type": "manual"
+						},
+						"sinceVersion": "1.2.49"
+					},
+					{
+						"id": "settings",
+						"title": "Menu settings",
+						"body": "Here you choose which apps you see, in which order and which are pinned, and switch the buttons under Create on or off. Administrators set the default for everyone here.",
+						"task": "Hint: Want to see the walkthrough again? Menu settings, Replay walkthrough. Or from Help in your account menu.",
+						"target": {
+							"kind": "element",
+							"ref": "apps-menu-settings"
+						},
+						"placement": "right",
+						"advanceOn": {
+							"type": "manual"
+						},
+						"sinceVersion": "1.2.49"
+					}
+				]
+			}
+		]
+	}
+}

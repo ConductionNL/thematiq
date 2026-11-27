@@ -92,6 +92,9 @@ return \OCA\Thematiq\Middleware\Support\ApiPathAliases::withVersionedAliases([
 		['name' => 'appMenuSettings#resetDefaults', 'url' => '/app-menu/defaults', 'verb' => 'DELETE'],
 		['name' => 'appMenuSettings#uploadIcon', 'url' => '/app-menu/icons', 'verb' => 'POST'],
 		['name' => 'appMenuSettings#icon', 'url' => '/app-menu/icons/{id}', 'verb' => 'GET'],
+		// The signed-in person's apps menu tour state (apps-menu-walkthrough), the nextcloud-vue preference contract.
+		['name' => 'preferences#show', 'url' => '/api/preferences/{key}', 'verb' => 'GET'],
+		['name' => 'preferences#update', 'url' => '/api/preferences/{key}', 'verb' => 'PUT'],
 		['name' => 'workspaceIcon#index', 'url' => '/settings/workspace-icons', 'verb' => 'GET'],
 		['name' => 'workspaceIcon#upload', 'url' => '/settings/workspace-icons/{kind}', 'verb' => 'POST'],
 		['name' => 'workspaceIcon#remove', 'url' => '/settings/workspace-icons/{kind}', 'verb' => 'DELETE'],

@@ -86,6 +86,10 @@
         {
             "name": "workspace-icon",
             "description": "The two workspace images."
+        },
+        {
+            "name": "preferences",
+            "description": "Per-user preferences of the apps menu walkthrough."
         }
     ],
     "paths": {
@@ -459,6 +463,140 @@
                     },
                     "422": {
                         "$ref": "#/components/responses/Problem422"
+                    }
+                }
+            }
+        },
+        "/preferences/{key}": {
+            "get": {
+                "operationId": "preferences-show",
+                "summary": "A walkthrough preference of the signed-in user",
+                "description": "The apps menu walkthrough's seen version or progress of the signed-in user (the nextcloud-vue preference contract). Any signed-in user; no user id.",
+                "tags": [
+                    "preferences"
+                ],
+                "parameters": [
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "required": true,
+                        "description": "apps_menu_walkthrough_seen_version or apps_menu_walkthrough_seen_version-progress; any other key answers 404.",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "apps_menu_walkthrough_seen_version",
+                                "apps_menu_walkthrough_seen_version-progress"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The request succeeded.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "value": {
+                                            "type": "string",
+                                            "nullable": true,
+                                            "description": "The stored value, null when none."
+                                        }
+                                    },
+                                    "required": [
+                                        "value"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Problem401"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/Problem404"
+                    }
+                }
+            },
+            "put": {
+                "operationId": "preferences-update",
+                "summary": "Store a walkthrough preference of the signed-in user",
+                "description": "Store the apps menu walkthrough's seen version or progress of the signed-in user; an empty value removes it.",
+                "tags": [
+                    "preferences"
+                ],
+                "parameters": [
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "required": true,
+                        "description": "apps_menu_walkthrough_seen_version or apps_menu_walkthrough_seen_version-progress; any other key answers 404.",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "apps_menu_walkthrough_seen_version",
+                                "apps_menu_walkthrough_seen_version-progress"
+                            ]
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "value": {
+                                        "type": "string",
+                                        "description": "The value, at most 1024 bytes; empty removes it."
+                                    }
+                                },
+                                "additionalProperties": false
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "The value as stored.",
+                        "headers": {
+                            "API-Version": {
+                                "$ref": "#/components/headers/API-Version"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "value": {
+                                            "type": "string",
+                                            "nullable": true,
+                                            "description": "The stored value, null when none."
+                                        }
+                                    },
+                                    "required": [
+                                        "value"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/Problem400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Problem401"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/Problem404"
                     }
                 }
             }
