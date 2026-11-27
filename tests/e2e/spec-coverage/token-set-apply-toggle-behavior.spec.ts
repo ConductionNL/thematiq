@@ -62,7 +62,56 @@ async function findOptionWithChanges(
 					resolved?: Record<string, string>
 				}
 				const resolved = data.resolved || {}
-				const keys = Object.keys(resolved)
+				// The app hands the primary-colour family of a set that carries
+				// its own Nextcloud primary colour to the theming dialog, not to
+				// this one (openTokenSetApplyDialog in js/admin.js), so a set that
+				// differs only there opens no token dialog.
+				let setTheming: { primary_color?: string } | undefined
+				try {
+					const sets = (
+						window as unknown as {
+							OCP: {
+								InitialState: {
+									loadState: (a: string, k: string, f: unknown) => unknown
+								}
+							}
+						}
+					).OCP.InitialState.loadState('thematiq', 'tokenSets', []) as Array<{
+						id: string
+						theming?: { primary_color?: string }
+					}>
+					setTheming = sets.find((ts) => ts.id === tokenSetId)?.theming
+				} catch {
+					setTheming = undefined
+				}
+				// The app also lays the set's saved overrides over the preview
+				// before comparing, so a set whose overrides already hold the
+				// current values (residue of an earlier run) shows no changes.
+				try {
+					const ocx = (
+						window as unknown as {
+							OC: { generateUrl: (p: string) => string; requestToken: string }
+						}
+					).OC
+					const saved = (await (
+						await fetch(
+							ocx.generateUrl(
+								'/apps/thematiq/settings/overrides?tokenSet='
+									+ encodeURIComponent(tokenSetId),
+							),
+							{ headers: { requesttoken: ocx.requestToken } },
+						)
+					).json()) as { overrides?: Record<string, string> }
+					for (const [name, value] of Object.entries(saved.overrides ?? {})) {
+						if (resolved[name] !== undefined) resolved[name] = value
+					}
+				} catch {
+					// No saved overrides: compare the preview as it is.
+				}
+				const keys = Object.keys(resolved).filter(
+					(k) =>
+						!(setTheming?.primary_color && k.indexOf('--color-primary') === 0),
+				)
 				if (keys.length === 0) return false
 				const root = getComputedStyle(document.documentElement)
 				return keys.some(
