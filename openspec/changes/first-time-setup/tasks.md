@@ -136,7 +136,7 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
 
 ## 6. Live check
 
-- [ ] 6.1 On a fresh reference instance: enable thematiq, open the dashboard as admin and run the
+- [x] 6.1 On a fresh reference instance: enable thematiq, open the dashboard as admin and run the
       wizard through; open as a non-admin; screenshots against the TqSetup boards; the switch on the
       Theming settings page. (Walked live on a fresh NC 34 sandbox, #2180: Welcome to Done with
       Gemeente Amsterdam, Next held until the statement, Apply sets the set, the Nextcloud primary
@@ -154,6 +154,14 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
       in this app: the boards' left-aligned "Thematiq instellen, stap n van 6" head with the step title,
       Skip as a link at the start of the footer, the chevrons on Next/Apply, and the walkthrough as the
       primary footer button on Klaar. 6.1 stays open for that frame.)
+      (28 Nov, b-thematiq cloud, the frame: nextcloud-vue 2.244.1's board look already draws it, so
+      no nextcloud-vue change was needed. thematiq uses it (look board, the eyebrow "Set up Thematiq,
+      step n of 6" above the step's own title, chevrons), Skip is a bare underlined link at the start,
+      and Done has Close beside the walkthrough as the primary button with its chevron after the
+      label, with no Back. The bundle also keeps nextcloud-vue's unscoped board dialog, header and
+      stepper rules (style-inject-loader `alsoKeep`), and the switches keep their track under the
+      board look's checkbox rule. Live on a fresh NC 34.0.6 sandbox (sqlite, php -S, Imagick with
+      SVG) at 1920x1080 beside TqSetupWelkom..TqSetupKlaar: first-time-setup.spec.ts 7/7.)
 - [x] 6.2 On an instance configured by an earlier version, upgrade and confirm nothing opens and the
       version card reads the earlier-version state. (live lane, NC 34 sandbox: thematiq 1.2.10 from main
       with Gemeente Amsterdam set through its own settings API, upgraded in place to development by

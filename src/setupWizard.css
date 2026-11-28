@@ -59,7 +59,11 @@
 .tq-setup__switch-card--disabled { opacity: 0.6; }
 .tq-setup__switch-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .tq-setup__switch-text label { font-weight: 600; }
-.tq-setup__switch-card input.tq-setup__toggle { min-height: 0; min-width: 0; max-height: none; height: 24px; width: 44px; padding: 0; border: 0; box-shadow: none; }
+/* The board look sizes every bare checkbox to 18 px with a transparent ground, !important and with
+ * four :not()s (.cn-look-board input[type=checkbox]:not(...)); a switch keeps its own size and track.
+ * :not(#tq-setup-none) only adds an id's weight. */
+.tq-setup__switch-card input.tq-setup__toggle:not(#tq-setup-none) { min-height: 0 !important; min-width: 0 !important; max-height: none; height: 24px !important; width: 44px !important; padding: 0; border: 0; box-shadow: none; background-color: var(--color-border-dark) !important; }
+.tq-setup__switch-card input.tq-setup__toggle:not(#tq-setup-none):checked { background-color: var(--color-primary-element) !important; }
 .tq-setup__toggle { appearance: none; -webkit-appearance: none; flex: none; position: relative; width: 44px; height: 24px; margin: 0; border-radius: 12px; background: var(--color-border-dark); cursor: pointer; transition: background-color 0.15s; }
 .tq-setup__toggle::after { content: ''; position: absolute; top: 3px; inset-inline-start: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--color-main-background); transition: inset-inline-start 0.15s; }
 .tq-setup__toggle:checked { background: var(--color-primary-element); }
@@ -78,10 +82,14 @@
 @media (max-width: 900px) { .tq-setup__cells--four { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 600px) { .tq-setup__cells, .tq-setup__points, .tq-setup__cards, .tq-setup__login { grid-template-columns: 1fr; } }
 
-/* The footer as the TqSetup boards draw it: Skip as a link at the start, the buttons at the end. */
-.tq-setup__skip { margin-inline-end: auto; min-height: 0; padding: 0; border: 0; background: transparent; color: var(--color-primary-element); font-weight: 600; text-decoration: underline; cursor: pointer; }
-.tq-setup__skip:hover, .tq-setup__skip:focus-visible { background: transparent; color: var(--color-primary-element-hover, var(--color-primary-element)); }
-.tq-setup__skip:disabled { opacity: .5; cursor: default; }
+/* The footer as the TqSetup boards draw it: Skip as a bare link at the start, the buttons at the end.
+ * The board look styles every footer button (.cn-dialog-board .dialog__actions button), so these
+ * selectors carry the dialog's classes to win over it. */
+.cn-dialog-board .dialog__actions button.tq-setup__skip { margin-inline-end: auto; height: auto; min-height: 0; padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--color-primary-element); font-size: 14px; font-weight: 600; text-decoration: underline; cursor: pointer; }
+.cn-dialog-board .dialog__actions button.tq-setup__skip:hover { background: transparent; text-decoration-thickness: 2px; }
+.cn-dialog-board .dialog__actions button.tq-setup__skip:disabled { opacity: .5; cursor: default; }
+.cn-dialog-board .dialog__actions button.tq-setup__close { height: 40px; padding: 0 16px; border: 1px solid var(--color-border-maxcontrast); border-radius: var(--cn-board-control-radius, 8px); background: transparent; color: var(--color-main-text); font-size: 14px; font-weight: 600; }
+.cn-dialog-board .dialog__actions button.tq-setup__close:hover { background: var(--color-background-hover); }
 
 /* TqSetupKlaar: Close beside the walkthrough, no Back after Apply, the chevron after the label. */
 .cn-dialog-board:has([data-step-id="done"] .tq-setup__step) [data-testid="cn-wizard-back"] { display: none; }
