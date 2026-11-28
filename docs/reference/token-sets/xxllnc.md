@@ -2,7 +2,7 @@
 
 # xxllnc
 
-Token set `xxllnc`: 618 declared by this set, 129 from the defaults layer.
+Token set `xxllnc`: 1183 declared by this set, 129 from the defaults layer.
 
 Contrast: primary text on primary 11.24:1, primary on background 14.16:1 (pass).
 
@@ -266,6 +266,77 @@ Contrast: primary text on primary 11.24:1, primary on background 14.16:1 (pass).
 
 | Token | Value | Dark mode | Source | Paints |
 |---|---|---|---|---|
+| `--ams-date-input-background-color` | `var(--utrecht-textbox-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--ams-date-input-border-radius` | `var(--utrecht-textbox-border-radius)` | | this set | |
+| `--ams-date-input-border-style` | `solid` | | this set | |
+| `--ams-date-input-border-width` | `var(--utrecht-textbox-border-width)` | | this set | |
+| `--ams-date-input-box-shadow` | `''` | | this set | |
+| `--ams-date-input-calender-picker-indicator-background-image` | `url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJXaW5kb3dUZXh0IiBkPSJNMjAgM2gtMVYxaC0ydjJIN1YxSDV2Mkg0Yy0xLjEgMC0yIC45LTIgMnYxNmMwIDEuMS45IDIgMiAyaDE2YzEuMSAwIDItLjkgMi0yVjVjMC0xLjEtLjktMi0yLTJ6bTAgMThINFY4aDE2djEzeiIvPjxwYXRoIGZpbGw9Im5vbmUiIGQ9Ik0wIDBoMjR2MjRIMHoiLz48L3N2Zz4=')` | | this set | |
+| `--ams-date-input-font-size` | `var(--utrecht-textbox-font-size)` | | this set | |
+| `--ams-date-input-font-weight` | `var(--utrecht-textbox-font-weight)` | | this set | |
+| `--ams-date-input-hover-calender-picker-indicator-background-image` | `url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNSIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJXaW5kb3dUZXh0IiBkPSJNMjAgM2gtMVYxaC0ydjJIN1YxSDV2Mkg0Yy0xLjEgMC0yIC45LTIgMnYxNmMwIDEuMS45IDIgMiAyaDE2YzEuMSAwIDItLjkgMi0yVjVjMC0xLjEtLjktMi0yLTJ6bTAgMThINFY4aDE2djEzeiIvPjxwYXRoIGZpbGw9Im5vbmUiIGQ9Ik0wIDBoMjR2MjRIMHoiLz48L3N2Zz4=')` | | this set | |
+| `--ams-date-input-line-height` | `var(--utrecht-textbox-line-height)` | | this set | |
+| `--ams-date-input-margin-block` | `var(--utrecht-textbox-margin-block)` | | this set | |
+| `--ams-date-input-min-block-size` | `var(--utrecht-textbox-min-block-size)` | | this set | |
+| `--ams-date-input-min-inline-size` | `var(--utrecht-textbox-min-inline-size)` | | this set | |
+| `--ams-date-input-outline-offset` | `var(--utrecht-textbox-outline-offset)` | | this set | |
+| `--ams-date-input-padding-block` | `var(--utrecht-textbox-padding-block-start)` | | this set | |
+| `--ams-date-input-padding-inline` | `var(--utrecht-textbox-padding-inline-start)` | | this set | |
+| `--ams-pagination-button-active-background-color` | `transparent` | | this set | |
+| `--ams-pagination-button-active-border-color` | `transparent` | | this set | |
+| `--ams-pagination-button-active-text-decoration` | `underline` | | this set | |
+| `--ams-pagination-button-background-color` | `transparent` | | this set | |
+| `--ams-pagination-button-border-color` | `transparent` | | this set | |
+| `--ams-pagination-button-border-radius` | `0px` | | this set | |
+| `--ams-pagination-button-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--ams-pagination-button-current-border-color` | `transparent` | | this set | |
+| `--ams-pagination-button-current-font-weight` | `var( --tilburg-document-strong-font-weight )` | | this set | |
+| `--ams-pagination-button-current-text-decoration` | `none` | | this set | |
+| `--ams-pagination-button-focus-text-decoration` | `none` | | this set | |
+| `--ams-pagination-button-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--ams-pagination-button-hover-background-color` | `transparent` | | this set | |
+| `--ams-pagination-button-hover-border-color` | `transparent` | | this set | |
+| `--ams-pagination-button-hover-text-decoration` | `underline` | | this set | |
+| `--ams-pagination-button-min-block-size` | `var(--tilburg-pointer-target-min-size)` | | this set | |
+| `--ams-pagination-button-min-inline-size` | `var(--tilburg-pointer-target-min-size)` | | this set | |
+| `--ams-pagination-button-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--ams-pagination-button-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--ams-pagination-button-padding-inline` | `var(--tilburg-space-inline-snail)` | | this set | |
+| `--ams-pagination-button-padding-inline-end` | `var(--tilburg-space-inline-snail)` | | this set | |
+| `--ams-pagination-button-padding-inline-start` | `var(--tilburg-space-inline-snail)` | | this set | |
+| `--ams-pagination-button-text-decoration` | `none` | | this set | |
+| `--ams-pagination-description-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--ams-pagination-description-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--ams-pagination-ellipses-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--ams-pagination-ellipses-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--ams-pagination-ellipses-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--ams-pagination-ellipses-padding-inline-end` | `var(--tilburg-space-inline-ant)` | | this set | |
+| `--ams-pagination-ellipses-padding-inline-start` | `var(--tilburg-space-inline-ant)` | | this set | |
+| `--ams-pagination-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--ams-pagination-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--ams-pagination-relative-link-active-background-color` | `transparent` | | this set | |
+| `--ams-pagination-relative-link-active-border-color` | `transparent` | | this set | |
+| `--ams-pagination-relative-link-active-text-decoration` | `underline` | | this set | |
+| `--ams-pagination-relative-link-background-color` | `transparent` | | this set | |
+| `--ams-pagination-relative-link-border-color` | `transparent` | | this set | |
+| `--ams-pagination-relative-link-border-radius` | `0px` | | this set | |
+| `--ams-pagination-relative-link-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--ams-pagination-relative-link-disabled-background-color` | `transparent` | | this set | |
+| `--ams-pagination-relative-link-disabled-border-color` | `transparent` | | this set | |
+| `--ams-pagination-relative-link-focus-text-decoration` | `none` | | this set | |
+| `--ams-pagination-relative-link-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--ams-pagination-relative-link-hover-background-color` | `transparent` | | this set | |
+| `--ams-pagination-relative-link-hover-border-color` | `transparent` | | this set | |
+| `--ams-pagination-relative-link-hover-text-decoration` | `underline` | | this set | |
+| `--ams-pagination-relative-link-icon-margin-inline` | `var( --tilburg-space-text-beetle )` | | this set | |
+| `--ams-pagination-relative-link-icon-size` | `var(--tilburg-icon-functional-size)` | | this set | |
+| `--ams-pagination-relative-link-min-block-size` | `var( --tilburg-pointer-target-min-size )` | | this set | |
+| `--ams-pagination-relative-link-min-inline-size` | `var( --tilburg-pointer-target-min-size )` | | this set | |
+| `--ams-pagination-relative-link-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--ams-pagination-relative-link-padding-block-start` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--ams-pagination-relative-link-padding-inline-end` | `0px` | | this set | |
+| `--ams-pagination-relative-link-padding-inline-start` | `0px` | | this set | |
+| `--ams-pagination-relative-link-text-decoration` | `none` | | this set | |
 | `--conduction-card-header-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f1f1f1%22%2F%3E%3C%2Fsvg%3E) `#f1f1f1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
 | `--conduction-card-header-date-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f1f1f1%22%2F%3E%3C%2Fsvg%3E) `#f1f1f1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
 | `--conduction-card-header-date-font-size` | `14px` | | this set | |
@@ -354,6 +425,7 @@ Contrast: primary text on primary 11.24:1, primary on background 14.16:1 (pass).
 | `--conduction-logo-footer-background-image` | `var(--nldesign-logo-url)` | | this set | |
 | `--conduction-logo-footer-block-size` | `100px` | | this set | |
 | `--conduction-logo-footer-inline-size` | `120px` | | this set | |
+| `--conduction-logo-header-background-image` | `url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjE1MCAxNSA5NiA1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01Ny4zOTYuMjExSC4yODF2NDkuNDA1aDU3LjExNVYuMjF6Ii8+PHBhdGggaWQ9ImMiIGQ9Ik01Ny41NjQuMjExSC40NDh2NDkuNDA1aDU3LjExNlYuMjF6Ii8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTg3LjkzMSAxNSkiPjxtYXNrIGlkPSJiIiBmaWxsPSIjZmZmIj48dXNlIHhsaW5rOmhyZWY9IiNhIi8+PC9tYXNrPjxwYXRoIGQ9Ik01Ny4zOTYgMjQuOTEzYzAtMTMuNTczLTExLjAwNC0yNC42MjItMjQuNTYtMjQuNy0uMDI0IDAtLjA0OC0uMDAzLS4wNzMtLjAwM0gyNC43NWEyLjUwNCAyLjUwNCAwIDEgMCAwIDUuMDFoNy45NDVjMTAuODU4IDAgMTkuNjk0IDguODM0IDE5LjY5NCAxOS42OTMgMCAxMC44Ni04LjgzNiAxOS42OTQtMTkuNjk0IDE5LjY5NEg1LjI4OXYtNC41NzhILjI4MXY5LjU4N2gzMi40ODJ2LS4wMDFjMTMuNTktLjA0IDI0LjYzMy0xMS4xMDUgMjQuNjMzLTI0LjcwMiIgZmlsbD0iIzAwOUZFNCIgbWFzaz0idXJsKCNiKSIvPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNTAgMTUpIj48bWFzayBpZD0iZCIgZmlsbD0iI2ZmZiI+PHVzZSB4bGluazpocmVmPSIjYyIvPjwvbWFzaz48cGF0aCBkPSJNLjQ0OCAyNC45MTNjMCAxMy41NzMgMTEuMDA0IDI0LjYyMiAyNC41NiAyNC43LjAyNCAwIC4wNDguMDAzLjA3My4wMDNoOC4wMTRhMi41MDQgMi41MDQgMCAxIDAgMC01LjAwOWgtNy45NDRjLTEwLjg1OSAwLTE5LjY5NC04LjgzNC0xOS42OTQtMTkuNjk0IDAtMTAuODU5IDguODM1LTE5LjY5NCAxOS42OTQtMTkuNjk0aDI3LjQwNHY0LjU3OGg1LjAwOVYuMjFIMjUuMDh2LjAwMUMxMS40OS4yNTEuNDQ4IDExLjMxNi40NDggMjQuOTEzIiBmaWxsPSIjMDA5RkU0IiBtYXNrPSJ1cmwoI2QpIi8+PC9nPjxwYXRoIGZpbGw9IiMwMDQzODgiIGQ9Ik0xNzYuMDE3IDQyLjExNmwtNC42NzgtMTIuNDAxaC01LjY2NGw4LjE0IDIwLjM2NmgzLjkyMWw4LjQwMS0yMC4zNjZoLTUuMzYzem0yNi41NDIuNTU4bC03LjkyOC0xMi45NTloLTYuNDEzdjIwLjM2N2g0Ljk5N1YzNi43ODdsOC4xNSAxMy4yOTVoNi4xOVYyOS43MTVoLTQuOTk2em0xOS4zMjMtNC45NHY0LjY2M2gzLjUzN3YyLjY3N2E5Ljc3MyA5Ljc3MyAwIDAgMS0xLjQxNC41NGMtLjY1Mi4yMDMtMS40NDMuMzA2LTIuMzU0LjMwNi0uODggMC0xLjY4Ni0uMTUtMi4zOTQtLjQ0OGE1LjMzOCA1LjMzOCAwIDAgMS0xLjgyNC0xLjI0NyA1LjUyMiA1LjUyMiAwIDAgMS0xLjE3LTEuODk0Yy0uMjcyLS43MjktLjQxLTEuNTQ5LS40MS0yLjQzMyAwLS44NjcuMTM4LTEuNjgxLjQxLTIuNDJhNS41MDIgNS41MDIgMCAwIDEgMS4xNy0xLjkwOCA1LjM3NCA1LjM3NCAwIDAgMSAxLjgyNC0xLjI0NmMuNzA5LS4yOTggMS41MTQtLjQ0OSAyLjM5NC0uNDQ5IDEuMDY0IDAgMS45NTkuMTUxIDIuNjU3LjQ0OS43LjI5NyAxLjMzOC43NCAxLjg5OCAxLjMxOGwuMjQyLjI0OCAzLjUxNS0zLjgzNS0uMjM3LS4yMjFhOC45MjMgOC45MjMgMCAwIDAtMy42MjctMi4wMzhjLTEuMzUtLjM4Ni0yLjg0Ny0uNTgzLTQuNDQ4LS41ODMtMS41NzIgMC0zLjA0NC4yNS00LjM3My43NDVhMTAuMTM5IDEwLjEzOSAwIDAgMC0zLjQ4MSAyLjE0M2MtLjk3NS45MjgtMS43NDYgMi4wNjYtMi4yOSAzLjM4NC0uNTQzIDEuMzE1LS44MTkgMi44LS44MTkgNC40MTMgMCAxLjYxMy4yNzYgMy4wOTguODIgNC40MTMuNTQ1IDEuMzE5IDEuMzE0IDIuNDU3IDIuMjg5IDMuMzg0Ljk3NC45MjYgMi4xNDYgMS42NDcgMy40OCAyLjE0MyAxLjMzLjQ5NCAyLjgwMi43NDQgNC4zNzQuNzQ0IDEuNDY0IDAgMi45Mi0uMTUyIDQuMzMtLjQ1MmExNi4wNTQgMTYuMDU0IDAgMCAwIDQuMDktMS40NzhsLjE3Ny0uMDlWMzcuNzMzaC04LjM2NnoiLz48L2c+PC9zdmc+')` | | this set | |
 | `--conduction-logo-header-block-size` | `20px` | | this set | |
 | `--conduction-logo-header-inline-size` | `70px` | | this set | |
 | `--conduction-logo-navbar-background-image` | `var(--nldesign-logo-url)` | | this set | |
@@ -397,11 +469,17 @@ Contrast: primary text on primary 11.24:1, primary on background 14.16:1 (pass).
 | `--conduction-primary-top-nav-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23eaeaea%22%2F%3E%3C%2Fsvg%3E) `#eaeaea` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23262626%22%2F%3E%3C%2Fsvg%3E) `#262626` | this set | |
 | `--conduction-primary-top-nav-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339383f%22%2F%3E%3C%2Fsvg%3E) `#39383f` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c1c0c7%22%2F%3E%3C%2Fsvg%3E) `#c1c0c7` | this set | |
 | `--conduction-primary-top-nav-current-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%2830%2C%2030%2C%2032%2C%200.06%29%22%2F%3E%3C%2Fsvg%3E) `rgba(30, 30, 32, 0.06)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cfcfd20f%22%2F%3E%3C%2Fsvg%3E) `#cfcfd20f` | this set | |
+| `--conduction-primary-top-nav-current-box-shadow` | `unset` | | this set | |
 | `--conduction-primary-top-nav-current-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339383f%22%2F%3E%3C%2Fsvg%3E) `#39383f` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c1c0c7%22%2F%3E%3C%2Fsvg%3E) `#c1c0c7` | this set | |
+| `--conduction-primary-top-nav-current-mobile-box-shadow` | `unset` | | this set | |
 | `--conduction-primary-top-nav-dropdown-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230e0d10%22%2F%3E%3C%2Fsvg%3E) `#0e0d10` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dddbe1%22%2F%3E%3C%2Fsvg%3E) `#dddbe1` | this set | |
 | `--conduction-primary-top-nav-dropdown-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dbdbdb%22%2F%3E%3C%2Fsvg%3E) `#dbdbdb` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--conduction-primary-top-nav-dropdown-current-box-shadow` | `unset` | | this set | |
+| `--conduction-primary-top-nav-dropdown-current-mobile-box-shadow` | `unset` | | this set | |
 | `--conduction-primary-top-nav-dropdown-hover-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%230e0d10%22%2F%3E%3C%2Fsvg%3E) `#0e0d10` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dddbe1%22%2F%3E%3C%2Fsvg%3E) `#dddbe1` | this set | |
 | `--conduction-primary-top-nav-dropdown-hover-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23eaeaea%22%2F%3E%3C%2Fsvg%3E) `#eaeaea` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--conduction-primary-top-nav-dropdown-hover-text-decoration` | `underline` | | this set | |
+| `--conduction-primary-top-nav-dropdown-text-decoration` | `none` | | this set | |
 | `--conduction-primary-top-nav-hover-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%2830%2C%2030%2C%2032%2C%200.06%29%22%2F%3E%3C%2Fsvg%3E) `rgba(30, 30, 32, 0.06)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23cfcfd20f%22%2F%3E%3C%2Fsvg%3E) `#cfcfd20f` | this set | |
 | `--conduction-primary-top-nav-hover-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2339383f%22%2F%3E%3C%2Fsvg%3E) `#39383f` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c1c0c7%22%2F%3E%3C%2Fsvg%3E) `#c1c0c7` | this set | |
 | `--conduction-primary-top-nav-item-padding` | `18px` | | this set | |
@@ -433,21 +511,38 @@ Contrast: primary text on primary 11.24:1, primary on background 14.16:1 (pass).
 | `--conduction-table-wrapper-scroll-button-padding-inline-end` | `14px` | | this set | |
 | `--conduction-table-wrapper-scroll-button-padding-inline-start` | `14px` | | this set | |
 | `--conduction-tabs-scroll-button-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--conduction-tabs-scroll-button-border-color` | `unset` | | this set | |
+| `--conduction-tabs-scroll-button-border-style` | `unset` | | this set | |
+| `--conduction-tabs-scroll-button-border-width` | `unset` | | this set | |
 | `--conduction-tabs-scroll-button-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
 | `--conduction-tabs-scroll-button-hover-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--conduction-tabs-scroll-button-hover-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%2843%2C%2043%2C%2043%2C%200.8%29%22%2F%3E%3C%2Fsvg%3E) `rgba(43, 43, 43, 0.8)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d4d4d4cc%22%2F%3E%3C%2Fsvg%3E) `#d4d4d4cc` | this set | |
 | `--conduction-tabs-tab-background-color` | `transparent` | | this set | |
+| `--conduction-tabs-tab-border-bottom` | `unset` | | this set | |
+| `--conduction-tabs-tab-border-bottom-color` | `unset` | | this set | |
+| `--conduction-tabs-tab-border-bottom-style` | `unset` | | this set | |
+| `--conduction-tabs-tab-border-bottom-width` | `unset` | | this set | |
+| `--conduction-tabs-tab-border-color` | `unset` | | this set | |
+| `--conduction-tabs-tab-border-style` | `unset` | | this set | |
+| `--conduction-tabs-tab-border-width` | `unset` | | this set | |
 | `--conduction-tabs-tab-bottom` | `-2px` | | this set | |
+| `--conduction-tabs-tab-button-bottom` | `0px` | | this set | |
 | `--conduction-tabs-tab-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
 | `--conduction-tabs-tab-font-family` | `neue-haas-grotesk-text, sans-serif` | | this set | |
 | `--conduction-tabs-tab-font-size` | `16px` | | this set | |
 | `--conduction-tabs-tab-font-weight` | `400` | | this set | |
+| `--conduction-tabs-tab-hover-background-color` | `transparent` | | this set | |
 | `--conduction-tabs-tab-hover-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--conduction-tabs-tab-hover-font-weight` | `700` | | this set | |
+| `--conduction-tabs-tab-hover-text-decoration` | `unset` | | this set | |
+| `--conduction-tabs-tab-letter-spacing` | `0.02857em` | | this set | |
 | `--conduction-tabs-tab-list-border-bottom-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23eaeaea%22%2F%3E%3C%2Fsvg%3E) `#eaeaea` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23262626%22%2F%3E%3C%2Fsvg%3E) `#262626` | this set | |
 | `--conduction-tabs-tab-list-border-bottom-style` | `solid` | | this set | |
 | `--conduction-tabs-tab-list-border-bottom-width` | `2px` | | this set | |
 | `--conduction-tabs-tab-list-margin-block-end` | `0px` | | this set | |
+| `--conduction-tabs-tab-list-padding-inline-end` | `2px` | | this set | |
 | `--conduction-tabs-tab-list-padding-inline-start` | `0px` | | this set | |
+| `--conduction-tabs-tab-margin-inline-end` | `unset` | | this set | |
 | `--conduction-tabs-tab-max-width` | `unset` | | this set | |
 | `--conduction-tabs-tab-min-height` | `61px` | | this set | |
 | `--conduction-tabs-tab-min-width` | `160px` | | this set | |
@@ -455,18 +550,32 @@ Contrast: primary text on primary 11.24:1, primary on background 14.16:1 (pass).
 | `--conduction-tabs-tab-padding-block-start` | `8px` | | this set | |
 | `--conduction-tabs-tab-padding-inline-end` | `14px` | | this set | |
 | `--conduction-tabs-tab-padding-inline-start` | `14px` | | this set | |
+| `--conduction-tabs-tab-panel-background-color` | `unset` | | this set | |
+| `--conduction-tabs-tab-panel-border-color` | `unset` | | this set | |
+| `--conduction-tabs-tab-panel-border-style` | `unset` | | this set | |
+| `--conduction-tabs-tab-panel-border-top` | `unset` | | this set | |
+| `--conduction-tabs-tab-panel-border-width` | `unset` | | this set | |
 | `--conduction-tabs-tab-panel-padding-block-end` | `24px` | | this set | |
 | `--conduction-tabs-tab-panel-padding-block-start` | `24px` | | this set | |
 | `--conduction-tabs-tab-panel-padding-inline-end` | `24px` | | this set | |
 | `--conduction-tabs-tab-panel-padding-inline-start` | `24px` | | this set | |
 | `--conduction-tabs-tab-selected-background-color` | `transparent` | | this set | |
+| `--conduction-tabs-tab-selected-border-bottom` | `unset` | | this set | |
 | `--conduction-tabs-tab-selected-border-bottom-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%280%2C%200%2C%200%2C%200.68%29%22%2F%3E%3C%2Fsvg%3E) `rgba(0, 0, 0, 0.68)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebebad%22%2F%3E%3C%2Fsvg%3E) `#ebebebad` | this set | |
 | `--conduction-tabs-tab-selected-border-bottom-style` | `solid` | | this set | |
 | `--conduction-tabs-tab-selected-border-bottom-width` | `2px` | | this set | |
+| `--conduction-tabs-tab-selected-border-color` | `unset` | | this set | |
+| `--conduction-tabs-tab-selected-border-style` | `unset` | | this set | |
+| `--conduction-tabs-tab-selected-border-width` | `unset` | | this set | |
+| `--conduction-tabs-tab-selected-box-shadow` | `unset` | | this set | |
 | `--conduction-tabs-tab-selected-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
 | `--conduction-tabs-tab-selected-font-family` | `neue-haas-grotesk-text, sans-serif` | | this set | |
 | `--conduction-tabs-tab-selected-font-weight` | `700` | | this set | |
+| `--conduction-tabs-tab-selected-hover-background-color` | `unset` | | this set | |
 | `--conduction-tabs-tab-selected-hover-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--conduction-tabs-tab-selected-hover-font-weight` | `700` | | this set | |
+| `--conduction-tabs-tab-selected-hover-text-decoration` | `unset` | | this set | |
+| `--conduction-tabs-tab-text-transform` | `unset` | | this set | |
 | `--conduction-tooltip-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23000000%22%2F%3E%3C%2Fsvg%3E) `#000000` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb%22%2F%3E%3C%2Fsvg%3E) `#ebebeb` | this set | |
 | `--conduction-tooltip-border-color` | `unset` | | this set | |
 | `--conduction-tooltip-border-radius` | `0px` | | this set | |
@@ -479,35 +588,237 @@ Contrast: primary text on primary 11.24:1, primary on background 14.16:1 (pass).
 | `--conduction-tooltip-padding-inline-start` | `14px` | | this set | |
 | `--conduction-tooltip-z-index` | `9999` | | this set | |
 | `--nldesign-logo-url` | `url('../../img/logos/xxllnc.svg')` | `url('../../../img/logos/xxllnc-dark.svg')` | this set | |
+| `--tilburg-border-radius-lg` | `16px` | | this set | |
+| `--tilburg-border-radius-md` | `8px` | | this set | |
+| `--tilburg-border-radius-round` | `999px` | | this set | |
+| `--tilburg-border-radius-sm` | `4px` | | this set | |
+| `--tilburg-border-width-lg` | `4px` | | this set | |
+| `--tilburg-border-width-md` | `2px` | | this set | |
+| `--tilburg-border-width-sm` | `1px` | | this set | |
+| `--tilburg-box-shadow-sm` | `[object Object]` | | this set | |
+| `--tilburg-color-black` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c5c5ca%22%2F%3E%3C%2Fsvg%3E) `#c5c5ca` | this set | |
+| `--tilburg-color-black-txt` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c5c5ca%22%2F%3E%3C%2Fsvg%3E) `#c5c5ca` | this set | |
+| `--tilburg-color-blue-500` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232b2b2b%22%2F%3E%3C%2Fsvg%3E) `#2b2b2b` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c6c6c6%22%2F%3E%3C%2Fsvg%3E) `#c6c6c6` | this set | |
+| `--tilburg-color-green-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328a745%22%2F%3E%3C%2Fsvg%3E) `#28a745` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2358cf73%22%2F%3E%3C%2Fsvg%3E) `#58cf73` | this set | |
+| `--tilburg-color-orange-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffc107%22%2F%3E%3C%2Fsvg%3E) `#ffc107` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23edb50c%22%2F%3E%3C%2Fsvg%3E) `#edb50c` | this set | |
+| `--tilburg-color-red-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dc3545%22%2F%3E%3C%2Fsvg%3E) `#dc3545` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c42c3a%22%2F%3E%3C%2Fsvg%3E) `#c42c3a` | this set | |
+| `--tilburg-color-white` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--tilburg-document-background-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--tilburg-document-color` | `var(--tilburg-color-black-txt)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--tilburg-document-font-size` | `var(--tilburg-typography-font-size-md)` | | this set | |
+| `--tilburg-document-font-weight` | `var(--tilburg-typography-font-weight-normal)` | | this set | |
+| `--tilburg-document-line-height` | `var(--tilburg-typography-line-height-md)` | | this set | |
+| `--tilburg-document-strong-font-weight` | `var(--tilburg-typography-font-weight-bold)` | | this set | |
+| `--tilburg-erm-font-size` | `16px` | | this set | |
+| `--tilburg-feedback-negative-border-color` | `var(--tilburg-color-red-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c42c3a%22%2F%3E%3C%2Fsvg%3E) `#c42c3a` | this set | |
+| `--tilburg-feedback-positive-border-color` | `var(--tilburg-color-green-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2358cf73%22%2F%3E%3C%2Fsvg%3E) `#58cf73` | this set | |
+| `--tilburg-focus-inverse-outline-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--tilburg-focus-outline-offset` | `0` | | this set | |
+| `--tilburg-focus-outline-style` | `dotted` | | this set | |
+| `--tilburg-focus-outline-width` | `var(--tilburg-border-width-md)` | | this set | |
+| `--tilburg-footer-link-hover-text-decoration` | `underline` | | this set | |
+| `--tilburg-footer-link-text-decoration` | `none` | | this set | |
+| `--tilburg-form-control-active-border-width` | `var(--tilburg-border-width-md)` | | this set | |
+| `--tilburg-form-control-background-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--tilburg-form-control-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--tilburg-form-control-focus-background-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--tilburg-form-control-focus-border-color` | `var(--tilburg-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c5c5ca%22%2F%3E%3C%2Fsvg%3E) `#c5c5ca` | this set | |
+| `--tilburg-form-control-focus-border-width` | `var(--tilburg-border-width-md)` | | this set | |
+| `--tilburg-form-control-focus-color` | `var(--tilburg-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--tilburg-form-control-hover-border-width` | `var(--tilburg-border-width-md)` | | this set | |
+| `--tilburg-form-control-invalid-background-color` | `var(--tilburg-color-white)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--tilburg-form-control-invalid-border-color` | `var(--tilburg-color-red-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c42c3a%22%2F%3E%3C%2Fsvg%3E) `#c42c3a` | this set | |
+| `--tilburg-form-control-invalid-border-width` | `var(--tilburg-border-width-md)` | | this set | |
+| `--tilburg-form-control-invalid-color` | `var(--tilburg-color-red-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e25a67%22%2F%3E%3C%2Fsvg%3E) `#e25a67` | this set | |
+| `--tilburg-header-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--tilburg-heading-color` | `var(--tilburg-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--tilburg-heading-font-weight` | `var(--tilburg-typography-font-weight-bold)` | | this set | |
+| `--tilburg-icon-functional-size` | `var(--tilburg-size-icon-md)` | | this set | |
+| `--tilburg-icon-toptask-size` | `var(--tilburg-size-icon-4xl)` | | this set | |
+| `--tilburg-line-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--tilburg-logo-color` | `var(--tilburg-color-black)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--tilburg-navigation-font-weight` | `700` | | this set | |
+| `--tilburg-navigation-hover-font-weight` | `700` | | this set | |
+| `--tilburg-pointer-target-min-size` | `var(--tilburg-size-md)` | | this set | |
+| `--tilburg-size-2xl` | `160px` | | this set | |
+| `--tilburg-size-2xs` | `16px` | | this set | |
+| `--tilburg-size-3xs` | `8px` | | this set | |
+| `--tilburg-size-4xs` | `4px` | | this set | |
+| `--tilburg-size-5xs` | `2px` | | this set | |
+| `--tilburg-size-icon-2xl` | `32px` | | this set | |
+| `--tilburg-size-icon-3xl` | `40px` | | this set | |
+| `--tilburg-size-icon-4xl` | `48px` | | this set | |
+| `--tilburg-size-icon-lg` | `24px` | | this set | |
+| `--tilburg-size-icon-md` | `24px` | | this set | |
+| `--tilburg-size-icon-sm` | `16px` | | this set | |
+| `--tilburg-size-icon-xl` | `24px` | | this set | |
+| `--tilburg-size-lg` | `64px` | | this set | |
+| `--tilburg-size-md` | `48px` | | this set | |
+| `--tilburg-size-sm` | `32px` | | this set | |
+| `--tilburg-size-xl` | `96px` | | this set | |
+| `--tilburg-size-xs` | `24px` | | this set | |
+| `--tilburg-space-block-ant` | `4px` | | this set | |
+| `--tilburg-space-block-beetle` | `8px` | | this set | |
+| `--tilburg-space-block-cat` | `32px` | | this set | |
+| `--tilburg-space-block-dog` | `48px` | | this set | |
+| `--tilburg-space-block-flea` | `2px` | | this set | |
+| `--tilburg-space-block-mouse` | `16px` | | this set | |
+| `--tilburg-space-block-pig` | `64px` | | this set | |
+| `--tilburg-space-block-rabbit` | `24px` | | this set | |
+| `--tilburg-space-block-rat` | `20px` | | this set | |
+| `--tilburg-space-block-snail` | `12px` | | this set | |
+| `--tilburg-space-column-ant` | `2px` | | this set | |
+| `--tilburg-space-column-beetle` | `4px` | | this set | |
+| `--tilburg-space-column-cat` | `24px` | | this set | |
+| `--tilburg-space-column-dog` | `28px` | | this set | |
+| `--tilburg-space-column-elephant` | `96px` | | this set | |
+| `--tilburg-space-column-flea` | `1px` | | this set | |
+| `--tilburg-space-column-giraffe` | `160px` | | this set | |
+| `--tilburg-space-column-horse` | `64px` | | this set | |
+| `--tilburg-space-column-mouse` | `12px` | | this set | |
+| `--tilburg-space-column-pig` | `32px` | | this set | |
+| `--tilburg-space-column-rabbit` | `20px` | | this set | |
+| `--tilburg-space-column-rat` | `16px` | | this set | |
+| `--tilburg-space-column-snail` | `8px` | | this set | |
+| `--tilburg-space-column-tiger` | `48px` | | this set | |
+| `--tilburg-space-inline-ant` | `4px` | | this set | |
+| `--tilburg-space-inline-beetle` | `8px` | | this set | |
+| `--tilburg-space-inline-cat` | `28px` | | this set | |
+| `--tilburg-space-inline-dog` | `32px` | | this set | |
+| `--tilburg-space-inline-flea` | `2px` | | this set | |
+| `--tilburg-space-inline-mouse` | `16px` | | this set | |
+| `--tilburg-space-inline-pig` | `48px` | | this set | |
+| `--tilburg-space-inline-rabbit` | `24px` | | this set | |
+| `--tilburg-space-inline-rat` | `20px` | | this set | |
+| `--tilburg-space-inline-snail` | `12px` | | this set | |
+| `--tilburg-space-row-ant` | `2px` | | this set | |
+| `--tilburg-space-row-beetle` | `4px` | | this set | |
+| `--tilburg-space-row-cat` | `24px` | | this set | |
+| `--tilburg-space-row-dog` | `28px` | | this set | |
+| `--tilburg-space-row-elephant` | `96px` | | this set | |
+| `--tilburg-space-row-flea` | `1px` | | this set | |
+| `--tilburg-space-row-giraffe` | `160px` | | this set | |
+| `--tilburg-space-row-horse` | `64px` | | this set | |
+| `--tilburg-space-row-mouse` | `12px` | | this set | |
+| `--tilburg-space-row-pig` | `32px` | | this set | |
+| `--tilburg-space-row-rabbit` | `20px` | | this set | |
+| `--tilburg-space-row-rat` | `16px` | | this set | |
+| `--tilburg-space-row-snail` | `8px` | | this set | |
+| `--tilburg-space-row-tiger` | `48px` | | this set | |
+| `--tilburg-space-text-ant` | `2px` | | this set | |
+| `--tilburg-space-text-beetle` | `4px` | | this set | |
+| `--tilburg-space-text-cat` | `16px` | | this set | |
+| `--tilburg-space-text-dog` | `24px` | | this set | |
+| `--tilburg-space-text-flea` | `1px` | | this set | |
+| `--tilburg-space-text-mouse` | `8px` | | this set | |
+| `--tilburg-space-text-rabbit` | `14px` | | this set | |
+| `--tilburg-space-text-rat` | `12px` | | this set | |
+| `--tilburg-space-text-snail` | `6px` | | this set | |
+| `--tilburg-status-badge-border-color` | `transparent` | | this set | |
+| `--tilburg-status-badge-border-radius` | `var(--tilburg-border-radius-sm)` | | this set | |
+| `--tilburg-status-badge-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--tilburg-status-badge-font-size` | `var(--tilburg-typography-font-size-sm)` | | this set | |
+| `--tilburg-status-badge-font-weight` | `var(--tilburg-document-strong-font-weight)` | | this set | |
+| `--tilburg-status-badge-informative-border-color` | `transparent` | | this set | |
+| `--tilburg-status-badge-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--tilburg-status-badge-negative-border-color` | `transparent` | | this set | |
+| `--tilburg-status-badge-padding-block` | `var(--tilburg-space-block-flea)` | | this set | |
+| `--tilburg-status-badge-padding-inline` | `var(--tilburg-space-inline-ant)` | | this set | |
+| `--tilburg-status-badge-positive-border-color` | `transparent` | | this set | |
+| `--tilburg-status-badge-warning-border-color` | `transparent` | | this set | |
+| `--tilburg-typography-font-family-primary` | `'Avenir', sans-serif` | | this set | |
+| `--tilburg-typography-font-family-secondary` | `'Avenir', sans-serif` | | this set | |
+| `--tilburg-typography-font-size-2xl` | `32px` | | this set | |
+| `--tilburg-typography-font-size-3xl` | `36px` | | this set | |
+| `--tilburg-typography-font-size-4xl` | `48px` | | this set | |
+| `--tilburg-typography-font-size-lg` | `20px` | | this set | |
+| `--tilburg-typography-font-size-md` | `16px` | | this set | |
+| `--tilburg-typography-font-size-sm` | `14px` | | this set | |
+| `--tilburg-typography-font-size-xl` | `24px` | | this set | |
+| `--tilburg-typography-font-weight-bold` | `700` | | this set | |
+| `--tilburg-typography-font-weight-normal` | `400` | | this set | |
+| `--tilburg-typography-line-height-lg` | `200%` | | this set | |
+| `--tilburg-typography-line-height-md` | `150%` | | this set | |
+| `--tilburg-typography-line-height-sm` | `125%` | | this set | |
+| `--tilburg-typography-line-height-xs` | `100%` | | this set | |
+| `--utrecht-accordion-border-radius` | `0px` | | this set | |
+| `--utrecht-accordion-button-active-border-color` | `transparent` | | this set | |
+| `--utrecht-accordion-button-border-color` | `transparent` | | this set | |
+| `--utrecht-accordion-button-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--utrecht-accordion-button-expanded-border-color` | `transparent` | | this set | |
+| `--utrecht-accordion-button-focus-border-color` | `transparent` | | this set | |
+| `--utrecht-accordion-button-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-accordion-button-font-weight` | `var(--tilburg-document-strong-font-weight)` | | this set | |
+| `--utrecht-accordion-button-hover-border-color` | `transparent` | | this set | |
+| `--utrecht-accordion-button-icon-margin-inline` | `var(--tilburg-space-text-mouse)` | | this set | |
+| `--utrecht-accordion-button-icon-size` | `var(--tilburg-icon-functional-size)` | | this set | |
+| `--utrecht-accordion-button-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-accordion-button-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-accordion-button-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-accordion-button-padding-inline-end` | `var(--tilburg-space-inline-mouse)` | | this set | |
+| `--utrecht-accordion-button-padding-inline-start` | `var(--tilburg-space-inline-mouse)` | | this set | |
+| `--utrecht-accordion-panel-border-color` | `transparent` | | this set | |
+| `--utrecht-accordion-panel-border-width` | `var(--tilburg-border-width-lg)` | | this set | |
+| `--utrecht-accordion-panel-padding-block-end` | `var(--tilburg-space-block-rabbit)` | | this set | |
+| `--utrecht-accordion-panel-padding-block-start` | `var(--tilburg-space-block-rabbit)` | | this set | |
+| `--utrecht-accordion-panel-padding-inline-end` | `var(--tilburg-space-inline-mouse)` | | this set | |
+| `--utrecht-accordion-panel-padding-inline-start` | `var(--tilburg-space-inline-mouse)` | | this set | |
+| `--utrecht-accordion-section-border-block-end-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--utrecht-accordion-section-border-width` | `auto` | | this set | |
 | `--utrecht-action-busy-cursor` | `wait` | | this set | |
 | `--utrecht-action-disabled-cursor` | `not-allowed` | | this set | |
 | `--utrecht-action-submit-cursor` | `pointer` | | this set | |
 | `--utrecht-alert-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23eaeaea%22%2F%3E%3C%2Fsvg%3E) `#eaeaea` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23262626%22%2F%3E%3C%2Fsvg%3E) `#262626` | this set | |
+| `--utrecht-alert-border-radius` | `var(--tilburg-border-radius-md)` | | this set | |
+| `--utrecht-alert-border-width` | `var(--tilburg-border-width-md)` | | this set | |
 | `--utrecht-alert-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--utrecht-alert-column-gap` | `var(--tilburg-space-column-snail)` | | this set | |
+| `--utrecht-alert-content-row-gap` | `var(--tilburg-space-row-snail)` | | this set | |
 | `--utrecht-alert-error-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f8d7da%22%2F%3E%3C%2Fsvg%3E) `#f8d7da` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23420f13%22%2F%3E%3C%2Fsvg%3E) `#420f13` | this set | |
 | `--utrecht-alert-error-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23721c24%22%2F%3E%3C%2Fsvg%3E) `#721c24` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e38d95%22%2F%3E%3C%2Fsvg%3E) `#e38d95` | this set | |
+| `--utrecht-alert-heading-font-size` | `var(--tilburg-typography-font-size-xl)` | | this set | |
+| `--utrecht-alert-heading-font-weight` | `var(--tilburg-heading-font-weight)` | | this set | |
+| `--utrecht-alert-heading-line-height` | `var(--tilburg-typography-line-height-sm)` | | this set | |
 | `--utrecht-alert-icon-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
 | `--utrecht-alert-icon-error-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23721c24%22%2F%3E%3C%2Fsvg%3E) `#721c24` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e38d95%22%2F%3E%3C%2Fsvg%3E) `#e38d95` | this set | |
 | `--utrecht-alert-icon-gap` | `8px` | | this set | |
+| `--utrecht-alert-icon-info-color` | `var(--tilburg-color-blue-500)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d4d4d4%22%2F%3E%3C%2Fsvg%3E) `#d4d4d4` | this set | |
 | `--utrecht-alert-icon-ok-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23155724%22%2F%3E%3C%2Fsvg%3E) `#155724` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a8eab7%22%2F%3E%3C%2Fsvg%3E) `#a8eab7` | this set | |
+| `--utrecht-alert-icon-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-alert-icon-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-alert-icon-padding-inline-end` | `0px` | | this set | |
+| `--utrecht-alert-icon-padding-inline-start` | `0px` | | this set | |
+| `--utrecht-alert-icon-size` | `var(--tilburg-icon-functional-size)` | | this set | |
 | `--utrecht-alert-icon-warning-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23856404%22%2F%3E%3C%2Fsvg%3E) `#856404` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23fbda7a%22%2F%3E%3C%2Fsvg%3E) `#fbda7a` | this set | |
+| `--utrecht-alert-info-border-width` | `var(--tilburg-border-width-md)` | | this set | |
+| `--utrecht-alert-message-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-alert-message-padding-block-start` | `var(--tilburg-space-block-beetle)` | | this set | |
+| `--utrecht-alert-message-row-gap` | `var(--tilburg-space-row-snail)` | | this set | |
+| `--utrecht-alert-negative-border-color` | `var( --tilburg-feedback-negative-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c42c3a%22%2F%3E%3C%2Fsvg%3E) `#c42c3a` | this set | |
 | `--utrecht-alert-ok-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d4edda%22%2F%3E%3C%2Fsvg%3E) `#d4edda` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d3f25%22%2F%3E%3C%2Fsvg%3E) `#1d3f25` | this set | |
+| `--utrecht-alert-ok-border-width` | `1px` | | this set | |
 | `--utrecht-alert-ok-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23155724%22%2F%3E%3C%2Fsvg%3E) `#155724` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23a8eab7%22%2F%3E%3C%2Fsvg%3E) `#a8eab7` | this set | |
 | `--utrecht-alert-padding-block-end` | `24px` | | this set | |
 | `--utrecht-alert-padding-block-start` | `24px` | | this set | |
 | `--utrecht-alert-padding-inline-end` | `24px` | | this set | |
 | `--utrecht-alert-padding-inline-start` | `24px` | | this set | |
+| `--utrecht-alert-positive-border-color` | `var( --tilburg-feedback-positive-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2358cf73%22%2F%3E%3C%2Fsvg%3E) `#58cf73` | this set | |
 | `--utrecht-alert-warning-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23fff3cd%22%2F%3E%3C%2Fsvg%3E) `#fff3cd` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%234f3d04%22%2F%3E%3C%2Fsvg%3E) `#4f3d04` | this set | |
 | `--utrecht-alert-warning-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23856404%22%2F%3E%3C%2Fsvg%3E) `#856404` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23fbda7a%22%2F%3E%3C%2Fsvg%3E) `#fbda7a` | this set | |
 | `--utrecht-badge-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c5c5ca%22%2F%3E%3C%2Fsvg%3E) `#c5c5ca` | this set | |
 | `--utrecht-badge-border-radius` | `10000px` | | this set | |
 | `--utrecht-badge-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f1f1f1%22%2F%3E%3C%2Fsvg%3E) `#f1f1f1` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
 | `--utrecht-badge-counter-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%280%2C%200%2C%200%2C%200.68%29%22%2F%3E%3C%2Fsvg%3E) `rgba(0, 0, 0, 0.68)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebebad%22%2F%3E%3C%2Fsvg%3E) `#ebebebad` | this set | |
+| `--utrecht-badge-counter-border-color` | `transparent` | | this set | |
 | `--utrecht-badge-counter-border-radius` | `50%` | | this set | |
+| `--utrecht-badge-counter-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
 | `--utrecht-badge-counter-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
 | `--utrecht-badge-counter-font-family` | `neue-haas-grotesk-text, sans-serif` | | this set | |
 | `--utrecht-badge-counter-font-size` | `16px` | | this set | |
 | `--utrecht-badge-counter-font-weight` | `400` | | this set | |
+| `--utrecht-badge-counter-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-badge-counter-min-block-size` | `var(--tilburg-size-xs)` | | this set | |
+| `--utrecht-badge-counter-min-inline-size` | `var(--tilburg-size-xs)` | | this set | |
 | `--utrecht-badge-counter-padding-block` | `4px` | | this set | |
 | `--utrecht-badge-counter-padding-inline` | `4px` | | this set | |
 | `--utrecht-badge-counter-text-decoration` | `none` | | this set | |
@@ -519,11 +830,26 @@ Contrast: primary text on primary 11.24:1, primary on background 14.16:1 (pass).
 | `--utrecht-blockquote-content-font-size` | `16px` | | this set | |
 | `--utrecht-blockquote-margin-inline-end` | `32px` | | this set | |
 | `--utrecht-blockquote-margin-inline-start` | `32px` | | this set | |
+| `--utrecht-breadcrumb-nav-divider-size` | `var(--tilburg-size-2xs)` | | this set | |
 | `--utrecht-breadcrumb-nav-font-family` | `neue-haas-grotesk-text, sans-serif` | | this set | |
+| `--utrecht-breadcrumb-nav-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-breadcrumb-nav-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-breadcrumb-nav-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-breadcrumb-nav-link-active-text-decoration` | `none` | | this set | |
 | `--utrecht-breadcrumb-nav-link-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23202125%22%2F%3E%3C%2Fsvg%3E) `#202125` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dadbdf%22%2F%3E%3C%2Fsvg%3E) `#dadbdf` | this set | |
 | `--utrecht-breadcrumb-nav-link-current-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23202125%22%2F%3E%3C%2Fsvg%3E) `#202125` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dadbdf%22%2F%3E%3C%2Fsvg%3E) `#dadbdf` | this set | |
 | `--utrecht-breadcrumb-nav-link-disabled-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23202125%22%2F%3E%3C%2Fsvg%3E) `#202125` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dadbdf%22%2F%3E%3C%2Fsvg%3E) `#dadbdf` | this set | |
+| `--utrecht-breadcrumb-nav-link-focus-text-decoration` | `none` | | this set | |
 | `--utrecht-breadcrumb-nav-link-hover-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23202125%22%2F%3E%3C%2Fsvg%3E) `#202125` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dadbdf%22%2F%3E%3C%2Fsvg%3E) `#dadbdf` | this set | |
+| `--utrecht-breadcrumb-nav-link-hover-text-decoration` | `none` | | this set | |
+| `--utrecht-breadcrumb-nav-link-icon-margin-inline` | `var(--tilburg-space-text-beetle)` | | this set | |
+| `--utrecht-breadcrumb-nav-link-icon-size` | `var(--tilburg-icon-functional-size)` | | this set | |
+| `--utrecht-breadcrumb-nav-link-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-breadcrumb-nav-link-padding-block-start` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-breadcrumb-nav-link-padding-inline-end` | `0px` | | this set | |
+| `--utrecht-breadcrumb-nav-link-padding-inline-start` | `0px` | | this set | |
+| `--utrecht-breadcrumb-nav-link-text-decoration` | `underline` | | this set | |
+| `--utrecht-breadcrumb-nav-margin-inline` | `var(--tilburg-space-inline-beetle)` | | this set | |
 | `--utrecht-breadcrumb-nav-padding-block-end` | `12px` | | this set | |
 | `--utrecht-breadcrumb-nav-padding-block-start` | `12px` | | this set | |
 | `--utrecht-breadcrumb-nav-padding-inline-end` | `0` | | this set | |
@@ -534,26 +860,85 @@ Contrast: primary text on primary 11.24:1, primary on background 14.16:1 (pass).
 | `--utrecht-button-border-radius` | `16px` | | this set | |
 | `--utrecht-button-border-width` | `0` | | this set | |
 | `--utrecht-button-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-button-disabled-border-color` | `transparent` | | this set | |
+| `--utrecht-button-focus-border-color` | `transparent` | | this set | |
 | `--utrecht-button-font-family` | `"Inter", sans-serif` | | this set | |
 | `--utrecht-button-font-size` | `inherit` | | this set | |
 | `--utrecht-button-font-weight` | `inherit` | | this set | |
 | `--utrecht-button-hover-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%2843%2C%2043%2C%2043%2C%200.8%29%22%2F%3E%3C%2Fsvg%3E) `rgba(43, 43, 43, 0.8)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c6c6c6cc%22%2F%3E%3C%2Fsvg%3E) `#c6c6c6cc` | this set | |
 | `--utrecht-button-hover-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%28229%2C%20229%2C%20229%2C%200.8%29%22%2F%3E%3C%2Fsvg%3E) `rgba(229, 229, 229, 0.8)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9ecc%22%2F%3E%3C%2Fsvg%3E) `#9e9e9ecc` | this set | |
 | `--utrecht-button-icon-gap` | `8px` | | this set | |
+| `--utrecht-button-icon-size` | `var(--tilburg-icon-functional-size)` | | this set | |
+| `--utrecht-button-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-button-min-block-size` | `var(--tilburg-pointer-target-min-size)` | | this set | |
+| `--utrecht-button-min-inline-size` | `var(--tilburg-pointer-target-min-size)` | | this set | |
+| `--utrecht-button-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-button-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-button-padding-inline-end` | `var(--tilburg-space-inline-mouse)` | | this set | |
+| `--utrecht-button-padding-inline-start` | `var(--tilburg-space-inline-mouse)` | | this set | |
+| `--utrecht-button-primary-action-active-border-color` | `transparent` | | this set | |
 | `--utrecht-button-primary-action-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232b2b2b%22%2F%3E%3C%2Fsvg%3E) `#2b2b2b` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c6c6c6%22%2F%3E%3C%2Fsvg%3E) `#c6c6c6` | this set | |
+| `--utrecht-button-primary-action-border-color` | `transparent` | | this set | |
 | `--utrecht-button-primary-action-border-width` | `0` | | this set | |
 | `--utrecht-button-primary-action-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-button-primary-action-disabled-border-color` | `transparent` | | this set | |
+| `--utrecht-button-primary-action-focus-border-color` | `transparent` | | this set | |
 | `--utrecht-button-primary-action-font-weight` | `inherit` | | this set | |
 | `--utrecht-button-primary-action-hover-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232b2b2b%22%2F%3E%3C%2Fsvg%3E) `#2b2b2b` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c6c6c6%22%2F%3E%3C%2Fsvg%3E) `#c6c6c6` | this set | |
+| `--utrecht-button-primary-action-hover-border-color` | `transparent` | | this set | |
 | `--utrecht-button-primary-action-hover-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
 | `--utrecht-button-secondary-action-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--utrecht-button-secondary-action-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232b2b2b%22%2F%3E%3C%2Fsvg%3E) `#2b2b2b` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c6c6c6%22%2F%3E%3C%2Fsvg%3E) `#c6c6c6` | this set | |
 | `--utrecht-button-secondary-action-border-width` | `2px` | | this set | |
 | `--utrecht-button-secondary-action-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232b2b2b%22%2F%3E%3C%2Fsvg%3E) `#2b2b2b` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d4d4d4%22%2F%3E%3C%2Fsvg%3E) `#d4d4d4` | this set | |
+| `--utrecht-button-secondary-action-disabled-border-color` | `transparent` | | this set | |
+| `--utrecht-button-secondary-action-focus-border-color` | `transparent` | | this set | |
 | `--utrecht-button-secondary-action-font-weight` | `400` | | this set | |
 | `--utrecht-button-secondary-action-hover-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--utrecht-button-secondary-action-hover-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%2843%2C%2043%2C%2043%2C%200.8%29%22%2F%3E%3C%2Fsvg%3E) `rgba(43, 43, 43, 0.8)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c6c6c6cc%22%2F%3E%3C%2Fsvg%3E) `#c6c6c6cc` | this set | |
 | `--utrecht-button-secondary-action-hover-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%2843%2C%2043%2C%2043%2C%200.8%29%22%2F%3E%3C%2Fsvg%3E) `rgba(43, 43, 43, 0.8)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d4d4d4cc%22%2F%3E%3C%2Fsvg%3E) `#d4d4d4cc` | this set | |
+| `--utrecht-button-subtle-active-border-color` | `transparent` | | this set | |
+| `--utrecht-button-subtle-background-color` | `transparent` | | this set | |
+| `--utrecht-button-subtle-border-color` | `transparent` | | this set | |
+| `--utrecht-button-subtle-disabled-border-color` | `transparent` | | this set | |
+| `--utrecht-button-subtle-focus-border-color` | `transparent` | | this set | |
+| `--utrecht-button-subtle-font-weight` | `var(--tilburg-document-strong-font-weight)` | | this set | |
+| `--utrecht-button-subtle-hover-border-color` | `transparent` | | this set | |
+| `--utrecht-checkbox-active-border-width` | `var( --tilburg-form-control-active-border-width )` | | this set | |
+| `--utrecht-checkbox-background-color` | `var(--tilburg-form-control-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-checkbox-border-radius` | `var(--tilburg-border-radius-sm)` | | this set | |
+| `--utrecht-checkbox-border-width` | `var(--tilburg-form-control-border-width)` | | this set | |
+| `--utrecht-checkbox-checked-active-border-color` | `transparent` | | this set | |
+| `--utrecht-checkbox-checked-active-border-width` | `var( --tilburg-form-control-active-border-width )` | | this set | |
+| `--utrecht-checkbox-checked-border-color` | `transparent` | | this set | |
+| `--utrecht-checkbox-checked-border-width` | `var(--tilburg-form-control-border-width)` | | this set | |
+| `--utrecht-checkbox-checked-disabled-border-color` | `transparent` | | this set | |
+| `--utrecht-checkbox-checked-focus-background-color` | `var( --tilburg-form-control-focus-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-checkbox-checked-focus-border-color` | `var( --tilburg-form-control-focus-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c5c5ca%22%2F%3E%3C%2Fsvg%3E) `#c5c5ca` | this set | |
+| `--utrecht-checkbox-checked-focus-border-width` | `var( --tilburg-form-control-focus-border-width )` | | this set | |
+| `--utrecht-checkbox-checked-focus-color` | `var(--tilburg-form-control-focus-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--utrecht-checkbox-checked-hover-border-color` | `transparent` | | this set | |
+| `--utrecht-checkbox-checked-hover-border-width` | `var( --tilburg-form-control-hover-border-width )` | | this set | |
+| `--utrecht-checkbox-focus-background-color` | `var( --tilburg-form-control-focus-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-checkbox-focus-border-color` | `var( --tilburg-form-control-focus-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c5c5ca%22%2F%3E%3C%2Fsvg%3E) `#c5c5ca` | this set | |
+| `--utrecht-checkbox-focus-border-width` | `var( --tilburg-form-control-focus-border-width )` | | this set | |
+| `--utrecht-checkbox-hover-border-width` | `var( --tilburg-form-control-hover-border-width )` | | this set | |
+| `--utrecht-checkbox-icon-size` | `var(--tilburg-icon-functional-size)` | | this set | |
+| `--utrecht-checkbox-indeterminate-active-border-color` | `transparent` | | this set | |
+| `--utrecht-checkbox-indeterminate-active-border-width` | `var( --tilburg-form-control-active-border-width )` | | this set | |
+| `--utrecht-checkbox-indeterminate-border-color` | `transparent` | | this set | |
+| `--utrecht-checkbox-indeterminate-border-width` | `var( --tilburg-form-control-border-width )` | | this set | |
+| `--utrecht-checkbox-indeterminate-disabled-border-color` | `transparent` | | this set | |
+| `--utrecht-checkbox-indeterminate-focus-background-color` | `var( --tilburg-form-control-focus-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-checkbox-indeterminate-focus-border-color` | `var( --tilburg-form-control-focus-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c5c5ca%22%2F%3E%3C%2Fsvg%3E) `#c5c5ca` | this set | |
+| `--utrecht-checkbox-indeterminate-focus-border-width` | `var( --tilburg-form-control-focus-border-width )` | | this set | |
+| `--utrecht-checkbox-indeterminate-focus-color` | `var( --tilburg-form-control-focus-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--utrecht-checkbox-indeterminate-hover-border-color` | `transparent` | | this set | |
+| `--utrecht-checkbox-indeterminate-hover-border-width` | `var( --tilburg-form-control-hover-border-width )` | | this set | |
+| `--utrecht-checkbox-invalid-background-color` | `var( --tilburg-form-control-invalid-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-checkbox-invalid-border-color` | `var( --tilburg-form-control-invalid-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c42c3a%22%2F%3E%3C%2Fsvg%3E) `#c42c3a` | this set | |
+| `--utrecht-checkbox-invalid-border-width` | `var( --tilburg-form-control-invalid-border-width )` | | this set | |
+| `--utrecht-checkbox-size` | `var(--tilburg-size-xs)` | | this set | |
 | `--utrecht-code-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f5f5f5%22%2F%3E%3C%2Fsvg%3E) `#f5f5f5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d1d1d%22%2F%3E%3C%2Fsvg%3E) `#1d1d1d` | this set | |
 | `--utrecht-code-block-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f5f5f5%22%2F%3E%3C%2Fsvg%3E) `#f5f5f5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d1d1d%22%2F%3E%3C%2Fsvg%3E) `#1d1d1d` | this set | |
 | `--utrecht-code-block-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
@@ -571,9 +956,56 @@ Contrast: primary text on primary 11.24:1, primary on background 14.16:1 (pass).
 | `--utrecht-code-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
 | `--utrecht-code-font-family` | `Monospace, "Lucida Console"` | | this set | |
 | `--utrecht-code-font-size` | `inherit` | | this set | |
+| `--utrecht-data-list-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-data-list-item-action-padding-block-end` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-item-action-padding-block-start` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-item-action-padding-inline-end` | `var( --tilburg-space-inline-mouse )` | | this set | |
+| `--utrecht-data-list-item-action-padding-inline-start` | `0px` | | this set | |
+| `--utrecht-data-list-item-action-row-padding-block-end` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-item-action-row-padding-block-start` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-item-action-row-padding-inline-end` | `0px` | | this set | |
+| `--utrecht-data-list-item-action-row-padding-inline-start` | `var( --tilburg-space-inline-mouse )` | | this set | |
+| `--utrecht-data-list-item-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--utrecht-data-list-item-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--utrecht-data-list-item-key-font-weight` | `var( --tilburg-document-strong-font-weight )` | | this set | |
+| `--utrecht-data-list-item-key-padding-block-end` | `var(--tilburg-space-block-ant)` | | this set | |
+| `--utrecht-data-list-item-key-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-data-list-item-key-padding-inline-end` | `0px` | | this set | |
+| `--utrecht-data-list-item-key-padding-inline-start` | `0px` | | this set | |
+| `--utrecht-data-list-item-key-row-padding-block-end` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-item-key-row-padding-block-start` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-item-key-row-padding-inline-end` | `var( --tilburg-space-inline-mouse )` | | this set | |
+| `--utrecht-data-list-item-key-row-padding-inline-start` | `0px` | | this set | |
+| `--utrecht-data-list-item-value-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-data-list-item-value-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-data-list-item-value-padding-block-start` | `var(--tilburg-space-block-ant)` | | this set | |
+| `--utrecht-data-list-item-value-padding-inline-end` | `0px` | | this set | |
+| `--utrecht-data-list-item-value-padding-inline-start` | `0px` | | this set | |
+| `--utrecht-data-list-item-value-row-padding-block-end` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-item-value-row-padding-block-start` | `var( --tilburg-space-block-snail )` | | this set | |
+| `--utrecht-data-list-item-value-row-padding-inline-end` | `0px` | | this set | |
+| `--utrecht-data-list-item-value-row-padding-inline-start` | `0px` | | this set | |
+| `--utrecht-data-list-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-data-list-rows-item-padding-block-end` | `var(--tilburg-space-block-ant)` | | this set | |
+| `--utrecht-data-list-rows-item-padding-block-start` | `var( --tilburg-space-block-snail )` | | this set | |
 | `--utrecht-document-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--utrecht-document-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
 | `--utrecht-document-font-family` | `neue-haas-grotesk-text, sans-serif` | | this set | |
+| `--utrecht-document-font-size` | `var(--tilburg-typography-font-size-md)` | | this set | |
+| `--utrecht-document-font-weight` | `var(--tilburg-typography-font-weight-normal)` | | this set | |
+| `--utrecht-document-line-height` | `var(--tilburg-typography-line-height-md)` | | this set | |
+| `--utrecht-document-strong-font-weight` | `var(--tilburg-typography-font-weight-bold)` | | this set | |
+| `--utrecht-feedback-danger-fill-border-color` | `var(--tilburg-color-red-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c42c3a%22%2F%3E%3C%2Fsvg%3E) `#c42c3a` | this set | |
+| `--utrecht-feedback-success-fill-border-color` | `var(--tilburg-color-green-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2358cf73%22%2F%3E%3C%2Fsvg%3E) `#58cf73` | this set | |
+| `--utrecht-feedback-warning-fill-border-color` | `var(--tilburg-color-orange-300)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23edb50c%22%2F%3E%3C%2Fsvg%3E) `#edb50c` | this set | |
+| `--utrecht-form-field-description-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-form-field-description-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-form-field-description-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-form-field-error-message-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-form-field-error-message-font-weight` | `var( --tilburg-document-font-weight )` | | this set | |
+| `--utrecht-form-field-error-message-icon-margin-inline-end` | `var( --tilburg-space-text-mouse )` | | this set | |
+| `--utrecht-form-field-error-message-icon-size` | `var(--tilburg-icon-functional-size)` | | this set | |
+| `--utrecht-form-field-error-message-line-height` | `var( --tilburg-document-line-height )` | | this set | |
 | `--utrecht-form-input-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--utrecht-form-input-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23949494%22%2F%3E%3C%2Fsvg%3E) `#949494` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236e6e6e%22%2F%3E%3C%2Fsvg%3E) `#6e6e6e` | this set | |
 | `--utrecht-form-input-border-radius` | `6px` | | this set | |
@@ -586,41 +1018,76 @@ Contrast: primary text on primary 11.24:1, primary on background 14.16:1 (pass).
 | `--utrecht-form-input-padding-inline-end` | `14px` | | this set | |
 | `--utrecht-form-input-padding-inline-start` | `14px` | | this set | |
 | `--utrecht-form-input-placeholder-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236d6d6d%22%2F%3E%3C%2Fsvg%3E) `#6d6d6d` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-form-label-checkbox-font-weight` | `var( --tilburg-typography-font-weight-normal )` | | this set | |
+| `--utrecht-form-label-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--utrecht-form-label-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-form-label-font-weight` | `var(--tilburg-document-strong-font-weight)` | | this set | |
+| `--utrecht-form-label-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-heading-1-color` | `var(--tilburg-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
 | `--utrecht-heading-1-font-family` | `neue-haas-grotesk-text, sans-serif` | | this set | |
+| `--utrecht-heading-1-font-size` | `var(--tilburg-typography-font-size-3xl)` | | this set | |
 | `--utrecht-heading-1-font-weight` | `400` | | this set | |
+| `--utrecht-heading-1-line-height` | `var(--tilburg-typography-line-height-sm)` | | this set | |
 | `--utrecht-heading-1-margin-block-end` | `48px` | | this set | |
 | `--utrecht-heading-1-margin-block-start` | `18px` | | this set | |
+| `--utrecht-heading-2-color` | `var(--tilburg-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
 | `--utrecht-heading-2-font-family` | `neue-haas-grotesk-text, sans-serif` | | this set | |
+| `--utrecht-heading-2-font-size` | `var(--tilburg-typography-font-size-2xl)` | | this set | |
 | `--utrecht-heading-2-font-weight` | `400` | | this set | |
+| `--utrecht-heading-2-line-height` | `var(--tilburg-typography-line-height-sm)` | | this set | |
 | `--utrecht-heading-2-margin-block-end` | `48px` | | this set | |
 | `--utrecht-heading-2-margin-block-start` | `18px` | | this set | |
+| `--utrecht-heading-3-color` | `var(--tilburg-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
 | `--utrecht-heading-3-font-family` | `neue-haas-grotesk-text, sans-serif` | | this set | |
+| `--utrecht-heading-3-font-size` | `var(--tilburg-typography-font-size-xl)` | | this set | |
 | `--utrecht-heading-3-font-weight` | `400` | | this set | |
+| `--utrecht-heading-3-line-height` | `var(--tilburg-typography-line-height-sm)` | | this set | |
 | `--utrecht-heading-3-margin-block-end` | `32px` | | this set | |
 | `--utrecht-heading-3-margin-block-start` | `18px` | | this set | |
+| `--utrecht-heading-4-color` | `var(--tilburg-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
 | `--utrecht-heading-4-font-family` | `neue-haas-grotesk-text, sans-serif` | | this set | |
+| `--utrecht-heading-4-font-size` | `var(--tilburg-typography-font-size-lg)` | | this set | |
 | `--utrecht-heading-4-font-weight` | `400` | | this set | |
+| `--utrecht-heading-4-line-height` | `var(--tilburg-typography-line-height-md)` | | this set | |
 | `--utrecht-heading-4-margin-block-end` | `24px` | | this set | |
 | `--utrecht-heading-4-margin-block-start` | `18px` | | this set | |
+| `--utrecht-heading-5-color` | `var(--tilburg-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
 | `--utrecht-heading-5-font-family` | `neue-haas-grotesk-text, sans-serif` | | this set | |
+| `--utrecht-heading-5-font-size` | `var(--tilburg-typography-font-size-md)` | | this set | |
 | `--utrecht-heading-5-font-weight` | `100` | | this set | |
+| `--utrecht-heading-5-line-height` | `var(--tilburg-typography-line-height-md)` | | this set | |
 | `--utrecht-heading-5-margin-block-end` | `24px` | | this set | |
 | `--utrecht-heading-5-margin-block-start` | `18px` | | this set | |
+| `--utrecht-heading-6-color` | `var(--tilburg-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--utrecht-heading-6-font-size` | `var(--tilburg-typography-font-size-sm)` | | this set | |
+| `--utrecht-heading-6-font-weight` | `var(--tilburg-heading-font-weight)` | | this set | |
+| `--utrecht-heading-6-line-height` | `var(--tilburg-typography-line-height-md)` | | this set | |
 | `--utrecht-icon-gap` | `8px` | | this set | |
+| `--utrecht-link-active-text-decoration` | `none` | | this set | |
 | `--utrecht-link-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%280%2C%200%2C%200%2C%200.68%29%22%2F%3E%3C%2Fsvg%3E) `rgba(0, 0, 0, 0.68)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebebad%22%2F%3E%3C%2Fsvg%3E) `#ebebebad` | this set | |
+| `--utrecht-link-focus-background-color` | `transparent` | | this set | |
+| `--utrecht-link-focus-text-decoration` | `none` | | this set | |
+| `--utrecht-link-focus-text-decoration-thickness` | `auto` | | this set | |
+| `--utrecht-link-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-link-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
 | `--utrecht-link-hover-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%280%2C%200%2C%200%2C%200.5%29%22%2F%3E%3C%2Fsvg%3E) `rgba(0, 0, 0, 0.5)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebeb80%22%2F%3E%3C%2Fsvg%3E) `#ebebeb80` | this set | |
 | `--utrecht-link-hover-text-decoration` | `none` | | this set | |
 | `--utrecht-link-hover-text-decoration-thickness` | `0` | | this set | |
+| `--utrecht-link-icon-margin-inline` | `var(--tilburg-space-text-beetle)` | | this set | |
 | `--utrecht-link-icon-size` | `18px` | | this set | |
+| `--utrecht-link-line-height` | `var(--tilburg-document-line-height)` | | this set | |
 | `--utrecht-link-text-decoration` | `none` | | this set | |
 | `--utrecht-link-text-decoration-color` | `unset` | | this set | |
 | `--utrecht-link-text-decoration-thickness` | `0` | | this set | |
 | `--utrecht-link-text-underline-offset` | `2px` | | this set | |
 | `--utrecht-link-visited-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%280%2C%200%2C%200%2C%200.68%29%22%2F%3E%3C%2Fsvg%3E) `rgba(0, 0, 0, 0.68)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebebad%22%2F%3E%3C%2Fsvg%3E) `#ebebebad` | this set | |
+| `--utrecht-ordered-list-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
 | `--utrecht-ordered-list-font-size` | `16px` | | this set | |
+| `--utrecht-ordered-list-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
 | `--utrecht-ordered-list-item-margin-block-end` | `4px` | | this set | |
 | `--utrecht-ordered-list-item-margin-block-start` | `4px` | | this set | |
 | `--utrecht-ordered-list-item-padding-inline-start` | `1ch` | | this set | |
+| `--utrecht-ordered-list-line-height` | `var(--tilburg-document-line-height)` | | this set | |
 | `--utrecht-ordered-list-margin-block-end` | `14px` | | this set | |
 | `--utrecht-ordered-list-margin-block-start` | `14px` | | this set | |
 | `--utrecht-ordered-list-padding-inline-start` | `32px` | | this set | |
@@ -650,9 +1117,19 @@ Contrast: primary text on primary 11.24:1, primary on background 14.16:1 (pass).
 | `--utrecht-page-margin-inline-start` | `24px` | | this set | |
 | `--utrecht-paragraph-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
 | `--utrecht-paragraph-font-family` | `neue-haas-grotesk-text, sans-serif` | | this set | |
+| `--utrecht-paragraph-font-size` | `var(--tilburg-document-font-size)` | | this set | |
 | `--utrecht-paragraph-font-weight` | `400` | | this set | |
+| `--utrecht-paragraph-lead-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--utrecht-paragraph-lead-font-size` | `var(--tilburg-typography-font-size-lg)` | | this set | |
+| `--utrecht-paragraph-lead-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-paragraph-lead-line-height` | `var(--tilburg-document-line-height)` | | this set | |
+| `--utrecht-paragraph-line-height` | `var(--tilburg-document-line-height)` | | this set | |
 | `--utrecht-paragraph-margin-block-end` | `0` | | this set | |
 | `--utrecht-paragraph-margin-block-start` | `0` | | this set | |
+| `--utrecht-paragraph-small-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--utrecht-paragraph-small-font-size` | `var(--tilburg-typography-font-size-sm)` | | this set | |
+| `--utrecht-paragraph-small-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-paragraph-small-line-height` | `var(--tilburg-document-line-height)` | | this set | |
 | `--utrecht-radio-button-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--utrecht-radio-button-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23767676%22%2F%3E%3C%2Fsvg%3E) `#767676` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23878787%22%2F%3E%3C%2Fsvg%3E) `#878787` | this set | |
 | `--utrecht-radio-button-border-width` | `1px` | | this set | |
@@ -692,22 +1169,77 @@ Contrast: primary text on primary 11.24:1, primary on background 14.16:1 (pass).
 | `--utrecht-radio-button-invalid-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dc3545%22%2F%3E%3C%2Fsvg%3E) `#dc3545` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c42c3a%22%2F%3E%3C%2Fsvg%3E) `#c42c3a` | this set | |
 | `--utrecht-radio-button-invalid-border-width` | `1px` | | this set | |
 | `--utrecht-radio-button-invalid-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dc3545%22%2F%3E%3C%2Fsvg%3E) `#dc3545` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e25a67%22%2F%3E%3C%2Fsvg%3E) `#e25a67` | this set | |
+| `--utrecht-radio-button-label-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-radio-button-label-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-radio-button-label-line-height` | `var(--tilburg-document-line-height)` | | this set | |
 | `--utrecht-radio-button-min-block-size` | `16px` | | this set | |
 | `--utrecht-radio-button-min-inline-size` | `16px` | | this set | |
+| `--utrecht-select-background-color` | `var(--tilburg-form-control-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-select-background-image` | `url("data:image/svg+xml,%3Csvg width='14' height='8' viewBox='0 0 14 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M0.292893 0.292893C0.683417 -0.0976311 1.31658 -0.0976311 1.70711 0.292893L7 5.58579L12.2929 0.292893C12.6834 -0.0976311 13.3166 -0.0976311 13.7071 0.292893C14.0976 0.683417 14.0976 1.31658 13.7071 1.70711L7.70711 7.70711C7.31658 8.09763 6.68342 8.09763 6.29289 7.70711L0.292893 1.70711C-0.0976311 1.31658 -0.0976311 0.683417 0.292893 0.292893Z' fill='%23001737'/%3E%3C/svg%3E")` | | this set | |
+| `--utrecht-select-border-bottom-width` | `auto` | | this set | |
+| `--utrecht-select-border-radius` | `var(--tilburg-border-radius-md)` | | this set | |
+| `--utrecht-select-border-width` | `var(--tilburg-form-control-border-width)` | | this set | |
+| `--utrecht-select-focus-background-color` | `var( --tilburg-form-control-focus-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-select-focus-border-color` | `var( --tilburg-form-control-focus-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c5c5ca%22%2F%3E%3C%2Fsvg%3E) `#c5c5ca` | this set | |
+| `--utrecht-select-focus-border-width` | `var( --tilburg-form-control-focus-border-width )` | | this set | |
+| `--utrecht-select-focus-color` | `var(--tilburg-form-control-focus-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--utrecht-select-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-select-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-select-hover-border-width` | `var( --tilburg-form-control-hover-border-width )` | | this set | |
+| `--utrecht-select-icon-size` | `var(--tilburg-icon-functional-size)` | | this set | |
+| `--utrecht-select-invalid-background-color` | `var( --tilburg-form-control-invalid-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-select-invalid-border-color` | `var( --tilburg-form-control-invalid-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c42c3a%22%2F%3E%3C%2Fsvg%3E) `#c42c3a` | this set | |
+| `--utrecht-select-invalid-border-width` | `var( --tilburg-form-control-invalid-border-width )` | | this set | |
+| `--utrecht-select-max-inline-size` | `400px` | | this set | |
+| `--utrecht-select-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-select-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-select-padding-inline-end` | `var(--tilburg-space-inline-snail)` | | this set | |
+| `--utrecht-select-padding-inline-start` | `var(--tilburg-space-inline-snail)` | | this set | |
+| `--utrecht-separator-block-end` | `0` | | this set | |
 | `--utrecht-separator-block-size` | `1px` | | this set | |
+| `--utrecht-separator-block-start` | `0` | | this set | |
 | `--utrecht-separator-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23e5e5e5%22%2F%3E%3C%2Fsvg%3E) `#e5e5e5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232a2a2a%22%2F%3E%3C%2Fsvg%3E) `#2a2a2a` | this set | |
 | `--utrecht-separator-margin-block-end` | `0px` | | this set | |
 | `--utrecht-separator-margin-block-start` | `0px` | | this set | |
+| `--utrecht-separator-width` | `100%` | | this set | |
+| `--utrecht-skip-link-border-color` | `transparent` | | this set | |
+| `--utrecht-skip-link-border-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--utrecht-skip-link-focus-border-color` | `transparent` | | this set | |
+| `--utrecht-skip-link-focus-text-decoration` | `none` | | this set | |
+| `--utrecht-skip-link-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-skip-link-font-weight` | `var(--tilburg-document-strong-font-weight)` | | this set | |
+| `--utrecht-skip-link-min-block-size` | `var(--tilburg-pointer-target-min-size)` | | this set | |
+| `--utrecht-skip-link-min-inline-size` | `var(--tilburg-pointer-target-min-size)` | | this set | |
+| `--utrecht-skip-link-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-skip-link-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-skip-link-padding-inline-end` | `var(--tilburg-space-inline-mouse)` | | this set | |
+| `--utrecht-skip-link-padding-inline-start` | `var(--tilburg-space-inline-mouse)` | | this set | |
+| `--utrecht-skip-link-text-decoration` | `underline` | | this set | |
 | `--utrecht-surface-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--utrecht-table-border-collapse` | `collapse` | | this set | |
 | `--utrecht-table-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f5f5f5%22%2F%3E%3C%2Fsvg%3E) `#f5f5f5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d1d1d%22%2F%3E%3C%2Fsvg%3E) `#1d1d1d` | this set | |
 | `--utrecht-table-border-width` | `1px` | | this set | |
+| `--utrecht-table-caption-color` | `var(--tilburg-heading-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--utrecht-table-caption-font-size` | `var(--tilburg-typography-font-size-xl)` | | this set | |
+| `--utrecht-table-caption-font-weight` | `var(--tilburg-heading-font-weight)` | | this set | |
+| `--utrecht-table-caption-margin-block-end` | `var(--tilburg-space-block-rabbit)` | | this set | |
+| `--utrecht-table-cell-line-height` | `var(--tilburg-typography-line-height-md)` | | this set | |
 | `--utrecht-table-cell-padding-block-end` | `18px` | | this set | |
 | `--utrecht-table-cell-padding-block-start` | `18px` | | this set | |
 | `--utrecht-table-cell-padding-inline-end` | `18px` | | this set | |
 | `--utrecht-table-cell-padding-inline-start` | `18px` | | this set | |
+| `--utrecht-table-data-cell-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--utrecht-table-data-cell-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-table-data-cell-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
 | `--utrecht-table-font-family` | `neue-haas-grotesk-text, sans-serif` | | this set | |
 | `--utrecht-table-font-size` | `16px` | | this set | |
+| `--utrecht-table-footer-background-color` | `transparent` | | this set | |
+| `--utrecht-table-footer-border-block-end-width` | `var(--tilburg-border-width-sm)` | | this set | |
+| `--utrecht-table-footer-cell-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
+| `--utrecht-table-footer-cell-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-table-footer-cell-font-weight` | `var( --tilburg-document-strong-font-weight )` | | this set | |
+| `--utrecht-table-header-background-color` | `transparent` | | this set | |
+| `--utrecht-table-header-border-block-end-width` | `var(--tilburg-border-width-md)` | | this set | |
 | `--utrecht-table-header-cell-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
 | `--utrecht-table-header-cell-font-size` | `16px` | | this set | |
 | `--utrecht-table-header-cell-font-weight` | `700` | | this set | |
@@ -717,28 +1249,61 @@ Contrast: primary text on primary 11.24:1, primary on background 14.16:1 (pass).
 | `--utrecht-table-header-text-transform` | `unset` | | this set | |
 | `--utrecht-table-margin-block-end` | `0` | | this set | |
 | `--utrecht-table-margin-block-start` | `18px` | | this set | |
+| `--utrecht-table-row-background-color` | `transparent` | | this set | |
 | `--utrecht-table-row-border-block-end-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23f5f5f5%22%2F%3E%3C%2Fsvg%3E) `#f5f5f5` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%231d1d1d%22%2F%3E%3C%2Fsvg%3E) `#1d1d1d` | this set | |
 | `--utrecht-table-row-border-block-end-width` | `1px` | | this set | |
+| `--utrecht-textarea-background-color` | `var(--tilburg-form-control-background-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-textarea-border-block-end-width` | `var(--utrecht-textarea-border-width)` | | this set | |
+| `--utrecht-textarea-border-radius` | `var(--tilburg-border-radius-md)` | | this set | |
+| `--utrecht-textarea-border-width` | `var(--tilburg-form-control-border-width)` | | this set | |
+| `--utrecht-textarea-font-size` | `var(--tilburg-document-font-size)` | | this set | |
+| `--utrecht-textarea-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-textarea-max-inline-size` | `400px` | | this set | |
+| `--utrecht-textarea-padding-block-end` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-textarea-padding-block-start` | `var(--tilburg-space-block-snail)` | | this set | |
+| `--utrecht-textarea-padding-inline-end` | `var(--tilburg-space-inline-snail)` | | this set | |
+| `--utrecht-textarea-padding-inline-start` | `var(--tilburg-space-inline-snail)` | | this set | |
 | `--utrecht-textbox-background-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-textbox-border-block-end-width` | `auto` | | this set | |
 | `--utrecht-textbox-border-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23949494%22%2F%3E%3C%2Fsvg%3E) `#949494` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236e6e6e%22%2F%3E%3C%2Fsvg%3E) `#6e6e6e` | this set | |
 | `--utrecht-textbox-border-radius` | `6px` | | this set | |
 | `--utrecht-textbox-border-width` | `1px` | | this set | |
 | `--utrecht-textbox-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236d6d6d%22%2F%3E%3C%2Fsvg%3E) `#6d6d6d` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-textbox-focus-background-color` | `var( --tilburg-form-control-focus-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-textbox-focus-border-color` | `var( --tilburg-form-control-focus-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c5c5ca%22%2F%3E%3C%2Fsvg%3E) `#c5c5ca` | this set | |
+| `--utrecht-textbox-focus-border-width` | `var( --tilburg-form-control-focus-border-width )` | | this set | |
+| `--utrecht-textbox-focus-color` | `var(--tilburg-form-control-focus-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
 | `--utrecht-textbox-font-family` | `neue-haas-grotesk-text, sans-serif` | | this set | |
 | `--utrecht-textbox-font-size` | `15px` | | this set | |
+| `--utrecht-textbox-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
+| `--utrecht-textbox-hover-border-width` | `var( --tilburg-form-control-hover-border-width )` | | this set | |
+| `--utrecht-textbox-invalid-background-color` | `var( --tilburg-form-control-invalid-background-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
+| `--utrecht-textbox-invalid-border-color` | `var( --tilburg-form-control-invalid-border-color )` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c42c3a%22%2F%3E%3C%2Fsvg%3E) `#c42c3a` | this set | |
+| `--utrecht-textbox-invalid-border-width` | `var( --tilburg-form-control-invalid-border-width )` | | this set | |
+| `--utrecht-textbox-max-inline-size` | `400px` | | this set | |
 | `--utrecht-textbox-padding-block-end` | `8px` | | this set | |
 | `--utrecht-textbox-padding-block-start` | `8px` | | this set | |
 | `--utrecht-textbox-padding-inline-end` | `14px` | | this set | |
 | `--utrecht-textbox-padding-inline-start` | `14px` | | this set | |
 | `--utrecht-textbox-placeholder-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%236d6d6d%22%2F%3E%3C%2Fsvg%3E) `#6d6d6d` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%239e9e9e%22%2F%3E%3C%2Fsvg%3E) `#9e9e9e` | this set | |
+| `--utrecht-unordered-list-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23d3d3d7%22%2F%3E%3C%2Fsvg%3E) `#d3d3d7` | this set | |
 | `--utrecht-unordered-list-font-size` | `16px` | | this set | |
+| `--utrecht-unordered-list-font-weight` | `var(--tilburg-document-font-weight)` | | this set | |
 | `--utrecht-unordered-list-item-margin-block-end` | `8px` | | this set | |
 | `--utrecht-unordered-list-item-margin-block-start` | `8px` | | this set | |
 | `--utrecht-unordered-list-item-padding-inline-start` | `1ch` | | this set | |
 | `--utrecht-unordered-list-margin-block-end` | `0` | | this set | |
 | `--utrecht-unordered-list-margin-block-start` | `18px` | | this set | |
+| `--utrecht-unordered-list-marker-border-color` | `var(--tilburg-document-color)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c5c5ca%22%2F%3E%3C%2Fsvg%3E) `#c5c5ca` | this set | |
 | `--utrecht-unordered-list-marker-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%280%2C%200%2C%200%2C%200.68%29%22%2F%3E%3C%2Fsvg%3E) `rgba(0, 0, 0, 0.68)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebebad%22%2F%3E%3C%2Fsvg%3E) `#ebebebad` | this set | |
 | `--utrecht-unordered-list-padding-inline-start` | `2ch` | | this set | |
+| `--vng-color-black` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c5c5ca%22%2F%3E%3C%2Fsvg%3E) `#c5c5ca` | this set | |
+| `--vng-color-black-txt` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328282c%22%2F%3E%3C%2Fsvg%3E) `#28282c` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c5c5ca%22%2F%3E%3C%2Fsvg%3E) `#c5c5ca` | this set | |
+| `--vng-color-blue-500` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%232b2b2b%22%2F%3E%3C%2Fsvg%3E) `#2b2b2b` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c6c6c6%22%2F%3E%3C%2Fsvg%3E) `#c6c6c6` | this set | |
+| `--vng-color-green-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2328a745%22%2F%3E%3C%2Fsvg%3E) `#28a745` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%2358cf73%22%2F%3E%3C%2Fsvg%3E) `#58cf73` | this set | |
+| `--vng-color-orange-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffc107%22%2F%3E%3C%2Fsvg%3E) `#ffc107` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23edb50c%22%2F%3E%3C%2Fsvg%3E) `#edb50c` | this set | |
+| `--vng-color-red-300` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23dc3545%22%2F%3E%3C%2Fsvg%3E) `#dc3545` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23c42c3a%22%2F%3E%3C%2Fsvg%3E) `#c42c3a` | this set | |
+| `--vng-color-white` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ffffff%22%2F%3E%3C%2Fsvg%3E) `#ffffff` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23141414%22%2F%3E%3C%2Fsvg%3E) `#141414` | this set | |
 | `--xxllnc-catalogi-rating-font-family` | `neue-haas-grotesk-text, sans-serif` | | this set | |
 | `--xxllnc-catalogi-rating-font-size` | `16px` | | this set | |
 | `--xxllnc-catalogi-rating-rating-bar-color` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22rgba%280%2C%200%2C%200%2C%200.68%29%22%2F%3E%3C%2Fsvg%3E) `rgba(0, 0, 0, 0.68)` | ![](data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2214%22%20height%3D%2214%22%3E%3Crect%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22%23ebebebad%22%2F%3E%3C%2Fsvg%3E) `#ebebebad` | this set | |

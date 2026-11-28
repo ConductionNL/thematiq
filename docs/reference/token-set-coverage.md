@@ -40,13 +40,13 @@ that lowers the allow-list count with nothing fixed, so it has to be written dow
 | cunningham | n/a | declared | no (known) | pass |
 | demodam | 55/87 | self-hosted | no (known) | pass |
 | denhaag | 81/87 | declared | yes | pass |
-| dinkelland | 53/87 | self-hosted | no (known) | pass |
+| dinkelland | 78/87 | self-hosted | no (known) | pass |
 | drechterland | 56/87 | system | yes | pass |
 | duiven | 55/87 | self-hosted | no (known) | pass |
 | duo | 55/87 | declared | no (known) | pass |
 | enkhuizen | 56/87 | system | no (known) | pass |
-| enschede | 55/87 | self-hosted | no (known) | pass |
-| epe | 52/87 | self-hosted | yes | pass |
+| enschede | 71/87 | self-hosted | no (known) | pass |
+| epe | 39/87 | self-hosted | yes | pass |
 | esdoornveen | 0/87 | self-hosted | yes | pass |
 | example-basisschool | 74/87 | self-hosted | yes | pass |
 | example-college | 74/87 | self-hosted | yes | pass |
@@ -54,22 +54,22 @@ that lowers the allow-list count with nothing fixed, so it has to be written dow
 | example-opleider | 74/87 | self-hosted | yes | pass |
 | example-voortgezet | 74/87 | self-hosted | yes | pass |
 | frankendesk | n/a | self-hosted | yes | pass |
-| groningen | 55/87 | self-hosted | no (known) | pass |
+| groningen | 39/87 | self-hosted | no (known) | pass |
 | haarlem | 62/87 | declared | no (known) | pass |
 | haarlemmermeer | 55/87 | declared | no (known) | pass |
-| hoeksche-waard | 53/87 | self-hosted | no (known) | pass |
+| hoeksche-waard | 70/87 | self-hosted | no (known) | pass |
 | hoog-contrast | n/a | self-hosted | no (known) | pass |
 | hoorn | 57/87 | self-hosted | yes | pass |
 | horstaandemaas | 52/87 | declared | no (known) | pass |
 | kvk | 39/87 | self-hosted | no (known) | pass |
 | lasuite | n/a | declared | no (known) | pass |
-| leiden | 55/87 | self-hosted | yes | pass |
+| leiden | 71/87 | self-hosted | yes | pass |
 | leidschendam-voorburg | 56/87 | self-hosted | no (known) | pass |
-| losser | 55/87 | self-hosted | no (known) | pass |
-| nijmegen | 58/87 | self-hosted | yes | pass |
-| noaberkracht | 53/87 | declared | no (known) | pass |
+| losser | 71/87 | self-hosted | no (known) | pass |
+| nijmegen | 76/87 | self-hosted | yes | pass |
+| noaberkracht | 80/87 | declared | no (known) | pass |
 | noordoostpolder | 54/87 | self-hosted | no (known) | pass |
-| noordwijk | 52/87 | self-hosted | yes | pass |
+| noordwijk | 79/87 | self-hosted | yes | pass |
 | nora | 50/87 | self-hosted | no (known) | pass |
 | opencatalogi | 79/87 | declared | yes | pass |
 | openwoo | 0/87 | system | no (known) | pass |
@@ -82,25 +82,25 @@ that lowers the allow-list count with nothing fixed, so it has to be written dow
 | sittard-geleen | 55/87 | declared | no (known) | pass |
 | stedebroec | 57/87 | system | no (known) | pass |
 | tilburg | 62/87 | system | yes | pass |
-| tubbergen | 53/87 | self-hosted | no (known) | pass |
+| tubbergen | 78/87 | self-hosted | no (known) | pass |
 | utrecht | 57/87 | declared | yes | pass |
 | vaartveld | 0/87 | self-hosted | yes | pass |
 | venray | 60/87 | declared | no (known) | pass |
 | vidar | 55/87 | declared | no (known) | pass |
 | vng | 74/87 | declared | yes | pass |
-| voorne-aan-zee | 55/87 | self-hosted | no (known) | pass |
+| voorne-aan-zee | 71/87 | self-hosted | no (known) | pass |
 | vught | 60/87 | declared | no (known) | pass |
 | warmtepompacademie | 0/87 | self-hosted | yes | pass |
 | westervoort | 53/87 | self-hosted | no (known) | pass |
 | wilgenboom | 0/87 | self-hosted | yes | pass |
-| xxllnc | 46/87 | declared | yes | pass |
-| zaanstad | 55/87 | self-hosted | no (known) | pass |
+| xxllnc | 79/87 | declared | yes | pass |
+| zaanstad | 71/87 | self-hosted | no (known) | pass |
 | zevenaar | 52/87 | self-hosted | no (known) | pass |
 | zuiddrecht | 0/87 | self-hosted | yes | pass |
 | zwolle | 65/87 | declared | no (known) | pass |
 
 - 66 sets measured; 27 pass every gated dimension (font, logo, contrast).
-- bridge (measured, NOT gated): 6 of 62 bridged sets declare none of the 87 --utrecht-* names; median 55.
+- bridge (measured, NOT gated): 6 of 62 bridged sets declare none of the 87 --utrecht-* names; median 57.
 - font: 22 declared, 39 self-hosted, 5 system.
 - logo: 39 of 66 point Nextcloud at no logo.
 - contrast: 0 of 66 do not pass.

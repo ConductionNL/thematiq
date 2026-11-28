@@ -136,6 +136,19 @@ final class LayoutOptionValues {
 	public const HEADER_STYLE_WORKPLACE = 'workplace';
 
 	/**
+	 * The layout options, with their values, that together draw the workplace top bar: the light
+	 * workplace layout and the workplace header.
+	 *
+	 * @var array<string, string>
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+	 */
+	public const WORKPLACE_TOP_BAR = [
+		LayoutOptionsService::WORKPLACE_LAYOUT_KEY => LayoutOptionsService::LAYOUT_LIGHT,
+		self::HEADER_STYLE_KEY => self::HEADER_STYLE_WORKPLACE,
+	];
+
+	/**
 	 * The values each option may hold, by app config key, the two older
 	 * options included. The navigation width is a whole number of pixels in
 	 * its range instead, and is not listed.

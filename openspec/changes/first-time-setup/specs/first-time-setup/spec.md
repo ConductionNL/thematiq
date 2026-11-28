@@ -261,11 +261,17 @@ a choice between a Workplace and a Classic style. On MUST mean thematiq's workpl
 store the administrator's `menu.style` default workplace. Off MUST mean Nextcloud's own menu: Apply MUST
 store the administrator's `menu.style` default classic and no other `menu.<key>` default. While the
 switch is on the step MUST show the workplace menu's defaults, columns 3 to 5, rows above More apps 1 to
-3, and the switches Show payoff, Show Create and Show external apps, ending in Apply, and Apply MUST store
-them as the administrator's `menu.<key>` defaults, checked as `POST /app-menu/defaults` checks them. The
-workplace apps menu shows only in the workplace top bar: when the switch is on and the chosen house
-style does not draw the workplace top bar, Apply MUST also store `header_style` workplace. With the
-switch off, `header_style` MUST be left as it is.
+3 as selects, under Display the switches Show titles, Show payoff, Create row in the apps menu and Show
+external apps, and under Top bar the switches Create button in the top bar and Contacts button in the
+top bar, each a card with its help text as TqSetupAppmenu draws it, ending in Apply, and Apply MUST store
+them as the administrator's `menu.<key>` defaults (`titles`, `payoff`, `showCreateRow`,
+`showExternalApps`, `showCreateButton`, `showContactsMenu`), checked as `POST /app-menu/defaults` checks
+them. The
+workplace apps menu shows only in the workplace top bar, which is the light workplace layout with the
+workplace header: when the switch is on and the chosen house style does not draw the workplace top bar,
+Apply MUST also store `workplace_layout` light and `header_style` workplace, each only where the set
+does not resolve to it already. With the switch off, `workplace_layout` and `header_style` MUST be left
+as they are.
 
 Board: TqSetupAppmenu, without its Style row (Ruben, 27 November 2026).
 
@@ -284,7 +290,7 @@ Board: TqSetupAppmenu, without its Style row (Ruben, 27 November 2026).
 #### Scenario: Turning the menu on brings the workplace top bar
 - GIVEN the administrator chose a house style that does not draw the workplace top bar
 - WHEN they keep "Use the thematiq apps menu" on and press Apply
-- THEN `header_style` MUST be workplace
+- THEN `workplace_layout` MUST be light and `header_style` MUST be workplace
 - AND a user who is not an administrator MUST see the workplace top bar with the workplace apps menu
 
 #### Scenario: The menu off keeps Nextcloud's own menu

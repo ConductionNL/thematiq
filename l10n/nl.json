@@ -2184,7 +2184,19 @@
         "The Nextcloud theme followed the set.": "Het Nextcloud-thema volgde de set.",
         "The Nextcloud theme follows the next change of set.": "Het Nextcloud-thema volgt de volgende wissel van set.",
         "The Nextcloud theme now follows the set. The previous theme is kept as a version in the log.": "Het Nextcloud-thema volgt nu de set. Het vorige thema blijft bewaard als versie in het logboek.",
-        "Thematiq leaves the Nextcloud theme alone.": "Thematiq laat het Nextcloud-thema met rust."
+        "Thematiq leaves the Nextcloud theme alone.": "Thematiq laat het Nextcloud-thema met rust.",
+        "A token set of a Dutch government, or your own set.": "Een tokenset van een Nederlandse overheid, of je eigen set.",
+        "Logo, colours, favicon and the login page take on the house style.": "Logo, kleuren, favicon en de inlogpagina nemen de huisstijl over.",
+        "Apps with a payoff, pinning to the top bar and Create.": "Apps met payoff, vastzetten in de bovenbalk en Nieuw maken.",
+        "The thematiq apps menu replaces the standard menu: apps with a title and payoff, pinning to the top bar, Create and an order of their own for each person. This is the default for everyone; afterwards everyone changes their own order and pinned apps.": "Het appmenu van thematiq vervangt het standaardmenu: apps met titel en payoff, vastzetten in de bovenbalk, Nieuw maken en een eigen volgorde per persoon. Dit is de standaard voor iedereen; iedereen past daarna de eigen volgorde en vastgezette apps aan.",
+        "On or off, there is no other choice. Off: Nextcloud keeps its own menu, the rest of the house style stays.": "Aan of uit, meer keuze is er niet. Uit: Nextcloud houdt zijn eigen menu, de rest van de huisstijl blijft.",
+        "One line under each app on what it does.": "Onder elke app één regel wat hij doet.",
+        "Document, spreadsheet, presentation, whiteboard.": "Document, spreadsheet, presentatie, whiteboard.",
+        "OpenProject, XWiki and what you add yourself.": "OpenProject, XWiki en wat je zelf toevoegt.",
+        "A token file from your designer.": "Een tokenbestand van je ontwerper.",
+        "Nextcloud has a theme of its own: logo, colours and favicon. Thematiq sets them to the set, so the apps on phone and computer, the emails and the login page follow the house style too.": "Nextcloud heeft een eigen thema: logo, kleuren en favicon. Thematiq zet die gelijk aan de set, zodat ook de apps op telefoon en computer, de e-mails en de inlogpagina de huisstijl volgen.",
+        "With a dark version.": "Met een donkere versie.",
+        "In the browser tab and on the home screen of your phone.": "In het tabblad en op het startscherm van je telefoon."
     },
     "plurals": {}
 }

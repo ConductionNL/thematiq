@@ -83,7 +83,7 @@
 			"primary_color": "#0066cc",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-bodegraven-reeuwijk-house-style",
@@ -101,7 +101,7 @@
 			"primary_color": "#003352",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "Droid Sans W01",
@@ -127,7 +127,7 @@
 			"primary_color": "#d41422",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-buren-house-style",
@@ -145,7 +145,7 @@
 			"primary_color": "#027db5",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-demodam-house-style",
@@ -163,7 +163,7 @@
 			"primary_color": "#006cb9",
 			"background_color": "#ffffff"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-dinkelland-house-style",
@@ -182,7 +182,7 @@
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/drechterland.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-drechterland-house-style",
@@ -200,7 +200,7 @@
 			"primary_color": "#1d5b8f",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-duiven-house-style",
@@ -218,7 +218,7 @@
 			"primary_color": "#004fa3",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "RijksoverheidSans",
@@ -244,7 +244,7 @@
 			"primary_color": "#0055ad",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-enkhuizen-house-style",
@@ -259,12 +259,12 @@
 		"name": "Gemeente Epe",
 		"description": "Design tokens for Gemeente Epe",
 		"theming": {
-			"primary_color": "#00549e",
+			"primary_color": "#01699d",
 			"background_color": "#ffffff",
 			"logo": "img/logos/epe.svg",
 			"logo_dark": "img/logos/epe-dark.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.3",
 		"licence": {
 			"id": "LicenseRef-epe-house-style",
@@ -282,12 +282,12 @@
 			"primary_color": "#055fa5",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "2a75406b722e286019e01d8d48c11d4cec14a0cb",
-		"upstreamVersion": "5.1.0",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
+		"upstreamVersion": "7.1.0",
 		"licence": {
 			"id": "LicenseRef-groningen-house-style",
 			"package": "@nl-design-system-unstable/groningen-design-tokens",
-			"version": "5.1.0",
+			"version": "7.1.0",
 			"holder": "Gemeente Groningen",
 			"restricted": true
 		}
@@ -300,7 +300,7 @@
 			"primary_color": "#1457a3",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "Sofia Pro",
@@ -326,7 +326,7 @@
 			"primary_color": "#068482",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "Calibri",
@@ -353,7 +353,7 @@
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/hoorn.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-hoorn-house-style",
@@ -371,7 +371,7 @@
 			"primary_color": "#125ea4",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "DIN",
@@ -398,12 +398,12 @@
 			"background_color": "#FFFFFF",
 			"logo": "img/logos/leiden.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "3.0.0",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
+		"upstreamVersion": "3.1.1",
 		"licence": {
 			"id": "LicenseRef-leiden-house-style",
 			"package": "@nl-design-system-unstable/leiden-design-tokens",
-			"version": "3.0.0",
+			"version": "3.1.1",
 			"holder": "Gemeente Leiden",
 			"restricted": true
 		}
@@ -416,7 +416,7 @@
 			"primary_color": "#1e1b54",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-leidschendam-voorburg-house-style",
@@ -436,7 +436,7 @@
 			"logo": "img/logos/nijmegen.svg",
 			"logo_dark": "img/logos/nijmegen-dark.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-nijmegen-house-style",
@@ -451,11 +451,11 @@
 		"name": "Noaberkracht",
 		"description": "Design tokens for Noaberkracht",
 		"theming": {
-			"primary_color": "#947200",
+			"primary_color": "#8e6d00",
 			"background_color": "#ffffff"
 		},
 		"note": "primary_color #4376fc is legacy Conduction cobalt (retired 2026-05-13) — verify with municipality upstream",
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "greycliff-cf",
@@ -481,7 +481,7 @@
 			"primary_color": "#348603",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-noordoostpolder-house-style",
@@ -501,7 +501,7 @@
 			"logo": "img/logos/noordwijk.svg",
 			"logo_dark": "img/logos/noordwijk-dark.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-noordwijk-house-style",
@@ -521,7 +521,7 @@
 			"logo": "img/logos/provincie-zuid-holland.svg",
 			"logo_dark": "img/logos/provincie-zuid-holland-dark.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "Karbon",
@@ -547,7 +547,7 @@
 			"primary_color": "#154273",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"licence": {
 			"id": "LicenseRef-riddeliemers-house-style",
 			"package": "proprietary/riddeliemers-design-tokens (no package.json)",
@@ -584,7 +584,7 @@
 			"primary_color": "#035935",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-stedebroec-house-style",
@@ -621,7 +621,7 @@
 			"primary_color": "#067432",
 			"background_color": "#ffffff"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-tubbergen-house-style",
@@ -639,7 +639,7 @@
 			"primary_color": "#2a8113",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "DIN",
@@ -665,7 +665,7 @@
 			"primary_color": "#0080a3",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "DIN",
@@ -717,7 +717,7 @@
 			"primary_color": "#003c6b",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-westervoort-house-style",
@@ -851,7 +851,7 @@
 			"logo": "img/logos/xxllnc.svg",
 			"logo_dark": "img/logos/xxllnc-dark.svg"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"font": {
 			"family": "neue-haas-grotesk-text",
@@ -877,7 +877,7 @@
 			"primary_color": "#596e28",
 			"background_color": "#FFFFFF"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-zevenaar-house-style",
@@ -1059,9 +1059,9 @@
 		"description": "Design tokens for Gemeente Hoeksche Waard, converted from nl-design-system/themes",
 		"design_system": "nldesign",
 		"theming": {
-			"primary_color": "#2e8721"
+			"primary_color": "#2b7e1f"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.1.0",
 		"licence": {
 			"id": "LicenseRef-hoeksche-waard-house-style",
@@ -1079,7 +1079,7 @@
 		"theming": {
 			"primary_color": "#00856A"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.2.3",
 		"licence": {
 			"id": "LicenseRef-purmerend-house-style",
@@ -1097,12 +1097,12 @@
 		"theming": {
 			"primary_color": "#e20d18"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.0",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
+		"upstreamVersion": "1.0.1",
 		"licence": {
 			"id": "LicenseRef-enschede-house-style",
 			"package": "@nl-design-system-community/enschede-design-tokens",
-			"version": "1.0.0",
+			"version": "1.0.1",
 			"holder": "Gemeente Enschede",
 			"restricted": true
 		}
@@ -1115,12 +1115,12 @@
 		"theming": {
 			"primary_color": "#2065A4"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.0.1",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
+		"upstreamVersion": "1.0.2",
 		"licence": {
 			"id": "LicenseRef-losser-house-style",
 			"package": "@nl-design-system-community/losser-design-tokens",
-			"version": "1.0.1",
+			"version": "1.0.2",
 			"holder": "Gemeente Losser",
 			"restricted": true
 		}
@@ -1131,14 +1131,14 @@
 		"description": "Design tokens for Gemeente Zaanstad, converted from nl-design-system/themes",
 		"design_system": "nldesign",
 		"theming": {
-			"primary_color": "#007694"
+			"primary_color": "#00596f"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
-		"upstreamVersion": "1.1.0",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
+		"upstreamVersion": "2.0.0",
 		"licence": {
 			"id": "LicenseRef-zaanstad-house-style",
 			"package": "@nl-design-system-community/zaanstad-design-tokens",
-			"version": "1.1.0",
+			"version": "2.0.0",
 			"holder": "Gemeente Zaanstad",
 			"restricted": true
 		}
@@ -1151,7 +1151,7 @@
 		"theming": {
 			"primary_color": "#431560"
 		},
-		"upstreamRef": "9cfc4c5a292b3750e44a674e6240fb8e4924dc09",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.7.2",
 		"licence": {
 			"id": "LicenseRef-nora-house-style",
@@ -1598,7 +1598,7 @@
 		"theming": {
 			"primary_color": "#1B59A4"
 		},
-		"upstreamRef": "8d49f2990e2f390bfceada50a187d385c4691b39",
+		"upstreamRef": "c4ff471ac18354f40b07c5fb0922eac026b2bebb",
 		"upstreamVersion": "1.0.0",
 		"licence": {
 			"id": "LicenseRef-voorne-aan-zee-house-style",

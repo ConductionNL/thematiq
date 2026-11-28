@@ -20,6 +20,7 @@
 
 import { translate as t } from '@nextcloud/l10n'
 import { createApp, h, reactive } from 'vue'
+import { mdiDatabaseOutline, mdiDotsGrid, mdiInformationOutline, mdiPaletteOutline } from '@mdi/js'
 import CnWizardDialog from '@conduction/nextcloud-vue/dist/esm/components/CnWizardDialog/CnWizardDialog.vue.js'
 import '@conduction/nextcloud-vue/dist/nextcloud-vue.css'
 import './setupWizard.css'
@@ -30,6 +31,7 @@ import {
 	immediateWalkthrough,
 	initialChoices,
 	MENU_RANGES,
+	FEATURED_SETS,
 	NEXTCLOUD_DEFAULT,
 	partsOf,
 	visibleSteps,
@@ -58,6 +60,17 @@ const RAIL = {
 function url(path) {
 	const OC = window.OC || {}
 	return typeof OC.generateUrl === 'function' ? OC.generateUrl('/apps/thematiq' + path) : '/index.php/apps/thematiq' + path
+}
+
+/**
+ * The address of a file this app ships, such as a set's logo.
+ *
+ * @param {string} path The path inside the app.
+ * @return {string} The URL.
+ */
+function appFile(path) {
+	const OC = window.OC || {}
+	return typeof OC.filePath === 'function' ? OC.filePath('thematiq', '', path) : '/apps/thematiq/' + path
 }
 
 /**
@@ -117,31 +130,40 @@ export function preloadedStatus() {
 }
 
 /**
- * A labelled switch (`role="switch"`).
+ * A 24 px icon from one path, coloured by the text colour.
  *
- * @param {object} row The switch.
- * @param {string} row.id The input id.
- * @param {string} row.label The label.
- * @param {boolean} row.checked Whether it is on.
- * @param {Function} row.onChange Called with the new value.
- * @param {string} [row.hint] The line under it.
+ * @param {string} d The path.
  * @return {object} The vnode.
  */
-function switchRow({ id, label, checked, onChange, hint, disabled }) {
-	return h('div', { class: 'tq-setup__switch' }, [
+function svgIcon(d) {
+	return h('svg', { class: 'tq-setup__icon', viewBox: '0 0 24 24', width: 20, height: 20, 'aria-hidden': 'true' }, [h('path', { d, fill: 'currentColor' })])
+}
+
+/**
+ * A switch drawn as the boards draw it: a bordered card, the label and help on the start, the switch
+ * on the end (TqSetupAppmenu).
+ *
+ * @param {object} row The switch: id, label, checked, onChange, hint, disabled.
+ * @return {object} The vnode.
+ * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+ */
+function switchCard({ id, label, checked, onChange, hint, disabled }) {
+	return h('div', { class: ['tq-setup__switch-card', disabled === true ? 'tq-setup__switch-card--disabled' : null] }, [
+		h('div', { class: 'tq-setup__switch-text' }, [
+			h('label', { for: id }, label),
+			hint ? h('p', { id: id + '-hint', class: 'tq-setup__hint' }, hint) : null,
+		]),
 		h('input', {
 			id,
 			type: 'checkbox',
 			role: 'switch',
-			class: 'checkbox',
+			class: 'tq-setup__toggle',
 			checked,
 			// Disabled, not hidden: it stays in the reading order with its hint (REQ-TQMT-004).
 			disabled: disabled === true,
 			'aria-describedby': hint ? id + '-hint' : undefined,
 			onChange: (event) => onChange(event.target.checked === true),
 		}),
-		h('label', { for: id }, label),
-		hint ? h('p', { id: id + '-hint', class: 'tq-setup__hint' }, hint) : null,
 	])
 }
 
@@ -316,15 +338,23 @@ export const SetupWizard = {
 		},
 
 		welcome() {
+			const point = (d, title, text) => h('div', { class: 'tq-setup__point' }, [
+				h('span', { class: 'tq-setup__point-icon' }, [svgIcon(d)]),
+				h('strong', title),
+				h('span', { class: 'tq-setup__hint' }, text),
+			])
 			return h('div', { class: 'tq-setup__step' }, [
 				h('h2', t(APP_ID, 'Welcome to Thematiq')),
 				h('p', t(APP_ID, 'Thematiq gives Nextcloud your organisation\'s house style: colours, fonts, logo and the apps menu, on every screen. You set it up in five short steps. You can change every choice later in Administration settings, Theming.')),
-				h('ul', { class: 'tq-setup__points' }, [
-					h('li', t(APP_ID, 'Choose a house style')),
-					h('li', t(APP_ID, 'Nextcloud follows')),
-					h('li', t(APP_ID, 'An apps menu made to measure')),
+				h('div', { class: 'tq-setup__points' }, [
+					point(mdiPaletteOutline, t(APP_ID, 'Choose a house style'), t(APP_ID, 'A token set of a Dutch government, or your own set.')),
+					point(mdiDatabaseOutline, t(APP_ID, 'Nextcloud follows'), t(APP_ID, 'Logo, colours, favicon and the login page take on the house style.')),
+					point(mdiDotsGrid, t(APP_ID, 'An apps menu made to measure'), t(APP_ID, 'Apps with a payoff, pinning to the top bar and Create.')),
 				]),
-				h('p', { class: 'tq-setup__note' }, t(APP_ID, 'Only administrators see this screen. Later closes it; it comes back on the next page you open, until you finish or skip. A Nextcloud that thematiq already set up does not see this.')),
+				h('p', { class: 'tq-setup__info' }, [
+					svgIcon(mdiInformationOutline),
+					h('span', t(APP_ID, 'Only administrators see this screen. Later closes it; it comes back on the next page you open, until you finish or skip. A Nextcloud that thematiq already set up does not see this.')),
+				]),
 			])
 		},
 
@@ -369,31 +399,51 @@ export const SetupWizard = {
 		 */
 		setCards() {
 			const choices = this.state.choices
-			// The stored set and Nextcloud default lead, and stay put while the administrator picks;
-			// a set picked from the full list (or just uploaded) stays in view after them.
-			const leads = (set) => set.id === this.state.storedSet || set.id === NEXTCLOUD_DEFAULT
-			const first = this.state.sets.filter(leads)
-			const rest = this.state.sets.filter((set) => !leads(set))
-			let more = rest.slice(0, 4)
-			if (!more.some((set) => set.id === choices.tokenSet)) {
-				more = more.concat(rest.filter((set) => set.id === choices.tokenSet))
+			// TqSetupHuisstijl: the stored set, the featured sets and Nextcloud default, five cards
+			// and then the upload card. The order follows the stored set, not the pick, so it stays
+			// put while the administrator picks; a set picked from the full list stays in view.
+			const byId = (id) => this.state.sets.find((set) => set.id === id)
+			const leadIds = []
+			for (const id of [this.state.storedSet, ...FEATURED_SETS]) {
+				if (id !== NEXTCLOUD_DEFAULT && !leadIds.includes(id) && byId(id) !== undefined && leadIds.length < 4) {
+					leadIds.push(id)
+				}
 			}
-			const shown = first.concat(this.state.showAll ? rest : more)
+			if (byId(NEXTCLOUD_DEFAULT) !== undefined) {
+				leadIds.push(NEXTCLOUD_DEFAULT)
+			}
+			let shown = leadIds.map(byId)
+			const rest = this.state.sets.filter((set) => !leadIds.includes(set.id))
+			if (this.state.showAll) {
+				shown = shown.concat(rest)
+			} else if (!leadIds.includes(choices.tokenSet)) {
+				shown = shown.concat(rest.filter((set) => set.id === choices.tokenSet))
+			}
 			const pick = (id) => {
 				choices.tokenSet = id
 				choices.confirmRestricted = false
 			}
-			return h('div', { class: 'tq-setup__cards', role: 'radiogroup', 'aria-label': t(APP_ID, 'House style') }, shown.map((set) => radioCard({
+			const swatches = (colours) => h('span', { class: 'tq-setup__swatches', 'aria-hidden': 'true' }, colours.map((colour) => h('span', { class: 'tq-setup__swatch', style: { background: colour } })))
+			const cards = shown.map((set) => radioCard({
 				name: 'tq-setup-set',
 				value: set.id,
 				checked: set.id === choices.tokenSet,
 				onPick: pick,
 				children: [
-					h('span', { class: 'tq-setup__swatch', style: { background: (set.theming || {}).primary_color || 'var(--color-primary-element)' }, 'aria-hidden': 'true' }),
 					h('strong', set.id === NEXTCLOUD_DEFAULT ? t(APP_ID, 'Nextcloud default') : set.name),
 					h('span', { class: 'tq-setup__hint' }, this.licenceLine(set)),
+					swatches([(set.theming || {}).primary_color || 'var(--color-primary-element)', (set.theming || {}).background_color || 'var(--color-main-background)']),
 				],
-			})))
+			}))
+			cards.push(h('label', { key: 'tq-setup-upload', class: 'tq-setup__card tq-setup__card--upload' }, [
+				h('input', { type: 'file', class: 'tq-setup__upload-input', accept: '.json,application/json', onChange: (event) => this.upload(event.target.files && event.target.files[0]) }),
+				h('span', { class: 'tq-setup__card-body' }, [
+					h('strong', t(APP_ID, 'Upload your own set')),
+					h('span', { class: 'tq-setup__hint' }, t(APP_ID, 'A token file from your designer.')),
+					swatches(['var(--color-background-dark)', 'var(--color-background-dark)', 'var(--color-background-dark)']),
+				]),
+			]))
+			return h('div', { class: 'tq-setup__cards', role: 'radiogroup', 'aria-label': t(APP_ID, 'House style') }, cards)
 		},
 
 		/**
@@ -420,16 +470,15 @@ export const SetupWizard = {
 			return h('div', { class: 'tq-setup__step' }, [
 				h('h2', t(APP_ID, 'Choose the house style')),
 				h('p', t(APP_ID, 'A house style is a token set: colours, fonts, corners and spacing in one file. Choose your organisation\'s set. You use another government\'s set only with its permission; thematiq asks for it in the next step.')),
+				h('strong', { class: 'tq-setup__label' }, t(APP_ID, 'Token set')),
 				this.state.setsLoaded
 					? this.setCards()
 					: h('p', { class: 'tq-setup__hint', role: 'status', 'data-testid': 'tq-setup-sets-loading' }, t(APP_ID, 'Loading the house styles…')),
-				h('p', { class: 'tq-setup__summary', 'aria-live': 'polite' }, this.setSummary()),
-				this.state.showAll || !this.state.setsLoaded
-					? null
-					: h('button', { type: 'button', class: 'tq-setup__link', onClick: () => { this.state.showAll = true } }, t(APP_ID, 'All {count} sets in the gallery', { count: this.state.sets.length })),
-				h('label', { class: 'tq-setup__upload' }, [
-					h('span', t(APP_ID, 'Upload your own set')),
-					h('input', { type: 'file', accept: '.json,application/json', onChange: (event) => this.upload(event.target.files && event.target.files[0]) }),
+				h('div', { class: 'tq-setup__summary-panel' }, [
+					h('p', { class: 'tq-setup__summary', 'aria-live': 'polite' }, this.setSummary()),
+					this.state.showAll || !this.state.setsLoaded
+						? null
+						: h('button', { type: 'button', class: 'tq-setup__link', onClick: () => { this.state.showAll = true } }, t(APP_ID, 'All {count} sets in the gallery', { count: this.state.sets.length })),
 				]),
 				message ? h('p', { class: 'tq-setup__hint', role: 'status' }, message) : null,
 				needed ? this.licence(needed) : null,
@@ -461,27 +510,38 @@ export const SetupWizard = {
 			const choices = this.state.choices
 			const theming = this.chosenSet.theming || {}
 			const now = (name) => (getComputedStyle(document.documentElement).getPropertyValue(name) || '').trim() || '-'
-			const cell = (label, before, after) => h('div', { class: 'tq-setup__cell' }, [
-				h('strong', label),
-				h('span', t(APP_ID, 'Now: {value}', { value: before })),
-				h('span', t(APP_ID, 'New: {value}', { value: after })),
+			// The value goes into another translated line: not escaped twice (Vue writes text, not HTML).
+			const nowLine = (value) => t(APP_ID, 'Now: {value}', { value }, undefined, { escape: false })
+			const file = (path) => (path ? path.split('/').pop() : '-')
+			const swatch = (colour) => h('span', { class: 'tq-setup__cell-preview', style: { background: colour || 'transparent' }, 'aria-hidden': 'true' })
+			const image = (path) => h('span', { class: 'tq-setup__cell-preview tq-setup__cell-preview--image', 'aria-hidden': 'true' }, path ? [h('img', { src: appFile(path), alt: '' })] : [])
+			const cell = (label, preview, value, lines) => h('div', { class: 'tq-setup__cell' }, [
+				h('span', { class: 'tq-setup__cell-label' }, label),
+				preview,
+				h('strong', value),
+				...lines.filter(Boolean).map((line) => h('span', { class: 'tq-setup__hint' }, line)),
 			])
+			const favicon = theming.favicon || theming.logo
 			return h('div', { class: 'tq-setup__step' }, [
 				h('h2', t(APP_ID, 'Update the Nextcloud theme')),
-				switchRow({
+				h('p', t(APP_ID, 'Nextcloud has a theme of its own: logo, colours and favicon. Thematiq sets them to the set, so the apps on phone and computer, the emails and the login page follow the house style too.')),
+				switchCard({
 					id: 'tq-setup-follows',
 					label: t(APP_ID, 'Keep the Nextcloud theme in line with the set'),
 					checked: choices.nextcloudThemeFollows,
 					onChange: (on) => { choices.nextcloudThemeFollows = on },
 					hint: t(APP_ID, 'Also on the next change of set. Off: thematiq leaves the Nextcloud theme alone.'),
 				}),
-				h('div', { class: 'tq-setup__cells' }, [
-					cell(t(APP_ID, 'Primary colour'), now('--color-primary'), theming.primary_color || '-'),
-					cell(t(APP_ID, 'Background colour'), now('--color-main-background'), theming.background_color || '-'),
-					cell(t(APP_ID, 'Logo'), t(APP_ID, 'Nextcloud logo'), theming.logo ? t(APP_ID, 'The set\'s logo, with a dark version') : '-'),
-					cell(t(APP_ID, 'Favicon'), t(APP_ID, 'Nextcloud favicon'), t(APP_ID, 'From the set\'s logo')),
+				h('div', { class: 'tq-setup__cells tq-setup__cells--four' }, [
+					cell(t(APP_ID, 'Primary colour'), swatch(theming.primary_color), theming.primary_color || '-', [nowLine(now('--color-primary'))]),
+					cell(t(APP_ID, 'Background colour'), swatch(theming.background_color), theming.background_color || '-', [nowLine(now('--color-main-background'))]),
+					cell(t(APP_ID, 'Logo'), image(theming.logo), file(theming.logo), [theming.logo_dark ? t(APP_ID, 'With a dark version.') : null, nowLine(t(APP_ID, 'Nextcloud logo'))]),
+					cell(t(APP_ID, 'Favicon'), image(favicon), file(favicon), [t(APP_ID, 'In the browser tab and on the home screen of your phone.'), nowLine(t(APP_ID, 'Nextcloud favicon'))]),
 				]),
-				h('p', { class: 'tq-setup__note' }, t(APP_ID, 'What Nextcloud has now is kept as a version in the log.')),
+				h('p', { class: 'tq-setup__info' }, [
+					svgIcon(mdiInformationOutline),
+					h('span', t(APP_ID, 'What Nextcloud has now is kept as a version in the log.')),
+				]),
 			])
 		},
 
@@ -527,37 +587,56 @@ export const SetupWizard = {
 		stepper(id, label, key) {
 			const menu = this.state.choices.menu
 			const range = MENU_RANGES[key]
+			const options = []
+			for (let value = range[0]; value <= range[1]; value++) {
+				options.push(h('option', { value, selected: menu[key] === value }, String(value)))
+			}
 			return h('div', { class: 'tq-setup__stepper' }, [
 				h('label', { for: id }, label),
-				h('input', { id, type: 'number', min: range[0], max: range[1], value: menu[key], onChange: (event) => { menu[key] = Number(event.target.value) } }),
+				h('select', { id, value: menu[key], onChange: (event) => { menu[key] = Number(event.target.value) } }, options),
 			])
 		},
 
 		appsMenu() {
 			const menu = this.state.choices.menu
+			const card = (key, label, hint, extra = {}) => switchCard({
+				id: 'tq-setup-' + key,
+				label,
+				hint,
+				checked: menu[key],
+				onChange: (on) => { menu[key] = on },
+				...extra,
+			})
 			return h('div', { class: 'tq-setup__step' }, [
 				h('h2', t(APP_ID, 'The apps menu')),
-				switchRow({
+				h('p', t(APP_ID, 'The thematiq apps menu replaces the standard menu: apps with a title and payoff, pinning to the top bar, Create and an order of their own for each person. This is the default for everyone; afterwards everyone changes their own order and pinned apps.')),
+				switchCard({
 					id: 'tq-setup-menu',
 					label: t(APP_ID, 'Use the thematiq apps menu'),
 					checked: menu.enabled,
 					onChange: (on) => { menu.enabled = on },
-					hint: t(APP_ID, 'Off: Nextcloud keeps its own menu, the rest of the house style stays.'),
+					hint: t(APP_ID, 'On or off, there is no other choice. Off: Nextcloud keeps its own menu, the rest of the house style stays.'),
 				}),
 				menu.enabled
 					? h('div', { class: 'tq-setup__menu' }, [
-						this.stepper('tq-setup-columns', t(APP_ID, 'Columns'), 'columns'),
-						this.stepper('tq-setup-rows', t(APP_ID, 'Rows above More apps'), 'rowsAboveFold'),
+						h('div', { class: 'tq-setup__cells' }, [
+							this.stepper('tq-setup-columns', t(APP_ID, 'Columns'), 'columns'),
+							this.stepper('tq-setup-rows', t(APP_ID, 'Rows above More apps'), 'rowsAboveFold'),
+						]),
+						h('div', { class: 'tq-setup__section', role: 'heading', 'aria-level': 3 }, t(APP_ID, 'Display')),
 						// apps-menu-show-titles REQ-TQMT-004: Show titles before Show payoff; the payoff
 						// switch is disabled while titles are off and keeps its value.
-						...[['titles', t(APP_ID, 'Show titles')], ['payoff', t(APP_ID, 'Show payoff')], ['showCreate', t(APP_ID, 'Show Create')], ['showExternalApps', t(APP_ID, 'Show external apps')]].map(([key, label]) => switchRow({
-							id: 'tq-setup-' + key,
-							label,
-							checked: menu[key],
-							onChange: (on) => { menu[key] = on },
-							disabled: key === 'payoff' && menu.titles === false,
-							hint: key === 'payoff' && menu.titles === false ? t(APP_ID, 'Only with Show titles.') : undefined,
-						})),
+						h('div', { class: 'tq-setup__cells' }, [
+							card('titles', t(APP_ID, 'Show titles'), t(APP_ID, 'The name of the app under or next to the icon. Off: icons only, the name appears as a tooltip.')),
+							card('payoff', t(APP_ID, 'Show payoff'), menu.titles === false ? t(APP_ID, 'Only with Show titles.') : t(APP_ID, 'One line under each app on what it does.'), { disabled: menu.titles === false }),
+							card('showCreateRow', t(APP_ID, 'Create row in the apps menu'), t(APP_ID, 'Document, spreadsheet, presentation, whiteboard.')),
+							card('showExternalApps', t(APP_ID, 'Show external apps'), t(APP_ID, 'OpenProject, XWiki and what you add yourself.')),
+						]),
+						h('div', { class: 'tq-setup__section', role: 'heading', 'aria-level': 3 }, t(APP_ID, 'Top bar')),
+						h('div', { class: 'tq-setup__cells' }, [
+							card('showCreateButton', t(APP_ID, 'Create button in the top bar'), t(APP_ID, 'The plus button before the notifications, on every page.')),
+							card('showContactsMenu', t(APP_ID, 'Contacts button in the top bar'), t(APP_ID, 'The address book next to the notifications. Off: the button disappears, the Contacts app stays in the menu.')),
+						]),
 						h('p', { class: 'tq-setup__note' }, t(APP_ID, 'Change later: in the menu itself, under Menu settings, tab Configuration.')),
 					])
 					: null,

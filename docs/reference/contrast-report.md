@@ -33,7 +33,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | duo | 7.93:1 | 4.5:1 | 7.93:1 | 3.0:1 | pass |
 | enkhuizen | 7.23:1 | 4.5:1 | 7.23:1 | 3.0:1 | pass |
 | enschede | 4.88:1 | 4.5:1 | 4.88:1 | 3.0:1 | pass |
-| epe | 7.60:1 | 4.5:1 | 7.60:1 | 3.0:1 | pass |
+| epe | 5.98:1 | 4.5:1 | 5.98:1 | 3.0:1 | pass |
 | esdoornveen | 9.36:1 | 4.5:1 | 8.65:1 | 3.0:1 | pass |
 | example-basisschool | 6.07:1 | 4.5:1 | 6.07:1 | 3.0:1 | pass |
 | example-college | 9.34:1 | 4.5:1 | 9.34:1 | 3.0:1 | pass |
@@ -44,7 +44,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | groningen | 6.59:1 | 4.5:1 | 6.59:1 | 3.0:1 | pass |
 | haarlem | 7.19:1 | 4.5:1 | 7.19:1 | 3.0:1 | pass |
 | haarlemmermeer | 4.63:1 | 4.5:1 | 4.54:1 | 3.0:1 | pass |
-| hoeksche-waard | 4.56:1 | 4.5:1 | 4.56:1 | 3.0:1 | pass |
+| hoeksche-waard | 5.11:1 | 4.5:1 | 5.11:1 | 3.0:1 | pass |
 | hoog-contrast | 21.00:1 | 7.0:1 | 21.00:1 | 4.5:1 | pass |
 | hoorn | 11.96:1 | 4.5:1 | 11.96:1 | 3.0:1 | pass |
 | horstaandemaas | 6.64:1 | 4.5:1 | 6.64:1 | 3.0:1 | pass |
@@ -54,7 +54,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | leidschendam-voorburg | 15.67:1 | 4.5:1 | 15.67:1 | 3.0:1 | pass |
 | losser | 6.07:1 | 4.5:1 | 6.07:1 | 3.0:1 | pass |
 | nijmegen | 5.10:1 | 4.5:1 | 5.10:1 | 3.0:1 | pass |
-| noaberkracht | 4.50:1 | 4.5:1 | 4.50:1 | 3.0:1 | pass |
+| noaberkracht | 4.84:1 | 4.5:1 | 4.84:1 | 3.0:1 | pass |
 | noordoostpolder | 4.56:1 | 4.5:1 | 4.61:1 | 3.0:1 | pass |
 | noordwijk | 13.15:1 | 4.5:1 | 12.18:1 | 3.0:1 | pass |
 | nora | 13.86:1 | 4.5:1 | 13.86:1 | 3.0:1 | pass |
@@ -82,7 +82,7 @@ system reads `--nldesign-*` tokens, computed by `ContrastService` over
 | westervoort | 11.30:1 | 4.5:1 | 11.30:1 | 3.0:1 | pass |
 | wilgenboom | 6.32:1 | 4.5:1 | 5.84:1 | 3.0:1 | pass |
 | xxllnc | 11.24:1 | 4.5:1 | 14.16:1 | 3.0:1 | pass |
-| zaanstad | 5.23:1 | 4.5:1 | 5.23:1 | 3.0:1 | pass |
+| zaanstad | 7.90:1 | 4.5:1 | 7.90:1 | 3.0:1 | pass |
 | zevenaar | 5.70:1 | 4.5:1 | 5.70:1 | 3.0:1 | pass |
 | zuiddrecht | 5.64:1 | 4.5:1 | 5.22:1 | 3.0:1 | pass |
 | zwolle | 5.06:1 | 4.5:1 | 5.06:1 | 3.0:1 | pass |
