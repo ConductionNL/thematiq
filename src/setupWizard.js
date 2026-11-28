@@ -20,6 +20,7 @@
 
 import { translate as t } from '@nextcloud/l10n'
 import { createApp, h, reactive } from 'vue'
+import { mdiDatabaseOutline, mdiDotsGrid, mdiInformationOutline, mdiPaletteOutline } from '@mdi/js'
 import CnWizardDialog from '@conduction/nextcloud-vue/dist/esm/components/CnWizardDialog/CnWizardDialog.vue.js'
 import '@conduction/nextcloud-vue/dist/nextcloud-vue.css'
 import './setupWizard.css'
@@ -142,6 +143,44 @@ function switchRow({ id, label, checked, onChange, hint, disabled }) {
 		}),
 		h('label', { for: id }, label),
 		hint ? h('p', { id: id + '-hint', class: 'tq-setup__hint' }, hint) : null,
+	])
+}
+
+/**
+ * A 24 px icon from one path, coloured by the text colour.
+ *
+ * @param {string} d The path.
+ * @return {object} The vnode.
+ */
+function svgIcon(d) {
+	return h('svg', { class: 'tq-setup__icon', viewBox: '0 0 24 24', width: 20, height: 20, 'aria-hidden': 'true' }, [h('path', { d, fill: 'currentColor' })])
+}
+
+/**
+ * A switch drawn as the boards draw it: a bordered card, the label and help on the start, the switch
+ * on the end (TqSetupAppmenu).
+ *
+ * @param {object} row The switch, as switchRow takes it.
+ * @return {object} The vnode.
+ * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+ */
+function switchCard({ id, label, checked, onChange, hint, disabled }) {
+	return h('div', { class: ['tq-setup__switch-card', disabled === true ? 'tq-setup__switch-card--disabled' : null] }, [
+		h('div', { class: 'tq-setup__switch-text' }, [
+			h('label', { for: id }, label),
+			hint ? h('p', { id: id + '-hint', class: 'tq-setup__hint' }, hint) : null,
+		]),
+		h('input', {
+			id,
+			type: 'checkbox',
+			role: 'switch',
+			class: 'tq-setup__toggle',
+			checked,
+			// Disabled, not hidden: it stays in the reading order with its hint (REQ-TQMT-004).
+			disabled: disabled === true,
+			'aria-describedby': hint ? id + '-hint' : undefined,
+			onChange: (event) => onChange(event.target.checked === true),
+		}),
 	])
 }
 
@@ -316,15 +355,23 @@ export const SetupWizard = {
 		},
 
 		welcome() {
+			const point = (d, title, text) => h('div', { class: 'tq-setup__point' }, [
+				h('span', { class: 'tq-setup__point-icon' }, [svgIcon(d)]),
+				h('strong', title),
+				h('span', { class: 'tq-setup__hint' }, text),
+			])
 			return h('div', { class: 'tq-setup__step' }, [
 				h('h2', t(APP_ID, 'Welcome to Thematiq')),
 				h('p', t(APP_ID, 'Thematiq gives Nextcloud your organisation\'s house style: colours, fonts, logo and the apps menu, on every screen. You set it up in five short steps. You can change every choice later in Administration settings, Theming.')),
-				h('ul', { class: 'tq-setup__points' }, [
-					h('li', t(APP_ID, 'Choose a house style')),
-					h('li', t(APP_ID, 'Nextcloud follows')),
-					h('li', t(APP_ID, 'An apps menu made to measure')),
+				h('div', { class: 'tq-setup__points' }, [
+					point(mdiPaletteOutline, t(APP_ID, 'Choose a house style'), t(APP_ID, 'A token set of a Dutch government, or your own set.')),
+					point(mdiDatabaseOutline, t(APP_ID, 'Nextcloud follows'), t(APP_ID, 'Logo, colours, favicon and the login page take on the house style.')),
+					point(mdiDotsGrid, t(APP_ID, 'An apps menu made to measure'), t(APP_ID, 'Apps with a payoff, pinning to the top bar and Create.')),
 				]),
-				h('p', { class: 'tq-setup__note' }, t(APP_ID, 'Only administrators see this screen. Later closes it; it comes back on the next page you open, until you finish or skip. A Nextcloud that thematiq already set up does not see this.')),
+				h('p', { class: 'tq-setup__info' }, [
+					svgIcon(mdiInformationOutline),
+					h('span', t(APP_ID, 'Only administrators see this screen. Later closes it; it comes back on the next page you open, until you finish or skip. A Nextcloud that thematiq already set up does not see this.')),
+				]),
 			])
 		},
 
@@ -527,37 +574,56 @@ export const SetupWizard = {
 		stepper(id, label, key) {
 			const menu = this.state.choices.menu
 			const range = MENU_RANGES[key]
+			const options = []
+			for (let value = range[0]; value <= range[1]; value++) {
+				options.push(h('option', { value, selected: menu[key] === value }, String(value)))
+			}
 			return h('div', { class: 'tq-setup__stepper' }, [
 				h('label', { for: id }, label),
-				h('input', { id, type: 'number', min: range[0], max: range[1], value: menu[key], onChange: (event) => { menu[key] = Number(event.target.value) } }),
+				h('select', { id, value: menu[key], onChange: (event) => { menu[key] = Number(event.target.value) } }, options),
 			])
 		},
 
 		appsMenu() {
 			const menu = this.state.choices.menu
+			const card = (key, label, hint, extra = {}) => switchCard({
+				id: 'tq-setup-' + key,
+				label,
+				hint,
+				checked: menu[key],
+				onChange: (on) => { menu[key] = on },
+				...extra,
+			})
 			return h('div', { class: 'tq-setup__step' }, [
 				h('h2', t(APP_ID, 'The apps menu')),
-				switchRow({
+				h('p', t(APP_ID, 'The thematiq apps menu replaces the standard menu: apps with a title and payoff, pinning to the top bar, Create and an order of their own for each person. This is the default for everyone; afterwards everyone changes their own order and pinned apps.')),
+				switchCard({
 					id: 'tq-setup-menu',
 					label: t(APP_ID, 'Use the thematiq apps menu'),
 					checked: menu.enabled,
 					onChange: (on) => { menu.enabled = on },
-					hint: t(APP_ID, 'Off: Nextcloud keeps its own menu, the rest of the house style stays.'),
+					hint: t(APP_ID, 'On or off, there is no other choice. Off: Nextcloud keeps its own menu, the rest of the house style stays.'),
 				}),
 				menu.enabled
 					? h('div', { class: 'tq-setup__menu' }, [
-						this.stepper('tq-setup-columns', t(APP_ID, 'Columns'), 'columns'),
-						this.stepper('tq-setup-rows', t(APP_ID, 'Rows above More apps'), 'rowsAboveFold'),
+						h('div', { class: 'tq-setup__cells' }, [
+							this.stepper('tq-setup-columns', t(APP_ID, 'Columns'), 'columns'),
+							this.stepper('tq-setup-rows', t(APP_ID, 'Rows above More apps'), 'rowsAboveFold'),
+						]),
+						h('div', { class: 'tq-setup__section', role: 'heading', 'aria-level': 3 }, t(APP_ID, 'Display')),
 						// apps-menu-show-titles REQ-TQMT-004: Show titles before Show payoff; the payoff
 						// switch is disabled while titles are off and keeps its value.
-						...[['titles', t(APP_ID, 'Show titles')], ['payoff', t(APP_ID, 'Show payoff')], ['showCreate', t(APP_ID, 'Show Create')], ['showExternalApps', t(APP_ID, 'Show external apps')]].map(([key, label]) => switchRow({
-							id: 'tq-setup-' + key,
-							label,
-							checked: menu[key],
-							onChange: (on) => { menu[key] = on },
-							disabled: key === 'payoff' && menu.titles === false,
-							hint: key === 'payoff' && menu.titles === false ? t(APP_ID, 'Only with Show titles.') : undefined,
-						})),
+						h('div', { class: 'tq-setup__cells' }, [
+							card('titles', t(APP_ID, 'Show titles'), t(APP_ID, 'The name of the app under or next to the icon. Off: icons only, the name appears as a tooltip.')),
+							card('payoff', t(APP_ID, 'Show payoff'), menu.titles === false ? t(APP_ID, 'Only with Show titles.') : t(APP_ID, 'One line under each app on what it does.'), { disabled: menu.titles === false }),
+							card('showCreateRow', t(APP_ID, 'Create row in the apps menu'), t(APP_ID, 'Document, spreadsheet, presentation, whiteboard.')),
+							card('showExternalApps', t(APP_ID, 'Show external apps'), t(APP_ID, 'OpenProject, XWiki and what you add yourself.')),
+						]),
+						h('div', { class: 'tq-setup__section', role: 'heading', 'aria-level': 3 }, t(APP_ID, 'Top bar')),
+						h('div', { class: 'tq-setup__cells' }, [
+							card('showCreateButton', t(APP_ID, 'Create button in the top bar'), t(APP_ID, 'The plus button before the notifications, on every page.')),
+							card('showContactsMenu', t(APP_ID, 'Contacts button in the top bar'), t(APP_ID, 'The address book next to the notifications. Off: the button disappears, the Contacts app stays in the menu.')),
+						]),
 						h('p', { class: 'tq-setup__note' }, t(APP_ID, 'Change later: in the menu itself, under Menu settings, tab Configuration.')),
 					])
 					: null,

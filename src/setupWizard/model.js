@@ -65,9 +65,12 @@ export function menuChoices(menu) {
 		// Show titles before Show payoff; a payoff needs titles (apps-menu-show-titles REQ-TQMT-004).
 		titles: menu.titles !== false,
 		payoff: menu.payoff !== false,
-		// One "Show Create" switch on the board; it sets both create switches (quick-actions-toggles).
-		showCreate: menu.showCreateButton !== false || menu.showCreateRow !== false,
+		// The board's two create switches and the contacts switch (quick-actions-toggles,
+		// top-bar-contacts-switch), each on unless stored off.
+		showCreateRow: menu.showCreateRow !== false,
 		showExternalApps: menu.showExternalApps !== false,
+		showCreateButton: menu.showCreateButton !== false,
+		showContactsMenu: menu.showContactsMenu !== false,
 	}
 }
 
@@ -152,9 +155,10 @@ export function applyRequest(choices, licences) {
 				rowsAboveFold: clamp(choices.menu.rowsAboveFold, MENU_RANGES.rowsAboveFold, 2),
 				titles: choices.menu.titles !== false,
 				payoff: choices.menu.payoff === true,
-				showCreateButton: choices.menu.showCreate === true,
-				showCreateRow: choices.menu.showCreate === true,
+				showCreateRow: choices.menu.showCreateRow === true,
 				showExternalApps: choices.menu.showExternalApps === true,
+				showCreateButton: choices.menu.showCreateButton === true,
+				showContactsMenu: choices.menu.showContactsMenu === true,
 			}
 			: { enabled: false },
 	}
