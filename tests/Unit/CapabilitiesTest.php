@@ -115,7 +115,7 @@ class CapabilitiesTest extends TestCase {
 	 * `showMenuLabels` keeps its name and carries Show titles in the top bar: the stored
 	 * `menu.topBarTitles`, else the older `show_menu_labels`.
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/theming-capability/spec.md
+	 * @spec openspec/specs/theming-capability/spec.md
 	 *
 	 * @return void
 	 */

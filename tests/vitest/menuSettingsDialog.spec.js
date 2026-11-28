@@ -504,7 +504,7 @@ describe('the Menu settings dialog', () => {
 		expect(caption()).toContain('colourNeutral')
 	})
 
-	// @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-menu-settings-and-the-setup-wizard-offer-show-titles-req-tqmt-004
+	// @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-and-the-setup-wizard-offer-show-titles-req-tqmt-004
 	it('places Show titles after the tiles and Show titles in the top bar under it, disables Show payoff without titles and keeps its value', async () => {
 		const dialog = await openDialog(answer(true))
 		dialog.querySelector('#thematiq-menu-settings-tab-theming').click()

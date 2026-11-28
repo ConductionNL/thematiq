@@ -55,11 +55,16 @@ async function setCheckbox(
 		page.locator(`label[for="${id}"]`).click(),
 	])
 	expect(resp.status(), `${endpoint} save should 200`).toBe(200)
-	const body = await resp.json()
-	// The menu defaults answer with the stored defaults, the older toggles with a status.
 	if (endpoint.includes('app-menu')) {
-		expect(body.defaults).toBeTruthy()
+		// The menu switches (js/admin-layout-panel.js) never read the answer, and
+		// Chromium does not finish a fetch body the page leaves unread, so
+		// `resp.json()` would wait for ever. The switch's own live region says
+		// Saved once the answer is ok; the reload in the caller proves the store.
+		await expect(
+			page.locator(`#${id}`).locator('xpath=..').locator('.thematiq-create-switches__live'),
+		).toHaveText(/\S/, { timeout: 5_000 })
 	} else {
+		const body = await resp.json()
 		expect(body.status).toBe('ok')
 	}
 	await expect

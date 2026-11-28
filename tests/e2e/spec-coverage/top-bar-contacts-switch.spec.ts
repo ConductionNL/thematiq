@@ -17,9 +17,9 @@
  *   @e2e apps-menu-settings::on-by-default
  *   @e2e apps-menu-settings::the-administrator-switches-the-contacts-menu-off-for-everyone
  *
- * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md
+ * @spec openspec/specs/apps-menu-settings/spec.md
  */
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Locator, type Page } from '@playwright/test'
 
 import { adminContext, api } from './_fixtures'
 import {
@@ -39,10 +39,18 @@ async function setOwn(page: Page, value: boolean | null): Promise<void> {
 	expect(res.status, JSON.stringify(res.json)).toBe(200)
 }
 
+/**
+ * The bell in the top bar. The notifications app mounts on a `#notifications` div and draws its
+ * header menu with the same id inside it, so the id alone matches two elements: take the header menu.
+ */
+function bellMenu(page: Page): Locator {
+	return page.locator('#header #notifications.header-menu, #header #notifications .header-menu').first()
+}
+
 /** Open Files and wait for the top bar. */
 async function openFiles(page: Page): Promise<void> {
 	await page.goto(FILES, { waitUntil: 'domcontentloaded' })
-	await expect(page.locator('#notifications')).toBeVisible({ timeout: 30_000 })
+	await expect(bellMenu(page)).toBeVisible({ timeout: 30_000 })
 }
 
 /** The contacts menu is gone: not displayed, not focusable, and Tab from the bell passes it. */
@@ -52,13 +60,22 @@ async function expectNoContactsMenu(page: Page): Promise<void> {
 		await expect(menu).toBeHidden()
 		expect(await menu.evaluate((el) => getComputedStyle(el).display)).toBe('none')
 	}
-	const bell = page.locator('#notifications button, #notifications [role="button"]').first()
+	const bell = bellMenu(page).locator('button, [role="button"]').first()
 	await bell.focus()
 	await page.keyboard.press('Tab')
 	const inContacts = await page.evaluate(
 		() => document.activeElement !== null && document.activeElement.closest('#contactsmenu') !== null,
 	)
 	expect(inContacts).toBe(false)
+	// The bar still ends bell, divider, person: the last shown control before the person carries the divider.
+	const divider = await page.evaluate(() => {
+		let el = document.querySelector('#header #user-menu')?.previousElementSibling ?? null
+		while (el !== null && getComputedStyle(el).display === 'none') {
+			el = el.previousElementSibling
+		}
+		return el === null ? null : getComputedStyle(el, '::after').width
+	})
+	expect(divider, 'the divider before the person').toBe('1px')
 }
 
 test.describe('the contacts menu in the top bar switches off', () => {

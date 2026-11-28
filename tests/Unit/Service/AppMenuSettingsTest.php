@@ -262,7 +262,7 @@ final class AppMenuSettingsTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
 	 */
 	public function testAPersonsContactsMenuSwitchWinsOverTheAdministrators(): void {
 		$settings = $this->settings();
@@ -375,8 +375,8 @@ final class AppMenuSettingsTest extends TestCase {
 	 * Show titles ships on and Show titles in the top bar off; the administrator's value wins; both
 	 * are switches, and neither is a person's key.
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-is-a-theming-choice-of-the-administrator-req-tqmt-001
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-show-titles-is-a-theming-choice-of-the-administrator-req-tqmt-001
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 *
 	 * @return void
 	 */
@@ -418,7 +418,7 @@ final class AppMenuSettingsTest extends TestCase {
 	 * top bar; a stored `menu.topBarTitles` wins; a save of the key and a reset for everyone remove
 	 * the older value.
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 *
 	 * @return void
 	 */

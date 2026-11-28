@@ -206,7 +206,7 @@ class SetupActionsTest extends TestCase {
 	 * The apps menu step sends Show titles before Show payoff; Apply stores it as the administrator's
 	 * value (apps-menu-show-titles REQ-TQMT-004).
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-menu-settings-and-the-setup-wizard-offer-show-titles-req-tqmt-004
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-and-the-setup-wizard-offer-show-titles-req-tqmt-004
 	 *
 	 * @return void
 	 */

@@ -187,7 +187,7 @@ final class AppMenuSettingsControllerTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
 	 */
 	public function testAPersonSavesTheContactsMenuSwitch(): void {
 		$response = $this->controller(uid: 'anna')->save(settings: ['showContactsMenu' => false]);
@@ -200,8 +200,8 @@ final class AppMenuSettingsControllerTest extends TestCase {
 	 * Show titles and Show titles in the top bar are the administrator's: a person's save of either
 	 * is refused with 400 naming it; the administrator's is stored.
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-is-a-theming-choice-of-the-administrator-req-tqmt-001
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-show-titles-is-a-theming-choice-of-the-administrator-req-tqmt-001
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 *
 	 * @return void
 	 */

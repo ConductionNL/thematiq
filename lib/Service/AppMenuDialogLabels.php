@@ -173,7 +173,7 @@ final class AppMenuDialogLabels {
 	 * @return array<string, string> The labels, by key.
 	 *
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-create-button-and-the-create-row-switch-on-and-off-independently-req-tqqt-001
-	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
 	 */
 	private static function createLabels(IL10N $l): array {
 		return [
@@ -194,7 +194,7 @@ final class AppMenuDialogLabels {
 	 *
 	 * @return array<string, string> Key to text.
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-menu-settings-and-the-setup-wizard-offer-show-titles-req-tqmt-004
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-and-the-setup-wizard-offer-show-titles-req-tqmt-004
 	 */
 	private static function titleLabels(IL10N $l): array {
 		return [
