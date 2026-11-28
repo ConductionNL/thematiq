@@ -112,6 +112,17 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
       favicon are the set's (`_core-theming.ts`), an anonymous login page has no slogan, a non-admin
       sees the workplace top bar and 3 columns; the step offers no Style choice; Start the apps menu
       walkthrough opens the menu with the tour.
+      (28 Nov, b-launchpad helping, sandbox NC 34.0.6 + MariaDB + php-imagick, OpenRegister main:
+      first-time-setup.spec.ts 6/6. Added: amsterdam's logo and favicon slots are what its theming
+      metadata brings; a zuiddrecht run (logo + favicon in its metadata) puts its primary colour, logo
+      and favicon into Nextcloud's theme, and "Start the apps menu walkthrough" reloads without the
+      wizard, opens the menu and starts at "Open the apps menu". Fixed in the spec: beforeEach left the
+      menu defaults of an earlier Apply in place, so a second wizard run found setup done. Sandbox
+      note: without php-imagick Nextcloud refuses an SVG favicon and Apply reports "Not applied:
+      Nextcloud theme". STILL OPEN, decision queued: amsterdam (no light layout) with the menu on
+      stores `header_style` workplace, but `css/header-workplace.css` is emitted only under the light
+      layout (workplace-layout spec), so no workplace top bar and no thematiq menu appear for a
+      non-admin; the e2e for that scenario waits in its own PR.)
 - [x] 5.4 The version card reads "Completed by admin on"; Set up again opens the wizard with the stored
       set; Later leaves setup done. (#E2E: `first-time setup: the wizard` in first-time-setup.spec.ts, live
       4/4 on a sandbox NC34 + MariaDB: 5.1 fixture through occ with every value put back and amsterdam's
