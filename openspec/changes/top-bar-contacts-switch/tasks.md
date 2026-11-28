@@ -39,7 +39,7 @@ extends) and the boards are merged. Copy and placement follow the boards.
 
 ## 5. Verification
 
-- [ ] 5.1 `hydra/scripts/diff-check.sh` green on the changed files while building; `composer
+- [x] 5.1 `hydra/scripts/diff-check.sh` green on the changed files while building; `composer
       check:strict` and `npm run lint` once before push.
 - [ ] 5.2 Live check on the dev instance (light and dark, a Zuiddrecht set and a plain one, the
       workplace and the classic style): with the switch off the bar ends bell, divider, person, with no
