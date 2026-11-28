@@ -143,7 +143,7 @@ function svgIcon(d) {
  * A switch drawn as the boards draw it: a bordered card, the label and help on the start, the switch
  * on the end (TqSetupAppmenu).
  *
- * @param {object} row The switch, as switchRow takes it.
+ * @param {object} row The switch: id, label, checked, onChange, hint, disabled.
  * @return {object} The vnode.
  * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
  */
