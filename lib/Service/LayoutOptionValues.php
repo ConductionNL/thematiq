@@ -141,7 +141,7 @@ final class LayoutOptionValues {
 	 *
 	 * @var array<string, string>
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
 	 */
 	public const WORKPLACE_TOP_BAR = [
 		LayoutOptionsService::WORKPLACE_LAYOUT_KEY => LayoutOptionsService::LAYOUT_LIGHT,

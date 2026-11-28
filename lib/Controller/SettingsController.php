@@ -138,7 +138,7 @@ class SettingsController extends Controller {
 	 *
 	 * @return JSONResponse The stored value and the Nextcloud theming values applied now; 400 for a non-boolean.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
 	 */
 	#[AuthorizedAdminSetting(Admin::class)]
 	public function setCoreThemingFollows(mixed $follows = null): JSONResponse {

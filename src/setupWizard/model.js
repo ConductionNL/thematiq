@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md
+ * @spec openspec/specs/first-time-setup/spec.md
  */
 
 /** The steps in order (rail: Welcome, House style, Nextcloud theme, Login page, Apps menu, Done). */
@@ -36,7 +36,7 @@ export const MENU_RANGES = { columns: [3, 5], rowsAboveFold: [1, 3] }
  *
  * @param {object|null} status The setup status document.
  * @return {object} The choices.
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
  */
 export function initialChoices(status) {
 	const known = status || {}
@@ -57,7 +57,7 @@ export function initialChoices(status) {
  *
  * @param {object} menu The stored menu choices.
  * @return {object} The menu choices.
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
  * @spec openspec/specs/apps-menu-settings/spec.md
  */
 export function menuChoices(menu) {
@@ -99,7 +99,7 @@ export function clamp(value, range, fallback) {
  *
  * @param {object} choices The choices.
  * @return {string[]} The step ids.
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
  */
 export function visibleSteps(choices) {
 	return STEP_IDS.filter((id) => id !== 'nextcloud-theme' || choices.tokenSet !== NEXTCLOUD_DEFAULT)
@@ -112,7 +112,7 @@ export function visibleSteps(choices) {
  * @param {string} tokenSet The chosen set.
  * @param {Array<object>} licences The `sets` of `GET /settings/tokensets/licences`.
  * @return {object|null} The set's licence entry when a confirmation is needed, else null.
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
  */
 export function confirmationNeeded(tokenSet, licences) {
 	const entry = (licences || []).find((item) => item && item.id === tokenSet)
@@ -128,7 +128,7 @@ export function confirmationNeeded(tokenSet, licences) {
  * @param {object} choices The choices.
  * @param {Array<object>} licences The licence entries.
  * @return {boolean}
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
  */
 export function houseStyleReady(choices, licences) {
 	return confirmationNeeded(choices.tokenSet, licences) === null || choices.confirmRestricted === true
@@ -142,7 +142,7 @@ export function houseStyleReady(choices, licences) {
  * @param {object} choices The choices.
  * @param {Array<object>} licences The licence entries.
  * @return {object} The request body.
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
  * @spec openspec/specs/apps-menu-settings/spec.md
  */
 export function applyRequest(choices, licences) {
@@ -176,7 +176,7 @@ export function applyRequest(choices, licences) {
  *
  * @param {object} result The answer of Apply (`{applied, failed}`).
  * @return {Array<{id: string, applied: boolean}>}
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-done-step-sums-up-and-offers-the-apps-menu-walkthrough-req-tqfs-011
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-done-step-sums-up-and-offers-the-apps-menu-walkthrough-req-tqfs-011
  */
 export function partsOf(result) {
 	const applied = (result && result.applied) || []
@@ -190,7 +190,7 @@ export function partsOf(result) {
  * The walkthrough progress that starts the tour at once after the reload (REQ-TQFS-011).
  *
  * @return {string} The stored value.
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-done-step-sums-up-and-offers-the-apps-menu-walkthrough-req-tqfs-011
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-done-step-sums-up-and-offers-the-apps-menu-walkthrough-req-tqfs-011
  */
 export function immediateWalkthrough() {
 	return JSON.stringify({ tourId: WALKTHROUGH.tourId, stepId: WALKTHROUGH.firstStep, index: 0, immediate: true })

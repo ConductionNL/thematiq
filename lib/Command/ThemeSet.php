@@ -202,7 +202,7 @@ class ThemeSet extends Command {
 	 * @return void
 	 *
 	 * @spec openspec/specs/theme-cli/spec.md
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
 	 */
 	private function reportCore(InputInterface $input, OutputInterface $output): void {
 		if ((bool)$input->getOption('sync-core') === false && $this->active->nextcloudFollows() === true) {

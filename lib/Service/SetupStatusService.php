@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
  */
 
 declare(strict_types=1);
@@ -29,7 +29,7 @@ use OCP\IConfig;
  * Completion is derived from the saved configuration: an instance an earlier version configured
  * counts as set up without a migration. The answer is cached for the request.
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
  */
 class SetupStatusService {
 
@@ -105,7 +105,7 @@ class SetupStatusService {
 	 *
 	 * @return bool True while setup is due.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
 	 */
 	public function isDue(): bool {
 		$status = $this->status();
@@ -118,7 +118,7 @@ class SetupStatusService {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
 	 */
 	public function forget(): void {
 		$this->cached = null;
@@ -131,7 +131,7 @@ class SetupStatusService {
 	 *
 	 * @return array<string, mixed> The document.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
 	public function status(): array {
 		if ($this->cached !== null) {
@@ -157,7 +157,7 @@ class SetupStatusService {
 	 *
 	 * @return bool True when an administrator (or deployment) configured thematiq.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
 	 */
 	public function isConfigured(): bool {
 		if (trim((string)$this->config->getSystemValue(self::CONFIG_SOURCE_SYSTEM_KEY, '')) !== '') {
@@ -184,7 +184,7 @@ class SetupStatusService {
 	 *
 	 * @return bool True for a chosen `menu.<key>` default.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
 	 */
 	private function isMenuDefault(string $key): bool {
 		if (str_starts_with($key, AppMenuSettings::PREFIX) === false) {
@@ -208,7 +208,7 @@ class SetupStatusService {
 	 *
 	 * @return array<string, mixed> `{tokenSet, nextcloudThemeFollows, loginStyle, hideSlogan, menu}`.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
 	private function current(): array {
 		$contexts = json_decode($this->value(key: 'themed_contexts', default: '[]'), true);
@@ -236,7 +236,7 @@ class SetupStatusService {
 	 *
 	 * @return array<string, array{done: bool, detail: string}> The steps by id.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
 	private function steps(array $current, bool $completed): array {
 		$stored = $this->config->getAppKeys(Application::APP_ID);
@@ -272,7 +272,7 @@ class SetupStatusService {
 	 *
 	 * @return array<string, mixed>|null The record.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
 	 */
 	private function record(string $key): ?array {
 		$raw = $this->value(key: $key, default: '');
@@ -296,7 +296,7 @@ class SetupStatusService {
 	 *
 	 * @return string The value.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
 	 */
 	private function value(string $key, string $default): string {
 		return $this->config->getAppValue(Application::APP_ID, $key, $default);

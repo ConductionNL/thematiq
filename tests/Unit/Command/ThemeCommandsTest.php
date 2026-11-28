@@ -279,7 +279,7 @@ class ThemeCommandsTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
 	 */
 	public function testAPlainSwitchFollowsInNextcloudWhenItFollows(): void {
 		$this->store['core_theming_follows_set'] = '1';

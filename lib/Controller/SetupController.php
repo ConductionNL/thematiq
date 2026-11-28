@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
  */
 
 declare(strict_types=1);
@@ -35,7 +35,7 @@ use OCP\IUserSession;
  * anyone else with 403 before the controller runs, and the POST requires CSRF. Under a configuration
  * source the POST is refused with 423 by `ConfigSourceLockMiddleware`.
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
  */
 class SetupController extends Controller {
 
@@ -63,7 +63,7 @@ class SetupController extends Controller {
 	 *
 	 * @auth admin-only the status names the stored house style choices, for administrators only
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
 	public function status(): JSONResponse {
 		return new JSONResponse($this->setup->status->status());
@@ -79,7 +79,7 @@ class SetupController extends Controller {
 	 *
 	 * @auth admin-only applying or skipping the setup changes the whole instance's look, so administrators only
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
 	public function action(string $actionId): JSONResponse {
 		$uid = (string)$this->userSession->getUser()?->getUID();
@@ -104,7 +104,7 @@ class SetupController extends Controller {
 	 *
 	 * @return JSONResponse 200 when every part was applied, 500 when one failed, 400 or 403 when refused.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
 	private function apply(string $uid): JSONResponse {
 		try {
@@ -129,7 +129,7 @@ class SetupController extends Controller {
 	 *
 	 * @return array<mixed> The body.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
 	private function body(): array {
 		$params = $this->request->getParams();

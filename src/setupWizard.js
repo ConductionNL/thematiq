@@ -15,7 +15,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
  */
 
 import { translate as t } from '@nextcloud/l10n'
@@ -143,7 +143,7 @@ function svgIcon(d) {
  * The chevron on the done step's walkthrough button (TqSetupKlaar), as an icon component the wizard
  * draws with its `size`.
  *
- * @spec openspec/changes/first-time-setup/tasks.md#6-live-check
+ * @spec openspec/changes/archive/2026-11-28-first-time-setup/tasks.md#6-live-check
  */
 export const ChevronRight = {
 	name: 'TqChevronRight',
@@ -161,7 +161,7 @@ export const ChevronRight = {
  *
  * @param {object} row The switch: id, label, checked, onChange, hint, disabled.
  * @return {object} The vnode.
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
  */
 function switchCard({ id, label, checked, onChange, hint, disabled }) {
 	return h('div', { class: ['tq-setup__switch-card', disabled === true ? 'tq-setup__switch-card--disabled' : null] }, [
@@ -206,7 +206,7 @@ function radioCard({ name, value, checked, onPick, children }) {
 /**
  * The wizard component.
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md
+ * @spec openspec/specs/first-time-setup/spec.md
  */
 export const SetupWizard = {
 	name: 'ThematiqSetupWizard',
@@ -257,7 +257,7 @@ export const SetupWizard = {
 		 * "Set up Thematiq, step n of 6", as the TqSetup boards draw it.
 		 *
 		 * @return {string} The title.
-		 * @spec openspec/changes/first-time-setup/tasks.md#6-live-check
+		 * @spec openspec/changes/archive/2026-11-28-first-time-setup/tasks.md#6-live-check
 		 */
 		heading() {
 			const titles = {
@@ -302,7 +302,7 @@ export const SetupWizard = {
 		 * "Skip, keep Nextcloud as it is": record the skip, change nothing else.
 		 *
 		 * @return {Promise<void>}
-		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-later-closes-the-wizard-for-this-page-skip-ends-it-req-tqfs-004
+		 * @spec openspec/specs/first-time-setup/spec.md#requirement-later-closes-the-wizard-for-this-page-skip-ends-it-req-tqfs-004
 		 */
 		async skip() {
 			await request('POST', '/api/setup/action/skip', {})
@@ -314,7 +314,7 @@ export const SetupWizard = {
 		 *
 		 * @param {string} stepId The step being left.
 		 * @return {Promise<true|string>} True to move on, or the reason it cannot.
-		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+		 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
 		 */
 		async validate(stepId) {
 			if (stepId === 'house-style' && !houseStyleReady(this.state.choices, this.state.licences)) {
@@ -327,7 +327,7 @@ export const SetupWizard = {
 		 * Apply: send every choice once. A refusal, or a part that failed, keeps step 5 open with why.
 		 *
 		 * @return {Promise<true|string>} True when every part was applied, else the reason.
-		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
+		 * @spec openspec/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
 		 */
 		async apply() {
 			const answer = await request('POST', '/api/setup/action/apply', applyRequest(this.state.choices, this.state.licences))
@@ -347,7 +347,7 @@ export const SetupWizard = {
 		 * Store an immediate start of the apps menu walkthrough and reload in the new house style.
 		 *
 		 * @return {Promise<void>}
-		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-done-step-sums-up-and-offers-the-apps-menu-walkthrough-req-tqfs-011
+		 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-done-step-sums-up-and-offers-the-apps-menu-walkthrough-req-tqfs-011
 		 */
 		async startWalkthrough() {
 			await request('PUT', '/api/preferences/' + WALKTHROUGH.key, { value: immediateWalkthrough() })
@@ -359,7 +359,7 @@ export const SetupWizard = {
 		 *
 		 * @param {File} file The set file.
 		 * @return {Promise<void>}
-		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
+		 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
 		 */
 		async upload(file) {
 			if (!file) {
@@ -426,7 +426,7 @@ export const SetupWizard = {
 		 * the house style step says it is loading instead of offering no cards and "All 0 sets".
 		 *
 		 * @return {Promise<void>}
-		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
+		 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
 		 */
 		async loadCatalogue() {
 			try {
@@ -446,7 +446,7 @@ export const SetupWizard = {
 		 * chosen set when it is not among them) or all.
 		 *
 		 * @return {object} The vnode.
-		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
+		 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
 		 */
 		setCards() {
 			const choices = this.state.choices
@@ -501,7 +501,7 @@ export const SetupWizard = {
 		 * The line under the cards that sums up the chosen set.
 		 *
 		 * @return {string} The line.
-		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
+		 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
 		 */
 		setSummary() {
 			if (this.state.choices.tokenSet === NEXTCLOUD_DEFAULT) {
@@ -627,7 +627,7 @@ export const SetupWizard = {
 		 * A small login page in the chosen style (TqSetupInlogpagina).
 		 *
 		 * @return {object} The vnode.
-		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
+		 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
 		 */
 		loginPreview() {
 			const choices = this.state.choices
@@ -759,7 +759,7 @@ export const SetupWizard = {
 		 *
 		 * @param {object} scope The wizard's actions-start scope.
 		 * @return {Array} The buttons.
-		 * @spec openspec/changes/first-time-setup/tasks.md#6-live-check
+		 * @spec openspec/changes/archive/2026-11-28-first-time-setup/tasks.md#6-live-check
 		 */
 		footer(scope) {
 			if (scope.currentStep && scope.currentStep.id === 'done') {
@@ -774,7 +774,7 @@ export const SetupWizard = {
 		 * The finishing button of the done step: the walkthrough with the apps menu on, else Close.
 		 *
 		 * @return {Promise<void>|void}
-		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
+		 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
 		 */
 		finish() {
 			return this.offersWalkthrough ? this.startWalkthrough() : this.close()
@@ -821,7 +821,7 @@ export const SetupWizard = {
  *
  * @param {object|null} [status] The setup status; the page's `setup_status` when left out.
  * @return {object|null} The app, or null when it is open already.
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
  */
 export function open(status) {
 	if (document.getElementById(CONTAINER_ID) !== null) {

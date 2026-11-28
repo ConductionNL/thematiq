@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
  */
 
 declare(strict_types=1);
@@ -32,7 +32,7 @@ use Throwable;
  * confirmation, the token set, Nextcloud's theme, the login page and the apps menu, each through the
  * same path the settings page uses, and stores `setup.completed` only once every part was applied.
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
  */
 class SetupActions {
 
@@ -70,7 +70,7 @@ class SetupActions {
 	 * @throws \InvalidArgumentException Naming the first key that is unknown or wrong; nothing is written then.
 	 * @throws Exception\RestrictedSetNotConfirmedException When a restricted set is not confirmed; nothing is written then.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
 	 */
 	public function apply(array $request, string $uid): array {
 		$choices = $this->request->check(request: $request);
@@ -112,7 +112,7 @@ class SetupActions {
 	 * @throws \InvalidArgumentException Naming the first key that is unknown or wrong.
 	 * @throws Exception\RestrictedSetNotConfirmedException When a restricted set is not confirmed.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
 	public function check(array $request): array {
 		return $this->request->check(request: $request);
@@ -125,7 +125,7 @@ class SetupActions {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-later-closes-the-wizard-for-this-page-skip-ends-it-req-tqfs-004
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-later-closes-the-wizard-for-this-page-skip-ends-it-req-tqfs-004
 	 */
 	public function skip(string $uid): void {
 		$this->store(key: SetupStatusService::SKIPPED_KEY, uid: $uid);
@@ -140,7 +140,7 @@ class SetupActions {
 	 *
 	 * @return bool True when a confirmation was stored.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
 	 */
 	private function confirmLicence(array $choices, string $uid): bool {
 		if ($choices['confirmRestricted'] !== true) {
@@ -159,7 +159,7 @@ class SetupActions {
 	 *
 	 * @return bool Always true: the part is applied, also when the set was already active.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
 	 */
 	private function switchSet(string $tokenSet): bool {
 		$this->writers->active->switchTo(tokenSet: $tokenSet, auditContext: ['via' => 'setup']);
@@ -177,7 +177,7 @@ class SetupActions {
 	 *
 	 * @throws RuntimeException When the set's theming values did not validate, so nothing was applied.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
 	 */
 	private function nextcloudTheme(string $tokenSet, bool $follows): bool {
 		$this->storeValue(key: SetupStatusService::FOLLOWS_KEY, value: self::flag(value: $follows));
@@ -200,7 +200,7 @@ class SetupActions {
 	 *
 	 * @throws RuntimeException When the set's theming values did not validate, so nothing was applied.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
 	 */
 	private function syncCore(string $tokenSet): void {
 		$applied = $this->writers->coreSync->sync(tokenSetId: $tokenSet);
@@ -225,7 +225,7 @@ class SetupActions {
 	 *
 	 * @return bool Always true.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
 	 */
 	private function loginPage(string $style, bool $hideSlogan): bool {
 		$this->storeValue(key: 'themed_contexts', value: (string)json_encode($this->loginContexts(style: $style)));
@@ -241,7 +241,7 @@ class SetupActions {
 	 *
 	 * @return array<int, string> The contexts to store.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
 	 */
 	private function loginContexts(string $style): array {
 		$contexts = json_decode($this->records->config->getAppValue(Application::APP_ID, 'themed_contexts', '[]'), true);
@@ -268,7 +268,7 @@ class SetupActions {
 	 *
 	 * @return array<int, string> The contexts without `login`.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
 	 */
 	private static function withoutLogin(array $contexts): array {
 		if ($contexts === []) {
@@ -286,7 +286,7 @@ class SetupActions {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
 	private function storeValue(string $key, string $value): void {
 		$old = $this->records->config->getAppValue(Application::APP_ID, $key, '');
@@ -303,7 +303,7 @@ class SetupActions {
 	 *
 	 * @return string `1` or `0`.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
 	private static function flag(bool $value): string {
 		if ($value === true) {
@@ -322,7 +322,7 @@ class SetupActions {
 	 *
 	 * @return bool Always true.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
 	 */
 	private function appsMenu(array $menu, string $tokenSet): bool {
 		$values = ['style' => 'classic'];
@@ -353,7 +353,7 @@ class SetupActions {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
 	 */
 	private function bringOption(string $key, string $value, string $tokenSet): void {
 		if ($this->writers->layout->resolve(key: $key, tokenSet: $tokenSet) === $value) {
@@ -372,7 +372,7 @@ class SetupActions {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-setup-status-is-derived-from-the-saved-configuration-req-tqfs-002
 	 */
 	private function store(string $key, string $uid): void {
 		$record = ['by' => $uid, 'at' => gmdate('Y-m-d\TH:i:s\Z', $this->records->time->getTime())];

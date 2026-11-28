@@ -1441,7 +1441,7 @@
 			})
 		}
 
-		// Keep the Nextcloud theme in line with the set (openspec/changes/first-time-setup,
+		// Keep the Nextcloud theme in line with the set (openspec/specs/first-time-setup,
 		// REQ-TQFS-013): saved at once; on applies the active set to Nextcloud's theme now.
 		var coreFollowsSwitch = document.getElementById(
 			'thematiq-core-theming-follows',

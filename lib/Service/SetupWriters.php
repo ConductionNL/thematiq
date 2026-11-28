@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
  */
 
 declare(strict_types=1);
@@ -26,7 +26,7 @@ use OCA\Thematiq\Kernel\Contracts\TokenSetLicenceServiceInterface;
  * The write paths the setup's `apply` shares with the settings page: the active set, the licence
  * confirmation, Nextcloud's theme and the top bar.
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
  */
 final class SetupWriters {
 

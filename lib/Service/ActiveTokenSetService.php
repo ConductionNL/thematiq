@@ -14,7 +14,7 @@
  * @link      https://github.com/ConductionNL/thematiq
  *
  * @spec openspec/specs/scheduled-switch/spec.md
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
  */
 
 declare(strict_types=1);
@@ -121,7 +121,7 @@ class ActiveTokenSetService {
 	 *
 	 * @return bool True while it follows.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
 	 */
 	public function nextcloudFollows(): bool {
 		return $this->follow?->follows() === true;
@@ -134,7 +134,7 @@ class ActiveTokenSetService {
 	 *
 	 * @return array<int, string> The Nextcloud theming values applied now.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
 	 */
 	public function setNextcloudFollows(bool $follows): array {
 		return ($this->follow?->setFollows(follows: $follows, activeSet: $this->getActive()) ?? []);

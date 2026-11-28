@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
  */
 
 declare(strict_types=1);
@@ -28,7 +28,7 @@ use OCA\Thematiq\Service\Exception\RestrictedSetNotConfirmedException;
  * a known set, booleans, a login style, the menu values as `POST /app-menu/defaults` checks them, and
  * the licence gate of the settings page.
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
  */
 class SetupRequest {
 
@@ -85,7 +85,7 @@ class SetupRequest {
 	 * @throws InvalidArgumentException Naming the first key that is unknown or wrong.
 	 * @throws RestrictedSetNotConfirmedException When a restricted set is neither confirmed nor confirmed now.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
 	public function check(array $request): array {
 		foreach (array_keys($request) as $key) {
@@ -119,7 +119,7 @@ class SetupRequest {
 	 * @throws InvalidArgumentException Naming `confirmRestricted` for a set that is not restricted.
 	 * @throws RestrictedSetNotConfirmedException When a restricted set is not confirmed.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-house-style-step-chooses-a-token-set-and-its-licence-confirmation-req-tqfs-007
 	 */
 	private function checkLicence(string $tokenSet, bool $confirm): void {
 		$gate = $this->tokenSets->licenceGate();
@@ -142,7 +142,7 @@ class SetupRequest {
 	 *
 	 * @throws InvalidArgumentException Naming `loginStyle`.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
 	 */
 	private static function checkLoginStyle(mixed $value): string {
 		if (in_array($value, self::LOGIN_STYLES, true) === false) {
@@ -161,7 +161,7 @@ class SetupRequest {
 	 *
 	 * @throws InvalidArgumentException Naming `tokenSet`.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
 	private function checkTokenSet(mixed $value): string {
 		if (is_string($value) === false || $this->tokenSets->isValidTokenSet(tokenSetId: $value) === false) {
@@ -180,7 +180,7 @@ class SetupRequest {
 	 *
 	 * @throws InvalidArgumentException Naming `menu` or `menu.<key>`.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-former-create-switch-moves-into-the-two-new-switches-req-tqqt-002
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) AppMenuSettings holds the one rule for the former create switch.
@@ -210,7 +210,7 @@ class SetupRequest {
 	 *
 	 * @throws InvalidArgumentException Naming the key.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-setup-contract-is-for-administrators-only-req-tqfs-005
 	 */
 	private static function checkBool(string $key, mixed $value): bool {
 		if (is_bool($value) === false) {
@@ -232,7 +232,7 @@ class SetupRequest {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) AppMenuSettings::strict() is the one rule set of the menu defaults.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
 	 */
 	private function menuValue(string $key, mixed $value): array {
 		if (in_array($key, self::MENU_KEYS, true) === false) {
