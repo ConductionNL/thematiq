@@ -39,8 +39,18 @@
 .tq-setup__cell-preview--image { box-shadow: none; justify-content: flex-start; }
 .tq-setup__cell-preview img { max-height: 36px; max-width: 100%; }
 .tq-setup__cell strong { overflow-wrap: anywhere; }
-.tq-setup__login-preview { display: flex; flex-direction: column; gap: 6px; width: 220px; padding: 16px; border-top: 6px solid; border-radius: var(--border-radius-large); background: var(--color-main-background); box-shadow: 0 1px 4px var(--color-box-shadow); }
-.tq-setup__login-field { height: 24px; border: 1px solid var(--color-border-dark); border-radius: var(--border-radius); }
+.tq-setup__login { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.tq-setup__login-choices { display: flex; flex-direction: column; gap: 10px; }
+.tq-setup__cards--stack { grid-template-columns: 1fr; }
+.tq-setup__check .tq-setup__hint { flex-basis: 100%; padding-inline-start: 28px; }
+.tq-setup__login-preview { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 12px; min-height: 260px; padding: 48px 16px 16px; border: 1px solid var(--color-border); border-radius: var(--border-radius-large); background: var(--color-background-hover); box-sizing: border-box; }
+.tq-setup__login-preview--nextcloud { background: var(--color-background-plain); }
+.tq-setup__login-card { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 240px; padding: 14px; border-radius: var(--border-radius-large); background: var(--color-main-background); box-shadow: 0 1px 4px var(--color-box-shadow); box-sizing: border-box; }
+.tq-setup__login-field { padding: 6px 8px; border: 1px solid var(--color-border-dark); border-radius: var(--border-radius); font-size: 11px; color: var(--color-text-maxcontrast); }
+.tq-setup__login-button { padding: 6px 8px; border-radius: var(--border-radius); color: var(--color-primary-element-text); font-size: 12px; font-weight: 600; text-align: center; }
+.tq-setup__login-link { font-size: 11px; text-align: center; }
+.tq-setup__login-footer { font-size: 11px; color: var(--color-text-maxcontrast); }
+.tq-setup__login-preview--nextcloud .tq-setup__login-footer { color: var(--color-background-plain-text); }
 .tq-setup__menu { display: flex; flex-direction: column; gap: 8px; }
 .tq-setup__stepper { display: flex; flex-direction: column; gap: 6px; }
 .tq-setup__stepper label { font-weight: 500; }
@@ -60,4 +70,4 @@
 .tq-setup__parts { margin: 0; padding: 0; list-style: none; }
 .tq-setup__part--failed { color: var(--color-error-text); }
 @media (max-width: 900px) { .tq-setup__cells--four { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 600px) { .tq-setup__cells, .tq-setup__points, .tq-setup__cards { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .tq-setup__cells, .tq-setup__points, .tq-setup__cards, .tq-setup__login { grid-template-columns: 1fr; } }

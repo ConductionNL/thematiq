@@ -2196,7 +2196,11 @@
         "A token file from your designer.": "Een tokenbestand van je ontwerper.",
         "Nextcloud has a theme of its own: logo, colours and favicon. Thematiq sets them to the set, so the apps on phone and computer, the emails and the login page follow the house style too.": "Nextcloud heeft een eigen thema: logo, kleuren en favicon. Thematiq zet die gelijk aan de set, zodat ook de apps op telefoon en computer, de e-mails en de inlogpagina de huisstijl volgen.",
         "With a dark version.": "Met een donkere versie.",
-        "In the browser tab and on the home screen of your phone.": "In het tabblad en op het startscherm van je telefoon."
+        "In the browser tab and on the home screen of your phone.": "In het tabblad en op het startscherm van je telefoon.",
+        "A plain background in the colour of the set, the logo above it, the login card with the primary button.": "Effen achtergrond in de kleur van de set, het logo erboven, de inlogkaart met de primaire knop.",
+        "Nextcloud's own background image and layout. Only the logo changes.": "De achtergrondafbeelding en de opmaak van Nextcloud zelf. Alleen het logo wisselt.",
+        "The login page is the first thing everyone sees. Choose whether it follows the house style or stays as Nextcloud draws it.": "De inlogpagina is het eerste wat iedereen ziet. Kies of ze de huisstijl volgt of blijft zoals Nextcloud haar tekent.",
+        "The slogan stays in the theme, but not under the logo.": "De slogan blijft in het thema staan, maar niet onder het logo."
     },
     "plurals": {}
 }
