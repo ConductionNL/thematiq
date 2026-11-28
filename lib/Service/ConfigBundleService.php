@@ -161,7 +161,7 @@ class ConfigBundleService implements ConfigBundleServiceInterface {
 	 *
 	 * @return array<string, mixed> The section.
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 */
 	private function exportedConfig(): array {
 		$config = $this->appSettings->config;
@@ -695,7 +695,7 @@ class ConfigBundleService implements ConfigBundleServiceInterface {
 	 * @return void
 	 *
 	 * @spec openspec/specs/config-portability/spec.md
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 */
 	private function applyConfig(array $config): void {
 		$this->appSettings->config->setAppValue(Application::APP_ID, 'token_set', $config['tokenSet']);

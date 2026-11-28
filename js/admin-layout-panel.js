@@ -653,7 +653,7 @@
 	 * @param {HTMLElement} box The box holding the switches.
 	 * @return {void}
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
-	 * @spec openspec/changes/apps-menu-show-titles/specs/admin-settings/spec.md
+	 * @spec openspec/specs/admin-settings/spec.md
 	 */
 	function wireMenuSwitches(box) {
 		var live = box.querySelector('.thematiq-create-switches__live')

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
+ * @spec openspec/specs/menu-labels/spec.md
  */
 
 declare(strict_types=1);
@@ -23,7 +23,7 @@ use RuntimeException;
  * The older menu labels option moves once into Show titles in the top bar, over an in-memory app
  * config; a stored value wins; a failure is logged, never thrown.
  *
- * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
+ * @spec openspec/specs/menu-labels/spec.md
  */
 final class MigrateMenuLabelsToTopBarTitlesTest extends TestCase {
 
@@ -126,7 +126,7 @@ final class MigrateMenuLabelsToTopBarTitlesTest extends TestCase {
 	/**
 	 * The reader: the stored key first, then the older one, and the workplace menu check.
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 *
 	 * @return void
 	 */
