@@ -633,7 +633,7 @@
 	 *
 	 * @return {void}
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
-	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-contacts-menu-default-on-thematiqs-admin-page-req-tqcm-002
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-contacts-menu-default-on-thematiqs-admin-page-req-tqcm-002
 	 */
 	function wireCreateSwitches() {
 		// The Menu card's switches: the two create switches, and Show titles in

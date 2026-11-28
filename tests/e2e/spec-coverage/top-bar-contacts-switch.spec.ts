@@ -17,7 +17,7 @@
  *   @e2e apps-menu-settings::on-by-default
  *   @e2e apps-menu-settings::the-administrator-switches-the-contacts-menu-off-for-everyone
  *
- * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md
+ * @spec openspec/specs/apps-menu-settings/spec.md
  */
 import { test, expect, type Page } from '@playwright/test'
 
@@ -42,7 +42,9 @@ async function setOwn(page: Page, value: boolean | null): Promise<void> {
 /** Open Files and wait for the top bar. */
 async function openFiles(page: Page): Promise<void> {
 	await page.goto(FILES, { waitUntil: 'domcontentloaded' })
-	await expect(page.locator('#notifications')).toBeVisible({ timeout: 30_000 })
+	// Nextcloud 34's notifications app mounts its own `#notifications` inside the
+	// header's container of the same id, so the id matches twice: take the outer one.
+	await expect(page.locator('#notifications').first()).toBeVisible({ timeout: 30_000 })
 }
 
 /** The contacts menu is gone: not displayed, not focusable, and Tab from the bell passes it. */
