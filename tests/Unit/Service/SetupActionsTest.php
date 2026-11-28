@@ -81,6 +81,13 @@ class SetupActionsTest extends TestCase {
 	private LayoutOptionsService&MockObject $layout;
 
 	/**
+	 * What the layout double resolves each option to; 'default' when absent.
+	 *
+	 * @var array<string, string>
+	 */
+	private array $resolved = [];
+
+	/**
 	 * Build the actions over in-memory doubles.
 	 *
 	 * @param array<int, string> $restricted The restricted sets.
@@ -139,7 +146,9 @@ class SetupActionsTest extends TestCase {
 
 		$this->coreSync = $this->createMock(originalClassName: ScheduledCoreThemingSync::class);
 		$this->layout = $this->createMock(originalClassName: LayoutOptionsService::class);
-		$this->layout->method('resolve')->willReturn('default');
+		$this->layout->method('resolve')->willReturnCallback(
+			fn (string $key, string $tokenSet): string => ($this->resolved[$key] ?? 'default')
+		);
 		$this->layout->method('setOption')->willReturnCallback(
 			function (string $key, string $value): string {
 				$this->store[$key] = $value;
@@ -194,6 +203,7 @@ class SetupActionsTest extends TestCase {
 		$this->assertSame(expected: '3', actual: $this->store['menu.columns']);
 		$this->assertSame(expected: 'false', actual: $this->store['menu.payoff']);
 		$this->assertSame(expected: 'workplace', actual: $this->store['header_style']);
+		$this->assertSame(expected: 'light', actual: $this->store['workplace_layout']);
 		$this->assertSame(
 			expected: ['by' => 'admin', 'at' => gmdate('Y-m-d\TH:i:s\Z', 1795786320)],
 			actual: json_decode($this->store['setup.completed'], true)
@@ -360,6 +370,26 @@ class SetupActionsTest extends TestCase {
 		$this->assertArrayNotHasKey(key: 'menu.columns', array: $this->store);
 		$this->assertArrayNotHasKey(key: 'header_style', array: $this->store);
 	}//end testTheMenuOffStoresClassicAlone()
+
+	/**
+	 * A set that already draws the workplace top bar (light layout, workplace header) gets neither
+	 * option written when the menu is on.
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+	 *
+	 * @return void
+	 */
+	public function testTheMenuOnLeavesATopBarTheSetDrawsAlone(): void {
+		$this->resolved = ['workplace_layout' => 'light', 'header_style' => 'workplace'];
+		$actions = $this->make();
+		$this->layout->expects($this->never())->method('setOption');
+
+		$actions->apply(request: ['tokenSet' => 'zuiddrecht', 'menu' => ['enabled' => true]], uid: 'admin');
+
+		$this->assertSame(expected: '"workplace"', actual: $this->store['menu.style']);
+		$this->assertArrayNotHasKey(key: 'header_style', array: $this->store);
+		$this->assertArrayNotHasKey(key: 'workplace_layout', array: $this->store);
+	}//end testTheMenuOnLeavesATopBarTheSetDrawsAlone()
 
 	/**
 	 * Skip stores who and when, and nothing else.
