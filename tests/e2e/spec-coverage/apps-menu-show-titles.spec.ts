@@ -11,8 +11,8 @@
  * Written from the change's scenarios; runs in the nightly against a live
  * instance (it is not run in the cloud sandbox).
  *
- * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
- * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
+ * @spec openspec/specs/apps-menu-settings/spec.md
+ * @spec openspec/specs/menu-labels/spec.md
  */
 import { test, expect, type Locator, type Page } from '@playwright/test'
 

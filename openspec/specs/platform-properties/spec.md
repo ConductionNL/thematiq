@@ -49,6 +49,13 @@ Nextcloud core SHALL own the favicon slot, its upload and the icons it serves fr
 - WHEN a user opens any page
 - THEN the browser tab shows the uploaded favicon
 
+#### Scenario: A favicon core cannot take is left out
+@e2e exclude depends on the instance's Imagick build; proven by tests/Unit/Service/ThemingServiceTest.php (testApplyImagesLeavesOutAnImageCoreRefuses)
+- GIVEN the active token set ships an SVG favicon and core's image manager refuses SVG favicons (no Imagick with SVG support)
+- WHEN the theming sync runs
+- THEN the favicon slot keeps what it has and is not listed as updated
+- AND the other images, the colours and the change of set still apply
+
 ### Requirement: The workspace domain is server configuration (REQ-TPLAT-004)
 
 The domain the workspace answers on SHALL be set in Nextcloud's `config.php` (`trusted_domains`, `overwrite.cli.url`) and in hosting, not in thematiq. Every URL thematiq writes into a page, a stylesheet or an email SHALL be built through Nextcloud's `IURLGenerator`, so it carries the configured domain.

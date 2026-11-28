@@ -2416,6 +2416,7 @@
 			if (container === null) {
 				return
 			}
+			tokenEditorStarted = true
 
 			fetch(overridesUrl('', editedTokenSetId()), {
 				headers: { requesttoken: OC.requestToken },
@@ -5897,8 +5898,47 @@
 			}
 		}
 
-		// Initialise token editor on page load.
-		initTokenEditor()
+		/**
+		 * Whether the token editor has been built (or is being fetched).
+		 *
+		 * @type {boolean}
+		 */
+		var tokenEditorStarted = false
+
+		/**
+		 * Build the token editor once the page has painted. It sits far below
+		 * the fold, and its ~250 rows (each translated and resolved against the
+		 * live styles) held up the first paint of the whole page. It is built
+		 * when the instrument nears the screen, once the page has settled after
+		 * its load event, or at once when the address names a section.
+		 *
+		 * @spec openspec/specs/token-editor-ui/spec.md
+		 * @return {void}
+		 */
+		function startTokenEditor() {
+			var run = function () {
+				if (tokenEditorStarted === false) {
+					initTokenEditor()
+				}
+			}
+			if (
+				typeof window.ThematiqWhenNear !== 'function'
+				|| window.location.hash !== ''
+			) {
+				run()
+				return
+			}
+			window.ThematiqWhenNear(
+				[
+					document.getElementById('nldesign-preview'),
+					document.getElementById('nldesign-token-editor'),
+				],
+				run,
+			)
+		}
+
+		// Initialise the token editor after the first paint (see startTokenEditor).
+		startTokenEditor()
 
 		/* ==========================================================================
 		 * THEMING PER APP — exclude individual apps from nldesign theming

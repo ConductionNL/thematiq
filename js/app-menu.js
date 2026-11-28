@@ -694,7 +694,7 @@
 	 * @param {Element} grid The grid.
 	 * @param {boolean} off Whether titles are off.
 	 * @return {void}
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+	 * @spec openspec/specs/apps-menu-settings/spec.md
 	 */
 	function createChipTitles(grid, off) {
 		grid.querySelectorAll(
@@ -977,7 +977,7 @@
 	 * @param {string} note A note the accessible name ends in, or ''.
 	 * @param {boolean} on Whether titles are off for this menu.
 	 * @return {void}
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+	 * @spec openspec/specs/apps-menu-settings/spec.md
 	 */
 	function iconOnly(el, name, note, on) {
 		if (on && name !== '') {
@@ -1001,7 +1001,7 @@
 	 * pins alike and stays inside the viewport.
 	 *
 	 * @return {HTMLElement} The tooltip.
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+	 * @spec openspec/specs/apps-menu-settings/spec.md
 	 */
 	function tipEl() {
 		var el = document.getElementById(TIP)
@@ -1022,7 +1022,7 @@
 	 *
 	 * @param {EventTarget|null} node The node.
 	 * @return {Element|null} The entry or pin.
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+	 * @spec openspec/specs/apps-menu-settings/spec.md
 	 */
 	function tipTarget(node) {
 		var el =
@@ -1045,7 +1045,7 @@
 	 *
 	 * @param {Element} target The entry or pin.
 	 * @return {void}
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+	 * @spec openspec/specs/apps-menu-settings/spec.md
 	 */
 	function showTip(target) {
 		var state = window.thematiqAppMenuTip
@@ -1077,7 +1077,7 @@
 	 * Hide the tooltip and forget its entry.
 	 *
 	 * @return {void}
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+	 * @spec openspec/specs/apps-menu-settings/spec.md
 	 */
 	function hideTip() {
 		var state = window.thematiqAppMenuTip
@@ -1097,7 +1097,7 @@
 	 *
 	 * @param {Element} el The node.
 	 * @return {boolean} Whether it matches `:focus-visible`.
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+	 * @spec openspec/specs/apps-menu-settings/spec.md
 	 */
 	function focusVisible(el) {
 		try {
@@ -1117,7 +1117,7 @@
 	 * menu would close.
 	 *
 	 * @return {void}
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+	 * @spec openspec/specs/apps-menu-settings/spec.md
 	 */
 	function wireTips() {
 		var previous = window.thematiqAppMenuTip
