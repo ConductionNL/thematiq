@@ -180,7 +180,7 @@ class AppMenuSettings {
 	 * @return array<string, mixed> The keys set.
 	 *
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 */
 	public function defaults(): array {
 		$values = [];

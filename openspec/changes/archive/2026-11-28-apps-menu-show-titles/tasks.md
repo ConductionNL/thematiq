@@ -86,30 +86,32 @@ ConductionNL/design-system#1220 and #1221; TqSetupAppmenu has a follow-up. Copy,
       store `{titles: false}` through `POST /apps/thematiq/app-menu/defaults`, open Files and the apps
       menu, check the accessible names, the missing text, the tooltip on focus, its Escape and the
       focus ring; then the Theming tab with payoff disabled; then `topBarTitles` on and off with two
-      pins; put every value back in a `finally`. (written: `tests/e2e/spec-coverage/apps-menu-show-titles.spec.ts`; live lane 28 Nov on an NC 34
-      sandbox: green with admin-settings, apps-menu-walkthrough and checkbox-toggle-persistence, 34 passed, 2 env skips)
+      pins; put every value back in a `finally`. Live 6/6 on 28 Nov (NC 34.0.6, PostgreSQL 16,
+      nginx/php-fpm 8.3, APCu, Redis); "Checkbox change triggers save" runs in menu-labels.spec.ts.
 
 ## 6. Verification
 
-- [ ] 6.1 `hydra/scripts/diff-check.sh` green on the changed files while building; `composer
-      check:strict` and `npm run lint` once before push.
+- [x] 6.1 `hydra/scripts/diff-check.sh` green on the changed files while building; `composer
+      check:strict` and `npm run lint` once before push. 28 Nov on development 2e31595: PHPUnit
+      AppMenu*/CssInjectionService/TopBarTitles 111/111, vitest appMenu*/menu*/adminLayoutTopBarTitles
+      147/147, lint clean, l10n complete; the full PHPUnit fails the same 16 as development
+      (mail/theming doubles, restricted-set request path, internal scopes cache; none in this change).
 - [x] 6.2 Live check on the dev instance, light and dark, a Zuiddrecht set and a plain one: titles off
       matches AppMenuZonderTitels in every section; keyboard through the whole menu shows a tooltip per
       entry and a focus ring; Escape hides the tooltip, then closes the menu; a screen reader reads each
       name once; 200% zoom keeps the tooltip inside the viewport; titles on is unchanged. Titles in the top bar on
       and off with pins, on the workplace menu and on the classic style (Nextcloud 32 header and 33
-      waffle); an instance upgraded with `show_menu_labels` on keeps its labels.
-      (live lane, 28 Nov, NC 34.0.6 sandbox, Zuiddrecht and the stock nextcloud set, light and dark,
-      workplace and classic: titles off 6/6 entries icon-only with an aria-label, no aria-describedby,
-      headings and More keep their text; arrow keys and Tab through apps and create chips show a
-      role=tooltip with the entry's name and a focus ring; Escape hides the tooltip with the menu open,
-      a second Escape closes it; at 200% zoom (640x400 CSS viewport) every tooltip stays inside;
-      titles on draws every name. Pins Files and Dashboard: topBarTitles on shows both names, off
-      icons only. Nextcloud's own menu (classic, or a set without the workplace top bar) shows its
-      names either way and loads show-menu-labels.css only with topBarTitles on. Upgrade:
-      show_menu_labels=1 without menu.topBarTitles reads as on, occ maintenance:repair moves it once
-      into menu.topBarTitles=true and removes the old value. Only Nextcloud 34 runs in the sandbox, so
-      the Nextcloud 32 header was not walked.)
+      waffle); an instance upgraded with `show_menu_labels` on keeps its labels. Done 28 Nov on the
+      sandbox reference stack, Zuiddrecht and Rijkshuisstijl (light layout, workplace top bar), light
+      and dark, and at 960x540 (200% zoom of 1920x1080): titles off draws icons only (headings and
+      the Create row's More keep their text, as the spec says), each focused entry shows its name in
+      the tooltip inside the viewport with a solid focus ring, the first Escape hides the tooltip and
+      keeps the menu open, the second closes it; titles on shows no tooltip. Top bar titles with
+      Files and Photos pinned: off icon-only, on names next to the icons. Classic style on Nextcloud
+      34: `show-menu-labels.css` loads only with the switch on; Nextcloud 34's waffle names its apps
+      either way. `show_menu_labels` = 1 with no `menu.topBarTitles` keeps the pin names; removing it
+      drops them. The board AppMenuZonderTitels is not published on identity.conduction.nl yet, so
+      the compare was made against the spec text.
 
 ## Notes from the build
 
