@@ -206,6 +206,15 @@ test.describe('the apps menu walkthrough', () => {
 		await expect(title(page)).toHaveText('Open the apps menu')
 		await card(page).locator('.cn-walkthrough__close').click()
 		await expect(card(page)).toBeHidden()
+		// "A person who finished the tour" is one whose seen version is stored:
+		// the close writes it in the background, and a reload at once aborts
+		// that request, so wait until the server has it.
+		await expect
+			.poll(async () => (await api(page, 'GET', SEEN)).json.value, { timeout: 10_000 })
+			.toMatch(/^\d+\.\d+\.\d+$/)
+		await expect
+			.poll(async () => (await api(page, 'GET', PROGRESS)).json.value ?? '', { timeout: 10_000 })
+			.toBe('')
 
 		await page.reload({ waitUntil: 'domcontentloaded' })
 		await page.locator('.app-menu__waffle').click()
