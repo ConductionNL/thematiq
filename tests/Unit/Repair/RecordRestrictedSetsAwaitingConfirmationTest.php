@@ -121,10 +121,17 @@ class RecordRestrictedSetsAwaitingConfirmationTest extends TestCase {
 			haystack: $steps,
 			message: 'the step is not registered for an upgrade'
 		);
-		$this->assertSame(
-			expected: RecordRestrictedSetsAwaitingConfirmation::class,
-			actual: end($steps),
+		// After ApplyConfigSource, which may apply a set. Only WarmTokenSetAudits,
+		// which changes no configuration, may follow it.
+		$this->assertGreaterThan(
+			expected: array_search(\OCA\Thematiq\Repair\ApplyConfigSource::class, $steps, true),
+			actual: array_search(RecordRestrictedSetsAwaitingConfirmation::class, $steps, true),
 			message: 'it runs after ApplyConfigSource, which may apply a set'
+		);
+		$this->assertSame(
+			expected: [RecordRestrictedSetsAwaitingConfirmation::class, \OCA\Thematiq\Repair\WarmTokenSetAudits::class],
+			actual: array_slice($steps, -2),
+			message: 'only the audit warm-up follows it'
 		);
 
 		$class = RecordRestrictedSetsAwaitingConfirmation::class;
