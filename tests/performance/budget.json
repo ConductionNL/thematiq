@@ -4,7 +4,8 @@
 		{
 			"name": "Theming settings",
 			"path": "/index.php/settings/admin/theming",
-			"ready": "#nldesign-settings"
+			"ready": "#nldesign-settings",
+			"floor": "/index.php/settings/admin/sharing"
 		},
 		{
 			"name": "Files with the house style",
