@@ -161,7 +161,7 @@ class Admin implements IDelegatedSettings {
 	 * @return array<string, bool>
 	 *
 	 * @spec openspec/specs/admin-settings/spec.md
-	 * @spec openspec/changes/apps-menu-show-titles/specs/admin-settings/spec.md
+	 * @spec openspec/specs/admin-settings/spec.md
 	 */
 	private function flagState(): array {
 		return [

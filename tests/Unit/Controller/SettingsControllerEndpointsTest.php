@@ -390,7 +390,7 @@ class SettingsControllerEndpointsTest extends TestCase {
 	 * The older menu labels endpoint is gone: "Show titles in the top bar" saves through the menu
 	 * defaults (POST /apps/thematiq/app-menu/defaults).
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
+	 * @spec openspec/specs/menu-labels/spec.md
 	 *
 	 * @return void
 	 */
