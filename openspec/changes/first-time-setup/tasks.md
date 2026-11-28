@@ -143,6 +143,17 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
       follows (#004699) and `setup.completed`; non-admin sees nothing. Fixed there: the house style step
       offered no cards and "All 0 sets" while the cold catalogue loaded, and a pick left another set's
       radio checked. Still open: the comparison with the TqSetup boards.)
+      (28 Nov, DONE lane, board pass: the TqSetup boards are on design-system main but not yet on
+      identity.conduction.nl, so they were rendered from design-system preview/screens/boards and set
+      beside the live wizard at 1920x1080 on NC 34.0.6 + PostgreSQL. Every step body now follows its
+      board: Welkom (feature cards, info box) and Appmenu (switch cards, selects, Display/Top bar, the
+      separate Create row/button switches and the Contacts switch) #2227, Huisstijl (featured sets,
+      upload card, summary panel) #2229, Theming (colour/logo/favicon cells, no double-escaped
+      apostrophe) #2231, Inlogpagina (descriptions, preview) #2232, Klaar (applied banner, parts with
+      details, walkthrough card) in this PR. Still different, in nextcloud-vue CnWizardDialog and not
+      in this app: the boards' left-aligned "Thematiq instellen, stap n van 6" head with the step title,
+      Skip as a link at the start of the footer, the chevrons on Next/Apply, and the walkthrough as the
+      primary footer button on Klaar. 6.1 stays open for that frame.)
 - [x] 6.2 On an instance configured by an earlier version, upgrade and confirm nothing opens and the
       version card reads the earlier-version state. (live lane, NC 34 sandbox: thematiq 1.2.10 from main
       with Gemeente Amsterdam set through its own settings API, upgraded in place to development by
