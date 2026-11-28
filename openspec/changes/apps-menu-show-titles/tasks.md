@@ -78,7 +78,7 @@ ConductionNL/design-system#1220 and #1221; TqSetupAppmenu has a follow-up. Copy,
 
 ## 5. End to end
 
-- [ ] 5.1 `tests/e2e/spec-coverage/apps-menu-show-titles.spec.ts` with `@e2e` tags for "The
+- [x] 5.1 `tests/e2e/spec-coverage/apps-menu-show-titles.spec.ts` with `@e2e` tags for "The
       administrator switches titles off", "Keyboard focus shows the name", "Escape dismisses the
       tooltip and keeps the menu open", "The administrator switches titles off in Menu settings", "A
       pin shows its name on focus", "Pins show their names" and menu-labels "Checkbox change triggers
@@ -86,7 +86,8 @@ ConductionNL/design-system#1220 and #1221; TqSetupAppmenu has a follow-up. Copy,
       store `{titles: false}` through `POST /apps/thematiq/app-menu/defaults`, open Files and the apps
       menu, check the accessible names, the missing text, the tooltip on focus, its Escape and the
       focus ring; then the Theming tab with payoff disabled; then `topBarTitles` on and off with two
-      pins; put every value back in a `finally`. (written: `tests/e2e/spec-coverage/apps-menu-show-titles.spec.ts`, runs in nightly)
+      pins; put every value back in a `finally`. (written: `tests/e2e/spec-coverage/apps-menu-show-titles.spec.ts`; live lane 28 Nov on an NC 34
+      sandbox: green with admin-settings, apps-menu-walkthrough and checkbox-toggle-persistence, 34 passed, 2 env skips)
 
 ## 6. Verification
 
