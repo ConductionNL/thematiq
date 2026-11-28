@@ -48,6 +48,18 @@
 	) !important;
 }
 
+/* 34px in 14px semibold, like the shared new-item button: Mail's is its own
+ * header button, not NcAppNavigationNew, so the shared rule misses it. */
+:is(#content, #content-vue).app-mail
+	.mail-navigation__new-message-button
+	.button-vue {
+	min-height: 34px !important;
+	height: 34px !important;
+	padding-block: 0 !important;
+	font-size: 14px;
+	font-weight: 600;
+}
+
 :is(#content, #content-vue).app-mail
 	.mail-navigation__new-message-button
 	.button-vue--vue-secondary:hover {
