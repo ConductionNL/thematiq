@@ -36,7 +36,7 @@ use OCP\IConfig;
  * @SuppressWarnings(PHPMD.StaticAccess) - AppMenuOrder::clean() and AppMenuExternalApp hold the shared value rules.
  *
  * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-are-admin-defaults-with-per-user-overrides
- * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
  */
 class AppMenuSettings {
 

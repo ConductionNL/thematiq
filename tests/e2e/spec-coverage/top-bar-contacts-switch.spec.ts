@@ -17,7 +17,7 @@
  *   @e2e apps-menu-settings::on-by-default
  *   @e2e apps-menu-settings::the-administrator-switches-the-contacts-menu-off-for-everyone
  *
- * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md
+ * @spec openspec/specs/apps-menu-settings/spec.md
  */
 import { test, expect, type Locator, type Page } from '@playwright/test'
 
