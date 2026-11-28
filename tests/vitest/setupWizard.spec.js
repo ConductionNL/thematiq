@@ -273,6 +273,94 @@ describe('the wizard', () => {
 		expect(vm.state.uploadMessage).toBe('Not a token set.')
 	})
 
+	/**
+	 * The wizard with its computed values as getters, so render() and the footer can be read.
+	 *
+	 * @param {object} [status] The setup status.
+	 * @return {Promise<object>} The instance-like object.
+	 */
+	async function framed(status = null) {
+		const { SetupWizard } = await import('../../src/setupWizard.js')
+		const vm = await wizard(status)
+		vm.state.sets = [{ id: 'zuiddrecht', name: 'Gemeente Zuiddrecht', theming: {} }]
+		Object.keys(SetupWizard.computed).forEach((key) => {
+			Object.defineProperty(vm, key, { get: () => SetupWizard.computed[key].call(vm) })
+		})
+		vm.render = () => SetupWizard.render.call(vm)
+		return vm
+	}
+
+	// @spec openspec/changes/first-time-setup/tasks.md#6-live-check
+	it('draws the frame as the TqSetup boards: board look, eyebrow, the step\'s own title in the head', async () => {
+		const vm = await framed()
+		vm.state.choices.tokenSet = 'zuiddrecht'
+		const props = vm.render().props
+		expect(props).toMatchObject({ look: 'board', width: 'wizard', eyebrowContext: 'Set up Thematiq', stepEyebrow: '{context}, step {step} of {total}' })
+		const titles = {
+			welcome: 'Welcome to Thematiq',
+			'house-style': 'Choose the house style',
+			'nextcloud-theme': 'Update the Nextcloud theme',
+			'login-page': 'The login page',
+			'apps-menu': 'The apps menu',
+			done: 'Done, Gemeente Zuiddrecht is set',
+		}
+		Object.entries(titles).forEach(([stepId, title]) => {
+			vm.state.stepId = stepId
+			expect(vm.render().props.dialogTitle).toBe(title)
+		})
+		vm.state.choices.tokenSet = 'nextcloud'
+		expect(vm.heading).toBe('Done, Nextcloud default is set')
+	})
+
+	// @spec openspec/changes/first-time-setup/tasks.md#6-live-check
+	it('Skip is a link at the start of the footer on every step but done', async () => {
+		const vm = await framed()
+		const [skip] = vm.footer({ currentStep: { id: 'house-style' }, loading: false })
+		expect(skip.props.class).toBe('tq-setup__skip')
+		expect(skip.props['data-testid']).toBe('tq-setup-skip')
+		expect(vm.footer({ currentStep: { id: 'welcome' }, loading: true })[0].props.disabled).toBe(true)
+	})
+
+	// @spec openspec/changes/first-time-setup/tasks.md#6-live-check
+	it('done with the menu on: Close beside the walkthrough as the primary button with a chevron', async () => {
+		const reload = vi.fn()
+		vi.stubGlobal('location', { reload })
+		const { ChevronRight } = await import('../../src/setupWizard.js')
+		const vm = await framed()
+		vm.state.choices.menu.enabled = true
+		vm.state.stepId = 'done'
+		const done = vm.steps.find((step) => step.id === 'done')
+		expect(done.submitLabel).toBe('Start the apps menu walkthrough')
+		expect(vm.render().props.submitIcon).toBe(ChevronRight)
+		const [close] = vm.footer({ currentStep: { id: 'done' } })
+		expect(close.props['data-testid']).toBe('tq-setup-close')
+		close.props.onClick()
+		expect(vm.closed).toHaveBeenCalledTimes(1)
+
+		await vm.finish()
+		expect(calls.map((call) => call.method)).toEqual(['PUT'])
+		expect(reload).toHaveBeenCalled()
+		expect(vm.closed).toHaveBeenCalledTimes(1)
+	})
+
+	// @spec openspec/changes/first-time-setup/tasks.md#6-live-check
+	it('done with the menu off: only Close, which closes and stores nothing', async () => {
+		const vm = await framed()
+		vm.state.choices.menu.enabled = false
+		expect(vm.steps.find((step) => step.id === 'done').submitLabel).toBe('Close')
+		expect(vm.render().props.submitIcon).toBeNull()
+		expect(vm.footer({ currentStep: { id: 'done' } })).toEqual([])
+		vm.finish()
+		expect(vm.closed).toHaveBeenCalled()
+		expect(calls).toEqual([])
+	})
+
+	it('draws the chevron at the size the wizard asks', async () => {
+		const { ChevronRight } = await import('../../src/setupWizard.js')
+		const node = ChevronRight.render.call({ size: 16 })
+		expect(node.children[0].props).toMatchObject({ width: 16, height: 16 })
+	})
+
 	it('hands over to the walkthrough: stores an immediate start and reloads', async () => {
 		const reload = vi.fn()
 		vi.stubGlobal('location', { reload })

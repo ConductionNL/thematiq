@@ -19,6 +19,23 @@ const webpack = require('webpack')
 const loader = path.join(__dirname, 'scripts', 'webpack', 'style-inject-loader.js')
 const packageCss = /@conduction[\\/]nextcloud-vue[\\/]dist[\\/]nextcloud-vue\.css$/
 
+/**
+ * The board look's dialog frame, which nextcloud-vue ships unscoped (TqSetup boards): the board
+ * tokens on `.cn-look-board`, and the `.cn-dialog-board`, `.cn-dialog-header` and `.cn-stepper` rules
+ * that name no other component.
+ *
+ * @param {string} selector A rule's selector.
+ * @return {boolean} Whether the wizard keeps it.
+ * @spec openspec/changes/first-time-setup/tasks.md#6-live-check
+ */
+function boardDialogRule(selector) {
+	const plain = selector.replace(/\/\*[\s\S]*?\*\//g, '').trim()
+	if (plain === '.cn-look-board') {
+		return true
+	}
+	return /\.cn-(dialog-board|dialog-header|stepper)(?![a-z-])/.test(plain) && !/\.cn-(?!dialog\b|dialog[-_]|look-board|wizard-dialog|stepper)[a-z]/.test(plain)
+}
+
 module.exports = {
 	mode: 'production',
 	entry: path.join(__dirname, 'src', 'setupWizard.js'),
@@ -50,6 +67,7 @@ module.exports = {
 					options: {
 						scopeOf: ['CnWizardDialog/CnWizardDialog', 'CnStepper/CnStepper', 'CnDialog/CnDialog'].map((name) =>
 							require.resolve('@conduction/nextcloud-vue/dist/esm/components/' + name + '.vue.js')),
+						alsoKeep: boardDialogRule,
 					},
 				}],
 			},

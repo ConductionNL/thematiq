@@ -69,6 +69,7 @@ OC.L10N.register(
         "You can always set up again from the version card in Administration settings, Theming.": "Je kunt altijd opnieuw instellen via de versiekaart in Beheerinstellingen, Thema's en uiterlijk.",
         "Start the apps menu walkthrough": "Rondleiding door het appmenu starten",
         "Skip, keep Nextcloud as it is": "Overslaan, Nextcloud blijft zoals het is",
+        "{context}, step {step} of {total}": "{context}, stap {step} van {total}",
         "Set up Thematiq": "Thematiq instellen",
         "Color picker for {label}": "Kleurkiezer voor {label}",
         "NL design system theme": "NL Design System-thema",

@@ -20,7 +20,7 @@
 
 import { translate as t } from '@nextcloud/l10n'
 import { createApp, h, reactive } from 'vue'
-import { mdiAlertCircle, mdiCheckCircle, mdiDatabaseOutline, mdiDotsGrid, mdiInformationOutline, mdiPaletteOutline } from '@mdi/js'
+import { mdiAlertCircle, mdiCheckCircle, mdiChevronRight, mdiDatabaseOutline, mdiDotsGrid, mdiInformationOutline, mdiPaletteOutline } from '@mdi/js'
 import CnWizardDialog from '@conduction/nextcloud-vue/dist/esm/components/CnWizardDialog/CnWizardDialog.vue.js'
 import '@conduction/nextcloud-vue/dist/nextcloud-vue.css'
 import './setupWizard.css'
@@ -140,6 +140,22 @@ function svgIcon(d) {
 }
 
 /**
+ * The chevron on the done step's walkthrough button (TqSetupKlaar), as an icon component the wizard
+ * draws with its `size`.
+ *
+ * @spec openspec/changes/first-time-setup/tasks.md#6-live-check
+ */
+export const ChevronRight = {
+	name: 'TqChevronRight',
+	props: { size: { type: Number, default: 20 } },
+	render() {
+		return h('span', { class: 'material-design-icon', 'aria-hidden': 'true' }, [
+			h('svg', { viewBox: '0 0 24 24', width: this.size, height: this.size }, [h('path', { d: mdiChevronRight, fill: 'currentColor' })]),
+		])
+	},
+}
+
+/**
  * A switch drawn as the boards draw it: a bordered card, the label and help on the start, the switch
  * on the end (TqSetupAppmenu).
  *
@@ -221,11 +237,47 @@ export const SetupWizard = {
 				id,
 				label: RAIL[id](),
 				cancelLabel: t(APP_ID, 'Later'),
-				submitLabel: t(APP_ID, 'Close'),
+				submitLabel: id === 'done' && this.offersWalkthrough ? t(APP_ID, 'Start the apps menu walkthrough') : t(APP_ID, 'Close'),
 			}))
 		},
 		chosenSet() {
 			return this.state.sets.find((set) => set.id === this.state.choices.tokenSet) || { id: this.state.choices.tokenSet, name: this.state.choices.tokenSet }
+		},
+		/**
+		 * The name of the chosen set as the done step shows it.
+		 *
+		 * @return {string} The set's name, or "Nextcloud default".
+		 */
+		setName() {
+			const choices = this.state.choices
+			return choices.tokenSet === NEXTCLOUD_DEFAULT ? t(APP_ID, 'Nextcloud default') : (this.chosenSet.name || choices.tokenSet)
+		},
+		/**
+		 * The dialog's heading: the current step's own title, under the eyebrow
+		 * "Set up Thematiq, step n of 6", as the TqSetup boards draw it.
+		 *
+		 * @return {string} The title.
+		 * @spec openspec/changes/first-time-setup/tasks.md#6-live-check
+		 */
+		heading() {
+			const titles = {
+				welcome: () => t(APP_ID, 'Welcome to Thematiq'),
+				'house-style': () => t(APP_ID, 'Choose the house style'),
+				'nextcloud-theme': () => t(APP_ID, 'Update the Nextcloud theme'),
+				'login-page': () => t(APP_ID, 'The login page'),
+				'apps-menu': () => t(APP_ID, 'The apps menu'),
+				done: () => t(APP_ID, 'Done, {set} is set', { set: this.setName }, undefined, { escape: false }),
+			}
+			const title = titles[this.state.stepId]
+			return title ? title() : t(APP_ID, 'Set up Thematiq')
+		},
+		/**
+		 * Whether the done step offers the walkthrough as its finishing button.
+		 *
+		 * @return {boolean} True with the apps menu on.
+		 */
+		offersWalkthrough() {
+			return this.state.choices.menu.enabled === true
 		},
 		nextLabel() {
 			if (this.state.stepId === 'welcome') {
@@ -344,7 +396,6 @@ export const SetupWizard = {
 				h('span', { class: 'tq-setup__hint' }, text),
 			])
 			return h('div', { class: 'tq-setup__step' }, [
-				h('h2', t(APP_ID, 'Welcome to Thematiq')),
 				h('p', t(APP_ID, 'Thematiq gives Nextcloud your organisation\'s house style: colours, fonts, logo and the apps menu, on every screen. You set it up in five short steps. You can change every choice later in Administration settings, Theming.')),
 				h('div', { class: 'tq-setup__points' }, [
 					point(mdiPaletteOutline, t(APP_ID, 'Choose a house style'), t(APP_ID, 'A token set of a Dutch government, or your own set.')),
@@ -468,7 +519,6 @@ export const SetupWizard = {
 			const needed = confirmationNeeded(this.state.choices.tokenSet, this.state.licences)
 			const message = this.state.uploadMessage
 			return h('div', { class: 'tq-setup__step' }, [
-				h('h2', t(APP_ID, 'Choose the house style')),
 				h('p', t(APP_ID, 'A house style is a token set: colours, fonts, corners and spacing in one file. Choose your organisation\'s set. You use another government\'s set only with its permission; thematiq asks for it in the next step.')),
 				h('strong', { class: 'tq-setup__label' }, t(APP_ID, 'Token set')),
 				this.state.setsLoaded
@@ -523,7 +573,6 @@ export const SetupWizard = {
 			])
 			const favicon = theming.favicon || theming.logo
 			return h('div', { class: 'tq-setup__step' }, [
-				h('h2', t(APP_ID, 'Update the Nextcloud theme')),
 				h('p', t(APP_ID, 'Nextcloud has a theme of its own: logo, colours and favicon. Thematiq sets them to the set, so the apps on phone and computer, the emails and the login page follow the house style too.')),
 				switchCard({
 					id: 'tq-setup-follows',
@@ -552,7 +601,6 @@ export const SetupWizard = {
 				['nextcloud', t(APP_ID, 'Nextcloud default'), t(APP_ID, 'Nextcloud\'s own background image and layout. Only the logo changes.')],
 			]
 			return h('div', { class: 'tq-setup__step' }, [
-				h('h2', t(APP_ID, 'The login page')),
 				h('p', t(APP_ID, 'The login page is the first thing everyone sees. Choose whether it follows the house style or stays as Nextcloud draws it.')),
 				h('div', { class: 'tq-setup__login' }, [
 					h('div', { class: 'tq-setup__login-choices' }, [
@@ -622,7 +670,6 @@ export const SetupWizard = {
 				...extra,
 			})
 			return h('div', { class: 'tq-setup__step' }, [
-				h('h2', t(APP_ID, 'The apps menu')),
 				h('p', t(APP_ID, 'The thematiq apps menu replaces the standard menu: apps with a title and payoff, pinning to the top bar, Create and an order of their own for each person. This is the default for everyone; afterwards everyone changes their own order and pinned apps.')),
 				switchCard({
 					id: 'tq-setup-menu',
@@ -659,7 +706,7 @@ export const SetupWizard = {
 
 		done() {
 			const choices = this.state.choices
-			const name = choices.tokenSet === NEXTCLOUD_DEFAULT ? t(APP_ID, 'Nextcloud default') : (this.chosenSet.name || choices.tokenSet)
+			const name = this.setName
 			const theming = this.chosenSet.theming || {}
 			const plain = { escape: false }
 			const details = {
@@ -688,7 +735,6 @@ export const SetupWizard = {
 				])
 			}
 			return h('div', { class: 'tq-setup__step' }, [
-				h('h2', t(APP_ID, 'Done, {set} is set', { set: name }, undefined, plain)),
 				h('p', { class: 'tq-setup__applied', role: 'status' }, [
 					svgIcon(mdiCheckCircle),
 					h('span', [h('strong', t(APP_ID, 'Applied.')), ' ', t(APP_ID, 'Everyone sees the house style on the next page they open.')]),
@@ -707,13 +753,31 @@ export const SetupWizard = {
 			])
 		},
 
+		/**
+		 * The footer's start: Skip as a link on every step but done; on done, Close
+		 * beside the walkthrough as the primary button (TqSetupKlaar).
+		 *
+		 * @param {object} scope The wizard's actions-start scope.
+		 * @return {Array} The buttons.
+		 * @spec openspec/changes/first-time-setup/tasks.md#6-live-check
+		 */
 		footer(scope) {
 			if (scope.currentStep && scope.currentStep.id === 'done') {
-				return this.state.choices.menu.enabled
-					? [h('button', { type: 'button', class: 'button', 'data-testid': 'tq-setup-walkthrough', onClick: () => this.startWalkthrough() }, t(APP_ID, 'Start the apps menu walkthrough'))]
+				return this.offersWalkthrough
+					? [h('button', { type: 'button', class: 'tq-setup__close', 'data-testid': 'tq-setup-close', onClick: () => this.close() }, t(APP_ID, 'Close'))]
 					: []
 			}
-			return [h('button', { type: 'button', class: 'button tq-setup__skip', 'data-testid': 'tq-setup-skip', disabled: scope.loading, onClick: () => this.skip() }, t(APP_ID, 'Skip, keep Nextcloud as it is'))]
+			return [h('button', { type: 'button', class: 'tq-setup__skip', 'data-testid': 'tq-setup-skip', disabled: scope.loading, onClick: () => this.skip() }, t(APP_ID, 'Skip, keep Nextcloud as it is'))]
+		},
+
+		/**
+		 * The finishing button of the done step: the walkthrough with the apps menu on, else Close.
+		 *
+		 * @return {Promise<void>|void}
+		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
+		 */
+		finish() {
+			return this.offersWalkthrough ? this.startWalkthrough() : this.close()
 		},
 	},
 	render() {
@@ -730,7 +794,12 @@ export const SetupWizard = {
 			slots['step-' + step.id] = () => bodies[step.id]()
 		})
 		return h(CnWizardDialog, {
-			dialogTitle: t(APP_ID, 'Set up Thematiq'),
+			look: 'board',
+			width: 'wizard',
+			dialogTitle: this.heading,
+			eyebrowContext: t(APP_ID, 'Set up Thematiq'),
+			stepEyebrow: t(APP_ID, '{context}, step {step} of {total}'),
+			submitIcon: this.offersWalkthrough ? ChevronRight : null,
 			steps: this.steps,
 			initialStep: 'welcome',
 			nextLabel: this.nextLabel,
@@ -741,7 +810,7 @@ export const SetupWizard = {
 			nextDisabled: this.state.stepId === 'house-style' && !houseStyleReady(this.state.choices, this.state.licences),
 			validate: (stepId) => this.validate(stepId),
 			onStepChange: (payload) => { this.state.stepId = payload.stepId },
-			onSubmit: () => this.close(),
+			onSubmit: () => this.finish(),
 			onClose: () => this.close(),
 		}, slots)
 	},
