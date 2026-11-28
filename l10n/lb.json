@@ -2205,7 +2205,19 @@
         "A plain background in the colour of the set, the logo above it, the login card with the primary button.": "A plain background in the colour of the set, the logo above it, the login card with the primary button.",
         "Nextcloud's own background image and layout. Only the logo changes.": "Nextcloud's own background image and layout. Only the logo changes.",
         "The login page is the first thing everyone sees. Choose whether it follows the house style or stays as Nextcloud draws it.": "The login page is the first thing everyone sees. Choose whether it follows the house style or stays as Nextcloud draws it.",
-        "The slogan stays in the theme, but not under the logo.": "The slogan stays in the theme, but not under the logo."
+        "The slogan stays in the theme, but not under the logo.": "The slogan stays in the theme, but not under the logo.",
+        "House style: {set}": "House style: {set}",
+        "Primary {colour}": "Primary {colour}",
+        "Logo, primary colour, background colour and favicon follow the set": "Logo, primary colour, background colour and favicon follow the set",
+        "Login page follows the house style": "Login page follows the house style",
+        "Login page stays Nextcloud's own": "Login page stays Nextcloud's own",
+        "Slogan hidden": "Slogan hidden",
+        "Apps menu on": "Apps menu on",
+        "Nextcloud's own apps menu": "Nextcloud's own apps menu",
+        "{columns} columns, {rows} rows above More apps": "{columns} columns, {rows} rows above More apps",
+        "Not applied: {part}": "Not applied: {part}",
+        "See how the new apps menu works?": "See how the new apps menu works?",
+        "A few short steps: opening, ordering, pinning, Create and the settings. It takes a minute. Everyone gets it the first time they open the menu.": "A few short steps: opening, ordering, pinning, Create and the settings. It takes a minute. Everyone gets it the first time they open the menu."
     },
     "plurals": {}
 }

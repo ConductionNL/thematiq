@@ -2198,7 +2198,19 @@ OC.L10N.register(
         "A plain background in the colour of the set, the logo above it, the login card with the primary button.": "Effen achtergrond in de kleur van de set, het logo erboven, de inlogkaart met de primaire knop.",
         "Nextcloud's own background image and layout. Only the logo changes.": "De achtergrondafbeelding en de opmaak van Nextcloud zelf. Alleen het logo wisselt.",
         "The login page is the first thing everyone sees. Choose whether it follows the house style or stays as Nextcloud draws it.": "De inlogpagina is het eerste wat iedereen ziet. Kies of ze de huisstijl volgt of blijft zoals Nextcloud haar tekent.",
-        "The slogan stays in the theme, but not under the logo.": "De slogan blijft in het thema staan, maar niet onder het logo."
+        "The slogan stays in the theme, but not under the logo.": "De slogan blijft in het thema staan, maar niet onder het logo.",
+        "House style: {set}": "Huisstijl: {set}",
+        "Primary {colour}": "Primair {colour}",
+        "Logo, primary colour, background colour and favicon follow the set": "Logo, primaire kleur, achtergrondkleur en favicon volgen de set",
+        "Login page follows the house style": "Inlogpagina volgt de huisstijl",
+        "Login page stays Nextcloud's own": "Inlogpagina blijft die van Nextcloud",
+        "Slogan hidden": "Slogan verborgen",
+        "Apps menu on": "Appmenu aan",
+        "Nextcloud's own apps menu": "Het eigen appmenu van Nextcloud",
+        "{columns} columns, {rows} rows above More apps": "{columns} kolommen, {rows} rijen boven Meer apps",
+        "Not applied: {part}": "Niet toegepast: {part}",
+        "See how the new apps menu works?": "Zien hoe het nieuwe appmenu werkt?",
+        "A few short steps: opening, ordering, pinning, Create and the settings. It takes a minute. Everyone gets it the first time they open the menu.": "Een paar korte stappen: openen, ordenen, vastzetten, Nieuw maken en de instellingen. Duurt een minuut. Iedereen krijgt hem bij het eerste bezoek aan het menu."
     },
     "nplurals=2; plural=(n != 1);"
 )

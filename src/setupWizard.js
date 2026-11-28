@@ -20,7 +20,7 @@
 
 import { translate as t } from '@nextcloud/l10n'
 import { createApp, h, reactive } from 'vue'
-import { mdiDatabaseOutline, mdiDotsGrid, mdiInformationOutline, mdiPaletteOutline } from '@mdi/js'
+import { mdiAlertCircle, mdiCheckCircle, mdiDatabaseOutline, mdiDotsGrid, mdiInformationOutline, mdiPaletteOutline } from '@mdi/js'
 import CnWizardDialog from '@conduction/nextcloud-vue/dist/esm/components/CnWizardDialog/CnWizardDialog.vue.js'
 import '@conduction/nextcloud-vue/dist/nextcloud-vue.css'
 import './setupWizard.css'
@@ -658,14 +658,51 @@ export const SetupWizard = {
 		},
 
 		done() {
-			const name = this.state.choices.tokenSet === NEXTCLOUD_DEFAULT ? t(APP_ID, 'Nextcloud default') : (this.chosenSet.name || this.state.choices.tokenSet)
+			const choices = this.state.choices
+			const name = choices.tokenSet === NEXTCLOUD_DEFAULT ? t(APP_ID, 'Nextcloud default') : (this.chosenSet.name || choices.tokenSet)
+			const theming = this.chosenSet.theming || {}
+			const plain = { escape: false }
+			const details = {
+				'house-style': [
+					t(APP_ID, 'House style: {set}', { set: name }, undefined, plain),
+					theming.primary_color ? t(APP_ID, 'Primary {colour}', { colour: theming.primary_color }, undefined, plain) : '',
+				],
+				'nextcloud-theme': [t(APP_ID, 'Nextcloud theme updated'), t(APP_ID, 'Logo, primary colour, background colour and favicon follow the set')],
+				'login-page': [
+					choices.loginStyle === 'house-style' ? t(APP_ID, 'Login page follows the house style') : t(APP_ID, 'Login page stays Nextcloud\'s own'),
+					choices.hideSlogan ? t(APP_ID, 'Slogan hidden') : '',
+				],
+				'apps-menu': [
+					choices.menu.enabled ? t(APP_ID, 'Apps menu on') : t(APP_ID, 'Nextcloud\'s own apps menu'),
+					choices.menu.enabled ? t(APP_ID, '{columns} columns, {rows} rows above More apps', { columns: choices.menu.columns, rows: choices.menu.rowsAboveFold }, undefined, plain) : '',
+				],
+			}
+			const part = (item) => {
+				const [title, line] = details[item.id]
+				return h('li', { class: ['tq-setup__part', item.applied ? 'tq-setup__part--ok' : 'tq-setup__part--failed'] }, [
+					svgIcon(item.applied ? mdiCheckCircle : mdiAlertCircle),
+					h('span', { class: 'tq-setup__part-text' }, [
+						h('strong', item.applied ? title : t(APP_ID, 'Not applied: {part}', { part: RAIL[item.id]() }, undefined, plain)),
+						line && item.applied ? h('span', { class: 'tq-setup__hint' }, line) : null,
+					]),
+				])
+			}
 			return h('div', { class: 'tq-setup__step' }, [
-				h('h2', t(APP_ID, 'Done, {set} is set', { set: name })),
-				h('p', { role: 'status' }, t(APP_ID, 'Applied.')),
-				h('p', t(APP_ID, 'Everyone sees the house style on the next page they open.')),
-				h('ul', { class: 'tq-setup__parts' }, partsOf(this.state.result).map((part) =>
-					h('li', { class: part.applied ? 'tq-setup__part--ok' : 'tq-setup__part--failed' }, (part.applied ? '✓ ' : '! ') + RAIL[part.id]()),
-				)),
+				h('h2', t(APP_ID, 'Done, {set} is set', { set: name }, undefined, plain)),
+				h('p', { class: 'tq-setup__applied', role: 'status' }, [
+					svgIcon(mdiCheckCircle),
+					h('span', [h('strong', t(APP_ID, 'Applied.')), ' ', t(APP_ID, 'Everyone sees the house style on the next page they open.')]),
+				]),
+				h('ul', { class: 'tq-setup__parts' }, partsOf(this.state.result).map(part)),
+				choices.menu.enabled
+					? h('div', { class: 'tq-setup__tour' }, [
+						h('span', { class: 'tq-setup__point-icon' }, [svgIcon(mdiDotsGrid)]),
+						h('span', { class: 'tq-setup__part-text' }, [
+							h('strong', t(APP_ID, 'See how the new apps menu works?')),
+							h('span', { class: 'tq-setup__hint' }, t(APP_ID, 'A few short steps: opening, ordering, pinning, Create and the settings. It takes a minute. Everyone gets it the first time they open the menu.')),
+						]),
+					])
+					: null,
 				h('p', { class: 'tq-setup__note' }, t(APP_ID, 'You can always set up again from the version card in Administration settings, Theming.')),
 			])
 		},
