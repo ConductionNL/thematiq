@@ -39,7 +39,9 @@ describe('the setup model', () => {
 		expect(fresh.tokenSet).toBe('nextcloud')
 		expect(fresh.nextcloudThemeFollows).toBe(true)
 		expect(fresh.menu.enabled).toBe(true)
-		expect(fresh.menu.showCreate).toBe(true)
+		expect(fresh.menu.showCreateRow).toBe(true)
+		expect(fresh.menu.showCreateButton).toBe(true)
+		expect(fresh.menu.showContactsMenu).toBe(true)
 		expect(fresh.menu.titles).toBe(true)
 
 		const again = initialChoices({
@@ -68,7 +70,8 @@ describe('the setup model', () => {
 		const choices = initialChoices(null)
 		choices.tokenSet = 'amsterdam'
 		choices.confirmRestricted = true
-		choices.menu.showCreate = false
+		choices.menu.showCreateButton = false
+		choices.menu.showContactsMenu = false
 		choices.menu.columns = 9
 		expect(applyRequest(choices, LICENCES)).toEqual({
 			tokenSet: 'amsterdam',
@@ -76,7 +79,7 @@ describe('the setup model', () => {
 			nextcloudThemeFollows: true,
 			loginStyle: 'house-style',
 			hideSlogan: false,
-			menu: { enabled: true, columns: 5, rowsAboveFold: 2, titles: true, payoff: true, showCreateButton: false, showCreateRow: false, showExternalApps: true },
+			menu: { enabled: true, columns: 5, rowsAboveFold: 2, titles: true, payoff: true, showCreateRow: true, showExternalApps: true, showCreateButton: false, showContactsMenu: false },
 		})
 
 		choices.menu.enabled = false
@@ -188,7 +191,7 @@ describe('the wizard', () => {
 			return out
 		}
 		const switches = () => inputs(vm.appsMenu()).map((props) => [props.id, props.disabled])
-		expect(switches().map(([id]) => id)).toEqual(['tq-setup-menu', 'tq-setup-titles', 'tq-setup-payoff', 'tq-setup-showCreate', 'tq-setup-showExternalApps'])
+		expect(switches().map(([id]) => id)).toEqual(['tq-setup-menu', 'tq-setup-titles', 'tq-setup-payoff', 'tq-setup-showCreateRow', 'tq-setup-showExternalApps', 'tq-setup-showCreateButton', 'tq-setup-showContactsMenu'])
 		expect(switches()).toContainEqual(['tq-setup-payoff', false])
 
 		vm.state.choices.menu.titles = false

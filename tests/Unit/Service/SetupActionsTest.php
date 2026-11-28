@@ -258,6 +258,22 @@ class SetupActionsTest extends TestCase {
 	}//end testTheMenuStepSendsTheCreateSwitches()
 
 	/**
+	 * The apps menu step's Contacts button switch (TqSetupAppmenu) is stored as the administrator's
+	 * `menu.showContactsMenu`.
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+	 *
+	 * @return void
+	 */
+	public function testTheMenuStepSendsTheContactsSwitch(): void {
+		$actions = $this->make();
+		$this->coreSync->method('sync')->willReturn([]);
+		$actions->apply(request: ['tokenSet' => 'amsterdam', 'menu' => ['enabled' => true, 'showContactsMenu' => false]], uid: 'admin');
+
+		$this->assertSame(expected: 'false', actual: $this->store['menu.showContactsMenu']);
+	}//end testTheMenuStepSendsTheContactsSwitch()
+
+	/**
 	 * A wrong value refuses the whole request and stores nothing.
 	 *
 	 * @return void

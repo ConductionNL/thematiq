@@ -261,8 +261,12 @@ a choice between a Workplace and a Classic style. On MUST mean thematiq's workpl
 store the administrator's `menu.style` default workplace. Off MUST mean Nextcloud's own menu: Apply MUST
 store the administrator's `menu.style` default classic and no other `menu.<key>` default. While the
 switch is on the step MUST show the workplace menu's defaults, columns 3 to 5, rows above More apps 1 to
-3, and the switches Show payoff, Show Create and Show external apps, ending in Apply, and Apply MUST store
-them as the administrator's `menu.<key>` defaults, checked as `POST /app-menu/defaults` checks them. The
+3 as selects, under Display the switches Show titles, Show payoff, Create row in the apps menu and Show
+external apps, and under Top bar the switches Create button in the top bar and Contacts button in the
+top bar, each a card with its help text as TqSetupAppmenu draws it, ending in Apply, and Apply MUST store
+them as the administrator's `menu.<key>` defaults (`titles`, `payoff`, `showCreateRow`,
+`showExternalApps`, `showCreateButton`, `showContactsMenu`), checked as `POST /app-menu/defaults` checks
+them. The
 workplace apps menu shows only in the workplace top bar, which is the light workplace layout with the
 workplace header: when the switch is on and the chosen house style does not draw the workplace top bar,
 Apply MUST also store `workplace_layout` light and `header_style` workplace, each only where the set
