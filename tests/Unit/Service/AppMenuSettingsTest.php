@@ -262,7 +262,7 @@ final class AppMenuSettingsTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-contacts-menu-in-the-top-bar-switches-off-for-a-person-req-tqcm-001
 	 */
 	public function testAPersonsContactsMenuSwitchWinsOverTheAdministrators(): void {
 		$settings = $this->settings();

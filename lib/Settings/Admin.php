@@ -294,7 +294,7 @@ class Admin implements IDelegatedSettings {
 	 * @spec openspec/specs/brand-stripe/spec.md#requirement-the-brand-stripe-is-an-admin-option
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-the-navigation-width-is-an-admin-option
 	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-defaults-on-thematiqs-admin-page-req-tqqt-003
-	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-contacts-menu-default-on-thematiqs-admin-page-req-tqcm-002
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-contacts-menu-default-on-thematiqs-admin-page-req-tqcm-002
 	 */
 	private function layoutParams(): array {
 		return [
@@ -361,7 +361,7 @@ class Admin implements IDelegatedSettings {
 	 *
 	 * @return bool Whether the switch is on for everyone.
 	 *
-	 * @spec openspec/changes/top-bar-contacts-switch/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-contacts-menu-default-on-thematiqs-admin-page-req-tqcm-002
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-the-administrator-sets-the-contacts-menu-default-on-thematiqs-admin-page-req-tqcm-002
 	 */
 	private function menuSwitch(string $key): bool {
 		$value = json_decode($this->config->getAppValue(Application::APP_ID, 'menu.' . $key, ''), true);
