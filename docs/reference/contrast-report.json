@@ -111,8 +111,8 @@
         },
         "epe": {
             "verdict": "pass",
-            "textRatio": 7.6,
-            "uiRatio": 7.6,
+            "textRatio": 5.98,
+            "uiRatio": 5.98,
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },
@@ -188,8 +188,8 @@
         },
         "hoeksche-waard": {
             "verdict": "pass",
-            "textRatio": 4.56,
-            "uiRatio": 4.56,
+            "textRatio": 5.11,
+            "uiRatio": 5.11,
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },
@@ -258,8 +258,8 @@
         },
         "noaberkracht": {
             "verdict": "pass",
-            "textRatio": 4.5,
-            "uiRatio": 4.5,
+            "textRatio": 4.84,
+            "uiRatio": 4.84,
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },
@@ -454,8 +454,8 @@
         },
         "zaanstad": {
             "verdict": "pass",
-            "textRatio": 5.23,
-            "uiRatio": 5.23,
+            "textRatio": 7.9,
+            "uiRatio": 7.9,
             "textThreshold": 4.5,
             "uiThreshold": 3.0
         },

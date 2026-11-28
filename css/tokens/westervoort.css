@@ -83,7 +83,7 @@
 	--nldesign-border-radius-rounded: 28px;
 	--nldesign-border-radius-small: 4px;
 	--nldesign-color-background-dark: #ffffff;
-	--nldesign-color-background-darker: #f6faf5;
+	--nldesign-color-background-darker: #b5b5b5;
 	--nldesign-color-background-hover: #f6faf5;
 	--nldesign-color-border: #66a947;
 	--nldesign-color-border-dark: #319fc4;
@@ -101,7 +101,7 @@
 	--nldesign-color-link-hover: #000000;
 	--nldesign-color-link-visited: #014c93;
 	--nldesign-color-nav-background: #ffffff;
-	--nldesign-color-placeholder-dark: #f6faf5;
+	--nldesign-color-placeholder-dark: #b5b5b5;
 	--nldesign-color-placeholder-light: #f6faf5;
 	--nldesign-color-primary: #003c6b;
 	--nldesign-color-primary-hover: #003660;
@@ -757,9 +757,9 @@
 	 *    source version:  1.0.0
 	 *    slug:            westervoort
 	 *    converter:       1.0.0
-	 *    mapping table:   v1 sha256:d34522588fb60c0c
+	 *    mapping table:   v1 sha256:cc536665731c3775
 	 *    applied:         10
-	 *    adapted:         34
+	 *    adapted:         36
 	 *    kept:            98
 	 *    skipped:         1
 	 */

@@ -262,6 +262,67 @@ async function setupStatus(page: Page): Promise<{ status: number; json: Record<s
 	})
 }
 
+/**
+ * Walk the wizard from the welcome to Done with a set from the gallery, the theme switch and the
+ * menu left on, and Apply.
+ *
+ * @param page The administrator's page, on a page that shows the wizard.
+ * @param setName The set's card label.
+ * @param restricted Whether the set is restricted (it asks for the statement while not confirmed).
+ */
+async function applyWithMenu(page: Page, setName: string, restricted: boolean): Promise<void> {
+	await next(page).click()
+	await page.getByRole('button', { name: /sets in the gallery/ }).click()
+	await page.locator('label.tq-setup__card', { hasText: setName }).first().click()
+	// A restricted set asks for the statement until someone confirmed it (the full run does).
+	const statement = page.locator('label[for="tq-setup-licence-statement"]')
+	if (restricted && await statement.waitFor({ timeout: 3_000 }).then(() => true, () => false)) {
+		await statement.click()
+	}
+	await expect(next(page)).toBeEnabled()
+	await next(page).click()
+	await expect(page.locator('.tq-setup__step h2')).toHaveText('Update the Nextcloud theme')
+	await next(page).click()
+	await expect(page.locator('.tq-setup__step h2')).toHaveText('The login page')
+	await next(page).click()
+	await expect(page.locator('.tq-setup__step h2')).toHaveText('The apps menu')
+	await expect(next(page)).toHaveText('Apply')
+	await next(page).click()
+	await expect(page.locator('.tq-setup__step h2')).toHaveText(`Done, ${setName} is set`, { timeout: 120_000 })
+}
+
+/** The admin's tour keys, so a test that starts the tour can put them back. */
+const TOUR_KEYS = ['apps_menu_walkthrough_seen_version', 'apps_menu_walkthrough_seen_version-progress']
+
+/**
+ * Read or write the signed-in person's tour keys.
+ *
+ * @param page A signed-in page.
+ * @param values The values to write, or null to read.
+ * @return The values read (or written).
+ */
+async function tourKeys(page: Page, values: Record<string, unknown> | null): Promise<Record<string, unknown>> {
+	return page.evaluate(async ({ keys, write }) => {
+		const OC = (window as any).OC
+		const out: Record<string, unknown> = {}
+		for (const key of keys) {
+			const url = OC.generateUrl(`/apps/thematiq/api/preferences/${key}`)
+			if (write === null) {
+				const r = await fetch(url, { headers: { requesttoken: OC.requestToken } })
+				out[key] = r.ok ? ((await r.json()).value ?? '') : ''
+			} else {
+				await fetch(url, {
+					method: 'PUT',
+					headers: { requesttoken: OC.requestToken, 'Content-Type': 'application/json' },
+					body: JSON.stringify({ value: write[key] ?? '' }),
+				})
+				out[key] = write[key] ?? ''
+			}
+		}
+		return out
+	}, { keys: TOUR_KEYS, write: values })
+}
+
 const wizard = (page: Page) => page.locator('#thematiq-setup-wizard')
 const next = (page: Page) => page.getByTestId('cn-wizard-next')
 
@@ -320,7 +381,8 @@ test.describe('first-time setup: the wizard', () => {
 	})
 
 	test.beforeEach(() => {
-		makeDue(before)
+		// Also the menu defaults an earlier test's Apply stored, which `before` does not name.
+		makeDue({ ...before, ...appValues() })
 	})
 
 	// @e2e first-time-setup::the-welcome-opens-on-the-dashboard
@@ -386,7 +448,14 @@ test.describe('first-time setup: the wizard', () => {
 		expect(status.current.tokenSet).toBe('amsterdam')
 		expect(status.current.hideSlogan).toBe(true)
 		expect(status.completed.by).toBe('admin')
-		expect((await readTheming(page)).primary_color.toLowerCase()).toBe(primaryOf('amsterdam'))
+		const theming = await readTheming(page)
+		expect(theming.primary_color.toLowerCase()).toBe(primaryOf('amsterdam'))
+		// The logo and favicon slots carry exactly what the set's theming metadata brings (ScheduledCoreThemingSync).
+		const meta = MANIFEST.find((entry) => entry.id === 'amsterdam')?.theming ?? {}
+		expect(meta.logo, 'CONTROL: amsterdam ships a logo').toBeTruthy()
+		expect(theming.has_custom_logo, 'the set\'s logo is Nextcloud\'s logo').toBe(true)
+		expect(theming.synced_logo).toBe(meta.logo)
+		expect(theming.synced_favicon).toBe(meta.favicon ?? '')
 
 		// An anonymous login page has no slogan; a non-admin gets the workplace menu with 3 columns.
 		const guest = await browser.newContext({ storageState: undefined })
@@ -422,5 +491,31 @@ test.describe('first-time setup: the wizard', () => {
 		expect((await setupStatus(page)).json.completed.by).toBe('admin')
 		await expectWizard(page, '/index.php/apps/files/', false)
 	})
-})
 
+	// @e2e first-time-setup::the-sets-logo-colours-and-favicon-reach-nextcloud
+	// @e2e first-time-setup::start-the-walkthrough
+	test('zuiddrecht: its logo, colour and favicon reach Nextcloud, and Start the apps menu walkthrough opens the menu with the tour', async ({ page }) => {
+		await expectWizard(page, '/index.php/apps/dashboard/', true)
+		await applyWithMenu(page, 'Gemeente Zuiddrecht', false)
+		const meta = MANIFEST.find((entry) => entry.id === 'zuiddrecht')?.theming ?? {}
+		expect(meta.logo && meta.favicon, 'CONTROL: zuiddrecht ships a logo and a favicon').toBeTruthy()
+		const theming = await readTheming(page)
+		expect(theming.primary_color.toLowerCase()).toBe(primaryOf('zuiddrecht'))
+		expect(theming.has_custom_logo).toBe(true)
+		expect(theming.has_custom_favicon).toBe(true)
+		expect(theming.synced_logo).toBe(meta.logo)
+		expect(theming.synced_favicon).toBe(meta.favicon)
+
+		const before = await tourKeys(page, null)
+		try {
+			await page.getByTestId('tq-setup-walkthrough').click()
+			const card = page.locator('.thematiq-menu-walkthrough .cn-walkthrough__card')
+			await expect(card).toBeVisible({ timeout: 30_000 })
+			await expect(wizard(page)).toHaveCount(0)
+			await expect(page.locator('.app-menu__waffle')).toHaveAttribute('aria-expanded', 'true')
+			await expect(card.locator('.cn-walkthrough__title')).toHaveText('Open the apps menu')
+		} finally {
+			await tourKeys(page, before)
+		}
+	})
+})
