@@ -170,7 +170,7 @@
 	--nldesign-border-radius-small: 4px;
 	--nldesign-color-background-dark: #7fdd06;
 	--nldesign-color-background-darker: #ebebeb;
-	--nldesign-color-background-hover: #ffffff;
+	--nldesign-color-background-hover: #ebebeb;
 	--nldesign-color-border: #525151;
 	--nldesign-color-border-dark: #949494;
 	--nldesign-color-error: #d70d0d;
@@ -821,9 +821,9 @@
 	 *    source version:  1.0.0
 	 *    slug:            noordoostpolder
 	 *    converter:       1.0.0
-	 *    mapping table:   v1 sha256:d34522588fb60c0c
+	 *    mapping table:   v1 sha256:cc536665731c3775
 	 *    applied:         10
-	 *    adapted:         37
+	 *    adapted:         40
 	 *    kept:            186
 	 *    skipped:         12
 	 */
