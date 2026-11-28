@@ -228,17 +228,25 @@ describe('the wizard', () => {
 	it('keeps the stored set and Nextcloud default first while picking, keys every card, and keeps a picked set in view', async () => {
 		const vm = await wizard({ completed: false, configured: false, current: { tokenSet: 'nextcloud' } })
 		vm.state.setsLoaded = true
-		vm.state.sets = ['amsterdam', 'basis', 'college', 'demodam', 'duo', 'esdoornveen', 'nextcloud', 'zuiddrecht'].map((id) => ({ id, name: id }))
+		vm.state.sets = ['amsterdam', 'basis', 'college', 'demodam', 'duo', 'esdoornveen', 'nextcloud', 'rijkshuisstijl', 'rotterdam', 'zuiddrecht'].map((id) => ({ id, name: id }))
 		const order = () => vm.setCards().children.map((card) => card.key)
-		expect(order()).toEqual(['nextcloud', 'amsterdam', 'basis', 'college', 'demodam'])
+		// TqSetupHuisstijl: the featured sets, Nextcloud default, then the upload card.
+		expect(order()).toEqual(['zuiddrecht', 'rijkshuisstijl', 'amsterdam', 'rotterdam', 'nextcloud', 'tq-setup-upload'])
 
 		vm.state.choices.tokenSet = 'amsterdam'
-		expect(order()).toEqual(['nextcloud', 'amsterdam', 'basis', 'college', 'demodam'])
+		expect(order()).toEqual(['zuiddrecht', 'rijkshuisstijl', 'amsterdam', 'rotterdam', 'nextcloud', 'tq-setup-upload'])
 		const checked = vm.setCards().children.filter((card) => card.children[0].props.checked).map((card) => card.key)
 		expect(checked).toEqual(['amsterdam'])
 
-		vm.state.choices.tokenSet = 'zuiddrecht'
-		expect(order()).toEqual(['nextcloud', 'amsterdam', 'basis', 'college', 'demodam', 'zuiddrecht'])
+		vm.state.choices.tokenSet = 'duo'
+		expect(order()).toEqual(['zuiddrecht', 'rijkshuisstijl', 'amsterdam', 'rotterdam', 'nextcloud', 'duo', 'tq-setup-upload'])
+	})
+
+	it('puts a stored set that is not featured first', async () => {
+		const vm = await wizard({ completed: true, configured: true, current: { tokenSet: 'duo' } })
+		vm.state.setsLoaded = true
+		vm.state.sets = ['amsterdam', 'duo', 'nextcloud', 'rijkshuisstijl', 'rotterdam', 'zuiddrecht'].map((id) => ({ id, name: id }))
+		expect(vm.setCards().children.map((card) => card.key)).toEqual(['duo', 'zuiddrecht', 'rijkshuisstijl', 'amsterdam', 'nextcloud', 'tq-setup-upload'])
 	})
 
 	it('stops saying loading when reading the sets fails', async () => {

@@ -2192,7 +2192,8 @@
         "On or off, there is no other choice. Off: Nextcloud keeps its own menu, the rest of the house style stays.": "Aan of uit, meer keuze is er niet. Uit: Nextcloud houdt zijn eigen menu, de rest van de huisstijl blijft.",
         "One line under each app on what it does.": "Onder elke app één regel wat hij doet.",
         "Document, spreadsheet, presentation, whiteboard.": "Document, spreadsheet, presentatie, whiteboard.",
-        "OpenProject, XWiki and what you add yourself.": "OpenProject, XWiki en wat je zelf toevoegt."
+        "OpenProject, XWiki and what you add yourself.": "OpenProject, XWiki en wat je zelf toevoegt.",
+        "A token file from your designer.": "Een tokenbestand van je ontwerper."
     },
     "plurals": {}
 }

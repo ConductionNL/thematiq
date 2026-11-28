@@ -31,6 +31,7 @@ import {
 	immediateWalkthrough,
 	initialChoices,
 	MENU_RANGES,
+	FEATURED_SETS,
 	NEXTCLOUD_DEFAULT,
 	partsOf,
 	visibleSteps,
@@ -416,31 +417,51 @@ export const SetupWizard = {
 		 */
 		setCards() {
 			const choices = this.state.choices
-			// The stored set and Nextcloud default lead, and stay put while the administrator picks;
-			// a set picked from the full list (or just uploaded) stays in view after them.
-			const leads = (set) => set.id === this.state.storedSet || set.id === NEXTCLOUD_DEFAULT
-			const first = this.state.sets.filter(leads)
-			const rest = this.state.sets.filter((set) => !leads(set))
-			let more = rest.slice(0, 4)
-			if (!more.some((set) => set.id === choices.tokenSet)) {
-				more = more.concat(rest.filter((set) => set.id === choices.tokenSet))
+			// TqSetupHuisstijl: the stored set, the featured sets and Nextcloud default, five cards
+			// and then the upload card. The order follows the stored set, not the pick, so it stays
+			// put while the administrator picks; a set picked from the full list stays in view.
+			const byId = (id) => this.state.sets.find((set) => set.id === id)
+			const leadIds = []
+			for (const id of [this.state.storedSet, ...FEATURED_SETS]) {
+				if (id !== NEXTCLOUD_DEFAULT && !leadIds.includes(id) && byId(id) !== undefined && leadIds.length < 4) {
+					leadIds.push(id)
+				}
 			}
-			const shown = first.concat(this.state.showAll ? rest : more)
+			if (byId(NEXTCLOUD_DEFAULT) !== undefined) {
+				leadIds.push(NEXTCLOUD_DEFAULT)
+			}
+			let shown = leadIds.map(byId)
+			const rest = this.state.sets.filter((set) => !leadIds.includes(set.id))
+			if (this.state.showAll) {
+				shown = shown.concat(rest)
+			} else if (!leadIds.includes(choices.tokenSet)) {
+				shown = shown.concat(rest.filter((set) => set.id === choices.tokenSet))
+			}
 			const pick = (id) => {
 				choices.tokenSet = id
 				choices.confirmRestricted = false
 			}
-			return h('div', { class: 'tq-setup__cards', role: 'radiogroup', 'aria-label': t(APP_ID, 'House style') }, shown.map((set) => radioCard({
+			const swatches = (colours) => h('span', { class: 'tq-setup__swatches', 'aria-hidden': 'true' }, colours.map((colour) => h('span', { class: 'tq-setup__swatch', style: { background: colour } })))
+			const cards = shown.map((set) => radioCard({
 				name: 'tq-setup-set',
 				value: set.id,
 				checked: set.id === choices.tokenSet,
 				onPick: pick,
 				children: [
-					h('span', { class: 'tq-setup__swatch', style: { background: (set.theming || {}).primary_color || 'var(--color-primary-element)' }, 'aria-hidden': 'true' }),
 					h('strong', set.id === NEXTCLOUD_DEFAULT ? t(APP_ID, 'Nextcloud default') : set.name),
 					h('span', { class: 'tq-setup__hint' }, this.licenceLine(set)),
+					swatches([(set.theming || {}).primary_color || 'var(--color-primary-element)', (set.theming || {}).background_color || 'var(--color-main-background)']),
 				],
-			})))
+			}))
+			cards.push(h('label', { key: 'tq-setup-upload', class: 'tq-setup__card tq-setup__card--upload' }, [
+				h('input', { type: 'file', class: 'tq-setup__upload-input', accept: '.json,application/json', onChange: (event) => this.upload(event.target.files && event.target.files[0]) }),
+				h('span', { class: 'tq-setup__card-body' }, [
+					h('strong', t(APP_ID, 'Upload your own set')),
+					h('span', { class: 'tq-setup__hint' }, t(APP_ID, 'A token file from your designer.')),
+					swatches(['var(--color-background-dark)', 'var(--color-background-dark)', 'var(--color-background-dark)']),
+				]),
+			]))
+			return h('div', { class: 'tq-setup__cards', role: 'radiogroup', 'aria-label': t(APP_ID, 'House style') }, cards)
 		},
 
 		/**
@@ -467,16 +488,15 @@ export const SetupWizard = {
 			return h('div', { class: 'tq-setup__step' }, [
 				h('h2', t(APP_ID, 'Choose the house style')),
 				h('p', t(APP_ID, 'A house style is a token set: colours, fonts, corners and spacing in one file. Choose your organisation\'s set. You use another government\'s set only with its permission; thematiq asks for it in the next step.')),
+				h('strong', { class: 'tq-setup__label' }, t(APP_ID, 'Token set')),
 				this.state.setsLoaded
 					? this.setCards()
 					: h('p', { class: 'tq-setup__hint', role: 'status', 'data-testid': 'tq-setup-sets-loading' }, t(APP_ID, 'Loading the house styles…')),
-				h('p', { class: 'tq-setup__summary', 'aria-live': 'polite' }, this.setSummary()),
-				this.state.showAll || !this.state.setsLoaded
-					? null
-					: h('button', { type: 'button', class: 'tq-setup__link', onClick: () => { this.state.showAll = true } }, t(APP_ID, 'All {count} sets in the gallery', { count: this.state.sets.length })),
-				h('label', { class: 'tq-setup__upload' }, [
-					h('span', t(APP_ID, 'Upload your own set')),
-					h('input', { type: 'file', accept: '.json,application/json', onChange: (event) => this.upload(event.target.files && event.target.files[0]) }),
+				h('div', { class: 'tq-setup__summary-panel' }, [
+					h('p', { class: 'tq-setup__summary', 'aria-live': 'polite' }, this.setSummary()),
+					this.state.showAll || !this.state.setsLoaded
+						? null
+						: h('button', { type: 'button', class: 'tq-setup__link', onClick: () => { this.state.showAll = true } }, t(APP_ID, 'All {count} sets in the gallery', { count: this.state.sets.length })),
 				]),
 				message ? h('p', { class: 'tq-setup__hint', role: 'status' }, message) : null,
 				needed ? this.licence(needed) : null,

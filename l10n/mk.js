@@ -2195,7 +2195,8 @@ OC.L10N.register(
         "On or off, there is no other choice. Off: Nextcloud keeps its own menu, the rest of the house style stays.": "On or off, there is no other choice. Off: Nextcloud keeps its own menu, the rest of the house style stays.",
         "One line under each app on what it does.": "One line under each app on what it does.",
         "Document, spreadsheet, presentation, whiteboard.": "Document, spreadsheet, presentation, whiteboard.",
-        "OpenProject, XWiki and what you add yourself.": "OpenProject, XWiki and what you add yourself."
+        "OpenProject, XWiki and what you add yourself.": "OpenProject, XWiki and what you add yourself.",
+        "A token file from your designer.": "A token file from your designer."
     },
     "nplurals=2; plural=(n != 1);"
 )

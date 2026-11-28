@@ -17,6 +17,9 @@ export const STEP_IDS = ['welcome', 'house-style', 'nextcloud-theme', 'login-pag
 /** The set that means "no house style, only the apps menu". */
 export const NEXTCLOUD_DEFAULT = 'nextcloud'
 
+/** The sets the house style step offers first, after the stored set (TqSetupHuisstijl). */
+export const FEATURED_SETS = ['zuiddrecht', 'rijkshuisstijl', 'amsterdam', 'rotterdam']
+
 /** The walkthrough the done step hands over to (change apps-menu-walkthrough, REQ-TQWT-002). */
 export const WALKTHROUGH = {
 	key: 'apps_menu_walkthrough_seen_version-progress',
