@@ -2196,7 +2196,10 @@ OC.L10N.register(
         "One line under each app on what it does.": "One line under each app on what it does.",
         "Document, spreadsheet, presentation, whiteboard.": "Document, spreadsheet, presentation, whiteboard.",
         "OpenProject, XWiki and what you add yourself.": "OpenProject, XWiki and what you add yourself.",
-        "A token file from your designer.": "A token file from your designer."
+        "A token file from your designer.": "A token file from your designer.",
+        "Nextcloud has a theme of its own: logo, colours and favicon. Thematiq sets them to the set, so the apps on phone and computer, the emails and the login page follow the house style too.": "Nextcloud has a theme of its own: logo, colours and favicon. Thematiq sets them to the set, so the apps on phone and computer, the emails and the login page follow the house style too.",
+        "With a dark version.": "With a dark version.",
+        "In the browser tab and on the home screen of your phone.": "In the browser tab and on the home screen of your phone."
     },
     "nplurals=2; plural=(n != 1);"
 )

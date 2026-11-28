@@ -2193,7 +2193,10 @@
         "One line under each app on what it does.": "Onder elke app één regel wat hij doet.",
         "Document, spreadsheet, presentation, whiteboard.": "Document, spreadsheet, presentatie, whiteboard.",
         "OpenProject, XWiki and what you add yourself.": "OpenProject, XWiki en wat je zelf toevoegt.",
-        "A token file from your designer.": "Een tokenbestand van je ontwerper."
+        "A token file from your designer.": "Een tokenbestand van je ontwerper.",
+        "Nextcloud has a theme of its own: logo, colours and favicon. Thematiq sets them to the set, so the apps on phone and computer, the emails and the login page follow the house style too.": "Nextcloud heeft een eigen thema: logo, kleuren en favicon. Thematiq zet die gelijk aan de set, zodat ook de apps op telefoon en computer, de e-mails en de inlogpagina de huisstijl volgen.",
+        "With a dark version.": "Met een donkere versie.",
+        "In the browser tab and on the home screen of your phone.": "In het tabblad en op het startscherm van je telefoon."
     },
     "plurals": {}
 }
