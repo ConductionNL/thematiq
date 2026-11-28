@@ -12,3 +12,22 @@
 body:not(#body-login) #header #contactsmenu {
 	display: none !important;
 }
+
+/*
+ * The thin divider before the person (css/header-workplace.css) hangs on the element right before
+ * #user-menu, which is the hidden #contactsmenu here. The control before it carries the divider
+ * instead, so the bar still ends bell, divider, person (REQ-TQCM-001).
+ */
+body:not(#body-login) #header .header-end > :has(+ #contactsmenu + #user-menu) {
+	display: flex;
+	align-items: center;
+}
+
+body:not(#body-login) #header .header-end > :has(+ #contactsmenu + #user-menu)::after {
+	content: '';
+	flex: none;
+	width: 1px;
+	height: 28px;
+	margin-inline: 12px 6px;
+	background-color: var(--color-border);
+}

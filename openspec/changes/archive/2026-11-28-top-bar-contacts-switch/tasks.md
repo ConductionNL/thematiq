@@ -52,3 +52,7 @@ extends) and the boards are merged. Copy and placement follow the boards.
       classic menu: off = `#contactsmenu` display none, bell and person 6 px apart as with it on;
       on = flex after the bell. A set without the workplace top bar keeps Nextcloud's own header,
       which thematiq leaves alone, as for the create switches.
+      Follow-up (28 Nov, b-thematiq, same matrix, 16 states): with the switch off the divider before the
+      person was gone. css/header-workplace.css draws it on the element right before `#user-menu`,
+      which was the hidden contacts menu. `css/top-bar-no-contacts.css` now draws it on the control
+      before the contacts menu, and the e2e checks it (6/6 with --repeat-each 2).
