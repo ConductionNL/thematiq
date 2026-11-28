@@ -260,7 +260,7 @@ export default function Home() {
             href: 'https://apps.nextcloud.com/apps/thematiq',
             tone: 'orange',
           }}
-          secondaryCta={{ label: 'Read the docs', href: '/docs/intro' }}
+          secondaryCta={{ label: 'Read the docs', href: '/docs/' }}
           tertiaryCta={{
             label: 'View on GitHub',
             href: 'https://github.com/ConductionNL/thematiq',

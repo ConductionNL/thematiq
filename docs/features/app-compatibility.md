@@ -72,7 +72,7 @@ Test your app with at least 3-4 different token sets to catch contrast and layou
 
 ## What Thematiq Overrides
 
-Thematiq maps 49 of Nextcloud's 102 CSS variables. The full mapping is documented in the [CSS Variable Mappings reference](../reference/mappings).
+Thematiq maps 49 of Nextcloud's 102 CSS variables. The full mapping is documented in the [CSS Variable Mappings reference](../reference/mappings.md).
 
 Variables that Thematiq intentionally does **not** override:
 - Layout dimensions (header height, sidebar width, breakpoints)

@@ -101,7 +101,7 @@ To add support for a new organization:
 
 The admin dropdown picks up new token sets automatically — no PHP changes needed.
 
-For detailed information on the token variable namespace, see the [Token Architecture reference](../reference/tokens).
+For detailed information on the token variable namespace, see the [Token Architecture reference](../reference/tokens.md).
 
 A leaf app's own picker (a builder tool inside another Conduction app, not
 the admin dropdown above) can enumerate this same catalogue and evaluate

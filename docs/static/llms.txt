@@ -2,11 +2,11 @@
 
 > Thematiq is an open-source theming app for the Nextcloud workspace.
 
-Thematiq is an open-source theming app for the Nextcloud workspace. Administrators pick their organisation from a list of 39 pre-built themes (Rijkshuisstijl, Gemeente Utrecht, Amsterdam, Den Haag, Rotterdam, and more) and the workspace adopts that house style instantly. A token editor lets teams fine-tune individual colours, and customisations export to a file for sharing across instances. Released under EUPL-1.2 and maintained by Conduction since 2019.
+Thematiq is an open-source theming app for the Nextcloud workspace. Administrators pick a theme from more than 60 ready-made themes (Rijkshuisstijl, Gemeente Utrecht, Amsterdam, Den Haag, Rotterdam, and more) or create their own, and the workspace adopts that brand identity instantly. A token editor lets teams fine-tune individual colours, and customisations export to a file for sharing across instances. Released under EUPL-1.2 and maintained by Conduction since 2019.
 
 ## Docs
 
-- [Documentation](https://thematiq.conduction.nl/docs/intro): main entry, including tutorials, user guide, and admin guide.
+- [Documentation](https://thematiq.conduction.nl/docs/): main entry, including tutorials, user guide, and admin guide.
 - [API reference](https://thematiq.conduction.nl/api): OpenAPI documentation.
 
 ## Optional

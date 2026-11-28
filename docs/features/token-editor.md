@@ -4,11 +4,11 @@ sidebar_position: 4.1
 
 # Token Editor
 
-The **Custom Token Overrides** section in the admin settings lets you fine-tune individual Nextcloud CSS tokens independently of your selected token set. Overrides apply as a live preview instantly, and are saved persistently when you click **Save overrides**.
+The **Custom token overrides** section in the admin settings lets you fine-tune individual Nextcloud CSS tokens independently of your selected token set. Overrides apply as a live preview instantly, and are saved persistently when you click **Save overrides**.
 
 ## Overview
 
-The token editor is located in the **Thematiq** section of the Appearance admin settings. It consists of:
+The token editor is located in the **Thematiq** section of the Theming admin settings. It consists of:
 
 - **A count** of the editable tokens: <!-- editable-count -->714<!-- /editable-count --> on this release
 - **A search field** that finds any token by its label, its CSS name or its component
@@ -19,7 +19,7 @@ The token editor is located in the **Thematiq** section of the Appearance admin 
 - **Custom value badge** indicating which tokens have been manually overridden
 - **Save overrides** button to persist all current values
 
-![Custom Token Overrides section showing the Download/Upload buttons, 4 category tabs, and the first token row with a custom value badge](../img/import-export-buttons.png)
+![Custom token overrides section showing the Download/Upload buttons, 4 category tabs, and the first token row with a custom value badge](../img/import-export-buttons.png)
 
 ## Category Tabs
 
