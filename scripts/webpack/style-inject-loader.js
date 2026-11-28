@@ -63,14 +63,15 @@ function blocks(css) {
  *
  * @param {string} css The stylesheet.
  * @param {string} needle The text a kept rule's selector names.
+ * @param {Function} [test] A further check on a kept rule's selector.
  * @return {string} The kept rules.
  */
-function keep(css, needle) {
+function keep(css, needle, test = () => true) {
 	return blocks(css).map(({ prelude, body }) => {
 		if (!prelude.startsWith('@')) {
-			return prelude.includes(needle) ? prelude + '{' + body + '}' : ''
+			return prelude.includes(needle) && test(prelude) ? prelude + '{' + body + '}' : ''
 		}
-		const inner = body.includes('{') ? keep(body, needle) : ''
+		const inner = body.includes('{') ? keep(body, needle, test) : ''
 		return inner === '' ? '' : prelude + '{' + inner + '}'
 	}).join('')
 }
@@ -104,6 +105,11 @@ module.exports = function styleInjectLoader(source) {
 			const id = scopeId(file)
 			return id === '' ? '' : keep(source, '[' + id + ']')
 		}).join('')
+	}
+	if (typeof options.alsoKeep === 'function') {
+		// Unscoped rules a scoped component relies on, such as the board look's dialog frame
+		// (`.cn-dialog-board`, `.cn-dialog-header`), which nextcloud-vue ships without a scope.
+		css += keep(String(source), '', options.alsoKeep)
 	}
 	return 'var css = ' + JSON.stringify(css) + ';\n'
 		+ 'if (css !== "" && typeof document !== "undefined") {\n'

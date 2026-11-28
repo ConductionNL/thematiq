@@ -764,7 +764,7 @@ export const SetupWizard = {
 		footer(scope) {
 			if (scope.currentStep && scope.currentStep.id === 'done') {
 				return this.offersWalkthrough
-					? [h('button', { type: 'button', class: 'button tq-setup__close', 'data-testid': 'tq-setup-close', onClick: () => this.close() }, t(APP_ID, 'Close'))]
+					? [h('button', { type: 'button', class: 'tq-setup__close', 'data-testid': 'tq-setup-close', onClick: () => this.close() }, t(APP_ID, 'Close'))]
 					: []
 			}
 			return [h('button', { type: 'button', class: 'tq-setup__skip', 'data-testid': 'tq-setup-skip', disabled: scope.loading, onClick: () => this.skip() }, t(APP_ID, 'Skip, keep Nextcloud as it is'))]

@@ -82,3 +82,7 @@
 .tq-setup__skip { margin-inline-end: auto; min-height: 0; padding: 0; border: 0; background: transparent; color: var(--color-primary-element); font-weight: 600; text-decoration: underline; cursor: pointer; }
 .tq-setup__skip:hover, .tq-setup__skip:focus-visible { background: transparent; color: var(--color-primary-element-hover, var(--color-primary-element)); }
 .tq-setup__skip:disabled { opacity: .5; cursor: default; }
+
+/* TqSetupKlaar: Close beside the walkthrough, no Back after Apply, the chevron after the label. */
+.cn-dialog-board:has([data-step-id="done"] .tq-setup__step) [data-testid="cn-wizard-back"] { display: none; }
+.cn-dialog-board:has([data-step-id="done"] .tq-setup__step) [data-testid="cn-wizard-next"] .button-vue__wrapper { flex-direction: row-reverse; }
