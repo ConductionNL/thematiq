@@ -93,12 +93,23 @@ ConductionNL/design-system#1220 and #1221; TqSetupAppmenu has a follow-up. Copy,
 
 - [ ] 6.1 `hydra/scripts/diff-check.sh` green on the changed files while building; `composer
       check:strict` and `npm run lint` once before push.
-- [ ] 6.2 Live check on the dev instance, light and dark, a Zuiddrecht set and a plain one: titles off
+- [x] 6.2 Live check on the dev instance, light and dark, a Zuiddrecht set and a plain one: titles off
       matches AppMenuZonderTitels in every section; keyboard through the whole menu shows a tooltip per
       entry and a focus ring; Escape hides the tooltip, then closes the menu; a screen reader reads each
       name once; 200% zoom keeps the tooltip inside the viewport; titles on is unchanged. Titles in the top bar on
       and off with pins, on the workplace menu and on the classic style (Nextcloud 32 header and 33
       waffle); an instance upgraded with `show_menu_labels` on keeps its labels.
+      (live lane, 28 Nov, NC 34.0.6 sandbox, Zuiddrecht and the stock nextcloud set, light and dark,
+      workplace and classic: titles off 6/6 entries icon-only with an aria-label, no aria-describedby,
+      headings and More keep their text; arrow keys and Tab through apps and create chips show a
+      role=tooltip with the entry's name and a focus ring; Escape hides the tooltip with the menu open,
+      a second Escape closes it; at 200% zoom (640x400 CSS viewport) every tooltip stays inside;
+      titles on draws every name. Pins Files and Dashboard: topBarTitles on shows both names, off
+      icons only. Nextcloud's own menu (classic, or a set without the workplace top bar) shows its
+      names either way and loads show-menu-labels.css only with topBarTitles on. Upgrade:
+      show_menu_labels=1 without menu.topBarTitles reads as on, occ maintenance:repair moves it once
+      into menu.topBarTitles=true and removes the old value. Only Nextcloud 34 runs in the sandbox, so
+      the Nextcloud 32 header was not walked.)
 
 ## Notes from the build
 
