@@ -63,6 +63,17 @@ function url(path) {
 }
 
 /**
+ * The address of a file this app ships, such as a set's logo.
+ *
+ * @param {string} path The path inside the app.
+ * @return {string} The URL.
+ */
+function appFile(path) {
+	const OC = window.OC || {}
+	return typeof OC.filePath === 'function' ? OC.filePath('thematiq', '', path) : '/apps/thematiq/' + path
+}
+
+/**
  * A request to the server with the CSRF token; JSON in and out.
  *
  * @param {string} method The verb.
@@ -528,27 +539,38 @@ export const SetupWizard = {
 			const choices = this.state.choices
 			const theming = this.chosenSet.theming || {}
 			const now = (name) => (getComputedStyle(document.documentElement).getPropertyValue(name) || '').trim() || '-'
-			const cell = (label, before, after) => h('div', { class: 'tq-setup__cell' }, [
-				h('strong', label),
-				h('span', t(APP_ID, 'Now: {value}', { value: before })),
-				h('span', t(APP_ID, 'New: {value}', { value: after })),
+			// The value goes into another translated line: not escaped twice (Vue writes text, not HTML).
+			const nowLine = (value) => t(APP_ID, 'Now: {value}', { value }, undefined, { escape: false })
+			const file = (path) => (path ? path.split('/').pop() : '-')
+			const swatch = (colour) => h('span', { class: 'tq-setup__cell-preview', style: { background: colour || 'transparent' }, 'aria-hidden': 'true' })
+			const image = (path) => h('span', { class: 'tq-setup__cell-preview tq-setup__cell-preview--image', 'aria-hidden': 'true' }, path ? [h('img', { src: appFile(path), alt: '' })] : [])
+			const cell = (label, preview, value, lines) => h('div', { class: 'tq-setup__cell' }, [
+				h('span', { class: 'tq-setup__cell-label' }, label),
+				preview,
+				h('strong', value),
+				...lines.filter(Boolean).map((line) => h('span', { class: 'tq-setup__hint' }, line)),
 			])
+			const favicon = theming.favicon || theming.logo
 			return h('div', { class: 'tq-setup__step' }, [
 				h('h2', t(APP_ID, 'Update the Nextcloud theme')),
-				switchRow({
+				h('p', t(APP_ID, 'Nextcloud has a theme of its own: logo, colours and favicon. Thematiq sets them to the set, so the apps on phone and computer, the emails and the login page follow the house style too.')),
+				switchCard({
 					id: 'tq-setup-follows',
 					label: t(APP_ID, 'Keep the Nextcloud theme in line with the set'),
 					checked: choices.nextcloudThemeFollows,
 					onChange: (on) => { choices.nextcloudThemeFollows = on },
 					hint: t(APP_ID, 'Also on the next change of set. Off: thematiq leaves the Nextcloud theme alone.'),
 				}),
-				h('div', { class: 'tq-setup__cells' }, [
-					cell(t(APP_ID, 'Primary colour'), now('--color-primary'), theming.primary_color || '-'),
-					cell(t(APP_ID, 'Background colour'), now('--color-main-background'), theming.background_color || '-'),
-					cell(t(APP_ID, 'Logo'), t(APP_ID, 'Nextcloud logo'), theming.logo ? t(APP_ID, 'The set\'s logo, with a dark version') : '-'),
-					cell(t(APP_ID, 'Favicon'), t(APP_ID, 'Nextcloud favicon'), t(APP_ID, 'From the set\'s logo')),
+				h('div', { class: 'tq-setup__cells tq-setup__cells--four' }, [
+					cell(t(APP_ID, 'Primary colour'), swatch(theming.primary_color), theming.primary_color || '-', [nowLine(now('--color-primary'))]),
+					cell(t(APP_ID, 'Background colour'), swatch(theming.background_color), theming.background_color || '-', [nowLine(now('--color-main-background'))]),
+					cell(t(APP_ID, 'Logo'), image(theming.logo), file(theming.logo), [theming.logo_dark ? t(APP_ID, 'With a dark version.') : null, nowLine(t(APP_ID, 'Nextcloud logo'))]),
+					cell(t(APP_ID, 'Favicon'), image(favicon), file(favicon), [t(APP_ID, 'In the browser tab and on the home screen of your phone.'), nowLine(t(APP_ID, 'Nextcloud favicon'))]),
 				]),
-				h('p', { class: 'tq-setup__note' }, t(APP_ID, 'What Nextcloud has now is kept as a version in the log.')),
+				h('p', { class: 'tq-setup__info' }, [
+					svgIcon(mdiInformationOutline),
+					h('span', t(APP_ID, 'What Nextcloud has now is kept as a version in the log.')),
+				]),
 			])
 		},
 
