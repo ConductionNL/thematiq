@@ -2177,7 +2177,12 @@ OC.L10N.register(
         "Show titles in the top bar": "Titels in de bovenbalk tonen",
         "The name next to the icon of every pinned app in the top bar. Off: icons only, the name appears as a tooltip.": "De naam naast het pictogram van elke vastgezette app in de bovenbalk. Uit: alleen pictogrammen, de naam verschijnt als tooltip.",
         "Only with Show titles.": "Alleen met Titels tonen.",
-        "without titles": "zonder titels"
+        "without titles": "zonder titels",
+        "Could not save the setting.": "De instelling kon niet worden opgeslagen.",
+        "The Nextcloud theme followed the set.": "Het Nextcloud-thema volgde de set.",
+        "The Nextcloud theme follows the next change of set.": "Het Nextcloud-thema volgt de volgende wissel van set.",
+        "The Nextcloud theme now follows the set. The previous theme is kept as a version in the log.": "Het Nextcloud-thema volgt nu de set. Het vorige thema blijft bewaard als versie in het logboek.",
+        "Thematiq leaves the Nextcloud theme alone.": "Thematiq laat het Nextcloud-thema met rust."
     },
     "nplurals=2; plural=(n != 1);"
 )

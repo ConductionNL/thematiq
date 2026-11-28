@@ -70,10 +70,11 @@ three apps before the next step.
       show them) with the selected entry of the navigation entry style (decision 1); TbCard with a
       20 px title (decision 3). Compdiff in 6.3 runs against the redrawn boards.
 
-- [ ] 6.1 `tests/css/check-shell-canon.mjs`: `CANON.navigationItemHeight` from 42 to 34 (decision 2);
+- [x] 6.1 `tests/css/check-shell-canon.mjs`: `CANON.navigationItemHeight` from 42 to 34 (decision 2);
       the OpenProject plugin's canon file (`spike/OP-TWIN-canon.md` in
       ConductionNL/openproject-thematiq) follows in a PR there. (thematiq's canon moved to 34 in
-      the build PR; the plugin's canon file is still to follow.)
+      the build PR; the plugin's canon file, geometry variables, sidebar rule and shell e2e followed in
+      ConductionNL/openproject-thematiq#169.)
 - [x] 6.2 New `tests/e2e/spec-coverage/same-shell-every-page.spec.ts` with `@e2e` tags for "Files has
       the boards' navigation", "Contacts' list rows", "A help link in Settings keeps its underline",
       "The Files sidebar", "Settings names its section" and "The four apps in the light layout"; an
@@ -87,9 +88,9 @@ three apps before the next step.
 - [ ] 6.3 Compdiff on the demo stack under Zuiddrecht: MlInbox, MlThreadList, MlThread, ClWeek,
       ClMonth, ClEventPopover, TbBoard and TbCard against the baseline; DqKop and the #1216 top bars
       on Files and Settings; dossiq/DqZaken. Write each result in this task.
-- [ ] 6.4 l10n: no new strings expected (the settings name is Nextcloud's own); `npm run test:l10n`
+- [x] 6.4 l10n: no new strings expected (the settings name is Nextcloud's own); `npm run test:l10n`
       green. (No new strings in this change; `npm run test:l10n` is red on development for strings in
-      js/admin.js that are not this change's.)
+      js/admin.js that are not this change's; green again since thematiq#2203.)
 
 ## Notes from the build
 
