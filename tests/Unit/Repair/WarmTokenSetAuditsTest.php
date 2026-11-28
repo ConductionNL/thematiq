@@ -34,15 +34,15 @@ class WarmTokenSetAuditsTest extends TestCase {
 	 * @return void
 	 */
 	public function testListsTheCatalogueOnce(): void {
-		$tokenSets = $this->createMock(TokenSetService::class);
+		$tokenSets = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSets->expects($this->once())->method('getAvailableTokenSets')->willReturn([['id' => 'a'], ['id' => 'b']]);
-		$output = $this->createMock(IOutput::class);
+		$output = $this->createMock(originalClassName: IOutput::class);
 		$output->expects($this->once())->method('info')->with('WarmTokenSetAudits: audited 2 token sets.');
 		$output->expects($this->never())->method('warning');
 
-		$step = new WarmTokenSetAudits($tokenSets, $this->createMock(LoggerInterface::class));
-		$this->assertInstanceOf(IRepairStep::class, $step);
-		$this->assertNotSame('', $step->getName());
+		$step = new WarmTokenSetAudits(tokenSets: $tokenSets, logger: $this->createMock(originalClassName: LoggerInterface::class));
+		$this->assertInstanceOf(expected: IRepairStep::class, actual: $step);
+		$this->assertNotSame(expected: '', actual: $step->getName());
 		$step->run($output);
 	}//end testListsTheCatalogueOnce()
 
@@ -52,15 +52,15 @@ class WarmTokenSetAuditsTest extends TestCase {
 	 * @return void
 	 */
 	public function testAFailureNeverFailsTheUpgrade(): void {
-		$tokenSets = $this->createMock(TokenSetService::class);
+		$tokenSets = $this->createMock(originalClassName: TokenSetService::class);
 		$tokenSets->method('getAvailableTokenSets')->willThrowException(new RuntimeException('read-only app data'));
-		$logger = $this->createMock(LoggerInterface::class);
+		$logger = $this->createMock(originalClassName: LoggerInterface::class);
 		$logger->expects($this->once())->method('warning')->with($this->anything(), ['exception' => 'read-only app data']);
-		$output = $this->createMock(IOutput::class);
+		$output = $this->createMock(originalClassName: IOutput::class);
 		$output->expects($this->once())->method('warning');
 		$output->expects($this->never())->method('info');
 
-		(new WarmTokenSetAudits($tokenSets, $logger))->run($output);
+		(new WarmTokenSetAudits(tokenSets: $tokenSets, logger: $logger))->run($output);
 	}//end testAFailureNeverFailsTheUpgrade()
 
 	/**
@@ -72,7 +72,7 @@ class WarmTokenSetAuditsTest extends TestCase {
 		$info = simplexml_load_file(__DIR__ . '/../../../appinfo/info.xml');
 		foreach (['post-migration', 'install'] as $block) {
 			$steps = array_map('strval', iterator_to_array($info->{'repair-steps'}->{$block}->step, false));
-			$this->assertSame(WarmTokenSetAudits::class, end($steps), $block);
+			$this->assertSame(expected: WarmTokenSetAudits::class, actual: end($steps), message: $block);
 		}
 	}//end testRegisteredLastAfterInstallAndUpgrade()
 }//end class
