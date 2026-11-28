@@ -784,7 +784,10 @@ body .button-vue.button-vue:focus-visible {
  * 'bigger view' of a card does, keeps the shared 20px panel title, so TbCard
  * draws one title size in both. Geometry only, no colour.
  */
-:where(body:not(#body-login)) .modal-container #app-sidebar-vue .app-sidebar-header__mainname {
+:where(body:not(#body-login))
+	.modal-container
+	#app-sidebar-vue
+	.app-sidebar-header__mainname {
 	font-size: 20px !important;
 	font-weight: 700 !important;
 	line-height: 26px !important;

@@ -63,7 +63,10 @@ describe('same-shell-every-page 6.3: the app pages as the boards draw them', () 
 			'background-color': 'var(--color-primary-element-light) !important',
 		})
 		// It comes after the white row, which it has to beat.
-		const css = fs.readFileSync(path.join(ROOT, 'css/workplace-apps/mail.css'), 'utf8')
+		const css = fs.readFileSync(
+			path.join(ROOT, 'css/workplace-apps/mail.css'),
+			'utf8',
+		)
 		expect(css.indexOf('.list-item--active) {')).toBeGreaterThan(
 			css.indexOf('.envelope-list .list-item {'),
 		)
