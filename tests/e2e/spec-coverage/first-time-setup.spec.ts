@@ -253,7 +253,7 @@ function setupKeys(values: Record<string, string>): string[] {
 
 /** Remove the values, so the instance is one nobody set up. */
 function makeDue(values: Record<string, string>): void {
-	// Also what an earlier test of this file stored (a completed setup), not only what was there before.
+	// Also what an earlier test of this file stored (the full run's menu defaults), not only what was there before.
 	for (const key of new Set(setupKeys(appValues()).concat(setupKeys(values)))) {
 		occ(['config:app:delete', 'thematiq', key])
 	}
@@ -450,10 +450,11 @@ test.describe('first-time setup: the wizard', () => {
 		await expectWizard(page, '/index.php/apps/files/', false)
 	})
 
-	// @e2e first-time-setup::the-done-step-offers-the-apps-menu-walkthrough
+	// @e2e first-time-setup::start-the-walkthrough
 	test('Start the apps menu walkthrough on the done step opens the menu with the tour', async ({ page }) => {
-		await expectWizard(page, '/index.php/apps/dashboard/', true)
+		await expectWizard(page, '/index.php/apps/files/', true)
 		await next(page).click()
+		await page.getByRole('button', { name: /sets in the gallery/ }).click()
 		await page.locator('label.tq-setup__card', { hasText: 'Zuiddrecht' }).first().click()
 		for (let i = 0; i < 4; i++) {
 			await next(page).click()
@@ -465,6 +466,8 @@ test.describe('first-time setup: the wizard', () => {
 		])
 		await expect(page.locator('.thematiq-menu-walkthrough .cn-walkthrough__card')).toBeVisible({ timeout: 30_000 })
 		await expect(page.locator('.thematiq-menu-walkthrough .cn-walkthrough__title')).toHaveText('Open the apps menu')
+		await expect(next(page)).toHaveCount(0)
+		await expect(page.locator('.app-menu__grid[data-thematiq-app-menu]')).toBeVisible()
 	})
 })
 

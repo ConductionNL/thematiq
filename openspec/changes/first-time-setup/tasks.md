@@ -106,12 +106,21 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
 - [x] 5.2 Walk: the welcome on the dashboard and in Files; a non-admin sees nothing and the page has no
       `setup_status`; walking the steps and Later writes nothing and the wizard comes back; Skip and
       nothing on the next page; a configured instance shows nothing; status is 403 for a non-admin.
-- [ ] 5.3 Full run: choose `amsterdam`, Next disabled until the statement; keep the theme switch on;
+- [x] 5.3 Full run: choose `amsterdam`, Next disabled until the statement; keep the theme switch on;
       Follow the house style with the slogan hidden; menu on with 3 columns on a set without the
       workplace top bar; Apply; then the set is active and audited, the core primary colour, logo and
       favicon are the set's (`_core-theming.ts`), an anonymous login page has no slogan, a non-admin
       sees the workplace top bar and 3 columns; the step offers no Style choice; Start the apps menu
-      walkthrough opens the menu with the tour.
+      walkthrough opens the menu with the tour. (28 Nov, DONE lane, live 6/6 with no retries on NC 34.0.6 +
+      PostgreSQL 16, nginx/php-fpm 8.3, Redis, Imagick: the full run now also checks core's logo is the
+      set's (`synced_logo`; amsterdam ships no favicon, so `synced_favicon` stays empty) and that the
+      non-admin's Files page draws the workplace top bar with the apps menu; a new test presses Start
+      the apps menu walkthrough and sees the page reload without the wizard, the menu open and the tour
+      at "Open the apps menu". Two app reds found and fixed: Apply with the menu on stored only
+      `header_style` workplace, but the workplace top bar needs the light layout too, so a set like
+      amsterdam kept Nextcloud's menu (now `workplace_layout` light as well, REQ-TQFS-010 text
+      follows); and without Imagick SVG support the set's SVG favicon made the change of set answer 500
+      (thematiq#2218).)
 - [x] 5.4 The version card reads "Completed by admin on"; Set up again opens the wizard with the stored
       set; Later leaves setup done. (#E2E: `first-time setup: the wizard` in first-time-setup.spec.ts, live
       4/4 on a sandbox NC34 + MariaDB: 5.1 fixture through occ with every value put back and amsterdam's
