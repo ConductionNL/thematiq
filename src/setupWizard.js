@@ -547,27 +547,36 @@ export const SetupWizard = {
 
 		loginPage() {
 			const choices = this.state.choices
+			const styles = [
+				['house-style', t(APP_ID, 'Follow the house style'), t(APP_ID, 'A plain background in the colour of the set, the logo above it, the login card with the primary button.')],
+				['nextcloud', t(APP_ID, 'Nextcloud default'), t(APP_ID, 'Nextcloud\'s own background image and layout. Only the logo changes.')],
+			]
 			return h('div', { class: 'tq-setup__step' }, [
 				h('h2', t(APP_ID, 'The login page')),
-				h('div', { class: 'tq-setup__cards', role: 'radiogroup', 'aria-label': t(APP_ID, 'Login page style') }, [
-					...[['house-style', t(APP_ID, 'Follow the house style')], ['nextcloud', t(APP_ID, 'Nextcloud default')]].map(([value, label]) => radioCard({
-						name: 'tq-setup-login',
-						value,
-						checked: choices.loginStyle === value,
-						onPick: (picked) => { choices.loginStyle = picked },
-						children: [h('strong', label)],
-					})),
+				h('p', t(APP_ID, 'The login page is the first thing everyone sees. Choose whether it follows the house style or stays as Nextcloud draws it.')),
+				h('div', { class: 'tq-setup__login' }, [
+					h('div', { class: 'tq-setup__login-choices' }, [
+						h('strong', { id: 'tq-setup-login-label', class: 'tq-setup__label' }, t(APP_ID, 'Login page style')),
+						h('div', { class: 'tq-setup__cards tq-setup__cards--stack', role: 'radiogroup', 'aria-labelledby': 'tq-setup-login-label' }, styles.map(([value, label, text]) => radioCard({
+							name: 'tq-setup-login',
+							value,
+							checked: choices.loginStyle === value,
+							onPick: (picked) => { choices.loginStyle = picked },
+							children: [h('strong', label), h('span', { class: 'tq-setup__hint' }, text)],
+						}))),
+						h('div', { class: 'tq-setup__check' }, [
+							h('input', { id: 'tq-setup-slogan', type: 'checkbox', class: 'checkbox', checked: choices.hideSlogan, 'aria-describedby': 'tq-setup-slogan-hint', onChange: (event) => { choices.hideSlogan = event.target.checked === true } }),
+							h('label', { for: 'tq-setup-slogan' }, t(APP_ID, 'Hide the Nextcloud slogan')),
+							h('p', { id: 'tq-setup-slogan-hint', class: 'tq-setup__hint' }, t(APP_ID, 'The slogan stays in the theme, but not under the logo.')),
+						]),
+					]),
+					this.loginPreview(),
 				]),
-				h('div', { class: 'tq-setup__check' }, [
-					h('input', { id: 'tq-setup-slogan', type: 'checkbox', class: 'checkbox', checked: choices.hideSlogan, onChange: (event) => { choices.hideSlogan = event.target.checked === true } }),
-					h('label', { for: 'tq-setup-slogan' }, t(APP_ID, 'Hide the Nextcloud slogan')),
-				]),
-				this.loginPreview(),
 			])
 		},
 
 		/**
-		 * A small login card in the chosen style.
+		 * A small login page in the chosen style (TqSetupInlogpagina).
 		 *
 		 * @return {object} The vnode.
 		 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-login-page-step-sets-the-login-page-style-req-tqfs-009
@@ -575,12 +584,17 @@ export const SetupWizard = {
 		loginPreview() {
 			const choices = this.state.choices
 			const house = choices.loginStyle === 'house-style'
-			const colour = house ? (this.chosenSet.theming || {}).primary_color : 'var(--color-primary-element)'
-			return h('div', { class: 'tq-setup__login-preview', 'aria-hidden': 'true', style: { borderTopColor: colour || 'var(--color-primary-element)' } }, [
-				h('span', { class: 'tq-setup__login-name' }, house ? this.chosenSet.name : 'Nextcloud'),
-				choices.hideSlogan ? null : h('span', { class: 'tq-setup__hint' }, t(APP_ID, 'a safe home for all your data')),
-				h('span', { class: 'tq-setup__login-field' }),
-				h('span', { class: 'tq-setup__login-field' }),
+			const colour = (house ? (this.chosenSet.theming || {}).primary_color : null) || 'var(--color-primary-element)'
+			const name = house ? this.chosenSet.name : 'Nextcloud'
+			return h('div', { class: ['tq-setup__login-preview', house ? null : 'tq-setup__login-preview--nextcloud'], 'aria-hidden': 'true' }, [
+				h('div', { class: 'tq-setup__login-card' }, [
+					h('strong', t(APP_ID, 'Log in')),
+					h('span', { class: 'tq-setup__login-field' }, t(APP_ID, 'Account name or email')),
+					h('span', { class: 'tq-setup__login-field' }, t(APP_ID, 'Password')),
+					h('span', { class: 'tq-setup__login-button', style: { background: colour } }, t(APP_ID, 'Log in')),
+					h('span', { class: 'tq-setup__login-link', style: { color: colour } }, t(APP_ID, 'Forgot password?')),
+				]),
+				h('span', { class: 'tq-setup__login-footer' }, choices.hideSlogan ? name : name + ' · ' + t(APP_ID, 'a safe home for all your data')),
 			])
 		},
 

@@ -2199,7 +2199,11 @@ OC.L10N.register(
         "A token file from your designer.": "A token file from your designer.",
         "Nextcloud has a theme of its own: logo, colours and favicon. Thematiq sets them to the set, so the apps on phone and computer, the emails and the login page follow the house style too.": "Nextcloud has a theme of its own: logo, colours and favicon. Thematiq sets them to the set, so the apps on phone and computer, the emails and the login page follow the house style too.",
         "With a dark version.": "With a dark version.",
-        "In the browser tab and on the home screen of your phone.": "In the browser tab and on the home screen of your phone."
+        "In the browser tab and on the home screen of your phone.": "In the browser tab and on the home screen of your phone.",
+        "A plain background in the colour of the set, the logo above it, the login card with the primary button.": "A plain background in the colour of the set, the logo above it, the login card with the primary button.",
+        "Nextcloud's own background image and layout. Only the logo changes.": "Nextcloud's own background image and layout. Only the logo changes.",
+        "The login page is the first thing everyone sees. Choose whether it follows the house style or stays as Nextcloud draws it.": "The login page is the first thing everyone sees. Choose whether it follows the house style or stays as Nextcloud draws it.",
+        "The slogan stays in the theme, but not under the logo.": "The slogan stays in the theme, but not under the logo."
     },
     "nplurals=2; plural=(n != 1);"
 )
