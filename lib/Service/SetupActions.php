@@ -336,8 +336,9 @@ class SetupActions {
 		// The workplace top bar is the light layout with the workplace header: on brings both
 		// when the set does not draw them, otherwise the menu would not show at all.
 		if ($menu['enabled'] === true) {
-			$this->bringOption(key: LayoutOptionsService::WORKPLACE_LAYOUT_KEY, value: LayoutOptionsService::LAYOUT_LIGHT, tokenSet: $tokenSet);
-			$this->bringOption(key: LayoutOptionValues::HEADER_STYLE_KEY, value: LayoutOptionValues::HEADER_STYLE_WORKPLACE, tokenSet: $tokenSet);
+			foreach (LayoutOptionValues::WORKPLACE_TOP_BAR as $key => $value) {
+				$this->bringOption(key: $key, value: $value, tokenSet: $tokenSet);
+			}
 		}
 
 		return true;
