@@ -959,26 +959,35 @@ test.describe('menu-labels', () => {
 			const tokenSet = 'nextcloud'
 
 			// Control: without labels, core hides the button below 1024px.
-			await withThemeState(browser, { tokenSet, showMenuLabels: false }, async () => {
-				await page.goto(appPage, { waitUntil: 'domcontentloaded' })
-				await page
-					.locator('#header .app-menu')
-					.waitFor({ state: 'attached' })
-				test.skip(
-					(await page.locator('#header .app-menu__waffle').count()) === 0,
-					'Nextcloud 32 renders no waffle menu; its labels are covered by the fixture tests above',
-				)
-				await expect(current).toHaveCount(1)
-				await expect(current).toBeHidden()
-			})
+			await withThemeState(
+				browser,
+				{ tokenSet, showMenuLabels: false },
+				async () => {
+					await page.goto(appPage, { waitUntil: 'domcontentloaded' })
+					await page
+						.locator('#header .app-menu')
+						.waitFor({ state: 'attached' })
+					test.skip(
+						(await page.locator('#header .app-menu__waffle').count())
+							=== 0,
+						'Nextcloud 32 renders no waffle menu; its labels are covered by the fixture tests above',
+					)
+					await expect(current).toHaveCount(1)
+					await expect(current).toBeHidden()
+				},
+			)
 
-			await withThemeState(browser, { tokenSet, showMenuLabels: true }, async () => {
-				await page.goto(appPage, { waitUntil: 'domcontentloaded' })
-				expect(await thematiqLayers(page)).toContain('show-menu-labels')
-				await expect(current).toBeVisible()
-				await expect(name).toBeVisible()
-				expect(((await name.textContent()) ?? '').trim()).not.toBe('')
-			})
+			await withThemeState(
+				browser,
+				{ tokenSet, showMenuLabels: true },
+				async () => {
+					await page.goto(appPage, { waitUntil: 'domcontentloaded' })
+					expect(await thematiqLayers(page)).toContain('show-menu-labels')
+					await expect(current).toBeVisible()
+					await expect(name).toBeVisible()
+					expect(((await name.textContent()) ?? '').trim()).not.toBe('')
+				},
+			)
 		},
 	)
 
@@ -989,38 +998,45 @@ test.describe('menu-labels', () => {
 			// On the stock header: under the workplace header (Zuiddrecht) the
 			// waffle opens the board's own app panel, which folds tiles away
 			// on purpose (apps-menu-ordered-list covers that panel).
-			await withThemeState(browser, { tokenSet: 'nextcloud', showMenuLabels: true }, async () => {
-				await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
-				await page
-					.locator('#header .app-menu')
-					.waitFor({ state: 'attached' })
-				test.skip(
-					(await page.locator('#header .app-menu__waffle').count()) === 0,
-					'Nextcloud 32 renders no waffle menu; its labels are covered by the fixture tests above',
-				)
-				await page.locator('#header .app-menu__waffle').click()
-				const labels = page.locator('.app-menu__popover .app-item__label')
-				await expect(labels.first()).toBeVisible()
-				const count = await labels.count()
-				expect(count).toBeGreaterThan(0)
-				for (let i = 0; i < count; i++) {
-					await expect(labels.nth(i)).toBeVisible()
-					expect(
-						((await labels.nth(i).textContent()) ?? '').trim(),
-					).not.toBe('')
-				}
-				const active = page.locator(
-					'.app-menu__popover .app-item--active .app-item__label',
-				)
-				if ((await active.count()) > 0) {
-					expect(
-						await active
-							.first()
-							.evaluate((el) => getComputedStyle(el).fontWeight),
-					).toBe('600')
-				}
-				await page.keyboard.press('Escape')
-			})
+			await withThemeState(
+				browser,
+				{ tokenSet: 'nextcloud', showMenuLabels: true },
+				async () => {
+					await page.goto(PROBE_URL, { waitUntil: 'domcontentloaded' })
+					await page
+						.locator('#header .app-menu')
+						.waitFor({ state: 'attached' })
+					test.skip(
+						(await page.locator('#header .app-menu__waffle').count())
+							=== 0,
+						'Nextcloud 32 renders no waffle menu; its labels are covered by the fixture tests above',
+					)
+					await page.locator('#header .app-menu__waffle').click()
+					const labels = page.locator(
+						'.app-menu__popover .app-item__label',
+					)
+					await expect(labels.first()).toBeVisible()
+					const count = await labels.count()
+					expect(count).toBeGreaterThan(0)
+					for (let i = 0; i < count; i++) {
+						await expect(labels.nth(i)).toBeVisible()
+						expect(
+							((await labels.nth(i).textContent()) ?? '').trim(),
+						).not.toBe('')
+					}
+					const active = page.locator(
+						'.app-menu__popover .app-item--active .app-item__label',
+					)
+					if ((await active.count()) > 0) {
+						expect(
+							await active
+								.first()
+								.evaluate((el) => getComputedStyle(el).fontWeight),
+						).toBe('600')
+					}
+					await page.keyboard.press('Escape')
+				},
+			)
 		},
 	)
 })

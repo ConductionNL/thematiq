@@ -242,9 +242,9 @@ describe('admin.js group theming section', () => {
 
 		expect(add.disabled).toBe(false)
 		add.click()
-		expect(
-			document.querySelectorAll('.nldesign-group-theming-row').length,
-		).toBe(2)
+		expect(document.querySelectorAll('.nldesign-group-theming-row').length).toBe(
+			2,
+		)
 	})
 
 	it('leaves Add disabled when the mappings cannot be loaded', async () => {
@@ -254,7 +254,9 @@ describe('admin.js group theming section', () => {
 
 		await loadAdminScript()
 
-		expect(document.getElementById('nldesign-group-theming-add').disabled).toBe(true)
+		expect(document.getElementById('nldesign-group-theming-add').disabled).toBe(
+			true,
+		)
 	})
 
 	it('removes a row via its remove button', async () => {

@@ -42,7 +42,10 @@ function install() {
 		} else if (String(url).indexOf('/settings/group-theming') !== -1) {
 			body = { mapping: [] }
 		} else if (String(url).indexOf('/settings/email-theming') !== -1) {
-			body = { state: { state: 'enabled' }, footer: { orgName: 'Gemeente Zuiddrecht' } }
+			body = {
+				state: { state: 'enabled' },
+				footer: { orgName: 'Gemeente Zuiddrecht' },
+			}
 		}
 		return Promise.resolve({
 			status: 200,
@@ -149,8 +152,12 @@ describe('admin.js panel loaders wait for their panel', () => {
 		await flush()
 		document.removeEventListener('thematiq:email-theming', told)
 		expect(fetched('/settings/email-theming')).toHaveLength(1)
-		expect(document.getElementById('nldesign-email-theming-enabled').checked).toBe(true)
-		expect(document.getElementById('nldesign-email-footer-org-name').value).toBe('Gemeente Zuiddrecht')
+		expect(
+			document.getElementById('nldesign-email-theming-enabled').checked,
+		).toBe(true)
+		expect(document.getElementById('nldesign-email-footer-org-name').value).toBe(
+			'Gemeente Zuiddrecht',
+		)
 		expect(told).toHaveBeenCalledTimes(1)
 	})
 })

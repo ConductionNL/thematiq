@@ -345,7 +345,9 @@ test.describe('the dialogs of the admin Theming page', () => {
 	}) => {
 		// The page's first reads come with its render; this test stubs one, so the page fetches.
 		await page.addInitScript(() => {
-			(window as unknown as { ThematiqBootReadsOff: boolean }).ThematiqBootReadsOff = true
+			;(
+				window as unknown as { ThematiqBootReadsOff: boolean }
+			).ThematiqBootReadsOff = true
 		})
 		// The uploaded-fonts list is answered with one font; a delete is refused here.
 		await page.route(

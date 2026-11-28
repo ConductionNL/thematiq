@@ -24,11 +24,17 @@ let realFetch
 async function loadShim(reads) {
 	vi.resetModules()
 	delete window.ThematiqBootReads
-	realFetch = vi.fn(() => Promise.resolve(new Response('{"from":"server"}', { status: 200 })))
+	realFetch = vi.fn(() =>
+		Promise.resolve(new Response('{"from":"server"}', { status: 200 })),
+	)
 	window.fetch = realFetch
 	window.OCP = {
 		InitialState: {
-			loadState: vi.fn((app, key, fallback) => (app === 'thematiq' && key === 'bootReads' && reads !== undefined ? reads : fallback)),
+			loadState: vi.fn((app, key, fallback) =>
+				app === 'thematiq' && key === 'bootReads' && reads !== undefined
+					? reads
+					: fallback,
+			),
 		},
 	}
 	await import('../../js/lib/bootReads.js?t=' + Math.random())
@@ -41,9 +47,15 @@ describe('ThematiqBootReads.keyOf', () => {
 
 	it('keys a thematiq URL by its path after /apps/thematiq, with the query', () => {
 		const keyOf = window.ThematiqBootReads.keyOf
-		expect(keyOf('/index.php/apps/thematiq/settings/fonts', BASE)).toBe('/settings/fonts')
-		expect(keyOf('/apps/thematiq/settings/overrides?tokenSet=nextcloud', BASE)).toBe('/settings/overrides?tokenSet=nextcloud')
-		expect(keyOf('http://localhost/index.php/apps/thematiq/settings/fonts', BASE)).toBe('/settings/fonts')
+		expect(keyOf('/index.php/apps/thematiq/settings/fonts', BASE)).toBe(
+			'/settings/fonts',
+		)
+		expect(
+			keyOf('/apps/thematiq/settings/overrides?tokenSet=nextcloud', BASE),
+		).toBe('/settings/overrides?tokenSet=nextcloud')
+		expect(
+			keyOf('http://localhost/index.php/apps/thematiq/settings/fonts', BASE),
+		).toBe('/settings/fonts')
 	})
 
 	it('keys nothing for another app, another origin or a request object', () => {
@@ -51,8 +63,15 @@ describe('ThematiqBootReads.keyOf', () => {
 		expect(keyOf('/index.php/apps/files/settings/fonts', BASE)).toBeNull()
 		expect(keyOf('/index.php/apps/thematiqx/settings/fonts', BASE)).toBeNull()
 		expect(keyOf('/other/apps/thematiq/settings/fonts', BASE)).toBeNull()
-		expect(keyOf('https://example.org/index.php/apps/thematiq/settings/fonts', BASE)).toBeNull()
-		expect(keyOf({ url: '/index.php/apps/thematiq/settings/fonts' }, BASE)).toBeNull()
+		expect(
+			keyOf(
+				'https://example.org/index.php/apps/thematiq/settings/fonts',
+				BASE,
+			),
+		).toBeNull()
+		expect(
+			keyOf({ url: '/index.php/apps/thematiq/settings/fonts' }, BASE),
+		).toBeNull()
 	})
 })
 
@@ -64,7 +83,10 @@ describe('ThematiqBootReads.create', () => {
 	it('answers a GET for a path the render read once, without the server; the next read goes to the server', async () => {
 		const server = vi.fn(() => 'server')
 		const boot = window.ThematiqBootReads.create(server, READS, BASE)
-		const first = await boot.fetch('/index.php/apps/thematiq/settings/fonts', { method: 'get', headers: { requesttoken: 'x' } })
+		const first = await boot.fetch('/index.php/apps/thematiq/settings/fonts', {
+			method: 'get',
+			headers: { requesttoken: 'x' },
+		})
 		expect(first.ok).toBe(true)
 		expect(await first.json()).toEqual({ fonts: [{ name: 'Barlow' }] })
 		expect(server).not.toHaveBeenCalled()
@@ -76,14 +98,23 @@ describe('ThematiqBootReads.create', () => {
 	it('sends a path the render did not read to the server', () => {
 		const server = vi.fn(() => 'server')
 		const boot = window.ThematiqBootReads.create(server, READS, BASE)
-		expect(boot.fetch('/index.php/apps/thematiq/settings/overrides?tokenSet=amsterdam')).toBe('server')
+		expect(
+			boot.fetch(
+				'/index.php/apps/thematiq/settings/overrides?tokenSet=amsterdam',
+			),
+		).toBe('server')
 		expect(server).toHaveBeenCalledTimes(1)
 	})
 
 	it('stops answering at the first write, which itself goes to the server', () => {
 		const server = vi.fn(() => 'server')
 		const boot = window.ThematiqBootReads.create(server, READS, BASE)
-		expect(boot.fetch('/index.php/apps/thematiq/settings/fonts', { method: 'POST', body: '{}' })).toBe('server')
+		expect(
+			boot.fetch('/index.php/apps/thematiq/settings/fonts', {
+				method: 'POST',
+				body: '{}',
+			}),
+		).toBe('server')
 		expect(boot.active()).toBe(false)
 		expect(boot.fetch('/index.php/apps/thematiq/settings/fonts')).toBe('server')
 		expect(server).toHaveBeenCalledTimes(2)
@@ -96,9 +127,15 @@ describe('ThematiqBootReads.create', () => {
 	})
 
 	it('answers nothing when the render read nothing', () => {
-		expect(window.ThematiqBootReads.create(vi.fn(), {}, BASE).active()).toBe(false)
-		expect(window.ThematiqBootReads.create(vi.fn(), [], BASE).active()).toBe(false)
-		expect(window.ThematiqBootReads.create(vi.fn(), null, BASE).active()).toBe(false)
+		expect(window.ThematiqBootReads.create(vi.fn(), {}, BASE).active()).toBe(
+			false,
+		)
+		expect(window.ThematiqBootReads.create(vi.fn(), [], BASE).active()).toBe(
+			false,
+		)
+		expect(window.ThematiqBootReads.create(vi.fn(), null, BASE).active()).toBe(
+			false,
+		)
 	})
 })
 
@@ -141,7 +178,10 @@ describe('the page shim', () => {
 
 	it('gives fetch back after a write, so a later read reaches the server', async () => {
 		await loadShim(READS)
-		await window.fetch('/index.php/apps/thematiq/settings/fonts', { method: 'PUT', body: '{}' })
+		await window.fetch('/index.php/apps/thematiq/settings/fonts', {
+			method: 'PUT',
+			body: '{}',
+		})
 		expect(window.fetch).toBe(realFetch)
 		await window.fetch('/index.php/apps/thematiq/settings/fonts')
 		expect(realFetch).toHaveBeenCalledTimes(2)

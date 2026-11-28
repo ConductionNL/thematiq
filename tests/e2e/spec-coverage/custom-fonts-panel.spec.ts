@@ -23,7 +23,9 @@ type LibraryFont = { name: string; licence?: string; roles?: string[] }
 async function stubFonts(page: Page, fonts: unknown[]): Promise<void> {
 	// The page's first reads come with its render; the stub only works when the page fetches.
 	await page.addInitScript(() => {
-		(window as unknown as { ThematiqBootReadsOff: boolean }).ThematiqBootReadsOff = true
+		;(
+			window as unknown as { ThematiqBootReadsOff: boolean }
+		).ThematiqBootReadsOff = true
 	})
 	await page.route(
 		(url) => url.pathname.endsWith('/apps/thematiq/settings/fonts'),

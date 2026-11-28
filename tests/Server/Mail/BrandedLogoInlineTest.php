@@ -34,6 +34,10 @@ class BrandedLogoInlineTest extends TestCase {
 	 * @return void
 	 */
 	public function testTheBrandedLogoIsAttachedToTheMessage(): void {
+		if (method_exists(EMailTemplate::class, 'getInlineImages') === false) {
+			$this->markTestSkipped(message: 'This Nextcloud has no inline images; they arrived in 34.');
+		}
+
 		$this->assertStringContainsString(
 			needle: '/lib/private/Mail/EMailTemplate.php',
 			haystack: (string)(new \ReflectionClass(objectOrClass: EMailTemplate::class))->getFileName()
