@@ -14,8 +14,8 @@
  * Then it RESTORES the prior set.
  *
  * GLOBAL STATE: mutates nldesign.token_set (and, via the apply dialog, possibly
- * custom-overrides.css). Both are snapshotted in beforeAll and RESTORED in
- * afterAll. We deliberately DESELECT all token rows in the apply dialog so the
+ * custom-overrides.css and core theming: primary, logo). All are snapshotted in
+ * beforeAll and RESTORED in afterAll. We deliberately DESELECT all token rows in the apply dialog so the
  * confirm only changes the active set, not the persisted overrides.
  */
 import { test, expect } from '@playwright/test'
@@ -30,6 +30,11 @@ import {
 	withdrawTokenSetOffer,
 	type TokenSetOffer,
 } from './_helpers'
+import {
+	captureCoreTheming,
+	restoreCoreTheming,
+	type CoreThemingCapture,
+} from '../spec-coverage/_core-theming'
 
 // Target set to apply (a real municipality set in token-sets.json). Chosen so it
 // differs from the common dev default ("demodam") to force a real change.
@@ -38,6 +43,10 @@ const TARGET_SET = 'utrecht'
 let baselineSet = ''
 let baselineOverrides: Record<string, string> = {}
 let offer: TokenSetOffer | null = null
+// The apply dialog is the one dialog: confirming it also brings core theming
+// (primary, logo) in line with the set, even with every token row deselected.
+// Without this the Utrecht logo stayed in core theming for every later spec.
+let coreTheming: CoreThemingCapture | null = null
 
 test.describe('workflow: token-set apply persistence', () => {
 	test.describe.configure({ mode: 'serial', timeout: 90_000 })
@@ -48,6 +57,7 @@ test.describe('workflow: token-set apply persistence', () => {
 		const token = await requestToken(page)
 		baselineSet = await getTokenSet(page, token)
 		baselineOverrides = await getOverrides(page, token)
+		coreTheming = await captureCoreTheming(page)
 		// A shipped brand is only in the dropdown once something makes it
 		// selectable (token-sets spec, "Only Fully Functional Brands Are
 		// Selectable"); a group mapping does so without theming this admin.
@@ -64,6 +74,9 @@ test.describe('workflow: token-set apply persistence', () => {
 		await setOverrides(page, token, baselineOverrides)
 		if (offer !== null) {
 			await withdrawTokenSetOffer(page, token, offer)
+		}
+		if (coreTheming !== null) {
+			await restoreCoreTheming(page, coreTheming)
 		}
 		expect(await getTokenSet(page, token)).toBe(baselineSet)
 		expect(await getOverrides(page, token)).toEqual(baselineOverrides)
