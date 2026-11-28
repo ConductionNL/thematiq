@@ -127,6 +127,9 @@ test.describe('the same shell on every page', () => {
 				waitUntil: 'domcontentloaded',
 			})
 			const row = page.locator('#app-content-vue .list-item').first()
+			// The list fills after the address books load: wait for it before
+			// deciding the instance has no contact.
+			await row.waitFor({ timeout: 20000 }).catch(() => {})
 			test.skip(
 				(await row.count()) === 0,
 				'Contacts has no contact to list on this instance',
@@ -153,6 +156,7 @@ test.describe('the same shell on every page', () => {
 			const help = page
 				.locator('#app-content .section a[href^="http"]')
 				.first()
+			await help.waitFor({ timeout: 15000 }).catch(() => {})
 			test.skip(
 				(await help.count()) === 0,
 				'no help link in the administration settings of this instance',
@@ -179,6 +183,9 @@ test.describe('the same shell on every page', () => {
 					name: /details|open details|details openen/i,
 				})
 				.first()
+			// The context menu renders after the click: wait for it before
+			// deciding it has no details entry.
+			await details.waitFor({ timeout: 15000 }).catch(() => {})
 			test.skip(
 				(await details.count()) === 0,
 				'the file menu offers no details entry on this instance',
