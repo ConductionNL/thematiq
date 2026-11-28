@@ -212,8 +212,11 @@ test.describe('first-time setup: the Nextcloud theme follows the set', () => {
 /** Who confirmed which restricted set (TokenSetLicenceService). */
 const CONFIRMATIONS = 'restricted_set_confirmations'
 
+// workplace_layout: Apply with the menu on writes the light layout next to
+// header_style (LayoutOptionValues::WORKPLACE_TOP_BAR, #2225); left behind it
+// restyled the header and the login page of every later spec.
 const SETUP_KEYS = [
-	'token_set', 'header_style', 'themed_contexts', 'hide_slogan', 'login_watermark',
+	'token_set', 'header_style', 'workplace_layout', 'themed_contexts', 'hide_slogan', 'login_watermark',
 	'brand_stripe_placement', FOLLOWS_KEY, 'setup.completed', 'setup.skipped',
 ]
 
