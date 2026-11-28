@@ -153,7 +153,7 @@ class Application extends App implements IBootstrap {
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, ThemeInjectionListener::class);
 		$context->registerEventListener(BeforeLoginTemplateRenderedEvent::class, ThemeInjectionListener::class);
 
-		// The first-time setup over an administrator's first page (openspec/changes/first-time-setup).
+		// The first-time setup over an administrator's first page (openspec/specs/first-time-setup).
 		$context->registerEventListener(BeforeTemplateRenderedEvent::class, SetupWizardListener::class);
 
 		// The workspace's mobile logo and touch icon (openspec/changes/mobile-logo-and-touch-icon).

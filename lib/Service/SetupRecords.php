@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
  */
 
 declare(strict_types=1);
@@ -27,7 +27,7 @@ use OCP\IConfig;
 /**
  * The app values, the theming audit trail and the clock the setup's actions write with.
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
  */
 final class SetupRecords {
 

@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md
+ * @spec openspec/specs/first-time-setup/spec.md
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -290,7 +290,7 @@ describe('the wizard', () => {
 		return vm
 	}
 
-	// @spec openspec/changes/first-time-setup/tasks.md#6-live-check
+	// @spec openspec/changes/archive/2026-11-28-first-time-setup/tasks.md#6-live-check
 	it('draws the frame as the TqSetup boards: board look, eyebrow, the step\'s own title in the head', async () => {
 		const vm = await framed()
 		vm.state.choices.tokenSet = 'zuiddrecht'
@@ -312,7 +312,7 @@ describe('the wizard', () => {
 		expect(vm.heading).toBe('Done, Nextcloud default is set')
 	})
 
-	// @spec openspec/changes/first-time-setup/tasks.md#6-live-check
+	// @spec openspec/changes/archive/2026-11-28-first-time-setup/tasks.md#6-live-check
 	it('Skip is a link at the start of the footer on every step but done', async () => {
 		const vm = await framed()
 		const [skip] = vm.footer({ currentStep: { id: 'house-style' }, loading: false })
@@ -321,7 +321,7 @@ describe('the wizard', () => {
 		expect(vm.footer({ currentStep: { id: 'welcome' }, loading: true })[0].props.disabled).toBe(true)
 	})
 
-	// @spec openspec/changes/first-time-setup/tasks.md#6-live-check
+	// @spec openspec/changes/archive/2026-11-28-first-time-setup/tasks.md#6-live-check
 	it('done with the menu on: Close beside the walkthrough as the primary button with a chevron', async () => {
 		const reload = vi.fn()
 		vi.stubGlobal('location', { reload })
@@ -343,7 +343,7 @@ describe('the wizard', () => {
 		expect(vm.closed).toHaveBeenCalledTimes(1)
 	})
 
-	// @spec openspec/changes/first-time-setup/tasks.md#6-live-check
+	// @spec openspec/changes/archive/2026-11-28-first-time-setup/tasks.md#6-live-check
 	it('done with the menu off: only Close, which closes and stores nothing', async () => {
 		const vm = await framed()
 		vm.state.choices.menu.enabled = false

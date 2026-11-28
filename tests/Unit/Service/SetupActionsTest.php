@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-nothing-changes-until-apply-req-tqfs-003
  */
 
 declare(strict_types=1);
@@ -261,7 +261,7 @@ class SetupActionsTest extends TestCase {
 	 * The apps menu step's Contacts button switch (TqSetupAppmenu) is stored as the administrator's
 	 * `menu.showContactsMenu`.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
 	 *
 	 * @return void
 	 */
@@ -391,7 +391,7 @@ class SetupActionsTest extends TestCase {
 	 * A set that already draws the workplace top bar (light layout, workplace header) gets neither
 	 * option written when the menu is on.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
 	 *
 	 * @return void
 	 */

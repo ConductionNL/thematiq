@@ -13,8 +13,8 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
  */
 
 declare(strict_types=1);
@@ -29,7 +29,7 @@ use OCP\IConfig;
  * the `--sync-core` path (the settings page, occ, a planned switch); the switch on the settings page and
  * the wizard's Nextcloud theme step store it.
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
  */
 class CoreThemingFollow {
 
@@ -59,7 +59,7 @@ class CoreThemingFollow {
 	 *
 	 * @return bool True while it follows.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
 	 */
 	public function follows(): bool {
 		return $this->config->getAppValue(Application::APP_ID, self::KEY, '0') === '1';
@@ -73,7 +73,7 @@ class CoreThemingFollow {
 	 *
 	 * @return array<int, string> The Nextcloud theming values applied now.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
 	 */
 	public function setFollows(bool $follows, string $activeSet): array {
 		$old = $this->config->getAppValue(Application::APP_ID, self::KEY, '');
@@ -98,7 +98,7 @@ class CoreThemingFollow {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
 	 */
 	public function afterSwitch(string $tokenSet, array $auditContext): void {
 		if ($this->follows() === true) {
@@ -114,7 +114,7 @@ class CoreThemingFollow {
 	 *
 	 * @return array<int, string> The values applied.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
 	 */
 	public function apply(string $tokenSet, array $auditContext): array {
 		$applied = $this->coreSync->sync(tokenSetId: $tokenSet);

@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-version-card-shows-the-setup-and-runs-it-again-req-tqfs-012
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-version-card-shows-the-setup-and-runs-it-again-req-tqfs-012
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'

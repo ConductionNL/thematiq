@@ -2,7 +2,7 @@
  * SPDX-FileCopyrightText: 2026 Conduction B.V.
  * SPDX-License-Identifier: EUPL-1.2
  *
- * @e2e openspec/changes/first-time-setup/specs/first-time-setup/spec.md
+ * @e2e openspec/specs/first-time-setup/spec.md
  *
  * Browser proof of the first-time setup change. This file starts with task 4b.4, the switch "Keep
  * the Nextcloud theme in line with the set" on the Theming settings page (REQ-TQFS-013); the wizard
@@ -344,7 +344,7 @@ async function expectWizard(page: Page, url: string, shown: boolean): Promise<vo
 	await expect(wizard(page)).toHaveCount(0)
 }
 
-// @e2e openspec/changes/first-time-setup/specs/first-time-setup/spec.md
+// @e2e openspec/specs/first-time-setup/spec.md
 test.describe('first-time setup: the wizard', () => {
 	test.describe.configure({ mode: 'serial' })
 	test.setTimeout(240_000)

@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
  */
 
 declare(strict_types=1);
@@ -40,7 +40,7 @@ use Throwable;
  *
  * @template-implements IEventListener<Event>
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
  */
 class SetupWizardListener implements IEventListener {
 
@@ -74,7 +74,7 @@ class SetupWizardListener implements IEventListener {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
 	 */
 	public function handle(Event $event): void {
 		if ($event instanceof BeforeTemplateRenderedEvent === false || $this->appliesTo(event: $event) === false) {
@@ -93,7 +93,7 @@ class SetupWizardListener implements IEventListener {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
 	 */
 	private function offer(): void {
 		if ($this->status->isDue() === false || $this->bundleBuilt() === false) {
@@ -111,7 +111,7 @@ class SetupWizardListener implements IEventListener {
 	 *
 	 * @return bool True for a user page of a member of the `admin` group.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
 	 */
 	private function appliesTo(BeforeTemplateRenderedEvent $event): bool {
 		if ($event->isLoggedIn() === false || $event->getResponse()->getRenderAs() !== TemplateResponse::RENDER_AS_USER) {
@@ -126,7 +126,7 @@ class SetupWizardListener implements IEventListener {
 	 *
 	 * @return bool True when the bundle exists.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
 	 */
 	protected function bundleBuilt(): bool {
 		return is_file(dirname(__DIR__, 2) . '/' . self::BUNDLE);
@@ -139,7 +139,7 @@ class SetupWizardListener implements IEventListener {
 	 *
 	 * @SuppressWarnings(PHPMD.StaticAccess) \OCP\Util::addScript() is the Nextcloud API for page scripts.
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
 	 */
 	protected function addLoader(): void {
 		\OCP\Util::addScript(Application::APP_ID, 'setup-wizard-loader');

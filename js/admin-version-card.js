@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EUPL-1.2
  * SPDX-FileCopyrightText: 2026 Conduction B.V. <info@conduction.nl>
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-version-card-shows-the-setup-and-runs-it-again-req-tqfs-012
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-version-card-shows-the-setup-and-runs-it-again-req-tqfs-012
  */
 ;(function thematiqVersionCard(win, doc) {
 	var BUNDLE = 'vendor/setupWizard.js'
@@ -89,7 +89,7 @@
 	 *
 	 * @param {object} status The answer of GET /api/setup/status.
 	 * @return {{state: string, detail: string}} The two lines.
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-version-card-shows-the-setup-and-runs-it-again-req-tqfs-012
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-version-card-shows-the-setup-and-runs-it-again-req-tqfs-012
 	 */
 	function describe(status) {
 		var current = status.current || {}
@@ -117,7 +117,7 @@
 	 *
 	 * @param {object} status The setup status.
 	 * @return {void}
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-version-card-shows-the-setup-and-runs-it-again-req-tqfs-012
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-version-card-shows-the-setup-and-runs-it-again-req-tqfs-012
 	 */
 	function setUpAgain(status) {
 		if (win.thematiqSetupWizard && typeof win.thematiqSetupWizard.open === 'function') {

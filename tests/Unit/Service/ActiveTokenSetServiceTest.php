@@ -133,7 +133,7 @@ class ActiveTokenSetServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
 	 */
 	public function testAFollowingThemeIsSyncedOnEverySwitch(): void {
 		$this->store['core_theming_follows_set'] = '1';
@@ -157,7 +157,7 @@ class ActiveTokenSetServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-nextcloud-theme-step-keeps-nextclouds-theme-in-line-with-the-set-req-tqfs-008
 	 */
 	public function testANotFollowingThemeIsLeftAlone(): void {
 		$coreSync = $this->createMock(originalClassName: ScheduledCoreThemingSync::class);
@@ -173,7 +173,7 @@ class ActiveTokenSetServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
 	 */
 	public function testTurningFollowingOnAppliesTheActiveSet(): void {
 		$coreSync = $this->createMock(originalClassName: ScheduledCoreThemingSync::class);
@@ -193,7 +193,7 @@ class ActiveTokenSetServiceTest extends TestCase {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
+	 * @spec openspec/specs/first-time-setup/spec.md#requirement-the-settings-page-switches-nextclouds-theme-in-line-with-the-set-req-tqfs-013
 	 */
 	public function testFollowingOnNextcloudDefaultOnlyStores(): void {
 		$this->store['token_set'] = 'nextcloud';

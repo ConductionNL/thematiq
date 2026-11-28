@@ -10,7 +10,7 @@
  *
  * Run with `npm run build:setup-wizard`.
  *
- * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
+ * @spec openspec/specs/first-time-setup/spec.md#requirement-the-wizard-opens-for-an-administrator-on-the-first-nextcloud-page-while-setup-is-due-req-tqfs-001
  */
 
 const path = require('path')
@@ -26,7 +26,7 @@ const packageCss = /@conduction[\\/]nextcloud-vue[\\/]dist[\\/]nextcloud-vue\.cs
  *
  * @param {string} selector A rule's selector.
  * @return {boolean} Whether the wizard keeps it.
- * @spec openspec/changes/first-time-setup/tasks.md#6-live-check
+ * @spec openspec/changes/archive/2026-11-28-first-time-setup/tasks.md#6-live-check
  */
 function boardDialogRule(selector) {
 	const plain = selector.replace(/\/\*[\s\S]*?\*\//g, '').trim()
