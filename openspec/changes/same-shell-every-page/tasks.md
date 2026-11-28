@@ -88,6 +88,18 @@ three apps before the next step.
 - [ ] 6.3 Compdiff on the demo stack under Zuiddrecht: MlInbox, MlThreadList, MlThread, ClWeek,
       ClMonth, ClEventPopover, TbBoard and TbCard against the baseline; DqKop and the #1216 top bars
       on Files and Settings; dossiq/DqZaken. Write each result in this task.
+      (Live A/B by the live lane, 28 Nov, NC 34.0.6 + PostgreSQL 16, Zuiddrecht, Mail stable5.13 on a
+      local Dovecot inbox, Calendar stable6.7, Deck stable34, all from git; compdiff live captures of
+      the pre-change build 1311240d against development, same seed: MlInbox/MlThreadList change only
+      in the navigation: the selected entry follows the admin's style and rows are 34 px (decisions 1
+      and 2), plus one bug in the move, Mail's New message 48 px instead of 34 px (shared new-item rule
+      targets NcAppNavigationNew only), fixed with this note. MlThread 0.11% of pixels, navigation only.
+      ClWeek/ClMonth/ClEventPopover: Calendar's navigation rows 34 px (decision 2); the Deck card list
+      Calendar draws over the week now takes the shared list-row look (44 -> 39 px, radius 3 -> 0, 1 px
+      row edge); no Cl board draws that list, left for the owner. TbBoard navigation only; TbCard 0.10%
+      (header pill 2.7 px). DqKop on Files: no pixel changed. Board against live still pairs nothing: the
+      Ml/Cl/Tb boards are multi-frame sheets drawn for the OpenProject canon, so the board half of this
+      task waits for 6.0's redraws; dossiq/DqZaken not run, dossiq is not on this sandbox.)
 - [x] 6.4 l10n: no new strings expected (the settings name is Nextcloud's own); `npm run test:l10n`
       green. (No new strings in this change; `npm run test:l10n` is red on development for strings in
       js/admin.js that are not this change's; green again since thematiq#2203.)
