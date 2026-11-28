@@ -16,55 +16,77 @@ On Nextcloud 32 each header entry swaps its icon for its name. Nextcloud 33 and 
 ## Requirements
 
 ### Requirement: Configuration Storage
-The show menu labels setting MUST be stored in Nextcloud's `IConfig` as a string value with clear on/off semantics.
+The show menu labels feature MUST be driven by the menu setting `topBarTitles` (Show titles in the top
+bar, apps-menu-settings REQ-TQMT-005), the administrator's app value `thematiq` / `menu.topBarTitles`,
+shipped false. The former app value `show_menu_labels` MUST move once into `menu.topBarTitles` (`'1'`
+becomes true, `'0'` false) by a repair step on upgrade, and MUST then be removed; until it has moved,
+`topBarTitles` MUST read `show_menu_labels` while `menu.topBarTitles` is absent. An instance that had
+the labels on MUST keep them on.
 
 #### Scenario: Setting stored as enabled
-- GIVEN the admin enables the show menu labels feature
-- WHEN `POST /apps/nldesign/settings/menulabels` is called with `showMenuLabels=true`
-- THEN `saveBooleanSetting('show_menu_labels', true)` MUST be called
-- AND `IConfig::setAppValue('nldesign', 'show_menu_labels', '1')` MUST be stored
-- AND the response MUST be JSON with `{"status": "ok", "showMenuLabels": true}`
+@e2e exclude Pure service logic: PHPUnit tests/Unit/Service/AppMenuSettingsTest.php (testTopBarTitlesIsStoredForEveryone)
+- GIVEN an administrator
+- WHEN `POST /apps/thematiq/app-menu/defaults` is called with `{topBarTitles: true}`
+- THEN the app value `menu.topBarTitles` MUST be true
 
 #### Scenario: Setting stored as disabled
-- GIVEN the admin disables the show menu labels feature
-- WHEN `POST /apps/nldesign/settings/menulabels` is called with `showMenuLabels=false`
-- THEN `IConfig::setAppValue('nldesign', 'show_menu_labels', '0')` MUST be called
-- AND the response MUST be JSON with `{"status": "ok", "showMenuLabels": false}`
+@e2e exclude Pure service logic: PHPUnit tests/Unit/Service/AppMenuSettingsTest.php (testTopBarTitlesIsStoredForEveryone)
+- GIVEN an administrator
+- WHEN `POST /apps/thematiq/app-menu/defaults` is called with `{topBarTitles: false}`
+- THEN the app value `menu.topBarTitles` MUST be false
 
 #### Scenario: Default value when not configured
-@e2e exclude a browser cannot remove a stored app value, so it cannot reach the never-configured state on an instance where the setting was ever saved; PHPUnit tests/Unit/Service/CssInjectionServiceTest.php::testTogglesAbsentFromConfigDefaultToOff asserts an absent key loads no show-menu-labels stylesheet
-- GIVEN no value has been set for `nldesign:show_menu_labels`
-- WHEN the setting is read during boot
-- THEN the default value MUST be `'0'` (disabled)
-- AND menu icons MUST be displayed normally (Nextcloud default behavior)
+@e2e exclude a browser cannot remove a stored app value; proven by tests/Unit/Service/AppMenuSettingsTest.php (testTopBarTitlesShipOff)
+- GIVEN neither `menu.topBarTitles` nor `show_menu_labels` is stored
+- WHEN the setting is read
+- THEN `topBarTitles` MUST be false
+- AND menu icons MUST be displayed normally (Nextcloud default behaviour)
 
 #### Scenario: Setting persists across restarts
-@e2e exclude a server restart cannot be driven from a browser; the value is the IConfig row, and PHPUnit tests/Unit/Controller/SettingsControllerEndpointsTest.php::testATogglePersistsTheOnValue asserts the endpoint stores the string '1' there
-- GIVEN the admin has enabled menu labels
+@e2e exclude a server restart cannot be driven from a browser; the value is an app value, proven by tests/Unit/Service/AppMenuSettingsTest.php (testTopBarTitlesIsStoredForEveryone)
+- GIVEN the administrator switched titles in the top bar on
 - WHEN the Nextcloud server restarts
-- THEN the setting MUST remain `'1'` in IConfig
-- AND menu labels MUST continue to display on all pages
+- THEN `menu.topBarTitles` MUST still be true
+
+#### Scenario: The former value moves once
+@e2e exclude a repair step on upgrade; proven by tests/Unit/Repair/MigrateMenuLabelsToTopBarTitlesTest.php (testTheFormerValueMovesOnceAndIsRemoved)
+- GIVEN the app value `show_menu_labels` is `'1'` and no `menu.topBarTitles` is stored
+- WHEN the repair step runs
+- THEN `menu.topBarTitles` MUST be true
+- AND `show_menu_labels` MUST be gone
+- AND running the step again MUST change nothing
 
 ### Requirement: Conditional CSS Loading
-The show-menu-labels CSS file MUST only be loaded when the feature is enabled.
+The show-menu-labels CSS file MUST be loaded only when the administrator's effective `topBarTitles` is
+on and the page shows Nextcloud's own apps menu, that is, where thematiq does not draw the workplace
+apps menu. On a page with the workplace apps menu it MUST NOT be loaded, because its `.app-item__label`
+rules would put names back into an icon-only workplace menu; the workplace top bar draws its pins'
+names itself (apps-menu-settings REQ-TQMT-006).
 
 #### Scenario: Feature enabled loads CSS
-- GIVEN `IConfig` returns `'1'` for `show_menu_labels`
-- WHEN `Application::injectThemeCSS()` runs during boot
-- THEN `\OCP\Util::addStyle('nldesign', 'show-menu-labels')` MUST be called
-- AND the CSS file MUST be loaded after all core layers and custom-overrides
+@e2e exclude asset loading of one page request; proven by tests/Unit/Service/CssInjectionServiceTest.php (testTopBarTitlesLoadTheLabelsStylesheetOnNextcloudsOwnMenu)
+- GIVEN `topBarTitles` is on and the menu style is classic
+- WHEN the theme CSS is injected
+- THEN `show-menu-labels` CSS MUST be loaded
 
 #### Scenario: Feature disabled skips CSS
-- GIVEN `IConfig` returns `'0'` for `show_menu_labels`
-- WHEN `Application::injectThemeCSS()` runs during boot
+@e2e exclude asset loading of one page request; proven by tests/Unit/Service/CssInjectionServiceTest.php (testTogglesAbsentFromConfigDefaultToOff)
+- GIVEN `topBarTitles` is off
+- WHEN the theme CSS is injected
 - THEN `show-menu-labels` CSS MUST NOT be loaded
-- AND Nextcloud's default icon-based menu MUST render normally
 
 #### Scenario: CSS loading order relative to other conditionals
-- GIVEN both hide_slogan and show_menu_labels are enabled
+@e2e exclude stylesheet order of one page request; proven by tests/Unit/Service/CssInjectionServiceTest.php (testConditionalStylesheetOrder)
+- GIVEN hide_slogan and `topBarTitles` are on and the menu style is classic
 - WHEN the CSS files are loaded
-- THEN hide-slogan MUST be loaded before show-menu-labels (matching the code order in `Application.php`)
+- THEN hide-slogan MUST be loaded before show-menu-labels
 - AND both MUST load after the custom-overrides layer
+
+#### Scenario: The workplace menu does not load it
+@e2e exclude asset loading of one page request; proven by tests/Unit/Service/CssInjectionServiceTest.php (testTheWorkplaceMenuDoesNotLoadTheLabelsStylesheet)
+- GIVEN `topBarTitles` is on and the page draws the workplace apps menu
+- WHEN the theme CSS is injected
+- THEN `show-menu-labels` CSS MUST NOT be loaded
 
 ### Requirement: Icon Hiding
 When the feature is enabled, app menu icons MUST be hidden from both visual display and layout.
@@ -177,49 +199,27 @@ When labels are shown, the active item MUST be indicated by bold text weight rat
 - THEN the font-weight difference MUST be perceivable regardless of background color
 - AND the text color MUST be inherited from the header text color token
 
-### Requirement: API Endpoint
-The app MUST expose an admin-only API endpoint for toggling the show menu labels setting.
-
-#### Scenario: Toggle menu labels on
-- GIVEN the admin is authenticated
-- WHEN `POST /apps/nldesign/settings/menulabels` is called with `showMenuLabels=true`
-- THEN the setting MUST be stored as `'1'` in IConfig
-- AND the response MUST confirm success with `{"status": "ok", "showMenuLabels": true}`
-
-#### Scenario: Toggle menu labels off
-- GIVEN the admin is authenticated
-- WHEN `POST /apps/nldesign/settings/menulabels` is called with `showMenuLabels=false`
-- THEN the setting MUST be stored as `'0'` in IConfig
-- AND the response MUST confirm success with `{"status": "ok", "showMenuLabels": false}`
-
-#### Scenario: Non-admin access denied
-- GIVEN a non-admin user is authenticated
-- WHEN `POST /apps/nldesign/settings/menulabels` is called
-- THEN the request MUST be rejected by the `@AuthorizedAdminSetting(settings=OCA\Thematiq\Settings\Admin)` annotation
-- AND the setting MUST NOT be modified
-
-#### Scenario: Route registration
-- GIVEN the app's routes configuration
-- WHEN routes are loaded from `appinfo/routes.php`
-- THEN a POST route for `/settings/menulabels` MUST be mapped to `settings#setMenuLabelsSetting`
-
 ### Requirement: Admin Settings Panel Integration
-The settings panel MUST include a checkbox that reflects and controls the menu labels setting.
+The admin page MUST control the feature with the switch "Show titles in the top bar" in the Menu card
+of Layout and options (admin-settings, Show Menu Labels Checkbox), saved through
+`POST /apps/thematiq/app-menu/defaults` with `{topBarTitles}`.
 
 #### Scenario: Checkbox reflects current state on load
-- GIVEN the show menu labels setting is enabled
+@e2e exclude the checked state of one switch; proven by tests/vitest/adminLayoutTopBarTitles.spec.js (the switch is checked from the administrator's topBarTitles)
+- GIVEN `menu.topBarTitles` is true
 - WHEN the settings panel loads
-- THEN the `#nldesign-show-menu-labels` checkbox MUST be checked
+- THEN "Show titles in the top bar" MUST be checked
 
 #### Scenario: Checkbox change triggers save
-- GIVEN the admin toggles the show menu labels checkbox
-- WHEN the change event fires in JavaScript
-- THEN `POST /apps/nldesign/settings/menulabels` MUST be called with the new boolean value
+- GIVEN an administrator on Layout and options with "Show titles in the top bar" off
+- WHEN they switch it on
+- THEN the app value `menu.topBarTitles` MUST be true
+- AND a person's pinned apps in the workplace top bar MUST show their names next to their icons
 
 #### Scenario: Checkbox label is localized and accessible
+@e2e exclude the label of one switch; proven by tests/vitest/adminLayoutTopBarTitles.spec.js (the switch is labelled and has its help text)
 - GIVEN the settings panel renders
-- THEN the checkbox label MUST read "Show text labels in app menu (hide icons)" (via `$l->t()`)
-- AND the label MUST have `for="nldesign-show-menu-labels"` for accessibility
+- THEN the switch MUST read "Show titles in the top bar" via `$l->t()` with `role="switch"` and its help text
 
 ### Requirement: Accessibility Improvement
 The menu labels feature MUST improve accessibility by providing text-based navigation alternatives.

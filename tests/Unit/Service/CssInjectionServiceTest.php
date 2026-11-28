@@ -1724,7 +1724,7 @@ class CssInjectionServiceTest extends TestCase {
 	 * Nextcloud's own menu labels load with Show titles in the top bar on and no workplace apps menu
 	 * on the page, and never next to the workplace menu.
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
+	 * @spec openspec/specs/menu-labels/spec.md
 	 *
 	 * @return void
 	 */
@@ -1742,7 +1742,7 @@ class CssInjectionServiceTest extends TestCase {
 	/**
 	 * With the classic header the labels load from `menu.topBarTitles`.
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
+	 * @spec openspec/specs/menu-labels/spec.md
 	 *
 	 * @return void
 	 */

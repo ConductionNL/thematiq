@@ -45,7 +45,7 @@ The settings form MUST return a `TemplateResponse` with all required parameters 
 - AND the template parameters MUST include `tokenSets` (array of all available token sets from `TokenSetService::getAvailableTokenSets()`)
 - AND the template parameters MUST include `currentTokenSet` (string, current active token set id, default `'nextcloud'`)
 - AND the template parameters MUST include `hideSlogan` (boolean, from IConfig `hide_slogan` compared with `=== '1'`)
-- AND the template parameters MUST include `showMenuLabels` (boolean, from IConfig `show_menu_labels` compared with `=== '1'`)
+- AND the template parameters MUST include `topBarTitles` (boolean, the administrator's effective `menu.topBarTitles`)
 
 #### Scenario: Token sets include design system metadata
 - GIVEN `Admin::getForm()` retrieves token sets
@@ -58,7 +58,7 @@ The settings form MUST return a `TemplateResponse` with all required parameters 
 - WHEN `Admin::getForm()` is called
 - THEN `currentTokenSet` MUST be `'nextcloud'`
 - AND `hideSlogan` MUST be `false`
-- AND `showMenuLabels` MUST be `false`
+- AND `topBarTitles` MUST be `false`
 
 ### Requirement: Token Set Selector Dropdown
 The settings panel MUST provide a searchable dropdown for selecting the active design token set from the SELECTABLE sets — the fully functional brands, plus the sets an instance is already using. See the token-sets spec, "Only Fully Functional Brands Are Selectable": the catalogue is unchanged and still holds every shipped set, but a brand that does not declare the vocabulary the design system reads is not offered for selection.
@@ -161,29 +161,38 @@ The settings panel MUST include a checkbox to toggle the hide slogan feature.
 - AND the response MUST be checked for success before confirming the change
 
 ### Requirement: Show Menu Labels Checkbox
-The settings panel MUST include a checkbox to toggle the show menu labels feature.
+The Menu card of Layout and options MUST have the switch "Show titles in the top bar"
+(`role="switch"`, with its help text) in place of the former checkbox "Show text labels in app menu
+(hide icons)". It MUST be checked from the administrator's effective `menu.topBarTitles`. Toggling it
+MUST save at once through `POST /apps/thematiq/app-menu/defaults` with `{topBarTitles}` only, say
+"Saved" in the page's polite live region, and on a failure say why in an alert and set the switch
+back. The change MUST be listed among the changes in this session.
 
 #### Scenario: Checkbox reflects enabled state
-- GIVEN the show menu labels setting is enabled (value `'1'` in IConfig)
+@e2e exclude the checked state of one switch from a stored value; proven by tests/vitest/adminLayoutTopBarTitles.spec.js (the switch is checked from the administrator's topBarTitles)
+- GIVEN the administrator's `menu.topBarTitles` is true
 - WHEN the settings panel loads
-- THEN the `#nldesign-show-menu-labels` checkbox MUST be checked
+- THEN "Show titles in the top bar" MUST be checked
 
 #### Scenario: Checkbox reflects disabled state
-@e2e exclude Requires IConfig to be set to disabled state — not guaranteed in shared env; covered by initial-state assertions in admin-settings spec-coverage.
-- GIVEN the show menu labels setting is disabled (value `'0'` in IConfig)
+@e2e exclude the unchecked state of one switch from a stored value; proven by tests/vitest/adminLayoutTopBarTitles.spec.js (the switch is unchecked by default)
+- GIVEN no `menu.topBarTitles` is stored
 - WHEN the settings panel loads
-- THEN the `#nldesign-show-menu-labels` checkbox MUST NOT be checked
+- THEN "Show titles in the top bar" MUST NOT be checked
 
 #### Scenario: Checkbox label text and accessibility
+@e2e exclude the label and role of one switch; proven by tests/vitest/adminLayoutTopBarTitles.spec.js (the switch is labelled and has its help text)
 - GIVEN the settings panel renders
-- THEN the checkbox label MUST read "Show text labels in app menu (hide icons)" (localized via `$l->t()`)
-- AND the label MUST have `for="nldesign-show-menu-labels"` to associate with the input
+- THEN the switch MUST read "Show titles in the top bar" (localized via `$l->t()`) with `role="switch"`
+- AND its help text MUST be its description
+- AND the former text "Show text labels in app menu (hide icons)" MUST NOT be on the page
 
 #### Scenario: Checkbox change triggers API call
-@e2e exclude API call assertion (POST /settings/menulabels) — not testable via DOM; would also toggle shared-env IConfig state.
-- GIVEN the admin toggles the show menu labels checkbox
-- WHEN the change event fires
-- THEN JavaScript MUST call `POST /apps/nldesign/settings/menulabels` with `showMenuLabels` as a boolean
+@e2e exclude the request a toggle sends; proven by tests/vitest/adminLayoutTopBarTitles.spec.js (a toggle saves topBarTitles through the menu defaults and says Saved)
+- GIVEN the administrator toggles "Show titles in the top bar" on
+- WHEN the change is saved
+- THEN `POST /apps/thematiq/app-menu/defaults` MUST be called with `{topBarTitles: true}`
+- AND the live region MUST say "Saved"
 
 ### Requirement: External Documentation Links
 The settings panel MUST include external links to relevant documentation with proper security attributes.

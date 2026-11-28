@@ -524,7 +524,7 @@ class CssInjectionService {
 	 * @spec openspec/specs/brand-stripe/spec.md#requirement-the-stripe-is-one-conditional-stylesheet
 	 * @spec openspec/specs/workplace-layout/spec.md#requirement-each-newer-option-is-one-conditional-stylesheet
 	 * @spec openspec/changes/same-shell-every-page/specs/workplace-layout/spec.md#requirement-no-page-pays-more-layout-css-than-mail-paid-req-tqss-007
-	 * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
+	 * @spec openspec/specs/menu-labels/spec.md
 	 */
 	private function injectConditionalStyles(string $tokenSet, ?string $appId, string $context): void {
 		// Headers, not addStyle(): Nextcloud prints every addStyle() stylesheet

@@ -132,7 +132,7 @@ class Capabilities implements IPublicCapability {
 	 *
 	 * @return array{hideSlogan: bool, showMenuLabels: bool} The toggles.
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/theming-capability/spec.md
+	 * @spec openspec/specs/theming-capability/spec.md
 	 */
 	private function toggles(): array {
 		return [

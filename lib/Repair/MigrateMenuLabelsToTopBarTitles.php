@@ -17,7 +17,7 @@
  *
  * @link https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
+ * @spec openspec/specs/menu-labels/spec.md
  */
 
 declare(strict_types=1);
@@ -41,7 +41,7 @@ use Throwable;
  * Idempotent and never throws: a failure is logged and the reader keeps falling back to the older
  * value.
  *
- * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
+ * @spec openspec/specs/menu-labels/spec.md
  */
 class MigrateMenuLabelsToTopBarTitles implements IRepairStep {
 
@@ -73,7 +73,7 @@ class MigrateMenuLabelsToTopBarTitles implements IRepairStep {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
+	 * @spec openspec/specs/menu-labels/spec.md
 	 */
 	public function run(IOutput $output): void {
 		try {
