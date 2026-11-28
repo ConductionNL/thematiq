@@ -37,6 +37,20 @@ const MANIFEST: ManifestEntry[] = JSON.parse(
 )
 
 /**
+ * A set's logo as its theming metadata names it.
+ *
+ * @param id The set.
+ * @return The app-relative logo path.
+ */
+function logoOf(id: string): string {
+	const logo = MANIFEST.find((entry) => entry.id === id)?.theming?.logo
+	if (logo === undefined) {
+		throw new Error(`${id} has no logo in token-sets.json`)
+	}
+	return logo
+}
+
+/**
  * A set's primary colour as its theming metadata names it, lower-cased.
  *
  * @param id The set.
@@ -215,6 +229,8 @@ const CONFIRMATIONS = 'restricted_set_confirmations'
 const SETUP_KEYS = [
 	'token_set', 'header_style', 'themed_contexts', 'hide_slogan', 'login_watermark',
 	'brand_stripe_placement', FOLLOWS_KEY, 'setup.completed', 'setup.skipped',
+	// Not a configured key, but Apply writes it with the menu on, so it is put back too.
+	'workplace_layout',
 ]
 
 /**
@@ -237,7 +253,8 @@ function setupKeys(values: Record<string, string>): string[] {
 
 /** Remove the values, so the instance is one nobody set up. */
 function makeDue(values: Record<string, string>): void {
-	for (const key of new Set(setupKeys(values))) {
+	// Also what an earlier test of this file stored (a completed setup), not only what was there before.
+	for (const key of new Set(setupKeys(appValues()).concat(setupKeys(values)))) {
 		occ(['config:app:delete', 'thematiq', key])
 	}
 }
@@ -386,7 +403,12 @@ test.describe('first-time setup: the wizard', () => {
 		expect(status.current.tokenSet).toBe('amsterdam')
 		expect(status.current.hideSlogan).toBe(true)
 		expect(status.completed.by).toBe('admin')
-		expect((await readTheming(page)).primary_color.toLowerCase()).toBe(primaryOf('amsterdam'))
+		const theming = await readTheming(page)
+		expect(theming.primary_color.toLowerCase()).toBe(primaryOf('amsterdam'))
+		// The set's logo went to core; amsterdam ships no favicon, so the favicon slot is not the set's.
+		expect(theming.has_custom_logo).toBe(true)
+		expect(theming.synced_logo).toBe(logoOf('amsterdam'))
+		expect(theming.synced_favicon).toBe('')
 
 		// An anonymous login page has no slogan; a non-admin gets the workplace menu with 3 columns.
 		const guest = await browser.newContext({ storageState: undefined })
@@ -406,6 +428,11 @@ test.describe('first-time setup: the wizard', () => {
 			})
 			expect(menu.style).toBe('workplace')
 			expect(menu.columns).toBe(3)
+			// amsterdam has no workplace top bar of its own: the apps menu step turned it on.
+			await member.page.goto('/index.php/apps/files/', { waitUntil: 'domcontentloaded' })
+			await expect(member.page.locator('#header .app-menu__waffle')).toBeVisible({ timeout: 30_000 })
+			await member.page.locator('#header .app-menu__waffle').click()
+			await expect(member.page.locator('.app-menu__grid[data-thematiq-app-menu]')).toBeVisible()
 		} finally {
 			await member.close()
 		}
@@ -421,6 +448,23 @@ test.describe('first-time setup: the wizard', () => {
 		await page.getByTestId('cn-wizard-cancel').click()
 		expect((await setupStatus(page)).json.completed.by).toBe('admin')
 		await expectWizard(page, '/index.php/apps/files/', false)
+	})
+
+	// @e2e first-time-setup::the-done-step-offers-the-apps-menu-walkthrough
+	test('Start the apps menu walkthrough on the done step opens the menu with the tour', async ({ page }) => {
+		await expectWizard(page, '/index.php/apps/dashboard/', true)
+		await next(page).click()
+		await page.locator('label.tq-setup__card', { hasText: 'Zuiddrecht' }).first().click()
+		for (let i = 0; i < 4; i++) {
+			await next(page).click()
+		}
+		await expect(page.locator('.tq-setup__step h2')).toHaveText(/^Done/, { timeout: 120_000 })
+		await Promise.all([
+			page.waitForEvent('load'),
+			page.getByTestId('tq-setup-walkthrough').click(),
+		])
+		await expect(page.locator('.thematiq-menu-walkthrough .cn-walkthrough__card')).toBeVisible({ timeout: 30_000 })
+		await expect(page.locator('.thematiq-menu-walkthrough .cn-walkthrough__title')).toHaveText('Open the apps menu')
 	})
 })
 

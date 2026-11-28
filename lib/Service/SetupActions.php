@@ -315,7 +315,7 @@ class SetupActions {
 
 	/**
 	 * Store the menu defaults: workplace with its defaults when on, classic alone when off; on also
-	 * brings the workplace top bar when the set does not draw it.
+	 * brings the workplace top bar (light layout and workplace header) when the set does not draw it.
 	 *
 	 * @param array<string, mixed> $menu The checked menu choice.
 	 * @param string $tokenSet The chosen set.
@@ -333,19 +333,35 @@ class SetupActions {
 		$this->menu->saveDefaults(values: $values, known: []);
 		$this->records->audit->log(action: 'toggle_changed', context: ['key' => 'menu.defaults', 'new' => (string)json_encode($values)]);
 
-		$headerKey = LayoutOptionValues::HEADER_STYLE_KEY;
-		if ($menu['enabled'] === true
-			&& $this->writers->layout->resolve(key: $headerKey, tokenSet: $tokenSet) !== LayoutOptionValues::HEADER_STYLE_WORKPLACE
-		) {
-			$old = $this->writers->layout->setOption(key: $headerKey, value: LayoutOptionValues::HEADER_STYLE_WORKPLACE);
-			$this->records->audit->log(
-				action: 'toggle_changed',
-				context: ['key' => $headerKey, 'old' => $old, 'new' => LayoutOptionValues::HEADER_STYLE_WORKPLACE]
-			);
+		// The workplace top bar is the light layout with the workplace header: on brings both
+		// when the set does not draw them, otherwise the menu would not show at all.
+		if ($menu['enabled'] === true) {
+			$this->bringOption(key: LayoutOptionsService::WORKPLACE_LAYOUT_KEY, value: LayoutOptionsService::LAYOUT_LIGHT, tokenSet: $tokenSet);
+			$this->bringOption(key: LayoutOptionValues::HEADER_STYLE_KEY, value: LayoutOptionValues::HEADER_STYLE_WORKPLACE, tokenSet: $tokenSet);
 		}
 
 		return true;
 	}//end appsMenu()
+
+	/**
+	 * Store a layout option when the set does not resolve to it already, audited.
+	 *
+	 * @param string $key The layout option's app config key.
+	 * @param string $value The value the workplace top bar needs.
+	 * @param string $tokenSet The chosen set.
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
+	 */
+	private function bringOption(string $key, string $value, string $tokenSet): void {
+		if ($this->writers->layout->resolve(key: $key, tokenSet: $tokenSet) === $value) {
+			return;
+		}
+
+		$old = $this->writers->layout->setOption(key: $key, value: $value);
+		$this->records->audit->log(action: 'toggle_changed', context: ['key' => $key, 'old' => $old, 'new' => $value]);
+	}//end bringOption()
 
 	/**
 	 * Store a `{by, at}` record.
