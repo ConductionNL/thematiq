@@ -46,6 +46,45 @@ async function currentUser(page: Page): Promise<string> {
 	return page.evaluate(() => String((window as any).OC.getCurrentUser().uid))
 }
 
+/**
+ * The current user's email address, and how to put it back.
+ *
+ * Calendar marks an entry "not answered yet" (`fc-event-nc-needs-action`)
+ * only when an ATTENDEE carries the person's OWN principal email. An account
+ * without an email (the admin of a fresh instance) can never be that
+ * attendee, so the entry would render as a plain one. Such an account gets a
+ * temporary address for the test; `restore` empties it again.
+ */
+async function ownEmail(
+	page: Page,
+	user: string,
+): Promise<{ email: string; restore: () => Promise<void> }> {
+	const me = await api(page, 'GET', '/ocs/v2.php/cloud/user?format=json')
+	const current = String(me.json?.ocs?.data?.email ?? '')
+	if (current !== '') {
+		return { email: current, restore: async () => {} }
+	}
+	const email = `${user}@example.org`
+	const set = await api(
+		page,
+		'PUT',
+		`/ocs/v2.php/cloud/users/${encodeURIComponent(user)}?format=json`,
+		{ key: 'email', value: email },
+	)
+	expect(set.status, 'setting a temporary email for the invite').toBeLessThan(300)
+	return {
+		email,
+		restore: async () => {
+			await api(
+				page,
+				'PUT',
+				`/ocs/v2.php/cloud/users/${encodeURIComponent(user)}?format=json`,
+				{ key: 'email', value: '' },
+			)
+		},
+	}
+}
+
 /** Two digits. */
 const pad = (n: number): string => String(n).padStart(2, '0')
 
@@ -82,7 +121,10 @@ async function calDav(
 	)
 }
 
-/** One VEVENT, optionally with the user invited and not answered yet. */
+/**
+ * One VEVENT, optionally with the user invited and not answered yet.
+ * `invited` is the person's own email address: Calendar matches on it.
+ */
 function event(
 	uid: string,
 	title: string,
@@ -104,7 +146,7 @@ function event(
 	if (invited !== undefined) {
 		lines.push('ORGANIZER;CN=Organiser:mailto:organiser@example.org')
 		lines.push(
-			`ATTENDEE;CN=${invited};PARTSTAT=NEEDS-ACTION;RSVP=TRUE:mailto:${invited}@example.org`,
+			`ATTENDEE;CN=${invited};PARTSTAT=NEEDS-ACTION;RSVP=TRUE:mailto:${invited}`,
 		)
 	}
 	lines.push('END:VEVENT', 'END:VCALENDAR', '')
@@ -185,6 +227,7 @@ test.describe('the workplace, looked at live under the Zuiddrecht set', () => {
 		const stamp = Date.now()
 		const past = `thematiq-e2e-past-${stamp}`
 		const open = `thematiq-e2e-open-${stamp}`
+		const invite = await ownEmail(page, user)
 		try {
 			expect(
 				await calDav(
@@ -211,7 +254,7 @@ test.describe('the workplace, looked at live under the Zuiddrecht set', () => {
 						'Thematiq open entry',
 						todayAt(23, 0),
 						todayAt(23, 30),
-						user,
+						invite.email,
 					),
 				),
 			).toBeLessThan(300)
@@ -270,6 +313,7 @@ test.describe('the workplace, looked at live under the Zuiddrecht set', () => {
 		} finally {
 			await calDav(page, 'DELETE', user, past)
 			await calDav(page, 'DELETE', user, open)
+			await invite.restore()
 		}
 	})
 
