@@ -281,14 +281,14 @@ async function applyWithMenu(page: Page, setName: string, restricted: boolean): 
 	}
 	await expect(next(page)).toBeEnabled()
 	await next(page).click()
-	await expect(page.locator('.tq-setup__step h2')).toHaveText('Update the Nextcloud theme')
+	await expect(heading(page)).toHaveText('Update the Nextcloud theme')
 	await next(page).click()
-	await expect(page.locator('.tq-setup__step h2')).toHaveText('The login page')
+	await expect(heading(page)).toHaveText('The login page')
 	await next(page).click()
-	await expect(page.locator('.tq-setup__step h2')).toHaveText('The apps menu')
+	await expect(heading(page)).toHaveText('The apps menu')
 	await expect(next(page)).toHaveText('Apply')
 	await next(page).click()
-	await expect(page.locator('.tq-setup__step h2')).toHaveText(`Done, ${setName} is set`, { timeout: 120_000 })
+	await expect(heading(page)).toHaveText(`Done, ${setName} is set`, { timeout: 120_000 })
 }
 
 /** The admin's tour keys, so a test that starts the tour can put them back. */
@@ -325,13 +325,16 @@ async function tourKeys(page: Page, values: Record<string, unknown> | null): Pro
 
 const wizard = (page: Page) => page.locator('#thematiq-setup-wizard')
 const next = (page: Page) => page.getByTestId('cn-wizard-next')
+/** The step's own title in the dialog head, under "Set up Thematiq, step n of 6" (the TqSetup boards). */
+const heading = (page: Page) => page.getByTestId('cn-dialog-title')
 
 /** Open a page and wait for the wizard, or make sure there is none. */
 async function expectWizard(page: Page, url: string, shown: boolean): Promise<void> {
 	await page.goto(url, { waitUntil: 'domcontentloaded' })
 	if (shown) {
 		await expect(next(page)).toBeVisible({ timeout: 30_000 })
-		await expect(page.getByText('Welcome to Thematiq')).toBeVisible()
+		await expect(heading(page)).toHaveText('Welcome to Thematiq')
+		await expect(page.getByTestId('cn-dialog-eyebrow')).toHaveText(/^Set up Thematiq, step 1 of [56]$/)
 		return
 	}
 	await page.waitForTimeout(3_000)
@@ -429,20 +432,21 @@ test.describe('first-time setup: the wizard', () => {
 		await page.locator('label[for="tq-setup-licence-statement"]').click()
 		await expect(next(page)).toBeEnabled()
 		await next(page).click()
-		await expect(page.locator('.tq-setup__step h2')).toHaveText('Update the Nextcloud theme')
+		await expect(heading(page)).toHaveText('Update the Nextcloud theme')
 		await expect(page.locator('#tq-setup-follows')).toBeChecked()
 		await next(page).click()
-		await expect(page.locator('.tq-setup__step h2')).toHaveText('The login page')
+		await expect(heading(page)).toHaveText('The login page')
 		await page.locator('label[for="tq-setup-slogan"]').click()
 		await next(page).click()
-		await expect(page.locator('.tq-setup__step h2')).toHaveText('The apps menu')
+		await expect(heading(page)).toHaveText('The apps menu')
 		await page.locator('#tq-setup-columns').selectOption('3')
 		await expect(page.getByText('Workplace', { exact: true })).toHaveCount(0)
 		await expect(next(page)).toHaveText('Apply')
 		await next(page).click()
-		await expect(page.locator('.tq-setup__step h2')).toHaveText('Done, Gemeente Amsterdam is set', { timeout: 120_000 })
+		await expect(heading(page)).toHaveText('Done, Gemeente Amsterdam is set', { timeout: 120_000 })
 		// The hand-off to the walkthrough is offered; what it stores is pinned by tests/vitest/setupWizard.spec.js.
-		await expect(page.getByTestId('tq-setup-walkthrough')).toBeVisible()
+		await expect(next(page)).toHaveText('Start the apps menu walkthrough')
+		await expect(page.getByTestId('tq-setup-close')).toBeVisible()
 		const status = (await setupStatus(page)).json
 		expect(status.current.tokenSet).toBe('amsterdam')
 		expect(status.current.hideSlogan).toBe(true)
@@ -507,7 +511,8 @@ test.describe('first-time setup: the wizard', () => {
 
 		const before = await tourKeys(page, null)
 		try {
-			await page.getByTestId('tq-setup-walkthrough').click()
+			await expect(next(page)).toHaveText('Start the apps menu walkthrough')
+			await next(page).click()
 			const card = page.locator('.thematiq-menu-walkthrough .cn-walkthrough__card')
 			await expect(card).toBeVisible({ timeout: 30_000 })
 			await expect(wizard(page)).toHaveCount(0)
