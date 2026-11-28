@@ -61,16 +61,29 @@ describe('ThematiqBootReads.create', () => {
 		await loadShim(undefined)
 	})
 
-	it('answers a GET for a path the render read once, without the server; the next read goes to the server', async () => {
+	it('answers a GET for a path the render read, without the server; a repeat after the boot window goes to the server', async () => {
 		const server = vi.fn(() => 'server')
-		const boot = window.ThematiqBootReads.create(server, READS, BASE)
+		let clock = 1000
+		const boot = window.ThematiqBootReads.create(server, READS, BASE, () => clock)
 		const first = await boot.fetch('/index.php/apps/thematiq/settings/fonts', { method: 'get', headers: { requesttoken: 'x' } })
 		expect(first.ok).toBe(true)
 		expect(await first.json()).toEqual({ fonts: [{ name: 'Barlow' }] })
 		expect(server).not.toHaveBeenCalled()
+		clock += 10001
 		expect(boot.fetch('/index.php/apps/thematiq/settings/fonts')).toBe('server')
 		expect(server).toHaveBeenCalledTimes(1)
 		expect(READS['/settings/fonts']).toBeDefined()
+	})
+
+	it('answers a second block with the same read while the page boots', async () => {
+		const server = vi.fn(() => 'server')
+		let clock = 1000
+		const boot = window.ThematiqBootReads.create(server, READS, BASE, () => clock)
+		await boot.fetch('/index.php/apps/thematiq/settings/fonts')
+		clock += 400
+		const second = await boot.fetch('/index.php/apps/thematiq/settings/fonts')
+		expect(await second.json()).toEqual({ fonts: [{ name: 'Barlow' }] })
+		expect(server).not.toHaveBeenCalled()
 	})
 
 	it('sends a path the render did not read to the server', () => {

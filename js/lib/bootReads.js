@@ -27,6 +27,9 @@
 ;(function thematiqBootReadsInit() {
 	var APP_PATH = '/apps/thematiq'
 
+	/** How long after the page opens a read the render answered is answered again, in milliseconds. */
+	var REPEAT_WINDOW_MS = 10000
+
 	/**
 	 * The boot-read key of a URL: its path after /apps/thematiq, with its query.
 	 *
@@ -73,11 +76,15 @@
 	 * @param {Function} realFetch The browser's fetch.
 	 * @param {object} reads Path => JSON body, from the render.
 	 * @param {string} base The page URL.
+	 * @param {Function} [clock] Milliseconds now; Date.now unless a test passes its own.
 	 * @return {{fetch: Function, stop: Function, active: Function}} The fetch, a way to stop answering, and whether it still answers.
 	 */
-	function create(realFetch, reads, base) {
+	function create(realFetch, reads, base, clock) {
 		var answering = reads !== null && typeof reads === 'object' && Object.keys(reads).length > 0
 		reads = answering === true ? Object.assign({}, reads) : {}
+		var now = typeof clock === 'function' ? clock : Date.now
+		var started = now()
+		var answered = {}
 
 		function stop() {
 			answering = false
@@ -89,9 +96,14 @@
 					stop()
 				} else {
 					var key = keyOf(input, base)
-					if (key !== null && Object.prototype.hasOwnProperty.call(reads, key) === true) {
+					// Two blocks that open with the same read (the version card and the config
+					// source line both read /settings/config-source) are both answered while the
+					// page boots; after REPEAT_WINDOW_MS a repeated read, such as a poll, goes to
+					// the server so it never keeps a stale answer.
+					if (key !== null && Object.prototype.hasOwnProperty.call(reads, key) === true
+						&& (answered[key] !== true || now() - started <= REPEAT_WINDOW_MS)) {
 						var body = reads[key]
-						delete reads[key]
+						answered[key] = true
 						return Promise.resolve(
 							new Response(JSON.stringify(body), {
 								status: 200,
