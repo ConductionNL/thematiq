@@ -25,6 +25,7 @@ use OCA\Thematiq\Controller\OwnComponentController;
 use OCA\Thematiq\Controller\OwnTokenController;
 use OCA\Thematiq\Controller\ScheduledSwitchController;
 use OCA\Thematiq\Controller\SettingsController;
+use OCA\Thematiq\Controller\SetupController;
 use OCA\Thematiq\Controller\TokenDeprecationController;
 use OCA\Thematiq\Controller\TokenSetLicenceController;
 use OCA\Thematiq\Settings\AdminBootReads;
@@ -59,6 +60,7 @@ class AdminBootReadsTest extends TestCase {
 		[FontController::class, 'list', '/settings/fonts'],
 		[FontController::class, 'library', '/settings/fonts/library'],
 		[ConfigSourceController::class, 'status', '/settings/config-source'],
+		[SetupController::class, 'status', '/api/setup/status'],
 	];
 
 	/**
@@ -118,7 +120,7 @@ class AdminBootReadsTest extends TestCase {
 			logger: $this->createMock(originalClassName: LoggerInterface::class)
 		))->forTokenSet(tokenSetId: 'custom-open woo');
 
-		$this->assertCount(expectedCount: 14, haystack: $reads);
+		$this->assertCount(expectedCount: 15, haystack: $reads);
 		foreach (self::PLAIN as [$class, $action, $path]) {
 			$this->assertSame(expected: ['from' => $class . '::' . $action], actual: $reads[$path]);
 		}

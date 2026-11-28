@@ -31,6 +31,7 @@ use OCA\Thematiq\Controller\OwnComponentController;
 use OCA\Thematiq\Controller\OwnTokenController;
 use OCA\Thematiq\Controller\ScheduledSwitchController;
 use OCA\Thematiq\Controller\SettingsController;
+use OCA\Thematiq\Controller\SetupController;
 use OCA\Thematiq\Controller\TokenDeprecationController;
 use OCA\Thematiq\Controller\TokenSetLicenceController;
 use OCP\AppFramework\Http;
@@ -77,6 +78,8 @@ final class AdminBootReads {
 		'/settings/fonts' => [FontController::class, 'list'],
 		'/settings/fonts/library' => [FontController::class, 'library'],
 		'/settings/config-source' => [ConfigSourceController::class, 'status'],
+		// The version card reads the setup status as the page opens (first-time-setup REQ-TQFS-012).
+		'/api/setup/status' => [SetupController::class, 'status'],
 	];
 
 	/**
