@@ -332,6 +332,9 @@ class ThemingService {
 	 * @spec openspec/specs/theming-sync/spec.md
 	 * @spec openspec/specs/theming-sync/spec.md
 	 * @spec openspec/specs/platform-properties/spec.md#requirement-the-login-background-is-a-core-image-slot-req-tplat-002
+	 * An image core refuses (an SVG favicon on an instance whose Imagick cannot read SVG) is left
+	 * out: its slot keeps its image and it is not reported as updated, so the set still applies.
+	 *
 	 * @spec openspec/specs/platform-properties/spec.md#requirement-the-favicon-is-a-core-image-slot-the-theming-sync-may-fill-req-tplat-003
 	 */
 	public function applyImages(array $params): array {
@@ -347,7 +350,14 @@ class ThemingService {
 					continue;
 				}
 
-				$mime = $this->imageManager->updateImage(key: $imageKey, tmpFile: $fullPath);
+				// Core refuses an image it cannot take, e.g. an SVG favicon when Imagick has no
+				// SVG support: that slot keeps what it has, the other slots and the set go on.
+				try {
+					$mime = $this->imageManager->updateImage(key: $imageKey, tmpFile: $fullPath);
+				} catch (\Exception $e) {
+					continue;
+				}
+
 				$this->themingDefaults->set(setting: $imageKey . 'Mime', value: $mime);
 				$updated[] = $imageKey;
 			}
