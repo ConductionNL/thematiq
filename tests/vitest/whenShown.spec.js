@@ -186,3 +186,78 @@ describe('panel-only loaders', () => {
 		expect(global.fetch).toHaveBeenCalled()
 	})
 })
+
+describe('ThematiqWhenNear', () => {
+	let observers
+	let originalObserver
+
+	beforeEach(async () => {
+		observers = []
+		originalObserver = window.IntersectionObserver
+		window.IntersectionObserver = class {
+			constructor(callback, options) {
+				this.callback = callback
+				this.options = options
+				this.targets = []
+				this.disconnected = false
+				observers.push(this)
+			}
+
+			observe(target) {
+				this.targets.push(target)
+			}
+
+			disconnect() {
+				this.disconnected = true
+			}
+		}
+		await loadHelper()
+	})
+
+	afterEach(() => {
+		window.IntersectionObserver = originalObserver
+		vi.useRealTimers()
+		document.body.innerHTML = ''
+	})
+
+	it('does not build a block far below the fold at once, and builds it once it nears the screen', () => {
+		document.body.innerHTML = '<div id="preview"></div><div id="editor"></div>'
+		const run = vi.fn()
+		const targets = [document.getElementById('preview'), document.getElementById('editor')]
+		window.ThematiqWhenNear(targets, run, { settle: 100000 })
+		expect(run).not.toHaveBeenCalled()
+		expect(observers).toHaveLength(1)
+		expect(observers[0].targets).toEqual(targets)
+		expect(observers[0].options.rootMargin).toBe('1000px 0px')
+
+		observers[0].callback([{ isIntersecting: false }])
+		expect(run).not.toHaveBeenCalled()
+		observers[0].callback([{ isIntersecting: false }, { isIntersecting: true }])
+		observers[0].callback([{ isIntersecting: true }])
+		expect(run).toHaveBeenCalledTimes(1)
+		expect(observers[0].disconnected).toBe(true)
+	})
+
+	it('builds it once the page has settled after its load event when it is never scrolled to', () => {
+		vi.useFakeTimers()
+		document.body.innerHTML = '<div id="editor"></div>'
+		const run = vi.fn()
+		// jsdom has finished loading: the delay starts now.
+		window.ThematiqWhenNear([document.getElementById('editor')], run)
+		vi.advanceTimersByTime(1499)
+		expect(run).not.toHaveBeenCalled()
+		vi.advanceTimersByTime(1)
+		expect(run).toHaveBeenCalledTimes(1)
+		observers[0].callback([{ isIntersecting: true }])
+		expect(run).toHaveBeenCalledTimes(1)
+	})
+
+	it('runs at once without IntersectionObserver or without an element', () => {
+		const run = vi.fn(() => 'built')
+		expect(window.ThematiqWhenNear([null], run)).toBe('built')
+		delete window.IntersectionObserver
+		document.body.innerHTML = '<div id="editor"></div>'
+		expect(window.ThematiqWhenNear([document.getElementById('editor')], run)).toBe('built')
+		expect(run).toHaveBeenCalledTimes(2)
+	})
+})
