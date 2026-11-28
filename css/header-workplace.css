@@ -132,6 +132,16 @@ body:not(#body-login) #header .unified-search-menu {
 	margin: 0;
 }
 
+/* With the names next to the pinned apps (menu.topBarTitles), the field is
+ * 352px, as DqKop draws it with titles in the bar, so the named pins keep
+ * their room before it. */
+body:not(#body-login)
+	#header:has(.thematiq-app-pins__pin[data-thematiq-titled])
+	.unified-search-menu {
+	inset-inline-start: calc(50% - 179px);
+	width: 352px;
+}
+
 /* Too narrow to centre it between the two ends: it follows the grid button
  * and shrinks. */
 @media (max-width: 1240px) {
@@ -442,8 +452,10 @@ body:not(#body-login) #header .thematiq-quick-add__button {
 	padding: 0;
 	border: 0;
 	border-radius: var(--thematiq-icon-radius, 22px);
-	background: transparent;
-	color: var(--color-main-text) !important;
+	/* DqKop, MlInbox, ClWeek, TbBoard: the one filled circle of the bar, in
+	   the primary's light tint, the plus in its text colour. */
+	background: var(--color-primary-element-light);
+	color: var(--color-primary-element-light-text) !important;
 	cursor: pointer;
 }
 
