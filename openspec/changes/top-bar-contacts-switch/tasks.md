@@ -5,29 +5,29 @@ extends) and the boards are merged. Copy and placement follow the boards.
 
 ## 1. Server
 
-- [ ] 1.1 `lib/Service/AppMenuSettings.php`: `showContactsMenu` in `DEFAULTS` (true), `SWITCHES` and
+- [x] 1.1 `lib/Service/AppMenuSettings.php`: `showContactsMenu` in `DEFAULTS` (true), `SWITCHES` and
       `PERSONAL`. REQ-TQCM-001.
-- [ ] 1.2 `lib/Service/AppMenuService.php`: add `css/top-bar-no-contacts.css` when the effective value
+- [x] 1.2 `lib/Service/AppMenuService.php`: add `css/top-bar-no-contacts.css` when the effective value
       is off, before the classic style's early return, so both headers get it. REQ-TQCM-001.
-- [ ] 1.3 `css/top-bar-no-contacts.css`: new, with the SPDX header; `#contactsmenu` gets
+- [x] 1.3 `css/top-bar-no-contacts.css`: new, with the SPDX header; `#contactsmenu` gets
       `display: none`; check the bar's spacing against AppMenu and DqKop. REQ-TQCM-001.
-- [ ] 1.4 `lib/Service/AppMenuDialogLabels.php`: the label, help and the shared note of `design.md`.
-- [ ] 1.5 `lib/Settings/Admin.php`: the administrator's value for the admin page. REQ-TQCM-002.
-- [ ] 1.6 PHPUnit `AppMenuSettingsTest` (default, a person's value wins, reset),
+- [x] 1.4 `lib/Service/AppMenuDialogLabels.php`: the label, help and the shared note of `design.md`.
+- [x] 1.5 `lib/Settings/Admin.php`: the administrator's value for the admin page. REQ-TQCM-002.
+- [x] 1.6 PHPUnit `AppMenuSettingsTest` (default, a person's value wins, reset),
       `AppMenuSettingsControllerTest` (a person saves the key), `AppMenuServiceTest` (the stylesheet
       only when off, in both styles).
 
 ## 2. Scripts
 
-- [ ] 2.1 `js/dialogs/menu-settings-dialog.js`: the switch after the create switches, editable in Only
+- [x] 2.1 `js/dialogs/menu-settings-dialog.js`: the switch after the create switches, editable in Only
       for me, saved as a personal key. REQ-TQCM-001.
-- [ ] 2.2 `templates/settings/admin.php`, `js/admin-layout-panel.js`, `js/admin.js`: the switch in the
+- [x] 2.2 `templates/settings/admin.php`, `js/admin-layout-panel.js`, `js/admin.js`: the switch in the
       Menu card, saved at once, live region, alert, enabled with classic, session list. REQ-TQCM-002.
-- [ ] 2.3 vitest: `menuSettingsDialog.spec.js`, `adminLayoutCreateSwitches.spec.js`.
+- [x] 2.3 vitest: `menuSettingsDialog.spec.js`, `adminLayoutCreateSwitches.spec.js`.
 
 ## 3. Copy
 
-- [ ] 3.1 l10n: the new strings in English and Dutch; `npm run test:l10n` green.
+- [x] 3.1 l10n: the new strings in English and Dutch; `npm run test:l10n` green.
 
 ## 4. End to end
 
