@@ -163,8 +163,35 @@ class ScheduledCoreThemingSync {
 			$this->config->setAppValue(Application::APP_ID, SettingsController::SYNCED_IMAGE_PREFIX . $imageKey, (string)$params[$imageKey]);
 		}
 
-		return array_merge($this->themingService->applyColors(params: $params), $updatedImages);
+		return array_merge($this->themingService->applyColors(params: $params), $updatedImages, $this->undoStaleImages(params: $params));
 	}//end applyParams()
+
+	/**
+	 * Give back to Nextcloud an image slot an earlier set filled and this set does not: a set without
+	 * a favicon must not keep the previous set's. Only slots thematiq itself filled (marked by their
+	 * `synced_<slot>` value) are undone, so an image an administrator uploaded in core stays.
+	 *
+	 * @param array<string, string> $params The block of the set now applied.
+	 *
+	 * @return array<int, string> The image slots given back.
+	 *
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-the-favicon-is-a-core-image-slot-the-theming-sync-may-fill-req-tplat-003
+	 */
+	private function undoStaleImages(array $params): array {
+		$undone = [];
+		foreach (self::IMAGE_KEYS as $imageKey) {
+			$marker = SettingsController::SYNCED_IMAGE_PREFIX . $imageKey;
+			if (isset($params[$imageKey]) === true || $this->config->getAppValue(Application::APP_ID, $marker, '') === '') {
+				continue;
+			}
+
+			$this->themingService->undoImage(key: $imageKey);
+			$this->config->deleteAppValue(Application::APP_ID, $marker);
+			$undone[] = $imageKey;
+		}
+
+		return $undone;
+	}//end undoStaleImages()
 
 	/**
 	 * The set's theming block, limited to what the dialog would offer.
