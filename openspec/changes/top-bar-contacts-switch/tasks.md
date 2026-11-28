@@ -31,7 +31,7 @@ extends) and the boards are merged. Copy and placement follow the boards.
 
 ## 4. End to end
 
-- [ ] 4.1 `tests/e2e/spec-coverage/top-bar-contacts-switch.spec.ts` with `@e2e` tags for "A person
+- [x] 4.1 `tests/e2e/spec-coverage/top-bar-contacts-switch.spec.ts` with `@e2e` tags for "A person
       switches the contacts menu off", "On by default" and "The administrator switches the contacts
       menu off for everyone": set the keys through the settings and defaults endpoints, open Files,
       check that `#contactsmenu` is not visible and not reached with Tab from the bell, and that the
@@ -41,7 +41,14 @@ extends) and the boards are merged. Copy and placement follow the boards.
 
 - [x] 5.1 `hydra/scripts/diff-check.sh` green on the changed files while building; `composer
       check:strict` and `npm run lint` once before push.
-- [ ] 5.2 Live check on the dev instance (light and dark, a Zuiddrecht set and a plain one, the
+- [x] 5.2 Live check on the dev instance (light and dark, a Zuiddrecht set and a plain one, the
       workplace and the classic style): with the switch off the bar ends bell, divider, person, with no
       gap; keyboard and screen reader pass over
       no contacts button; with it on the bar is unchanged.
+      (28 Nov, sandbox NC 34.0.6: zuiddrecht and rijkshuisstijl (light layout + workplace header) x
+      workplace/classic menu x light/dark x on/off, 16 states measured. Off: the bar ends bell, divider,
+      person, and the person stays at the same x as with it on. Red found and fixed: the divider is drawn
+      on the element right before `#user-menu`, which was the hidden contacts menu, so it disappeared.
+      `css/top-bar-no-contacts.css` now puts it on the control before the contacts menu. Keyboard: Tab
+      from the bell skips it (e2e). The `nextcloud` set and plain sets without the workplace header
+      leave Nextcloud's header alone by design (the menu layer runs only with `header-workplace`).)

@@ -67,6 +67,15 @@ async function expectNoContactsMenu(page: Page): Promise<void> {
 		() => document.activeElement !== null && document.activeElement.closest('#contactsmenu') !== null,
 	)
 	expect(inContacts).toBe(false)
+	// The bar still ends bell, divider, person: the last shown control before the person carries the divider.
+	const divider = await page.evaluate(() => {
+		let el = document.querySelector('#header #user-menu')?.previousElementSibling ?? null
+		while (el !== null && getComputedStyle(el).display === 'none') {
+			el = el.previousElementSibling
+		}
+		return el === null ? null : getComputedStyle(el, '::after').width
+	})
+	expect(divider, 'the divider before the person').toBe('1px')
 }
 
 test.describe('the contacts menu in the top bar switches off', () => {
