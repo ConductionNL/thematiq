@@ -511,6 +511,40 @@ class ThemingServiceTest extends TestCase {
 	}//end testApplyImagesPairsTheStoredFileWithItsMime()
 
 	/**
+	 * Core refuses an SVG favicon when Imagick cannot read SVG. That slot is left out and the other
+	 * slots are still written, so a change of set does not fail on an instance without Imagick.
+	 *
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-the-favicon-is-a-core-image-slot-the-theming-sync-may-fill-req-tplat-003
+	 *
+	 * @return void
+	 */
+	public function testApplyImagesLeavesOutAnImageCoreRefuses(): void {
+		$this->imageManager->method('updateImage')->willReturnCallback(
+			function (string $key, string $tmpFile): string {
+				if ($key === 'favicon') {
+					throw new \Exception('Unsupported image type: image/svg+xml');
+				}
+
+				return 'image/svg+xml';
+			}
+		);
+
+		$written = [];
+		$this->themingDefaults->method('set')->willReturnCallback(
+			function (string $setting, string $value) use (&$written): void {
+				$written[$setting] = $value;
+			}
+		);
+
+		$updated = $this->service->applyImages(
+			params: ['logo' => 'img/logos/present.svg', 'favicon' => 'img/logos/present.svg']
+		);
+
+		$this->assertSame(expected: ['logo'], actual: $updated);
+		$this->assertSame(expected: ['logoMime' => 'image/svg+xml'], actual: $written);
+	}//end testApplyImagesLeavesOutAnImageCoreRefuses()
+
+	/**
 	 * `logo_dark` is validated like a logo but never applied: core has one
 	 * logo slot, and the dark logo is delivered by this app's own generated
 	 * dark stylesheet instead.
