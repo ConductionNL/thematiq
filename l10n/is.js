@@ -2182,7 +2182,12 @@ OC.L10N.register(
         "Show titles in the top bar": "Show titles in the top bar",
         "The name next to the icon of every pinned app in the top bar. Off: icons only, the name appears as a tooltip.": "The name next to the icon of every pinned app in the top bar. Off: icons only, the name appears as a tooltip.",
         "Only with Show titles.": "Only with Show titles.",
-        "without titles": "without titles"
+        "without titles": "without titles",
+        "Could not save the setting.": "Could not save the setting.",
+        "The Nextcloud theme followed the set.": "The Nextcloud theme followed the set.",
+        "The Nextcloud theme follows the next change of set.": "The Nextcloud theme follows the next change of set.",
+        "The Nextcloud theme now follows the set. The previous theme is kept as a version in the log.": "The Nextcloud theme now follows the set. The previous theme is kept as a version in the log.",
+        "Thematiq leaves the Nextcloud theme alone.": "Thematiq leaves the Nextcloud theme alone."
     },
     "nplurals=2; plural=(n != 1);"
 )
