@@ -106,7 +106,7 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
 - [x] 5.2 Walk: the welcome on the dashboard and in Files; a non-admin sees nothing and the page has no
       `setup_status`; walking the steps and Later writes nothing and the wizard comes back; Skip and
       nothing on the next page; a configured instance shows nothing; status is 403 for a non-admin.
-- [ ] 5.3 Full run: choose `amsterdam`, Next disabled until the statement; keep the theme switch on;
+- [x] 5.3 Full run: choose `amsterdam`, Next disabled until the statement; keep the theme switch on;
       Follow the house style with the slogan hidden; menu on with 3 columns on a set without the
       workplace top bar; Apply; then the set is active and audited, the core primary colour, logo and
       favicon are the set's (`_core-theming.ts`), an anonymous login page has no slogan, a non-admin
@@ -123,6 +123,8 @@ Copy and layout follow the boards; each task names its board. Task 5.3 needs app
       stores `header_style` workplace, but `css/header-workplace.css` is emitted only under the light
       layout (workplace-layout spec), so no workplace top bar and no thematiq menu appear for a
       non-admin; the e2e for that scenario waits in its own PR.)
+      (28 Nov: decision (A) built in #2225, Apply with the menu on also stores the light layout; the
+      scenario's e2e in #2221, first-time-setup.spec.ts 7/7 live on NC 34.0.6 + PG16, done-thematiq.)
 - [x] 5.4 The version card reads "Completed by admin on"; Set up again opens the wizard with the stored
       set; Later leaves setup done. (#E2E: `first-time setup: the wizard` in first-time-setup.spec.ts, live
       4/4 on a sandbox NC34 + MariaDB: 5.1 fixture through occ with every value put back and amsterdam's
