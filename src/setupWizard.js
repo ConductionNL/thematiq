@@ -130,35 +130,6 @@ export function preloadedStatus() {
 }
 
 /**
- * A labelled switch (`role="switch"`).
- *
- * @param {object} row The switch.
- * @param {string} row.id The input id.
- * @param {string} row.label The label.
- * @param {boolean} row.checked Whether it is on.
- * @param {Function} row.onChange Called with the new value.
- * @param {string} [row.hint] The line under it.
- * @return {object} The vnode.
- */
-function switchRow({ id, label, checked, onChange, hint, disabled }) {
-	return h('div', { class: 'tq-setup__switch' }, [
-		h('input', {
-			id,
-			type: 'checkbox',
-			role: 'switch',
-			class: 'checkbox',
-			checked,
-			// Disabled, not hidden: it stays in the reading order with its hint (REQ-TQMT-004).
-			disabled: disabled === true,
-			'aria-describedby': hint ? id + '-hint' : undefined,
-			onChange: (event) => onChange(event.target.checked === true),
-		}),
-		h('label', { for: id }, label),
-		hint ? h('p', { id: id + '-hint', class: 'tq-setup__hint' }, hint) : null,
-	])
-}
-
-/**
  * A 24 px icon from one path, coloured by the text colour.
  *
  * @param {string} d The path.
