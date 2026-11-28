@@ -518,4 +518,26 @@ test.describe('first-time setup: the wizard', () => {
 			await tourKeys(page, before)
 		}
 	})
+
+	// @e2e first-time-setup::turning-the-menu-on-brings-the-workplace-top-bar
+	test('turning the menu on brings the workplace top bar for a set without it (amsterdam)', async ({ page, browser }) => {
+		await expectWizard(page, '/index.php/apps/dashboard/', true)
+		await applyWithMenu(page, 'Gemeente Amsterdam', true)
+		expect(occ(['config:app:get', 'thematiq', 'header_style'])).toBe('workplace')
+		const member = await loginAs(browser, NONADMIN_USER, NONADMIN_PASS)
+		try {
+			await member.page.goto('/index.php/apps/files/', { waitUntil: 'domcontentloaded' })
+			// The workplace top bar is css/header-workplace.css with thematiq's apps menu in it.
+			await expect(member.page.locator('link[href*="thematiq/css/header-workplace.css"]')).toHaveCount(1)
+			expect(await member.page.evaluate(() => {
+				try {
+					return (window as any).OCP.InitialState.loadState('thematiq', 'app-menu', null) !== null
+				} catch {
+					return false
+				}
+			}), 'thematiq draws its apps menu for the member').toBe(true)
+		} finally {
+			await member.close()
+		}
+	})
 })
