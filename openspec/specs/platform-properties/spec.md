@@ -49,6 +49,13 @@ Nextcloud core SHALL own the favicon slot, its upload and the icons it serves fr
 - WHEN a user opens any page
 - THEN the browser tab shows the uploaded favicon
 
+#### Scenario: A set without a favicon gives the previous set's back
+@e2e exclude two syncs in a row on core theming; proven by tests/Unit/Service/ScheduledCoreThemingSyncTest.php (testASlotTheNewSetDoesNotFillIsGivenBack)
+- GIVEN the theming sync filled the favicon slot from the previous set
+- WHEN a set without a favicon is synced
+- THEN the favicon slot MUST go back to Nextcloud's own and no longer be marked as synced
+- AND a favicon an administrator uploaded in core, never synced by thematiq, MUST stay
+
 #### Scenario: A favicon core cannot take is left out
 @e2e exclude depends on the instance's Imagick build; proven by tests/Unit/Service/ThemingServiceTest.php (testApplyImagesLeavesOutAnImageCoreRefuses)
 - GIVEN the active token set ships an SVG favicon and core's image manager refuses SVG favicons (no Imagick with SVG support)

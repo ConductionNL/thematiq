@@ -377,6 +377,20 @@ class ThemingService {
 	public const RESETTABLE = ['primary_color', 'background_color', 'logo', 'logoheader', 'favicon', 'background'];
 
 	/**
+	 * Give one image slot back to Nextcloud: core's undo deletes the stored image and its mime, so the
+	 * page falls back to core's own.
+	 *
+	 * @param string $key The image slot (logo, logoheader, favicon, background).
+	 *
+	 * @return void
+	 *
+	 * @spec openspec/specs/platform-properties/spec.md#requirement-the-favicon-is-a-core-image-slot-the-theming-sync-may-fill-req-tplat-003
+	 */
+	public function undoImage(string $key): void {
+		$this->themingDefaults->undo(setting: $key);
+	}//end undoImage()
+
+	/**
 	 * Undo everything Thematiq may have synced into Nextcloud theming.
 	 *
 	 * Selecting the stock `nextcloud` set means "Nextcloud's own colours and
