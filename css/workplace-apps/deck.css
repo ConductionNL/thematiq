@@ -682,8 +682,8 @@
 }
 
 :is(#content, #content-vue).app-deck .controls .board-title[data-thematiq-open] h2 {
-	font-size: 18px !important;
-	line-height: 22px !important;
+	font-size: 20px !important;
+	line-height: 24px !important;
 }
 
 :is(#content, #content-vue).app-deck

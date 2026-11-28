@@ -30,10 +30,14 @@
 	--thematiq-app-layer: mail;
 }
 
-/* "New message" is the filled primary action. */
+/* "New message" is the filled primary action, 34px like the shared new-item
+ * button (Mail 5.13 draws it outside NcAppNavigationNew). */
 :is(#content, #content-vue).app-mail
 	.mail-navigation__new-message-button
 	.button-vue--vue-secondary {
+	min-height: 34px !important;
+	height: 34px !important;
+	padding-block: 0 !important;
 	border-color: var(
 		--nldesign-color-button-primary-border,
 		var(--nldesign-color-primary)
@@ -109,6 +113,16 @@
 		--thematiq-global-color-main-background,
 		var(--color-main-background)
 	) !important;
+}
+
+/* The selected conversation keeps the shared selected row (MlInbox, MlThread):
+ * the primary's light tint with a 3px primary edge. The white row above is
+ * more specific than the shared rule, so the selected one is named here. */
+:is(#content, #content-vue).app-mail
+	.envelope-list
+	:is(.list-item__wrapper--active .list-item, .list-item--active) {
+	box-shadow: inset 3px 0 0 var(--color-primary-element);
+	background-color: var(--color-primary-element-light) !important;
 }
 
 :is(#content, #content-vue).app-mail
