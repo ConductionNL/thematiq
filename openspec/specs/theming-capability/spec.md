@@ -55,7 +55,8 @@ The `nldesign` capability value MUST be an object with exactly these keys:
   set declares no logo. Additional variants (e.g. `dark`) are reserved for future changes
   (dark-mode-token-variants) — consumers MUST treat unknown variant keys as additive;
 - `hideSlogan` (bool) — whether the `hide_slogan` toggle is active;
-- `showMenuLabels` (bool) — whether the `show_menu_labels` toggle is active.
+- `showMenuLabels` (bool) — the administrator's effective `menu.topBarTitles` (Show titles in the top
+  bar, apps-menu-settings REQ-TQMT-005); the field keeps its name so existing consumers keep working.
 
 The payload MUST reflect the live appconfig state (no stale snapshot across a token-set change)
 and MUST contain only branding facts already observable by anyone loading the themed login page —
@@ -65,7 +66,7 @@ filesystem paths outside web asset paths.
 #### Scenario: Payload for an active shipped set
 - GIVEN the active token set is `rijkshuisstijl` with a manifest entry declaring name
   "Rijkshuisstijl" and `theming.logo: img/logos/rijkshuisstijl.svg`
-- AND `hide_slogan` is `'1'` and `show_menu_labels` is `'0'`
+- AND `hide_slogan` is `'1'` and `menu.topBarTitles` is false
 - WHEN the capability payload is computed
 - THEN `tokenSet` MUST equal `{ "id": "rijkshuisstijl", "name": "Rijkshuisstijl", "version": null }`
   (no version declared in the manifest today)
@@ -162,4 +163,3 @@ in the payload.
 - AND `iconPacks` MUST be an empty array
 - AND no exception MUST propagate to the OCS layer
 - AND no exception message MUST appear in the payload
-

@@ -194,7 +194,7 @@ final class AppMenuDialogLabels {
 	 *
 	 * @return array<string, string> Key to text.
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-menu-settings-and-the-setup-wizard-offer-show-titles-req-tqmt-004
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-menu-settings-and-the-setup-wizard-offer-show-titles-req-tqmt-004
 	 */
 	private static function titleLabels(IL10N $l): array {
 		return [

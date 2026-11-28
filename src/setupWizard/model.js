@@ -55,7 +55,7 @@ export function initialChoices(status) {
  * @param {object} menu The stored menu choices.
  * @return {object} The menu choices.
  * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
- * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+ * @spec openspec/specs/apps-menu-settings/spec.md
  */
 export function menuChoices(menu) {
 	return {
@@ -137,7 +137,7 @@ export function houseStyleReady(choices, licences) {
  * @param {Array<object>} licences The licence entries.
  * @return {object} The request body.
  * @spec openspec/changes/first-time-setup/specs/first-time-setup/spec.md#requirement-the-apps-menu-step-is-one-switch-req-tqfs-010
- * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md
+ * @spec openspec/specs/apps-menu-settings/spec.md
  */
 export function applyRequest(choices, licences) {
 	const body = {

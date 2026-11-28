@@ -13,7 +13,7 @@
  * @license   EUPL-1.2 https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12
  * @link      https://github.com/ConductionNL/thematiq
  *
- * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
  */
 
 declare(strict_types=1);
@@ -30,7 +30,7 @@ use OCP\IConfig;
  * The OCS capability, the configuration bundle and the theme versions keep the name
  * `showMenuLabels` and carry this value.
  *
- * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+ * @spec openspec/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
  */
 class AppMenuTopBarTitles {
 
@@ -77,7 +77,7 @@ class AppMenuTopBarTitles {
 	 *
 	 * @return bool Whether the top bar shows the names.
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 */
 	public function isOn(): bool {
 		$stored = $this->stored();
@@ -95,7 +95,7 @@ class AppMenuTopBarTitles {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 */
 	public function set(bool $on): void {
 		$this->config->setAppValue(Application::APP_ID, self::APP_KEY, (string)json_encode($on));
@@ -106,7 +106,7 @@ class AppMenuTopBarTitles {
 	 *
 	 * @return bool|null The stored value.
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 */
 	public function stored(): ?bool {
 		$value = json_decode((string)$this->config->getAppValue(Application::APP_ID, self::APP_KEY, ''), true);
@@ -123,7 +123,7 @@ class AppMenuTopBarTitles {
 	 *
 	 * @return array<string, bool> `['topBarTitles' => bool]`, or empty.
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 */
 	public function legacyDefault(): array {
 		$legacy = $this->legacy();
@@ -141,7 +141,7 @@ class AppMenuTopBarTitles {
 	 *
 	 * @return void
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
+	 * @spec openspec/specs/apps-menu-settings/spec.md#requirement-show-titles-in-the-top-bar-is-a-theming-choice-of-the-administrator-req-tqmt-005
 	 */
 	public function forgetLegacyOnceChosen(array $values): void {
 		if (array_key_exists(self::KEY, $values) === true) {
@@ -154,7 +154,7 @@ class AppMenuTopBarTitles {
 	 *
 	 * @return bool|null True for '1', false for '0'.
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
+	 * @spec openspec/specs/menu-labels/spec.md
 	 */
 	public function legacy(): ?bool {
 		return match ((string)$this->config->getAppValue(Application::APP_ID, self::LEGACY_KEY, '')) {
@@ -172,7 +172,7 @@ class AppMenuTopBarTitles {
 	 *
 	 * @return bool True with the workplace apps menu.
 	 *
-	 * @spec openspec/changes/apps-menu-show-titles/specs/menu-labels/spec.md
+	 * @spec openspec/specs/menu-labels/spec.md
 	 */
 	public function workplaceMenu(array $sheets): bool {
 		if (in_array(self::HEADER_WORKPLACE_STYLESHEET, $sheets, true) === false) {
